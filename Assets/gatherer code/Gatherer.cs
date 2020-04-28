@@ -1,4 +1,5 @@
 ﻿using Assets;
+using Assets.Gatherer_Code;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -6,17 +7,20 @@ using UnityEngine;
 public class Gatherer : MonoBehaviour
 {
     public ResourceType gatheringType;
-    public float speed;
-    public float eatDistance;
+    public float speed = 1;
+    public float eatDistance = 0.1f;
 
     // Start is called before the first frame update
     void Start()
     {
-        
+        this.inventory = new ResourceInventory();
     }
 
     private GameObject currentTarget;
     private float timeSinceLastTargetCheck = 0;
+
+    private ResourceInventory inventory;
+
 
     // Update is called once per frame
     void Update()
@@ -48,6 +52,8 @@ public class Gatherer : MonoBehaviour
 
     private void eatResource(GameObject resource)
     {
+        var resourceType = resource.GetComponent<Resource>();
+        this.inventory.addResource(resourceType.type, resourceType.value);
         Destroy(resource);
     }
 
