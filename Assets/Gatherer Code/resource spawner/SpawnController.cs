@@ -31,7 +31,10 @@ public class SpawnController : MonoBehaviour
 
     private Vector3 getRandomPosInBounds()
     {
-        return this.spawnBoxSize * (Random.value - 0.5f);
+        return new Vector3(
+            this.spawnBoxSize.x * (Random.value - 0.5f),
+            this.spawnBoxSize.y * (Random.value - 0.5f),
+            this.spawnBoxSize.z * (Random.value - 0.5f));
     }
 
     private void OnDrawGizmos()

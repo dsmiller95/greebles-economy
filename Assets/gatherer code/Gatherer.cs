@@ -25,29 +25,35 @@ public class Gatherer : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        timeSinceLastTargetCheck += Time.deltaTime;
         if (currentTarget == null &&
             // only check once per second if nothing found
-            timeSinceLastTargetCheck > 1)
+            (timeSinceLastTargetCheck += Time.deltaTime) > 1)
         {
             currentTarget = this.getNextTarget();
             timeSinceLastTargetCheck = 0;
         }
-
-        if(currentTarget != null)
+        if (currentTarget != null)
         {
             this.approachPositionWithDistance(currentTarget.transform.position, Time.deltaTime * this.speed);
-            if((transform.position - currentTarget.transform.position).magnitude < eatDistance)
+            if(distanceToFood(currentTarget.transform.position) < eatDistance)
             {
                 this.eatResource(this.currentTarget);
+                timeSinceLastTargetCheck = float.MaxValue;
             }
         }
     }
 
     private void approachPositionWithDistance(Vector3 targetPostion, float distance)
     {
-        var direction = (targetPostion - this.transform.position).normalized;
+        var difference = targetPostion - this.transform.position;
+        var direction = new Vector3(difference.x, 0, difference.z).normalized;
         this.transform.position += direction * distance;
+    }
+
+    private float distanceToFood(Vector3 foodPos)
+    {
+        var difference = transform.position - currentTarget.transform.position;
+        return new Vector3(difference.x, difference.y, difference.z).magnitude;
     }
 
     private void eatResource(GameObject resource)

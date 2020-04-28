@@ -8,6 +8,7 @@ namespace Assets.Gatherer_Code
 {
     public enum UserLayerMasks
     {
-        Resources = 1<<8
+        Resources = 1<<8,
+        Gatherer = 1<<9
     }
 }
