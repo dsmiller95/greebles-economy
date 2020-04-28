@@ -4,7 +4,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using System.Linq;
 
 [RequireComponent(typeof(ResourceInventory))]
 [RequireComponent(typeof(TimeTracker))]
@@ -23,15 +23,20 @@ public class Gatherer : MonoBehaviour
     void Start()
     {
         this.inventory = this.GetComponent<ResourceInventory>();
-        this.timeTracker = this.GetComponent<TimeTracker>();
+        this.timeTracker = this.GetComponent<ITimeTracker>();
+        this.optimizer = new GatherBehaviorOptimizer();
+        this.gatheringWeights = optimizer.generateInitialWeights();
     }
 
     private GameObject currentTarget;
     private float timeSinceLastTargetCheck = 0;
 
     private ResourceInventory inventory;
-    private TimeTracker timeTracker;
+    private ITimeTracker timeTracker;
+    private GatherBehaviorOptimizer optimizer;
     private GathererState currentState = GathererState.Gathering;
+
+    private Dictionary<ResourceType, float> gatheringWeights;
 
 
     // Update is called once per frame
@@ -51,7 +56,13 @@ public class Gatherer : MonoBehaviour
     private void SellGoods()
     {
         attemptToEnsureTarget(UserLayerMasks.Market,
-            gameObject => gameObject?.GetComponent<Market>() != null);
+            (gameObject, distance) => {
+                if (gameObject?.GetComponent<Market>() != null)
+                {
+                    return -distance;
+                }
+                return float.MinValue;
+            });
         if (currentTarget != null)
         {
             this.approachPositionWithDistance(currentTarget.transform.position, Time.deltaTime * this.speed);
@@ -59,7 +70,16 @@ public class Gatherer : MonoBehaviour
             {
                 var market = this.currentTarget.GetComponent<Market>();
                 var sellResult = market.sellAllGoods(this.inventory);
-                gold += sellResult.TotalResult;
+                var timeSummary = timeTracker.getResourceTimeSummary();
+
+                gold += sellResult.Values.Aggregate(0f, (aggregate, current) => current.totalRevenue + aggregate);
+
+                Debug.Log(serializeDictionary(timeSummary));
+                Debug.Log(serializeDictionary(sellResult, sell => sell.totalRevenue.ToString()));
+                gatheringWeights = optimizer.generateNewWeights(gatheringWeights, timeSummary, sellResult);
+                Debug.Log("new weights:");
+                Debug.Log(serializeDictionary(gatheringWeights));
+                timeTracker.clearTime();
 
                 currentTarget = null;
                 timeSinceLastTargetCheck = float.MaxValue;
@@ -68,10 +88,27 @@ public class Gatherer : MonoBehaviour
         }
     }
 
+    public static string serializeDictionary<T>(Dictionary<ResourceType, T> dictionary, Func<T, string> serializer = null)
+    {
+        serializer = serializer ?? (s => s.ToString());
+        return dictionary.Select(entry => $"Type: {Enum.GetName(typeof(ResourceType), entry.Key)}\t Value: {serializer(entry.Value)}").Aggregate((agg, current) => agg + '\n' + current);
+    }
+
     private void Gather()
     {
-        attemptToEnsureTarget(UserLayerMasks.Resources,
-            gameObject => gameObject?.GetComponent<Resource>()?.type == gatheringType);
+        if (attemptToEnsureTarget(UserLayerMasks.Resources,
+            (gameObject, distance) => {
+                var resource = gameObject?.GetComponent<Resource>();
+                if (resource != null)
+                {
+                    var type = resource.type;
+                    return -(distance/gatheringWeights[type]);
+                }
+                return float.MinValue;
+            }))
+        {
+            this.timeTracker.startTrackingResource(currentTarget.GetComponent<Resource>().type);
+        };
         if (currentTarget != null)
         {
             this.approachPositionWithDistance(currentTarget.transform.position, Time.deltaTime * this.speed);
@@ -86,11 +123,20 @@ public class Gatherer : MonoBehaviour
         {
             currentTarget = null;
             timeSinceLastTargetCheck = float.MaxValue;
+            this.timeTracker.pauseTracking();
             this.currentState = GathererState.Selling;
         }
     }
 
-    private void attemptToEnsureTarget(UserLayerMasks layerMask, Func<GameObject, bool> filter)
+
+    /// <summary>
+    /// Attempts to set the current target to an object within <see cref="searchRadius"/> based on the layer mask and filter function
+    ///     returns true if the currentTarget was set to a valid target
+    /// </summary>
+    /// <param name="layerMask"></param>
+    /// <param name="weightFunction"></param>
+    /// <returns></returns>
+    private bool attemptToEnsureTarget(UserLayerMasks layerMask, Func<GameObject, float, float> weightFunction)
     {
         if (currentTarget == null &&
             // only check once per second if nothing found
@@ -98,9 +144,14 @@ public class Gatherer : MonoBehaviour
         {
             currentTarget = this.getClosestObjectSatisfyingCondition(
                 layerMask,
-                filter);
+                weightFunction);
             timeSinceLastTargetCheck = 0;
+            if(currentTarget != null)
+            {
+                return true;
+            }
         }
+        return false;
     }
 
     private void approachPositionWithDistance(Vector3 targetPostion, float distance)
@@ -123,29 +174,26 @@ public class Gatherer : MonoBehaviour
         Destroy(resource);
     }
 
-    private GameObject getClosestObjectSatisfyingCondition(UserLayerMasks layerMask, Func<GameObject, bool> filter)
+    private GameObject getClosestObjectSatisfyingCondition(UserLayerMasks layerMask, Func<GameObject, float, float> weightFunction)
     {
         Collider[] resourcesInRadius = Physics.OverlapSphere(this.transform.position, searchRadius, (int)layerMask);
         if(resourcesInRadius.Length <= 0)
         {
             return null;
         }
-        float minDistance = float.MaxValue;
-        Collider closestCollider = null;
+        float maxWeight = float.MinValue;
+        Collider highestWeightCollider = null;
         foreach (Collider resource in resourcesInRadius)
         {
-            if (!filter(resource.gameObject))
+            float distance = (this.transform.position - resource.transform.position).magnitude;
+            float weight = weightFunction(resource.gameObject, distance);
+            if (weight > maxWeight)
             {
-                continue;
-            }
-            float distanceSqr = (this.transform.position - resource.transform.position).sqrMagnitude;
-            if (distanceSqr < minDistance)
-            {
-                minDistance = distanceSqr;
-                closestCollider = resource;
+                maxWeight = weight;
+                highestWeightCollider = resource;
             }
         }
-        return closestCollider?.gameObject;
+        return highestWeightCollider?.gameObject;
     }
 
     enum GathererState

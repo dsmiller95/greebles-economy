@@ -21,11 +21,11 @@ public class Market : MonoBehaviour
         
     }
 
-    public ResourceSellResult sellAllGoods(ResourceInventory inventory)
+    public Dictionary<ResourceType, ResourceSellResult> sellAllGoods(ResourceInventory inventory)
     {
-        var result = new ResourceSellResult();
-        result.FoodResult = inventory.getResource(ResourceType.Food) * foodPrice;
-        result.WoodResult = inventory.getResource(ResourceType.Wood) * woodPrice;
+        var result = new Dictionary<ResourceType, ResourceSellResult>();
+        result[ResourceType.Food] = new ResourceSellResult(inventory.getResource(ResourceType.Food), inventory.getResource(ResourceType.Food) * foodPrice);
+        result[ResourceType.Wood] = new ResourceSellResult(inventory.getResource(ResourceType.Wood), inventory.getResource(ResourceType.Wood) * foodPrice);
         inventory.empty();
         return result;
     }

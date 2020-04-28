@@ -3,9 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using Assets.Gatherer_Code;
 
-public class TimeTracker : MonoBehaviour
+public class TimeTracker : MonoBehaviour, ITimeTracker
 {
-
     private Dictionary<ResourceType, float> timeDictionary;
     private ResourceType? currentTracked;
 
@@ -47,4 +46,19 @@ public class TimeTracker : MonoBehaviour
             timeDictionary.Add(type, 0);
         }
     }
+
+    public void pauseTracking()
+    {
+        this.currentTracked = null;
+    }
+}
+
+public interface ITimeTracker
+{
+    Dictionary<ResourceType, float> getResourceTimeSummary();
+
+    void clearTime();
+
+    void startTrackingResource(ResourceType type);
+    void pauseTracking();
 }

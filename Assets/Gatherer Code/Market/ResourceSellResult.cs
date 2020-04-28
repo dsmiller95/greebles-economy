@@ -8,11 +8,14 @@ namespace Assets.Gatherer_Code.Market
 {
     public class ResourceSellResult
     {
-        public float WoodResult { get; set; }
-        public float FoodResult { get; set; }
-        public float TotalResult
+        public ResourceSellResult(int items, float price)
         {
-            get => WoodResult + FoodResult;
+            this.soldItems = items;
+            this.sellPrice = price;
         }
+
+        public int soldItems;
+        public float sellPrice;
+        public float totalRevenue { get => soldItems * sellPrice; }
     }
 }
