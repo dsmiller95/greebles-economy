@@ -8,6 +8,9 @@ using UnityEngine;
 
 public class Gatherer : MonoBehaviour
 {
+    public const int searchRadius = 100;
+    public const float waitTimeBetweenSearches = 0.3f;
+
     public ResourceType gatheringType;
     public float speed = 1;
     public float touchDistance = 1f;
@@ -87,7 +90,7 @@ public class Gatherer : MonoBehaviour
     {
         if (currentTarget == null &&
             // only check once per second if nothing found
-            (timeSinceLastTargetCheck += Time.deltaTime) > 1)
+            (timeSinceLastTargetCheck += Time.deltaTime) > waitTimeBetweenSearches)
         {
             currentTarget = this.getClosestObjectSatisfyingCondition(
                 layerMask,
@@ -118,7 +121,7 @@ public class Gatherer : MonoBehaviour
 
     private GameObject getClosestObjectSatisfyingCondition(UserLayerMasks layerMask, Func<GameObject, bool> filter)
     {
-        Collider[] resourcesInRadius = Physics.OverlapSphere(this.transform.position, 30, (int)layerMask);
+        Collider[] resourcesInRadius = Physics.OverlapSphere(this.transform.position, searchRadius, (int)layerMask);
         if(resourcesInRadius.Length <= 0)
         {
             return null;
