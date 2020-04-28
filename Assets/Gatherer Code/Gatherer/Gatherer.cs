@@ -6,6 +6,8 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
+[RequireComponent(typeof(ResourceInventory))]
+[RequireComponent(typeof(TimeTracker))]
 public class Gatherer : MonoBehaviour
 {
     public const int searchRadius = 100;
@@ -21,12 +23,14 @@ public class Gatherer : MonoBehaviour
     void Start()
     {
         this.inventory = this.GetComponent<ResourceInventory>();
+        this.timeTracker = this.GetComponent<TimeTracker>();
     }
 
     private GameObject currentTarget;
     private float timeSinceLastTargetCheck = 0;
 
     private ResourceInventory inventory;
+    private TimeTracker timeTracker;
     private GathererState currentState = GathererState.Gathering;
 
 

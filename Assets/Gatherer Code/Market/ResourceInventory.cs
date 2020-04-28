@@ -7,7 +7,6 @@ using UnityEngine;
 
 public class ResourceInventory : MonoBehaviour
 {
-
     public int inventoryCapacity = 10;
 
     public int wood = 0;
