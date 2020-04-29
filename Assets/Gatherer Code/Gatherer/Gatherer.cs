@@ -75,7 +75,6 @@ public class Gatherer : MonoBehaviour
                 gold += sellResult.Values.Aggregate(0f, (aggregate, current) => current.totalRevenue + aggregate);
 
                 gatheringWeights = optimizer.generateNewWeights(gatheringWeights, timeSummary, sellResult);
-                Debug.Log("new weights:");
                 Debug.Log(serializeDictionary(gatheringWeights));
                 timeTracker.clearTime();
 

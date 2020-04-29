@@ -17,21 +17,21 @@ public class GatherBehaviorOptimizer
         var profitPerTime = Enum.GetValues(typeof(ResourceType)).Cast<ResourceType>()
             .Select(type => new { type, profitPerTime = 
                 sellResults.ContainsKey(type) && timeSpent.ContainsKey(type) 
-                    ? sellResults[type].totalRevenue / timeSpent[type] 
-                    : 0 });
+                    ? sellResults[type].totalRevenue / Math.Max(timeSpent[type], 0.1f) 
+                    : 0.1f });
 
         var totalProfitPerTime = profitPerTime.Select(x => x.profitPerTime).Sum();
         var normalizedProfitPerTime = profitPerTime.Select(pair => new { pair.type, weight = pair.profitPerTime / totalProfitPerTime });
 
         var regeneratedWeights = normalizedProfitPerTime.ToDictionary(pair => pair.type, pair => pair.weight);
 
-        return averageInPlace(regeneratedWeights, previousWeights);
+        return averageInPlace(previousWeights, regeneratedWeights, 0.1f);
     }
 
-    private Dictionary<T, float> averageInPlace<T>(Dictionary<T, float> average, Dictionary<T, float> input)
+    private Dictionary<T, float> averageInPlace<T>(Dictionary<T, float> baseValue, Dictionary<T, float> input, float inputWeight)
     {
-        return average
-            .Select(pair => new { pair.Key, Value = (pair.Value + input[pair.Key]) / 2 })
+        return baseValue
+            .Select(pair => new { pair.Key, Value = (pair.Value * (1 - inputWeight)) + (input[pair.Key] * inputWeight) })
             .ToDictionary(pair => pair.Key, pair => pair.Value);
     }
 
