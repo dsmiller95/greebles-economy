@@ -74,8 +74,6 @@ public class Gatherer : MonoBehaviour
 
                 gold += sellResult.Values.Aggregate(0f, (aggregate, current) => current.totalRevenue + aggregate);
 
-                Debug.Log(serializeDictionary(timeSummary));
-                Debug.Log(serializeDictionary(sellResult, sell => sell.totalRevenue.ToString()));
                 gatheringWeights = optimizer.generateNewWeights(gatheringWeights, timeSummary, sellResult);
                 Debug.Log("new weights:");
                 Debug.Log(serializeDictionary(gatheringWeights));
@@ -170,8 +168,12 @@ public class Gatherer : MonoBehaviour
     private void eatResource(GameObject resource)
     {
         var resourceType = resource.GetComponent<Resource>();
-        this.inventory.addResource(resourceType.type, resourceType.value);
-        Destroy(resource);
+        if (!resourceType.eaten)
+        {
+            resourceType.eaten = true;
+            this.inventory.addResource(resourceType.type, resourceType.value);
+            Destroy(resource);
+        }
     }
 
     private GameObject getClosestObjectSatisfyingCondition(UserLayerMasks layerMask, Func<GameObject, float, float> weightFunction)

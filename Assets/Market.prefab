@@ -105,5 +105,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 22051b71cfd0c764c94d1c448c4258bd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  woodPrice: 1
-  foodPrice: 2
+  woodPrice: 3
+  foodPrice: 1

@@ -8,6 +8,8 @@ public class Resource : MonoBehaviour
 {
     public ResourceType type;
     public int value = 1;
+
+    public bool eaten = false;
     // Start is called before the first frame update
     void Start()
     {

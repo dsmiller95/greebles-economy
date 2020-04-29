@@ -124,7 +124,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1ba35100e75b85540b7597d32a655b98, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  inventoryCapacity: 2
+  inventoryCapacity: 10
   wood: 0
   food: 0
 --- !u!114 &2209523452537891497

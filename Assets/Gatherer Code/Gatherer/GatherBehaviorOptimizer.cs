@@ -14,21 +14,25 @@ public class GatherBehaviorOptimizer
         Dictionary<ResourceType, float> timeSpent,
         Dictionary<ResourceType, ResourceSellResult> sellResults)
     {
-
-        Debug.Log("generating weights");
-
         var profitPerTime = Enum.GetValues(typeof(ResourceType)).Cast<ResourceType>()
             .Select(type => new { type, profitPerTime = 
                 sellResults.ContainsKey(type) && timeSpent.ContainsKey(type) 
                     ? sellResults[type].totalRevenue / timeSpent[type] 
                     : 0 });
-        Debug.Log(Gatherer.serializeDictionary(profitPerTime.ToDictionary(x => x.type, x => x.profitPerTime)));
 
         var totalProfitPerTime = profitPerTime.Select(x => x.profitPerTime).Sum();
         var normalizedProfitPerTime = profitPerTime.Select(pair => new { pair.type, weight = pair.profitPerTime / totalProfitPerTime });
 
-        //TODO: move the previous weigh towards the result, instead of replacing it
-        return normalizedProfitPerTime.ToDictionary(pair => pair.type, pair => pair.weight);
+        var regeneratedWeights = normalizedProfitPerTime.ToDictionary(pair => pair.type, pair => pair.weight);
+
+        return averageInPlace(regeneratedWeights, previousWeights);
+    }
+
+    private Dictionary<T, float> averageInPlace<T>(Dictionary<T, float> average, Dictionary<T, float> input)
+    {
+        return average
+            .Select(pair => new { pair.Key, Value = (pair.Value + input[pair.Key]) / 2 })
+            .ToDictionary(pair => pair.Key, pair => pair.Value);
     }
 
     public Dictionary<ResourceType, float> generateInitialWeights()
