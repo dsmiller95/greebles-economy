@@ -44,11 +44,6 @@ public class Gatherer : MonoBehaviour
         stateMachine.registerGenericHandler(new GatheringStateHandler());
         stateMachine.registerGenericHandler(new SellingStateHandler());
 
-        stateMachine.registerStateTransitionHandler(GathererState.All, GathererState.GoingHome, (x) =>
-        {
-
-        });
-
         stateMachine.registerStateTransitionHandler(GathererState.All, GathererState.All, (x) =>
         {
             currentTarget = null;
@@ -104,15 +99,34 @@ public class Gatherer : MonoBehaviour
         return false;
     }
 
-    internal void approachPositionWithDistance(Vector3 targetPostion, float distance)
+    internal bool seekTargetToTouch()
+    {
+        if (!currentTarget)
+        {
+            return false;
+        }
+        this.moveTowardsPosition(this.currentTarget.transform.position);
+        return isTouchingCurrentTarget();
+    }
+
+    private void moveTowardsPosition(Vector3 targetPostion)
     {
         var difference = targetPostion - this.transform.position;
         var direction = new Vector3(difference.x, 0, difference.z).normalized;
-        this.transform.position += direction * distance;
+        this.transform.position += direction * Time.deltaTime * this.speed;
     }
 
-    internal float distanceToCurrentTarget()
+    internal bool isTouchingCurrentTarget()
     {
+        return distanceToCurrentTarget() <= touchDistance;
+    }
+
+    private float distanceToCurrentTarget()
+    {
+        if (!currentTarget)
+        {
+            return float.MaxValue;
+        }
         var difference = transform.position - currentTarget.transform.position;
         return new Vector3(difference.x, difference.y, difference.z).magnitude;
     }

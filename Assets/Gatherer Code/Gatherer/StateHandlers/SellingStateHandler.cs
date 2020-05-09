@@ -19,13 +19,9 @@ class SellingStateHandler : GenericStateHandler<GathererState, Gatherer>
                 }
                 return float.MinValue;
             });
-        if (data.currentTarget != null)
+        if (data.seekTargetToTouch())
         {
-            data.approachPositionWithDistance(data.currentTarget.transform.position, Time.deltaTime * data.speed);
-            if (data.distanceToCurrentTarget() < data.touchDistance)
-            {
-                return GathererState.Gathering;
-            }
+            return GathererState.Gathering;
         }
         return GathererState.Selling;
     }

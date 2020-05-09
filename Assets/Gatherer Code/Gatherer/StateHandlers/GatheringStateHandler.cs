@@ -24,14 +24,10 @@ class GatheringStateHandler : GenericStateHandler<GathererState, Gatherer>
         {
             data.timeTracker.startTrackingResource(data.currentTarget.GetComponent<Resource>().type);
         };
-        if (data.currentTarget != null)
+        if (data.seekTargetToTouch())
         {
-            data.approachPositionWithDistance(data.currentTarget.transform.position, Time.deltaTime * data.speed);
-            if (data.distanceToCurrentTarget() < data.touchDistance)
-            {
-                data.eatResource(data.currentTarget);
-                data.lastTargetCheckTime = 0;
-            }
+            data.eatResource(data.currentTarget);
+            data.lastTargetCheckTime = 0;
         }
 
         if (data.inventory.getFullRatio() >= 1)
