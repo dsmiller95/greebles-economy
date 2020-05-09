@@ -9,11 +9,11 @@ public class ResourceInventory : MonoBehaviour
 {
     public int inventoryCapacity = 10;
 
-    public Dictionary<ResourceType, float> inventory;
+    private Dictionary<ResourceType, float> inventory;
 
     public ResourceType[] spaceFillingItems = new ResourceType[] { ResourceType.Food, ResourceType.Wood };
 
-    public ResourceBar resourceBar;
+    public ResourceDisplay resourceRenderer;
 
     public void Start()
     {
@@ -21,16 +21,19 @@ public class ResourceInventory : MonoBehaviour
         var resourceTypes = Enum.GetValues(typeof(ResourceType)).Cast<ResourceType>();
         foreach (var resource in resourceTypes)
         {
+            // create the key with default; then set value to activate any extra functionality
             inventory[resource] = 0;
+            this.setInventoryValue(resource, 0);
         }
-        resourceBar.SetMaxResourceValue(200);
-        resourceBar.setResourceType(ResourceType.Gold);
+        resourceRenderer.setMaxForType(ResourceType.Gold, 200);
+        foreach (var resourceType in spaceFillingItems)
+        {
+            resourceRenderer.setMaxForType(resourceType, inventoryCapacity);
+        }
     }
     
     public void Update()
     {
-        //todo: make this smarter;
-        this.resourceBar.setResourceValue(getResource(ResourceType.Gold));
     }
 
     public float getResource(ResourceType type)
@@ -43,15 +46,21 @@ public class ResourceInventory : MonoBehaviour
         {
             return getResource(type);
         }
-        return inventory[type] += amount;
+        return setInventoryValue(type, inventory[type] + amount);
     }
 
     public void emptySpaceFillingInventory()
     {
         foreach (var item in spaceFillingItems)
         {
-            this.inventory[item] = 0;
+            setInventoryValue(item, 0);
         }
+    }
+
+    private float setInventoryValue(ResourceType type, float newValue)
+    {
+        this.resourceRenderer.setValue(type, newValue);
+        return inventory[type] = newValue;
     }
 
     public float totalFullSpace
