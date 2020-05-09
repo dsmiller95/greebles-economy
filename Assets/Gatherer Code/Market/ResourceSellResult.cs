@@ -8,13 +8,13 @@ namespace Assets.Gatherer_Code.Market
 {
     public class ResourceSellResult
     {
-        public ResourceSellResult(int items, float price)
+        public ResourceSellResult(float items, float price)
         {
             this.soldItems = items;
             this.sellPrice = price;
         }
 
-        public int soldItems;
+        public float soldItems;
         public float sellPrice;
         public float totalRevenue { get => soldItems * sellPrice; }
     }

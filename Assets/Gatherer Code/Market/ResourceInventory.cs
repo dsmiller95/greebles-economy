@@ -9,39 +9,48 @@ public class ResourceInventory : MonoBehaviour
 {
     public int inventoryCapacity = 10;
 
-    public int wood = 0;
-    public int food = 0;
+    public Dictionary<ResourceType, float> inventory;
 
-    public int getResource(ResourceType type)
+    public ResourceType[] spaceFillingItems = new ResourceType[] { ResourceType.Food, ResourceType.Wood };
+
+    public ResourceInventory()
     {
-        switch (type)
+        inventory = new Dictionary<ResourceType, float>();
+        var resourceTypes = Enum.GetValues(typeof(ResourceType)).Cast<ResourceType>();
+        foreach (var resource in resourceTypes)
         {
-            case ResourceType.Food: return food;
-            case ResourceType.Wood: return wood;
-            default: throw new NotImplementedException();
+            inventory[resource] = 0;
         }
     }
-    public int addResource(ResourceType type, int amount)
+
+    public float getResource(ResourceType type)
+    {
+        return inventory[type];
+    }
+    public float addResource(ResourceType type, float amount)
     {
         if(getFullRatio() >= 1)
         {
             return getResource(type);
         }
-        switch (type)
+        return inventory[type] += amount;
+    }
+
+    public void emptySpaceFillingInventory()
+    {
+        foreach (var item in spaceFillingItems)
         {
-            case ResourceType.Food: return food += amount;
-            case ResourceType.Wood: return wood += amount;
-            default: throw new NotImplementedException();
+            this.inventory[item] = 0;
         }
     }
 
-    public void empty()
+    public float totalFullSpace
     {
-        wood = food = 0;
+        get => spaceFillingItems.Select(x => inventory[x]).Sum();
     }
 
     public float getFullRatio()
     {
-        return (wood + food) / inventoryCapacity;
+        return totalFullSpace / inventoryCapacity;
     }
 }

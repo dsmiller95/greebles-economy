@@ -2,6 +2,7 @@
 using Assets.Gatherer_Code.Market;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class Market : MonoBehaviour
@@ -21,12 +22,14 @@ public class Market : MonoBehaviour
         
     }
 
-    public Dictionary<ResourceType, ResourceSellResult> sellAllGoods(ResourceInventory inventory)
+    public Dictionary<ResourceType, ResourceSellResult> sellAllGoodsInInventory(ResourceInventory inventory)
     {
         var result = new Dictionary<ResourceType, ResourceSellResult>();
         result[ResourceType.Food] = new ResourceSellResult(inventory.getResource(ResourceType.Food), inventory.getResource(ResourceType.Food) * foodPrice);
         result[ResourceType.Wood] = new ResourceSellResult(inventory.getResource(ResourceType.Wood), inventory.getResource(ResourceType.Wood) * foodPrice);
-        inventory.empty();
+        inventory.emptySpaceFillingInventory();
+
+        inventory.addResource(ResourceType.Gold, result.Values.Sum(sellResult => sellResult.totalRevenue));
         return result;
     }
 }

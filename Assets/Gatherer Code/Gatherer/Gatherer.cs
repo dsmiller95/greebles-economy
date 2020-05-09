@@ -13,11 +13,11 @@ public class Gatherer : MonoBehaviour
     public const int searchRadius = 100;
     public const float waitTimeBetweenSearches = 0.3f;
 
+    public GameObject myHome;
+
     public ResourceType gatheringType;
     public float speed = 1;
     public float touchDistance = 1f;
-
-    public float gold = 0;
 
     // Start is called before the first frame update
     void Start()
@@ -69,10 +69,9 @@ public class Gatherer : MonoBehaviour
             if (distanceToCurrentTarget() < touchDistance)
             {
                 var market = this.currentTarget.GetComponent<Market>();
-                var sellResult = market.sellAllGoods(this.inventory);
-                var timeSummary = timeTracker.getResourceTimeSummary();
+                var sellResult = market.sellAllGoodsInInventory(this.inventory);
 
-                gold += sellResult.Values.Aggregate(0f, (aggregate, current) => current.totalRevenue + aggregate);
+                var timeSummary = timeTracker.getResourceTimeSummary();
 
                 gatheringWeights = optimizer.generateNewWeights(gatheringWeights, timeSummary, sellResult);
                 Debug.Log(serializeDictionary(gatheringWeights));

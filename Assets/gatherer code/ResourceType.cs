@@ -9,6 +9,7 @@ namespace Assets.Gatherer_Code
     public enum ResourceType
     {
         Wood,
-        Food
+        Food,
+        Gold
     }
 }
