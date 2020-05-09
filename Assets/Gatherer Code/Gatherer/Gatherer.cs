@@ -29,7 +29,7 @@ public class Gatherer : MonoBehaviour
     }
 
     private GameObject currentTarget;
-    private float timeSinceLastTargetCheck = 0;
+    private float lastTargetCheckTime = 0;
 
     private ResourceInventory inventory;
     private ITimeTracker timeTracker;
@@ -78,7 +78,7 @@ public class Gatherer : MonoBehaviour
                 timeTracker.clearTime();
 
                 currentTarget = null;
-                timeSinceLastTargetCheck = float.MaxValue;
+                lastTargetCheckTime = 0;
                 this.currentState = GathererState.Gathering;
             }
         }
@@ -111,14 +111,14 @@ public class Gatherer : MonoBehaviour
             if (distanceToCurrentTarget() < touchDistance)
             {
                 this.eatResource(this.currentTarget);
-                timeSinceLastTargetCheck = float.MaxValue;
+                lastTargetCheckTime = 0;
             }
         }
 
         if(this.inventory.getFullRatio() >= 1)
         {
             currentTarget = null;
-            timeSinceLastTargetCheck = float.MaxValue;
+            lastTargetCheckTime = 0;
             this.timeTracker.pauseTracking();
             this.currentState = GathererState.Selling;
         }
@@ -136,12 +136,12 @@ public class Gatherer : MonoBehaviour
     {
         if (currentTarget == null &&
             // only check once per second if nothing found
-            (timeSinceLastTargetCheck += Time.deltaTime) > waitTimeBetweenSearches)
+            (lastTargetCheckTime + waitTimeBetweenSearches) < Time.time)
         {
+            lastTargetCheckTime = Time.time;
             currentTarget = this.getClosestObjectSatisfyingCondition(
                 layerMask,
                 weightFunction);
-            timeSinceLastTargetCheck = 0;
             if(currentTarget != null)
             {
                 return true;
