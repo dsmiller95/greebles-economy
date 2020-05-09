@@ -104,11 +104,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 6201624005823754261}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3c414129effceba4aa5a328916ac2c47, type: 3}
+  m_Script: {fileID: 11500000, guid: 50b5e155ae909e8439d85ad6b1c1a5a6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   type: 0
   value: 1
+  eaten: 0
 --- !u!54 &-6853645583858474221
 Rigidbody:
   m_ObjectHideFlags: 0

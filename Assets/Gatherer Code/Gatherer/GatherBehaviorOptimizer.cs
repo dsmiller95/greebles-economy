@@ -14,6 +14,8 @@ public class GatherBehaviorOptimizer
         Dictionary<ResourceType, float> timeSpent,
         Dictionary<ResourceType, ResourceSellResult> sellResults)
     {
+        //TODO: counteract the single-gather case. If the agent only gathered one type of resource, We shouldn't make much if any changes to the weights
+        // Because no new comparitive information was gained
         var profitPerTime = Enum.GetValues(typeof(ResourceType)).Cast<ResourceType>()
             .Select(type => new { type, profitPerTime = 
                 sellResults.ContainsKey(type) && timeSpent.ContainsKey(type) 

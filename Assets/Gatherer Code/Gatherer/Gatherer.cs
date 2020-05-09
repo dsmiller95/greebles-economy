@@ -13,20 +13,12 @@ public class Gatherer : MonoBehaviour
     public const int searchRadius = 100;
     public const float waitTimeBetweenSearches = 0.3f;
 
-    public GameObject myHome;
+    public Home home;
 
     public ResourceType gatheringType;
     public float speed = 1;
     public float touchDistance = 1f;
 
-    // Start is called before the first frame update
-    void Start()
-    {
-        this.inventory = this.GetComponent<ResourceInventory>();
-        this.timeTracker = this.GetComponent<ITimeTracker>();
-        this.optimizer = new GatherBehaviorOptimizer();
-        this.gatheringWeights = optimizer.generateInitialWeights();
-    }
 
     private GameObject currentTarget;
     private float lastTargetCheckTime = 0;
@@ -38,22 +30,31 @@ public class Gatherer : MonoBehaviour
 
     private Dictionary<ResourceType, float> gatheringWeights;
 
+    private StateMachine<GathererState> stateMachine;
+
+    // Start is called before the first frame update
+    void Start()
+    {
+        this.inventory = this.GetComponent<ResourceInventory>();
+        this.timeTracker = this.GetComponent<ITimeTracker>();
+        this.optimizer = new GatherBehaviorOptimizer();
+        this.gatheringWeights = optimizer.generateInitialWeights();
+
+        this.stateMachine = new StateMachine<GathererState>(GathererState.Gathering);
+        stateMachine.registerStateHandler(GathererState.Gathering, () => this.Gather());
+        stateMachine.registerStateHandler(GathererState.Selling, () => this.AttemptSellGoods());
+
+        stateMachine.registerStateTransitionHandler(GathererState.Selling, GathererState.Gathering, () => SellGoods());
+        stateMachine.registerStateTransitionHandler(GathererState.Gathering, GathererState.Selling, () => BeginSelling());
+    }
 
     // Update is called once per frame
     void Update()
     {
-        switch (this.currentState)
-        {
-            case GathererState.Gathering:
-                this.Gather();
-                break;
-            case GathererState.Selling:
-                this.SellGoods();
-                break;
-        }
+        this.stateMachine.update();
     }
 
-    private void SellGoods()
+    private GathererState AttemptSellGoods()
     {
         attemptToEnsureTarget(UserLayerMasks.Market,
             (gameObject, distance) => {
@@ -68,29 +69,28 @@ public class Gatherer : MonoBehaviour
             this.approachPositionWithDistance(currentTarget.transform.position, Time.deltaTime * this.speed);
             if (distanceToCurrentTarget() < touchDistance)
             {
-                var market = this.currentTarget.GetComponent<Market>();
-                var sellResult = market.sellAllGoodsInInventory(this.inventory);
-
-                var timeSummary = timeTracker.getResourceTimeSummary();
-
-                gatheringWeights = optimizer.generateNewWeights(gatheringWeights, timeSummary, sellResult);
-                Debug.Log(serializeDictionary(gatheringWeights));
-                timeTracker.clearTime();
-
-                currentTarget = null;
-                lastTargetCheckTime = 0;
-                this.currentState = GathererState.Gathering;
+                return this.currentState = GathererState.Gathering;
             }
         }
+        return GathererState.Selling;
     }
 
-    public static string serializeDictionary<T>(Dictionary<ResourceType, T> dictionary, Func<T, string> serializer = null)
+    private void SellGoods()
     {
-        serializer = serializer ?? (s => s.ToString());
-        return dictionary.Select(entry => $"Type: {Enum.GetName(typeof(ResourceType), entry.Key)}\t Value: {serializer(entry.Value)}").Aggregate((agg, current) => agg + '\n' + current);
+        var market = this.currentTarget.GetComponent<Market>();
+        var sellResult = market.sellAllGoodsInInventory(this.inventory);
+
+        var timeSummary = timeTracker.getResourceTimeSummary();
+
+        gatheringWeights = optimizer.generateNewWeights(gatheringWeights, timeSummary, sellResult);
+        Debug.Log(Utilities.SerializeDictionary(gatheringWeights));
+        timeTracker.clearTime();
+
+        currentTarget = null;
+        lastTargetCheckTime = 0;
     }
 
-    private void Gather()
+    private GathererState Gather()
     {
         if (attemptToEnsureTarget(UserLayerMasks.Resources,
             (gameObject, distance) => {
@@ -117,11 +117,16 @@ public class Gatherer : MonoBehaviour
 
         if(this.inventory.getFullRatio() >= 1)
         {
-            currentTarget = null;
-            lastTargetCheckTime = 0;
-            this.timeTracker.pauseTracking();
-            this.currentState = GathererState.Selling;
+            return this.currentState = GathererState.Selling;
         }
+        return GathererState.Gathering;
+    }
+
+    private void BeginSelling()
+    {
+        currentTarget = null;
+        lastTargetCheckTime = 0;
+        this.timeTracker.pauseTracking();
     }
 
 
@@ -196,6 +201,7 @@ public class Gatherer : MonoBehaviour
         return highestWeightCollider?.gameObject;
     }
 
+    [Flags]
     enum GathererState
     {
         Gathering,

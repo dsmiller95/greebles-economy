@@ -25,15 +25,40 @@ public class ResourceInventory : MonoBehaviour
             inventory[resource] = 0;
             this.setInventoryValue(resource, 0);
         }
-        resourceRenderer.setMaxForType(ResourceType.Gold, 200);
         foreach (var resourceType in spaceFillingItems)
         {
             resourceRenderer.setMaxForType(resourceType, inventoryCapacity);
         }
+        resourceRenderer.setMaxForType(ResourceType.Gold, 200);
     }
     
     public void Update()
     {
+    }
+
+    public void drainAllInto(ResourceInventory target)
+    {
+        foreach (var resourceType in Enum.GetValues(typeof(ResourceType)).Cast<ResourceType>())
+        {
+            this.transferResourceInto(resourceType, target);
+        }
+    }
+
+    public float transferResourceInto(ResourceType type, ResourceInventory target, float amount = -1)
+    {
+        if(amount == -1)
+        {
+            amount = getResource(type);
+        }
+        else if (amount < 0)
+        {
+            throw new NotImplementedException();
+        }
+        var toAdd = Mathf.Min(amount, getResource(type));
+
+        var added = target.addResource(type, toAdd);
+        this.setInventoryValue(type, getResource(type) - added);
+        return added;
     }
 
     public float getResource(ResourceType type)
@@ -42,9 +67,14 @@ public class ResourceInventory : MonoBehaviour
     }
     public float addResource(ResourceType type, float amount)
     {
-        if(getFullRatio() >= 1)
+        if (spaceFillingItems.Contains(type))
         {
-            return getResource(type);
+            if (getFullRatio() >= 1)
+            {
+                return getResource(type);
+            }
+            var remainingSpace = Mathf.Max(0, this.inventoryCapacity - totalFullSpace);
+            amount = Mathf.Min(remainingSpace, amount);
         }
         return setInventoryValue(type, inventory[type] + amount);
     }

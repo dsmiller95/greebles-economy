@@ -109,7 +109,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7d6a9f8f9acb76748806158c012636bc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  myHome: {fileID: 0}
+  home: {fileID: 0}
   gatheringType: 1
   speed: 10
   touchDistance: 1
@@ -168,7 +168,7 @@ RectTransform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3538974859372260091}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -0.001}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0.02, y: 0.02, z: 0.02}
   m_Children:
   - {fileID: 6121293686519322381}
@@ -298,7 +298,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 4887857269877903528}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dea87f375807a77458428ce8ce53ec74, type: 3}
+  m_Script: {fileID: 11500000, guid: 6f9cda87c3c304a43bf56c481f69b7ef, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   ResourceBarPrefab: {fileID: 4421950807818138392, guid: c6fab876b0878b64b85d073977fc31f3,
@@ -306,11 +306,11 @@ MonoBehaviour:
   resourceConfiguration:
   - type: 0
     icon: {fileID: 21300000, guid: d9b2700042841ea4d994f37d5bc97735, type: 3}
-    fillColor: {r: 0.6509434, g: 0.4624586, b: 0.13203098, a: 1}
+    fillColor: {r: 0.6132076, g: 0.4528962, b: 0.10123709, a: 1}
   - type: 1
     icon: {fileID: 21300000, guid: a3881873072cd8e48926593b8de5553b, type: 3}
-    fillColor: {r: 0.31617054, g: 0.9433962, b: 0.057849795, a: 1}
+    fillColor: {r: 0.28697777, g: 1, b: 0, a: 1}
   - type: 2
     icon: {fileID: 21300000, guid: e071dac40184f5844957d183405ceb8f, type: 3}
-    fillColor: {r: 1, g: 0.96448624, b: 0, a: 1}
+    fillColor: {r: 1, g: 0.97662324, b: 0, a: 1}
   offset: {x: 0, y: 25}
