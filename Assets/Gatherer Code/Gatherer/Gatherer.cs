@@ -20,17 +20,16 @@ public class Gatherer : MonoBehaviour
     public float touchDistance = 1f;
 
 
-    private GameObject currentTarget;
-    private float lastTargetCheckTime = 0;
+    internal GameObject currentTarget;
+    internal float lastTargetCheckTime = 0;
 
-    private ResourceInventory inventory;
-    private ITimeTracker timeTracker;
-    private GatherBehaviorOptimizer optimizer;
-    private GathererState currentState = GathererState.Gathering;
+    internal ResourceInventory inventory;
+    internal ITimeTracker timeTracker;
+    internal GatherBehaviorOptimizer optimizer;
 
-    private Dictionary<ResourceType, float> gatheringWeights;
+    internal Dictionary<ResourceType, float> gatheringWeights;
 
-    private StateMachine<GathererState> stateMachine;
+    private StateMachine<GathererState, Gatherer> stateMachine;
 
     // Start is called before the first frame update
     void Start()
@@ -40,94 +39,44 @@ public class Gatherer : MonoBehaviour
         this.optimizer = new GatherBehaviorOptimizer();
         this.gatheringWeights = optimizer.generateInitialWeights();
 
-        this.stateMachine = new StateMachine<GathererState>(GathererState.Gathering);
-        stateMachine.registerStateHandler(GathererState.Gathering, () => this.Gather());
-        stateMachine.registerStateHandler(GathererState.Selling, () => this.AttemptSellGoods());
+        this.stateMachine = new StateMachine<GathererState, Gatherer>(GathererState.Gathering);
 
-        stateMachine.registerStateTransitionHandler(GathererState.Selling, GathererState.Gathering, () => SellGoods());
-        stateMachine.registerStateTransitionHandler(GathererState.Gathering, GathererState.Selling, () => BeginSelling());
+        stateMachine.registerGenericHandler(new GatheringStateHandler());
+        stateMachine.registerGenericHandler(new SellingStateHandler());
+
+        stateMachine.registerStateTransitionHandler(GathererState.All, GathererState.GoingHome, (x) =>
+        {
+
+        });
+
+        stateMachine.registerStateTransitionHandler(GathererState.All, GathererState.All, (x) =>
+        {
+            currentTarget = null;
+            lastTargetCheckTime = 0;
+        });
     }
 
     // Update is called once per frame
     void Update()
     {
-        this.stateMachine.update();
+        this.stateMachine.update(this);
     }
 
-    private GathererState AttemptSellGoods()
-    {
-        attemptToEnsureTarget(UserLayerMasks.Market,
-            (gameObject, distance) => {
-                if (gameObject?.GetComponent<Market>() != null)
-                {
-                    return -distance;
-                }
-                return float.MinValue;
-            });
-        if (currentTarget != null)
-        {
-            this.approachPositionWithDistance(currentTarget.transform.position, Time.deltaTime * this.speed);
-            if (distanceToCurrentTarget() < touchDistance)
-            {
-                return this.currentState = GathererState.Gathering;
-            }
-        }
-        return GathererState.Selling;
-    }
+    //private void BeginGoingHome()
+    //{
+    //    this.currentTarget = home.gameObject;
+    //}
 
-    private void SellGoods()
-    {
-        var market = this.currentTarget.GetComponent<Market>();
-        var sellResult = market.sellAllGoodsInInventory(this.inventory);
-
-        var timeSummary = timeTracker.getResourceTimeSummary();
-
-        gatheringWeights = optimizer.generateNewWeights(gatheringWeights, timeSummary, sellResult);
-        Debug.Log(Utilities.SerializeDictionary(gatheringWeights));
-        timeTracker.clearTime();
-
-        currentTarget = null;
-        lastTargetCheckTime = 0;
-    }
-
-    private GathererState Gather()
-    {
-        if (attemptToEnsureTarget(UserLayerMasks.Resources,
-            (gameObject, distance) => {
-                var resource = gameObject?.GetComponent<Resource>();
-                if (resource != null)
-                {
-                    var type = resource.type;
-                    return -(distance/gatheringWeights[type]);
-                }
-                return float.MinValue;
-            }))
-        {
-            this.timeTracker.startTrackingResource(currentTarget.GetComponent<Resource>().type);
-        };
-        if (currentTarget != null)
-        {
-            this.approachPositionWithDistance(currentTarget.transform.position, Time.deltaTime * this.speed);
-            if (distanceToCurrentTarget() < touchDistance)
-            {
-                this.eatResource(this.currentTarget);
-                lastTargetCheckTime = 0;
-            }
-        }
-
-        if(this.inventory.getFullRatio() >= 1)
-        {
-            return this.currentState = GathererState.Selling;
-        }
-        return GathererState.Gathering;
-    }
-
-    private void BeginSelling()
-    {
-        currentTarget = null;
-        lastTargetCheckTime = 0;
-        this.timeTracker.pauseTracking();
-    }
+    //private GathererState GoHome()
+    //{
+    //    this.approachPositionWithDistance(currentTarget.transform.position, Time.deltaTime * this.speed);
+    //    if (distanceToCurrentTarget() < touchDistance)
+    //    {
+    //        home.depositAllGoods(this.inventory);
+    //        return GathererState.Gathering;
+    //    }
+    //    return GathererState.GoingHome;
+    //}
 
 
     /// <summary>
@@ -137,7 +86,7 @@ public class Gatherer : MonoBehaviour
     /// <param name="layerMask"></param>
     /// <param name="weightFunction"></param>
     /// <returns></returns>
-    private bool attemptToEnsureTarget(UserLayerMasks layerMask, Func<GameObject, float, float> weightFunction)
+    public bool attemptToEnsureTarget(UserLayerMasks layerMask, Func<GameObject, float, float> weightFunction)
     {
         if (currentTarget == null &&
             // only check once per second if nothing found
@@ -155,20 +104,20 @@ public class Gatherer : MonoBehaviour
         return false;
     }
 
-    private void approachPositionWithDistance(Vector3 targetPostion, float distance)
+    internal void approachPositionWithDistance(Vector3 targetPostion, float distance)
     {
         var difference = targetPostion - this.transform.position;
         var direction = new Vector3(difference.x, 0, difference.z).normalized;
         this.transform.position += direction * distance;
     }
 
-    private float distanceToCurrentTarget()
+    internal float distanceToCurrentTarget()
     {
         var difference = transform.position - currentTarget.transform.position;
         return new Vector3(difference.x, difference.y, difference.z).magnitude;
     }
 
-    private void eatResource(GameObject resource)
+    internal void eatResource(GameObject resource)
     {
         var resourceType = resource.GetComponent<Resource>();
         if (!resourceType.eaten)
@@ -199,12 +148,5 @@ public class Gatherer : MonoBehaviour
             }
         }
         return highestWeightCollider?.gameObject;
-    }
-
-    [Flags]
-    enum GathererState
-    {
-        Gathering,
-        Selling
     }
 }
