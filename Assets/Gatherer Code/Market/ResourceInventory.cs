@@ -13,7 +13,9 @@ public class ResourceInventory : MonoBehaviour
 
     public ResourceType[] spaceFillingItems = new ResourceType[] { ResourceType.Food, ResourceType.Wood };
 
-    public ResourceInventory()
+    public ResourceBar resourceBar;
+
+    public void Start()
     {
         inventory = new Dictionary<ResourceType, float>();
         var resourceTypes = Enum.GetValues(typeof(ResourceType)).Cast<ResourceType>();
@@ -21,6 +23,14 @@ public class ResourceInventory : MonoBehaviour
         {
             inventory[resource] = 0;
         }
+        resourceBar.SetMaxResourceValue(200);
+        resourceBar.setResourceType(ResourceType.Gold);
+    }
+    
+    public void Update()
+    {
+        //todo: make this smarter;
+        this.resourceBar.setResourceValue(getResource(ResourceType.Gold));
     }
 
     public float getResource(ResourceType type)
