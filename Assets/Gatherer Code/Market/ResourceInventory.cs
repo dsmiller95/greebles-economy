@@ -5,31 +5,51 @@ using System.Text;
 using Assets.Gatherer_Code;
 using UnityEngine;
 
+public struct ResourceChanged
+{
+    public ResourceChanged(ResourceType type, float newValue)
+    {
+        this.type = type;
+        this.newValue = newValue;
+    }
+    public ResourceType type;
+    public float newValue;
+}
+
 public class ResourceInventory : MonoBehaviour
 {
     public int inventoryCapacity = 10;
+
+    public event EventHandler<ResourceChanged> resourceAmountChanges;
+    public event EventHandler<ResourceChanged> resourceCapacityChanges;
 
     private Dictionary<ResourceType, float> inventory;
 
     public ResourceType[] spaceFillingItems = new ResourceType[] { ResourceType.Food, ResourceType.Wood };
 
-    public ResourceDisplay resourceRenderer;
-
-    public void Start()
+    void Awake()
     {
         inventory = new Dictionary<ResourceType, float>();
         var resourceTypes = Enum.GetValues(typeof(ResourceType)).Cast<ResourceType>();
         foreach (var resource in resourceTypes)
         {
-            // create the key with default; then set value to activate any extra functionality
+            // create the key with default. Emit set events in Start(); once everyone has had a chance to subscribe to updates
             inventory[resource] = 0;
+        }
+    }
+
+    public void Start()
+    {
+        var resourceTypes = Enum.GetValues(typeof(ResourceType)).Cast<ResourceType>();
+        foreach (var resource in resourceTypes)
+        {
             this.setInventoryValue(resource, 0);
         }
         foreach (var resourceType in spaceFillingItems)
         {
-            resourceRenderer.setMaxForType(resourceType, inventoryCapacity);
+            resourceCapacityChanges?.Invoke(this, new ResourceChanged(resourceType, inventoryCapacity));
         }
-        resourceRenderer.setMaxForType(ResourceType.Gold, 200);
+        resourceCapacityChanges?.Invoke(this, new ResourceChanged(ResourceType.Gold, 200));
     }
     
     public void Update()
@@ -38,10 +58,12 @@ public class ResourceInventory : MonoBehaviour
 
     public void drainAllInto(ResourceInventory target)
     {
+        Debug.Log($"Draining {Utilities.SerializeDictionary(inventory)}\nInto {Utilities.SerializeDictionary(target.inventory)}");
         foreach (var resourceType in Enum.GetValues(typeof(ResourceType)).Cast<ResourceType>())
         {
             this.transferResourceInto(resourceType, target);
         }
+        Debug.Log($"Finished Draining {Utilities.SerializeDictionary(inventory)}\nInto {Utilities.SerializeDictionary(target.inventory)}");
     }
 
     public float transferResourceInto(ResourceType type, ResourceInventory target, float amount = -1)
@@ -58,6 +80,7 @@ public class ResourceInventory : MonoBehaviour
 
         var added = target.addResource(type, toAdd);
         this.setInventoryValue(type, getResource(type) - added);
+        Debug.Log($"Added {Enum.GetName(typeof(ResourceType), type)}: {amount} {toAdd} {added}");
         return added;
     }
 
@@ -65,18 +88,25 @@ public class ResourceInventory : MonoBehaviour
     {
         return inventory[type];
     }
+    /// <summary>
+    /// Attempts to add as much of amount as possible into this inventory.
+    /// </summary>
+    /// <param name="type">the type of resource to add</param>
+    /// <param name="amount">the maximum amount of resource to add to the inventory</param>
+    /// <returns>the amount of the resource that was actuall added</returns>
     public float addResource(ResourceType type, float amount)
     {
         if (spaceFillingItems.Contains(type))
         {
             if (getFullRatio() >= 1)
             {
-                return getResource(type);
+                return 0;
             }
             var remainingSpace = Mathf.Max(0, this.inventoryCapacity - totalFullSpace);
             amount = Mathf.Min(remainingSpace, amount);
         }
-        return setInventoryValue(type, inventory[type] + amount);
+        setInventoryValue(type, inventory[type] + amount);
+        return amount;
     }
 
     public void emptySpaceFillingInventory()
@@ -89,7 +119,7 @@ public class ResourceInventory : MonoBehaviour
 
     private float setInventoryValue(ResourceType type, float newValue)
     {
-        this.resourceRenderer.setValue(type, newValue);
+        this.resourceAmountChanges?.Invoke(this, new ResourceChanged(type, newValue));
         return inventory[type] = newValue;
     }
 

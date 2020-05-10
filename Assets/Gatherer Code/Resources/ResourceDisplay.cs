@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-
 public class ResourceDisplay : MonoBehaviour
 {
     [Serializable]
@@ -19,13 +18,13 @@ public class ResourceDisplay : MonoBehaviour
     public ResourceBarConfiguration[] resourceConfiguration;
     public Vector2 offset = new Vector2(0, 10);
 
-    private Dictionary<ResourceType, ResourceBar> resourceBars;
+    public ResourceInventory inventoryToTrack;
 
-    // Start is called before the first frame update
-    void Start()
+    private Dictionary<ResourceType, ResourceBar> resourceBars = new Dictionary<ResourceType, ResourceBar>();
+
+    void Awake()
     {
-        resourceBars = new Dictionary<ResourceType, ResourceBar>();
-        for(var i = 0; i < resourceConfiguration.Length; i++)
+        for (var i = 0; i < resourceConfiguration.Length; i++)
         {
             var newBar = Instantiate(ResourceBarPrefab, this.transform);
             newBar.transform.position += this.transform.TransformVector((Vector3)(offset * i));
@@ -36,14 +35,25 @@ public class ResourceDisplay : MonoBehaviour
 
             resourceBars[config.type] = resourceBar;
         }
+        this.inventoryToTrack.resourceAmountChanges += (sender, change) => {
+            this.setValue(change.type, change.newValue);
+        };
+        this.inventoryToTrack.resourceCapacityChanges += (sender, change) => {
+            this.setMaxForType(change.type, change.newValue);
+        };
     }
 
-    public void setValue(ResourceType type, float value)
+    // Start is called before the first frame update
+    void Start()
+    {
+    }
+
+    private void setValue(ResourceType type, float value)
     {
         resourceBars[type]?.setResourceValue(value);
     }
 
-    public void setMaxForType(ResourceType type, float max)
+    private void setMaxForType(ResourceType type, float max)
     {
         resourceBars[type]?.SetMaxResourceValue(max);
     }

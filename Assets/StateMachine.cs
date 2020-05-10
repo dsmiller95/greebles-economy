@@ -19,7 +19,7 @@ namespace Assets
         private T state;
 
         private Dictionary<T, Func<ParamType, T>> updateHandlers;
-        private ICollection<StateChangeHandler> stateChangeHandlers;
+        private IList<StateChangeHandler> stateChangeHandlers;
 
 
         public StateMachine(T initalState)
@@ -34,6 +34,13 @@ namespace Assets
             updateHandlers[state] = handler;
         }
 
+        /// <summary>
+        /// Registers a handler to be called when state changes. The first handler added that matches
+        ///     will be the first handler to be called, but will not block any other handlers
+        /// </summary>
+        /// <param name="initialState">The possible initial state, or states if the enum is flags</param>
+        /// <param name="endState">the possible end state, or states if the enum is flags</param>
+        /// <param name="handler">the handler to execute</param>
         public void registerStateTransitionHandler(T initialState, T endState, Action<ParamType> handler)
         {
             this.stateChangeHandlers.Add(new StateChangeHandler
@@ -59,8 +66,9 @@ namespace Assets
 
         public void update(ParamType updateParam)
         {
-            var updateAction = updateHandlers[state];
-            if (updateAction == null)
+
+            Func<ParamType, T> updateAction;
+            if (!updateHandlers.TryGetValue(state, out updateAction))
             {
                 throw new NotImplementedException($"no state handler found for state {Enum.GetName(typeof(T), state)}");
             }

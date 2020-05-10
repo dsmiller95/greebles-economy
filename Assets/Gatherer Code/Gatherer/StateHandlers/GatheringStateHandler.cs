@@ -32,7 +32,7 @@ class GatheringStateHandler : GenericStateHandler<GathererState, Gatherer>
 
         if (data.inventory.getFullRatio() >= 1)
         {
-            return GathererState.Selling;
+            return GathererState.GoingHome;
         }
         return GathererState.Gathering;
     }

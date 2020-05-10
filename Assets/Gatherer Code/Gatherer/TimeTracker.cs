@@ -22,7 +22,8 @@ public class TimeTracker : MonoBehaviour, ITimeTracker
     // Update is called once per frame
     void Update()
     {
-        if (currentTracked is ResourceType tracked)
+        if (currentTracked != null
+                && currentTracked is ResourceType tracked)
         {
             timeDictionary[tracked] += Time.deltaTime;
         }

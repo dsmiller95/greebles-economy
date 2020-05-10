@@ -15,7 +15,6 @@ public class Gatherer : MonoBehaviour
 
     public Home home;
 
-    public ResourceType gatheringType;
     public float speed = 1;
     public float touchDistance = 1f;
 
@@ -41,14 +40,15 @@ public class Gatherer : MonoBehaviour
 
         this.stateMachine = new StateMachine<GathererState, Gatherer>(GathererState.Gathering);
 
-        stateMachine.registerGenericHandler(new GatheringStateHandler());
-        stateMachine.registerGenericHandler(new SellingStateHandler());
-
         stateMachine.registerStateTransitionHandler(GathererState.All, GathererState.All, (x) =>
         {
             currentTarget = null;
             lastTargetCheckTime = 0;
         });
+
+        stateMachine.registerGenericHandler(new GatheringStateHandler());
+        stateMachine.registerGenericHandler(new SellingStateHandler());
+        stateMachine.registerGenericHandler(new GoingHomeStateHandler());
     }
 
     // Update is called once per frame
@@ -80,7 +80,7 @@ public class Gatherer : MonoBehaviour
     /// </summary>
     /// <param name="layerMask"></param>
     /// <param name="weightFunction"></param>
-    /// <returns></returns>
+    /// <returns>true on the frame when a target is found or changed</returns>
     public bool attemptToEnsureTarget(UserLayerMasks layerMask, Func<GameObject, float, float> weightFunction)
     {
         if (currentTarget == null &&
