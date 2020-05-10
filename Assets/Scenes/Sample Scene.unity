@@ -483,6 +483,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Gatherer (2)
       objectReference: {fileID: 0}
+    - target: {fileID: 1140293900322245272, guid: 1ad692875fa053a4199f9744c750984a,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 1140293900322245277, guid: 1ad692875fa053a4199f9744c750984a,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -650,6 +655,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Gatherer (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 1140293900322245272, guid: 1ad692875fa053a4199f9744c750984a,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1140293900322245277, guid: 1ad692875fa053a4199f9744c750984a,
         type: 3}
@@ -826,6 +836,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Gatherer
+      objectReference: {fileID: 0}
+    - target: {fileID: 1140293900322245272, guid: 1ad692875fa053a4199f9744c750984a,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1140293900322245277, guid: 1ad692875fa053a4199f9744c750984a,
         type: 3}

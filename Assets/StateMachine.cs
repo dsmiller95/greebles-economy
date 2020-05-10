@@ -76,7 +76,7 @@ namespace Assets
 
             if(!newState.Equals(state))
             {
-                Debug.Log($"Transitioning from {Enum.GetName(typeof(T), state)} into {Enum.GetName(typeof(T), newState)}");
+                //Debug.Log($"Transitioning from {Enum.GetName(typeof(T), state)} into {Enum.GetName(typeof(T), newState)}");
                 foreach (var changeHandler in stateChangeHandlers)
                 {
                     if (changeHandler.fromState.HasFlag(state) && changeHandler.toState.HasFlag(newState))
