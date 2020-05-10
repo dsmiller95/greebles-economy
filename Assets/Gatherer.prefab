@@ -156,7 +156,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1ba35100e75b85540b7597d32a655b98, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  inventoryCapacity: 10
+  inventoryCapacity: 1
   spaceFillingItems: 0100000000000000
 --- !u!114 &4335989833534531825
 MonoBehaviour:
