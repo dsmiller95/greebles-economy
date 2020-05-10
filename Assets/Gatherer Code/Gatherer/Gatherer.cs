@@ -17,6 +17,8 @@ public class Gatherer : MonoBehaviour
 
     public float speed = 1;
     public float touchDistance = 1f;
+    public int backpackSize = 10;
+    public int pocketSize = 1;
 
 
     internal GameObject currentTarget;
@@ -34,6 +36,7 @@ public class Gatherer : MonoBehaviour
     void Start()
     {
         this.inventory = this.GetComponent<ResourceInventory>();
+
         this.timeTracker = this.GetComponent<ITimeTracker>();
         this.optimizer = new GatherBehaviorOptimizer();
         this.gatheringWeights = optimizer.generateInitialWeights();
@@ -57,21 +60,15 @@ public class Gatherer : MonoBehaviour
         this.stateMachine.update(this);
     }
 
-    //private void BeginGoingHome()
-    //{
-    //    this.currentTarget = home.gameObject;
-    //}
+    internal void attachBackpack()
+    {
+        inventory.inventoryCapacity = pocketSize + backpackSize;
+    }
 
-    //private GathererState GoHome()
-    //{
-    //    this.approachPositionWithDistance(currentTarget.transform.position, Time.deltaTime * this.speed);
-    //    if (distanceToCurrentTarget() < touchDistance)
-    //    {
-    //        home.depositAllGoods(this.inventory);
-    //        return GathererState.Gathering;
-    //    }
-    //    return GathererState.GoingHome;
-    //}
+    internal void removeBackpack()
+    {
+        inventory.inventoryCapacity = pocketSize;
+    }
 
 
     /// <summary>

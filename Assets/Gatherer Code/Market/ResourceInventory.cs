@@ -18,7 +18,18 @@ public struct ResourceChanged
 
 public class ResourceInventory : MonoBehaviour
 {
-    public int inventoryCapacity = 10;
+    public int inventoryCapacitySetForUI = 10;
+    private int _inventoryCapacity;
+    public int inventoryCapacity {
+        get => _inventoryCapacity;
+        set {
+            _inventoryCapacity = value;
+            foreach (var resourceType in spaceFillingItems)
+            {
+                resourceCapacityChanges?.Invoke(this, new ResourceChanged(resourceType, inventoryCapacity));
+            }
+        }
+    }
 
     public event EventHandler<ResourceChanged> resourceAmountChanges;
     public event EventHandler<ResourceChanged> resourceCapacityChanges;
@@ -29,6 +40,7 @@ public class ResourceInventory : MonoBehaviour
 
     void Awake()
     {
+        this.inventoryCapacity = inventoryCapacitySetForUI; 
         inventory = new Dictionary<ResourceType, float>();
         var resourceTypes = Enum.GetValues(typeof(ResourceType)).Cast<ResourceType>();
         foreach (var resource in resourceTypes)
@@ -58,12 +70,10 @@ public class ResourceInventory : MonoBehaviour
 
     public void drainAllInto(ResourceInventory target)
     {
-        Debug.Log($"Draining {Utilities.SerializeDictionary(inventory)}\nInto {Utilities.SerializeDictionary(target.inventory)}");
         foreach (var resourceType in Enum.GetValues(typeof(ResourceType)).Cast<ResourceType>())
         {
             this.transferResourceInto(resourceType, target);
         }
-        Debug.Log($"Finished Draining {Utilities.SerializeDictionary(inventory)}\nInto {Utilities.SerializeDictionary(target.inventory)}");
     }
 
     public float transferResourceInto(ResourceType type, ResourceInventory target, float amount = -1)
@@ -80,7 +90,6 @@ public class ResourceInventory : MonoBehaviour
 
         var added = target.addResource(type, toAdd);
         this.setInventoryValue(type, getResource(type) - added);
-        Debug.Log($"Added {Enum.GetName(typeof(ResourceType), type)}: {amount} {toAdd} {added}");
         return added;
     }
 

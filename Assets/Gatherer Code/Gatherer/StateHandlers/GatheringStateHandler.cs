@@ -42,7 +42,7 @@ class GatheringStateHandler : GenericStateHandler<GathererState, Gatherer>
     {
     }
 
-    public GathererState validNextStates => GathererState.GoingHome | GathererState.Selling;
+    public GathererState validNextStates => GathererState.GoingHome;
     public void TransitionOutOfState(Gatherer data)
     {
         data.timeTracker.pauseTracking();

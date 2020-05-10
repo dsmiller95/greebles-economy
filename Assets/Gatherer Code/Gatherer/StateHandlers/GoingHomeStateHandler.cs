@@ -13,6 +13,13 @@ class GoingHomeStateHandler : GenericStateHandler<GathererState, Gatherer>
     {
         if (data.seekTargetToTouch())
         {
+            if (data.home.depositAllGoods(data.inventory))
+            {
+                //Our home is full; time to go to market
+                data.attachBackpack();
+                data.home.withdrawAllGoods(data.inventory);
+                return GathererState.Selling;
+            }
             return GathererState.Gathering;
         }
         return GathererState.GoingHome;
@@ -24,9 +31,8 @@ class GoingHomeStateHandler : GenericStateHandler<GathererState, Gatherer>
         data.currentTarget = data.home.gameObject;
     }
 
-    public GathererState validNextStates => GathererState.Gathering;
+    public GathererState validNextStates => GathererState.Gathering | GathererState.Selling;
     public void TransitionOutOfState(Gatherer data)
     {
-        data.home.depositAllGoods(data.inventory);
     }
 }

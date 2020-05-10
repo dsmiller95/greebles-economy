@@ -7,9 +7,15 @@ public class Home : MonoBehaviour
 {
     public ResourceInventory inventory;
 
-    public void depositAllGoods(ResourceInventory inventoryToDrain)
+    /// <summary>
+    /// Deposit all the items from the given inventory into this inventory
+    /// </summary>
+    /// <param name="inventoryToDrain">the inventory to drain</param>
+    /// <returns>True if the home's inventory is full</returns>
+    public bool depositAllGoods(ResourceInventory inventoryToDrain)
     {
         inventoryToDrain.drainAllInto(inventory);
+        return this.inventory.getFullRatio() >= 1;
     }
     public void withdrawAllGoods(ResourceInventory inventoryToDepositTo)
     {
