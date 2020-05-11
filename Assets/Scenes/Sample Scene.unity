@@ -150,7 +150,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maximumConcurrentSpawned: 10
-  spawnProbability: 1.29
+  spawnProbability: 0.6
   spawnPrefab: {fileID: 3155566554545023561, guid: 66f771a5f8295964b8a5f7adc9704b52,
     type: 3}
   spawnBoxSize: {x: 26.5, y: 1, z: 22}
@@ -198,7 +198,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maximumConcurrentSpawned: 10
-  spawnProbability: 1.29
+  spawnProbability: 0.5
   spawnPrefab: {fileID: 6201624005823754261, guid: 3419ec4628f325d4784815b1a5b2bc2f,
     type: 3}
   spawnBoxSize: {x: 26.5, y: 1, z: 22}
@@ -210,7 +210,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 299593787}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 3.9, y: 0.89, z: 45.4}
+  m_LocalPosition: {x: 0.75, y: 0.89, z: 17.58}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}

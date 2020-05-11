@@ -10,6 +10,7 @@ public class Market : MonoBehaviour
 
     public float woodPrice = 1;
     public float foodPrice = 2;
+
     // Start is called before the first frame update
     void Start()
     {
