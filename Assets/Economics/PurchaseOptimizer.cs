@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Assets.Economics
 {
-    struct CostUtilityFunction
+    struct CostUtilityAdapter
     {
         public IPurchaser purchaser;
         public ISeller seller;
@@ -15,12 +15,12 @@ namespace Assets.Economics
 
     class PurchaseOptimizer
     {
-        private CostUtilityFunction[] resources;
+        private IList<CostUtilityAdapter> resources;
         private float increment = 1;
 
-        public PurchaseOptimizer(CostUtilityFunction[] resources)
+        public PurchaseOptimizer(IEnumerable<CostUtilityAdapter> resources)
         {
-            this.resources = resources;
+            this.resources = resources.ToList();
         }
 
         public void Optimize(float startingBank)
@@ -84,7 +84,7 @@ namespace Assets.Economics
         /// </summary>
         /// <param name="increment">The increment to which the value functions are evaluated</param>
         /// <returns></returns>
-        private CostUtilityFunction? GetHighestValuePerUtility(float increment)
+        private CostUtilityAdapter? GetHighestValuePerUtility(float increment)
         {
             return this.resources
                 .Select(resource => new {
@@ -96,7 +96,7 @@ namespace Assets.Economics
                 ?.resource;
         }
 
-        private CostUtilityFunction? GetHighestUtility(float maxPurchase)
+        private CostUtilityAdapter? GetHighestUtility(float maxPurchase)
         {
             return this.resources
                 .Where(resource => resource.purchaser.Purchase(increment, false) <= maxPurchase)

@@ -5,10 +5,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
+using Assets.Economics;
 
 [RequireComponent(typeof(ResourceInventory))]
 [RequireComponent(typeof(TimeTracker))]
-public class Gatherer : MonoBehaviour
+public class Gatherer : MonoBehaviour, IUtilityEvaluator
 {
     public const int searchRadius = 100;
     public const float waitTimeBetweenSearches = 0.3f;
@@ -31,6 +32,37 @@ public class Gatherer : MonoBehaviour
     internal Dictionary<ResourceType, float> gatheringWeights;
 
     private StateMachine<GathererState, Gatherer> stateMachine;
+    public Dictionary<ResourceType, IUtilityEvaluator> utilityFunctions {
+        get;
+        private set;
+    }
+
+    private void Awake()
+    {
+        this.utilityFunctions = new Dictionary<ResourceType, IUtilityEvaluator>()
+        {
+            {
+                ResourceType.Food,
+                new UtilityEvaluatorFunctionAdapter(
+                    new InverseWeightedUtility(new WeightedRegion[] {
+                        new WeightedRegion(0, 10),
+                        new WeightedRegion(2, 1)
+                    }),
+                    () => this.inventory.getResource(ResourceType.Food)
+                )
+            },
+            {
+                ResourceType.Wood,
+                new UtilityEvaluatorFunctionAdapter(
+                    new InverseWeightedUtility(new WeightedRegion[] {
+                        new WeightedRegion(0, 10),
+                        new WeightedRegion(1, 0.5f)
+                    }),
+                    () => this.inventory.getResource(ResourceType.Wood)
+                )
+            }
+        };
+    }
 
     // Start is called before the first frame update
     void Start()
@@ -159,5 +191,10 @@ public class Gatherer : MonoBehaviour
             }
         }
         return highestWeightCollider?.gameObject;
+    }
+
+    public float GetIncrementalUtility(float increment)
+    {
+        throw new NotImplementedException();
     }
 }

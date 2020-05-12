@@ -5,12 +5,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-class MarketSellerAdapter : ISeller, IPurchaser
+class MarketExchangeAdapter : ISeller, IPurchaser
 {
     private Market market;
     private ResourceInventory sourceInventory;
-    private ResourceType type;
-    public MarketSellerAdapter(ResourceInventory sourceInventory, Market market, ResourceType type)
+    public ResourceType type {
+        get;
+        private set;
+    };
+    public MarketExchangeAdapter(ResourceInventory sourceInventory, Market market, ResourceType type)
     {
         this.market = market;
         this.type = type;

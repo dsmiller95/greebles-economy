@@ -1,4 +1,5 @@
-﻿using Assets.Gatherer_Code;
+﻿using Assets.Economics;
+using Assets.Gatherer_Code;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -27,7 +28,20 @@ class SellingStateHandler : GenericStateHandler<GathererState, Gatherer>
         if (data.seekTargetToTouch())
         {
             var market = data.currentTarget.GetComponent<Market>();
+            IEnumerable<CostUtilityAdapter> optimizerAdapters = Enum.GetValues(typeof(ResourceType)).Cast<ResourceType>()
+                .Select(x => new MarketExchangeAdapter(data.inventory, market, x))
+                .Select(x => new CostUtilityAdapter()
+                {
+                    utilityFunction = data.utilityFunctions[x.type],
+                    purchaser = x,
+                    seller = x
+                });
+            // TODO: acheive some metric of which items were most -valuable-
+            //  Meaning which initial items ulitimitaly brought the most utility
+            var optimizer = new PurchaseOptimizer(optimizerAdapters);
+
             var sellResult = market.sellAllGoodsInInventory(data.inventory);
+
 
             var timeSummary = data.timeTracker.getResourceTimeSummary();
 

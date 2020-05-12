@@ -8,6 +8,11 @@ namespace Assets.Economics
 {
     public struct WeightedRegion
     {
+        public WeightedRegion(int beginning, float weight)
+        {
+            this.RegionBeginning = beginning;
+            this.RegionWeight = weight;
+        }
         public int RegionBeginning;
         public float RegionWeight;
     }
