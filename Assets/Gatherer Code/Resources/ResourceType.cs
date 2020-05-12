@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 public enum ResourceType
 {
-    Wood,
-    Food,
-    Gold
+    Wood = 1,
+    Food = 2,
+    Gold = 4
 }

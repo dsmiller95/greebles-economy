@@ -9,17 +9,11 @@ namespace Assets.Economics
     interface IPurchaser
     {
         /// <summary>
-        /// Get the cost to purchase a given amount
+        /// Purchase given amount
         /// </summary>
         /// <param name="amount">the amount to purchase</param>
+        /// <param name="execute">Whether or not to execute the purchase</param>
         /// <returns>the price of purchasing exactly amount</returns>
-        float PurchaseCost(float amount);
-
-        /// <summary>
-        /// Execute a purchase of a certain amount
-        /// </summary>
-        /// <param name="amount">the amount to purchase</param>
-        /// <returns>The cost of the purchase</returns>
-        float ExecutePurchase(float amount);
+        float Purchase(float amount, bool execute);
     }
 }

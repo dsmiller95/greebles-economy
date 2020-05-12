@@ -73,7 +73,7 @@ namespace Assets.Economics
             {
                 foreach (var purchase in purchases)
                 {
-                    purchase.ExecutePurchase(optimizer.increment);
+                    purchase.Purchase(optimizer.increment, true);
                 }
             }
         }
@@ -99,7 +99,7 @@ namespace Assets.Economics
         private CostUtilityFunction? GetHighestUtility(float maxPurchase)
         {
             return this.resources
-                .Where(resource => resource.purchaser.PurchaseCost(increment) <= maxPurchase)
+                .Where(resource => resource.purchaser.Purchase(increment, false) <= maxPurchase)
                 .Select(resource => new { resource, utility = resource.utilityFunction.GetIncrementalUtility(increment) })
                 .OrderBy(resource => resource.utility)
                 .LastOrDefault()

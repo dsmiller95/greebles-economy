@@ -36,7 +36,7 @@ public class ResourceInventory : MonoBehaviour
 
     private Dictionary<ResourceType, float> inventory;
 
-    public ResourceType[] spaceFillingItems = new ResourceType[] { ResourceType.Food, ResourceType.Wood };
+    public static readonly ResourceType[] spaceFillingItems = new ResourceType[] { ResourceType.Food, ResourceType.Wood };
 
     void Awake()
     {
@@ -68,15 +68,27 @@ public class ResourceInventory : MonoBehaviour
     {
     }
 
-    public void drainAllInto(ResourceInventory target)
+
+    /// <summary>
+    /// Drain all the items from this inventory of type res
+    /// </summary>
+    /// <param name="target">the inventory to drain the items into</param>
+    /// <param name="res">the type of items to transfer. Could be a flags</param>
+    /// <returns>A map from the resource type to the amount transfered</returns>
+    public Dictionary<ResourceType, float> DrainAllInto(ResourceInventory target, ResourceType[] types)
     {
-        foreach (var resourceType in Enum.GetValues(typeof(ResourceType)).Cast<ResourceType>())
+        var result = new Dictionary<ResourceType, float>();
+        var resourcesToDrain = Enum.GetValues(typeof(ResourceType))
+            .Cast<ResourceType>()
+            .Where(resource => types.Contains(resource));
+        foreach (var resourceType in resourcesToDrain)
         {
-            this.transferResourceInto(resourceType, target);
+            result[resourceType] = this.transferResourceInto(resourceType, target);
         }
+        return result;
     }
 
-    public float transferResourceInto(ResourceType type, ResourceInventory target, float amount = -1)
+    public float transferResourceInto(ResourceType type, ResourceInventory target, float amount = -1, bool execute = true)
     {
         if(amount == -1)
         {
@@ -89,8 +101,27 @@ public class ResourceInventory : MonoBehaviour
         var toAdd = Mathf.Min(amount, getResource(type));
 
         var added = target.addResource(type, toAdd);
-        this.setInventoryValue(type, getResource(type) - added);
+        if (execute)
+        {
+            this.setInventoryValue(type, getResource(type) - added);
+        }
         return added;
+    }
+
+    /// <summary>
+    /// Consume up to a certain amount out of the inventory
+    /// </summary>
+    /// <param name="type">the type to consume</param>
+    /// <param name="amount">the amount to attempt to consume</param>
+    public void Consume(ResourceType type, float amount)
+    {
+        if (amount < 0)
+        {
+            throw new NotImplementedException();
+        }
+
+        var toConsume = Mathf.Min(amount, getResource(type));
+        this.setInventoryValue(type, getResource(type) - toConsume);
     }
 
     public float getResource(ResourceType type)
