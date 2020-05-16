@@ -23,24 +23,35 @@ namespace Assets.Economics
             this.resources = resources.ToList();
         }
 
-        public void Optimize(float startingBank)
+        public void Optimize(float bank)
         {
-            PurchaseResult.Purchase(this, startingBank).ExecutePurchases();
+            var initialPurchase = PurchaseResult.Purchase(this, bank);
+            initialPurchase.ExecutePurchases();
+            bank -= initialPurchase.totalCost;
 
             var executesPurchase = true;
             for (var minUtility = GetHighestValuePerUtility(increment); minUtility.HasValue && executesPurchase; minUtility = GetHighestValuePerUtility(increment))
             {
                 var sellPrice = minUtility.Value.seller.Sell(increment, false);
-                var purchaseOption = PurchaseResult.Purchase(this, sellPrice);
-                executesPurchase = purchaseOption.utilityGained + minUtility.Value.utilityFunction.GetIncrementalUtility(-increment) > 0;
+                var purchaseOption = PurchaseResult.Purchase(this, sellPrice + bank);
+                executesPurchase = (purchaseOption.utilityGained + minUtility.Value.utilityFunction.GetIncrementalUtility(-increment)) > 0;
                 if (executesPurchase)
+                {
+                    bank += sellPrice - purchaseOption.totalCost;
                     purchaseOption.ExecutePurchases();
+                    minUtility.Value.seller.Sell(increment, true);
+                }
             }
         }
 
         class PurchaseResult
         {
             public float utilityGained {
+                get;
+                private set;
+            }
+            public float totalCost
+            {
                 get;
                 private set;
             }
@@ -51,10 +62,12 @@ namespace Assets.Economics
                 this.optimizer = optimizer;
                 purchases = new List<IPurchaser>();
                 utilityGained = 0f;
+                totalCost = 0f;
                 //drain the bank
-                for (var resource = optimizer.GetHighestUtility(bank); resource.HasValue; resource = optimizer.GetHighestUtility(bank))
+                for (var resource = optimizer.GetHighestUtility(bank - totalCost); resource.HasValue; resource = optimizer.GetHighestUtility(bank - totalCost))
                 {
                     utilityGained += resource.Value.utilityFunction.GetIncrementalUtility(optimizer.increment);
+                    totalCost += resource.Value.purchaser.Purchase(optimizer.increment, false);
                     purchases.Add(resource.Value.purchaser);
                 }
             }

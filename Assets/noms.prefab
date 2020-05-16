@@ -106,7 +106,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 50b5e155ae909e8439d85ad6b1c1a5a6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  type: 1
+  type: 2
   value: 1
   eaten: 0
 --- !u!54 &3155566554545023571

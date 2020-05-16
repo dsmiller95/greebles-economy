@@ -12,7 +12,7 @@ class MarketExchangeAdapter : ISeller, IPurchaser
     public ResourceType type {
         get;
         private set;
-    };
+    }
     public MarketExchangeAdapter(ResourceInventory sourceInventory, Market market, ResourceType type)
     {
         this.market = market;

@@ -159,7 +159,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   inventoryCapacitySetForUI: 1
-  spaceFillingItems: 0100000000000000
 --- !u!114 &4335989833534531825
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -336,13 +335,13 @@ MonoBehaviour:
   ResourceBarPrefab: {fileID: 4421950807818138392, guid: c6fab876b0878b64b85d073977fc31f3,
     type: 3}
   resourceConfiguration:
-  - type: 0
+  - type: 1
     icon: {fileID: 21300000, guid: d9b2700042841ea4d994f37d5bc97735, type: 3}
     fillColor: {r: 0.6132076, g: 0.4528962, b: 0.10123709, a: 1}
-  - type: 1
+  - type: 2
     icon: {fileID: 21300000, guid: a3881873072cd8e48926593b8de5553b, type: 3}
     fillColor: {r: 0.28697777, g: 1, b: 0, a: 1}
-  - type: 2
+  - type: 4
     icon: {fileID: 21300000, guid: e071dac40184f5844957d183405ceb8f, type: 3}
     fillColor: {r: 1, g: 0.97662324, b: 0, a: 1}
   offset: {x: 0, y: 25}

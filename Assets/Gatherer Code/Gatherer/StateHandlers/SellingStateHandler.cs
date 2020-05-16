@@ -38,7 +38,7 @@ class SellingStateHandler : GenericStateHandler<GathererState, Gatherer>
                 });
             // TODO: acheive some metric of which items were most -valuable-
             //  Meaning which initial items ulitimitaly brought the most utility
-            var optimizer = new PurchaseOptimizer(optimizerAdapters);
+            // var optimizer = new PurchaseOptimizer(optimizerAdapters);
 
             var sellResult = market.sellAllGoodsInInventory(data.inventory);
 

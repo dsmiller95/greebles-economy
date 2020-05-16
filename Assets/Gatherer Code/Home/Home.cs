@@ -14,12 +14,12 @@ public class Home : MonoBehaviour
     /// <returns>True if the home's inventory is full</returns>
     public bool depositAllGoods(ResourceInventory inventoryToDrain)
     {
-        inventoryToDrain.drainAllInto(inventory);
+        inventoryToDrain.DrainAllInto(inventory, ResourceInventory.spaceFillingItems);
         return this.inventory.getFullRatio() >= 1;
     }
     public void withdrawAllGoods(ResourceInventory inventoryToDepositTo)
     {
-        inventory.drainAllInto(inventoryToDepositTo);
+        inventory.DrainAllInto(inventoryToDepositTo, ResourceInventory.spaceFillingItems);
     }
 
     // Start is called before the first frame update

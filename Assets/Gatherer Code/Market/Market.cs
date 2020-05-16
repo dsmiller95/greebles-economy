@@ -1,10 +1,12 @@
 ﻿using Assets.Gatherer_Code;
 using Assets.Gatherer_Code.Market;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
+[Serializable]
 public struct SellPrice
 {
     public ResourceType type;

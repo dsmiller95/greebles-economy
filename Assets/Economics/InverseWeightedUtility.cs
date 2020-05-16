@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace Assets.Economics
 {
+    [Serializable]
     public struct WeightedRegion
     {
         public WeightedRegion(int beginning, float weight)
