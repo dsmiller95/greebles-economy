@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using UnityEngine;
 
 namespace Assets.Economics
 {
@@ -21,10 +22,12 @@ namespace Assets.Economics
     public class InverseWeightedUtility : IUtilityFunction
     {
         private WeightedRegion[] regions;
+        private float offset;
 
-        public InverseWeightedUtility(WeightedRegion[] regions)
+        public InverseWeightedUtility(WeightedRegion[] regions, float offset = 1)
         {
             this.regions = regions;
+            this.offset = offset;
         }
 
         /// <summary>
@@ -44,7 +47,7 @@ namespace Assets.Economics
 
         private float BaseUtility(float inventory)
         {
-            return 1f / inventory;
+            return 1f / (inventory + offset);
         }
 
         private WeightedRegion RegionAt(float inventory)
@@ -52,10 +55,11 @@ namespace Assets.Economics
             try
             {
                 return this.regions
-                    .Where(region => region.RegionBeginning < inventory)
+                    .Where(region => region.RegionBeginning <= inventory)
                     .Last();
             } catch
             {
+                Debug.Log(regions);
                 throw new Exception($"no defined region at {inventory}");
             }
         }
