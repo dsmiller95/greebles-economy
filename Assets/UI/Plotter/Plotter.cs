@@ -5,22 +5,11 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
-[Serializable]
-public struct PlottableConfig
-{
-    public float start;
-    public float end;
-    public float yScale;
-    public int steps;
-    public Color lineColor;
-    public Color dotColor;
-}
 
 public class Plotter : MonoBehaviour
 {
     public GameObject[] plots;
-    private IList<IPlottable> plottables;
-    public PlottableConfig[] plotConfigs;
+    private IList<IPlottableSeries> plottables;
     public RectTransform container;
     public Sprite circleSprite;
     public float xOffset = 1;
@@ -31,11 +20,11 @@ public class Plotter : MonoBehaviour
     private void Awake()
     {
         this.plottables = plots
-            .Select(g => g.GetComponent<IPlottable>())
+            .Select(g => g.GetComponent<IPlottableSeries>())
             .Where(p => p != default)
             .ToList();
         plotContainers = this.plottables
-            .Select((x, y) => new PlotContainer(x, plotConfigs[y], this))
+            .Select(plottable => new PlotContainer(plottable, this))
             .ToList();
     }
 
@@ -44,7 +33,7 @@ public class Plotter : MonoBehaviour
     {
         foreach (var container in plotContainers)
         {
-            container.InitGraphObjects();
+            //container.InitGraphObjects();
         }
     }
 

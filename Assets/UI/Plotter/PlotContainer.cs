@@ -8,37 +8,51 @@ using UnityEngine.UI;
 
 class PlotContainer
 {
-    private IPlottable plottable;
+    private IPlottableSeries plottable;
     private PlottableConfig config;
     private Plotter parent;
 
     private IList<GameObject> dots;
-    private IList<GameObject> lines;
+    private IList<GameObject> connections;
 
-    public PlotContainer(IPlottable plottable, PlottableConfig config, Plotter parent)
+    public PlotContainer(IPlottableSeries plottable, Plotter parent)
     {
         this.parent = parent;
-        this.config = config;
+        this.config = plottable.GetPlottableConfig();
         this.plottable = plottable;
+        this.dots = new List<GameObject>();
+        this.connections = new List<GameObject>();
     }
 
 
     public void InitGraphObjects()
     {
-        var positions = GraphPositioning(plottable, config).ToList();
-        this.lines = positions
-            .RollingWindow(2)
-            .Select(pair => CreateDotConnection(pair[0], pair[1]))
-            .ToList();
-        this.dots = positions
-            .Select(pos => CreateDot(pos))
-            .ToList();
+        //var positions = GetPositionsInGraph().ToList();
+        //this.connections = positions
+        //    .RollingWindow(2)
+        //    .Select(pair => CreateDotConnection(pair[0], pair[1]))
+        //    .ToList();
+        //this.dots = positions
+        //    .Select(pos => CreateDot(pos))
+        //    .ToList();
     }
 
     public void Update()
     {
-        var positions = GraphPositioning(plottable, config).ToList();
-        foreach (var connection in positions.RollingWindow(2).Zip(lines, (pair, line) => new { pair, line }))
+        var positions = GetPositionsInGraph().ToList();
+
+        this.connections = Utilities.EnsureAllObjectsCreated(
+            positions.Count - 1,
+            this.connections,
+            () => CreateUnpositionedDotConnection(),
+            connection => GameObject.Destroy(connection));
+        this.dots = Utilities.EnsureAllObjectsCreated(
+            positions.Count,
+            this.dots,
+            () => CreateUnpositionedDot(),
+            dot => GameObject.Destroy(dot));
+
+        foreach (var connection in positions.RollingWindow(2).Zip(connections, (pair, line) => new { pair, line }))
         {
             UpdateDotConnection(connection.pair[0], connection.pair[1], connection.line);
         }
@@ -65,23 +79,19 @@ class PlotContainer
         transform.transform.eulerAngles = new Vector3(0, 0, Vector2.SignedAngle(Vector2.right, dir));
         transform.sizeDelta = new Vector2(distance, 3);
     }
-    private IEnumerable<Vector2> GraphPositioning(IPlottable plot, PlottableConfig config)
+
+    private IEnumerable<Vector2> GetPositionsInGraph()
     {
+        var points = plottable.GetSeries();
+        var plotConfig = plottable.GetPlottableConfig();
+
         float graphHeight = this.parent.container.sizeDelta.y;
-        float xUIStep = this.parent.container.sizeDelta.x / config.steps;
-        float xValueStep = (config.end - config.start) / config.steps;
-        for (int i = 0; i < config.steps; i++)
-        {
-            var value = plot.PlotAt(i * xValueStep);
-            float xPos = i * xUIStep + this.parent.xOffset;
-            float yPos = Math.Min(value * graphHeight / config.yScale, graphHeight);
-            var dotPos = new Vector2(xPos, yPos);
-            yield return dotPos;
-        }
+        float graphWidth = this.parent.container.sizeDelta.x;
+        float xUIScale = graphWidth / plottable.GetPointRange();
+        var uiScale = new Vector2(xUIScale, graphHeight / plotConfig.yScale);
+        return points.Select(point => new Vector2(point.x * uiScale.x, Mathf.Clamp(point.y * uiScale.y, 0, graphHeight)));
     }
-
-
-    private GameObject CreateDot(Vector2 anchor)
+    private GameObject CreateUnpositionedDot()
     {
         var newDot = new GameObject("circle", typeof(Image));
         newDot.transform.SetParent(this.parent.container, false);
@@ -91,15 +101,12 @@ class PlotContainer
         image.color = config.dotColor;
 
         var transform = newDot.GetComponent<RectTransform>();
-        transform.anchoredPosition = anchor;
         transform.sizeDelta = new Vector2(11, 11);
         transform.anchorMin = new Vector2(0, 0);
         transform.anchorMax = new Vector2(0, 0);
         return newDot;
     }
-
-
-    private GameObject CreateDotConnection(Vector2 start, Vector2 end)
+    private GameObject CreateUnpositionedDotConnection()
     {
         var connection = new GameObject("connector", typeof(Image));
         connection.transform.SetParent(this.parent.container, false);
@@ -107,16 +114,54 @@ class PlotContainer
         var transform = connection.GetComponent<RectTransform>();
         transform.anchorMin = new Vector2(0, 0);
         transform.anchorMax = new Vector2(0, 0);
-
-        var difference = end - start;
-        var dir = difference.normalized;
-        var distance = difference.magnitude;
-
-        transform.anchoredPosition = start + dir * distance * 0.5f;
-        transform.transform.eulerAngles = new Vector3(0, 0, Vector2.SignedAngle(Vector2.right, dir));
-        transform.sizeDelta = new Vector2(distance, 3);
         return connection;
     }
+
+
+
+    /// <summary>
+    /// /////////////////////////////////////
+    /// </summary>
+    /// <param name="anchor"></param>
+    /// <returns></returns>
+
+
+    //private GameObject CreateDot(Vector2 anchor)
+    //{
+    //    var newDot = new GameObject("circle", typeof(Image));
+    //    newDot.transform.SetParent(this.parent.container, false);
+
+    //    var image = newDot.GetComponent<Image>();
+    //    image.sprite = this.parent.circleSprite;
+    //    image.color = config.dotColor;
+
+    //    var transform = newDot.GetComponent<RectTransform>();
+    //    transform.anchoredPosition = anchor;
+    //    transform.sizeDelta = new Vector2(11, 11);
+    //    transform.anchorMin = new Vector2(0, 0);
+    //    transform.anchorMax = new Vector2(0, 0);
+    //    return newDot;
+    //}
+
+
+    //private GameObject CreateDotConnection(Vector2 start, Vector2 end)
+    //{
+    //    var connection = new GameObject("connector", typeof(Image));
+    //    connection.transform.SetParent(this.parent.container, false);
+    //    connection.GetComponent<Image>().color = config.lineColor;
+    //    var transform = connection.GetComponent<RectTransform>();
+    //    transform.anchorMin = new Vector2(0, 0);
+    //    transform.anchorMax = new Vector2(0, 0);
+
+    //    var difference = end - start;
+    //    var dir = difference.normalized;
+    //    var distance = difference.magnitude;
+
+    //    transform.anchoredPosition = start + dir * distance * 0.5f;
+    //    transform.transform.eulerAngles = new Vector3(0, 0, Vector2.SignedAngle(Vector2.right, dir));
+    //    transform.sizeDelta = new Vector2(distance, 3);
+    //    return connection;
+    //}
 
 }
 

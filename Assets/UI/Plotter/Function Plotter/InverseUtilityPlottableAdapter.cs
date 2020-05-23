@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class InverseUtilityPlottableAdapter : MonoBehaviour, IPlottable
+public class InverseUtilityPlottableAdapter : MonoBehaviour, IPlottableFunction
 {
     public float increment = 1f;
     public WeightedRegion[] weightedRegions;
