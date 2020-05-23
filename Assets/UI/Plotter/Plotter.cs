@@ -12,8 +12,6 @@ public class Plotter : MonoBehaviour
     private IList<IPlottableSeries> plottables;
     public RectTransform container;
     public Sprite circleSprite;
-    public float xOffset = 1;
-    public float updateTimeDelay = 0.4f;
 
     private IList<PlotContainer> plotContainers;
 
@@ -21,7 +19,7 @@ public class Plotter : MonoBehaviour
     {
     }
 
-    // Update is called once per frame
+    // Start is called before the first frame update
     void Start()
     {
         this.plottables = plots
@@ -40,6 +38,14 @@ public class Plotter : MonoBehaviour
         foreach (var container in plotContainers)
         {
             container.Init();
+        }
+    }
+
+    private void OnDestroy()
+    {
+        foreach (var container in plotContainers)
+        {
+            container.OnDestroy();
         }
     }
 }

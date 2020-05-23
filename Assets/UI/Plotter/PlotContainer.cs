@@ -30,6 +30,11 @@ class PlotContainer
         this.plottable.SeriesUpdated += Plottable_SeriesUpdated;
     }
 
+    public void OnDestroy()
+    {
+        this.plottable.SeriesUpdated -= Plottable_SeriesUpdated;
+    }
+
     private void Plottable_SeriesUpdated(object sender)
     {
         this.UpdateGraph();

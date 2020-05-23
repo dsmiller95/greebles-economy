@@ -48,6 +48,7 @@ GameObject:
   - component: {fileID: 7894513326273371995}
   - component: {fileID: 4335989833534531825}
   - component: {fileID: 3460751752712892426}
+  - component: {fileID: 7835220949394996051}
   m_Layer: 9
   m_Name: GathererActor
   m_TagString: Untagged
@@ -185,8 +186,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   inventory: {fileID: 7894513326273371995}
-  timeRange: 360
-  timeStep: 1
+  timeRange: 30
+  totalSteps: 60
   resourcePlotConfig:
   - type: 4
     plotConfig:
@@ -203,6 +204,19 @@ MonoBehaviour:
       yScale: 12
       lineColor: {r: 0.7075472, g: 0.5537606, b: 0.23696157, a: 0.5882353}
       dotColor: {r: 0.70980394, g: 0.5568628, b: 0.23921569, a: 0}
+--- !u!114 &7835220949394996051
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3070155397435437859}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 808d9277d0fdde04cbe4942eafd5e644, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ResourcePlotter: {fileID: 3460751752712892426}
 --- !u!1 &3538974859372260091
 GameObject:
   m_ObjectHideFlags: 0

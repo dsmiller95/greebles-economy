@@ -23,4 +23,5 @@ public struct PlottableConfig
     public float yScale;
     public Color lineColor;
     public Color dotColor;
+    // TODO: add an option to remove either the lines or dots
 }
