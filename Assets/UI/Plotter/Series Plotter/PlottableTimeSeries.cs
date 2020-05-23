@@ -8,8 +8,8 @@ using UnityEngine;
 class PlottableTimeSeries : IPlottableSeries
 {
     public event SeriesUpdatedHandler SeriesUpdated;
-    public PlottableConfig plotConfig;
 
+    private PlottableConfig plotConfig;
     private IList<Vector2> currentTimeSeries;
     private float startTime;
     private float timeRange;
@@ -19,18 +19,19 @@ class PlottableTimeSeries : IPlottableSeries
     /// </summary>
     /// <param name="initialStartTime">The point in time that will map to x=0</param>
     /// <param name="timeRange">The time range in seconds the graph should represent</param>
-    public PlottableTimeSeries(float initialStartTime, float timeRange = 20)
+    public PlottableTimeSeries(float initialStartTime, PlottableConfig plotConfig, float timeRange = 20)
     {
         this.currentTimeSeries = new List<Vector2>();
         this.startTime = initialStartTime;
         this.timeRange = timeRange;
+        this.plotConfig = plotConfig;
     }
 
     public void AddPoint(float value)
     {
         var newPoint = new Vector2(Time.time, value);
         this.currentTimeSeries.Add(newPoint);
-        this.SeriesUpdated(this);
+        this.SeriesUpdated?.Invoke(this);
 
         // TODO: implement rolling window
         //var timeShift = newPoint.x - (this.startTime + this.timeRange);

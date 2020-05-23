@@ -19,18 +19,24 @@ public class Plotter : MonoBehaviour
 
     private void Awake()
     {
-        this.plottables = plots
-            .Select(g => g.GetComponent<IPlottableSeries>())
-            .Where(p => p != default)
-            .ToList();
-        plotContainers = this.plottables
-            .Select(plottable => new PlotContainer(plottable, this))
-            .ToList();
     }
 
     // Update is called once per frame
     void Start()
     {
+        this.plottables = plots
+            .Select(gameObject => gameObject.GetComponent<IPlottableSeries>())
+            .Where(plottable => plottable != default)
+            .Concat(plots
+                .Select(gameObject => gameObject.GetComponent<IMultiPlottableSeries>())
+                .Where(multiPlottable => multiPlottable != default)
+                .Select(multiPlottable => multiPlottable.GetPlottableSeries())
+                .SelectMany(plottable => plottable))
+            .ToList();
+        Debug.Log($"found {plottables.Count} plots");
+        plotContainers = this.plottables
+            .Select(plottable => new PlotContainer(plottable, this))
+            .ToList();
         foreach (var container in plotContainers)
         {
             container.Init();

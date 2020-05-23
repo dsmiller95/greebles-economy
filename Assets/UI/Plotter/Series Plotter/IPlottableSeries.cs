@@ -5,8 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 
-delegate void SeriesUpdatedHandler(object sender);
-interface IPlottableSeries
+public delegate void SeriesUpdatedHandler(object sender);
+public interface IPlottableSeries
 {
     event SeriesUpdatedHandler SeriesUpdated;
     IEnumerable<Vector2> GetSeries();
