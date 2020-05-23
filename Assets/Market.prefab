@@ -53,13 +53,10 @@ MonoBehaviour:
   resourceConfiguration:
   - type: 1
     icon: {fileID: 21300000, guid: d9b2700042841ea4d994f37d5bc97735, type: 3}
-    fillColor: {r: 0.6132076, g: 0.4528962, b: 0.10123709, a: 1}
   - type: 2
     icon: {fileID: 21300000, guid: a3881873072cd8e48926593b8de5553b, type: 3}
-    fillColor: {r: 0.28697777, g: 1, b: 0, a: 1}
   - type: 4
     icon: {fileID: 21300000, guid: e071dac40184f5844957d183405ceb8f, type: 3}
-    fillColor: {r: 1, g: 0.97662324, b: 0, a: 1}
   offset: {x: 0, y: 25}
   inventoryToTrack: {fileID: 2938998355160009592}
 --- !u!1 &4861457521204343749
@@ -120,10 +117,11 @@ MeshRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: 7127dc5c79065644d998cb90db8d70a6, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
