@@ -64,7 +64,7 @@ public class Market : MonoBehaviour
 
     public Dictionary<ResourceType, ResourceSellResult> sellAllGoodsInInventory(ResourceInventory inventory)
     {
-        return SellAllGoods(inventory, this.inventory, ResourceInventory.spaceFillingItems, this.exchangeRates);
+        return SellAllGoods(inventory, this.inventory, ResourceConfiguration.spaceFillingItems, this.exchangeRates);
     }
 
     private static Dictionary<ResourceType, ResourceSellResult> SellAllGoods(ResourceInventory seller, ResourceInventory consumer, ResourceType[] types, Dictionary<ResourceType, float> prices)

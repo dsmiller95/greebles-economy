@@ -10,7 +10,6 @@ public class ResourceDisplay : MonoBehaviour
     {
         public ResourceType type;
         public Sprite icon;
-        public Color fillColor;
     }
 
     public GameObject ResourceBarPrefab;
@@ -31,7 +30,7 @@ public class ResourceDisplay : MonoBehaviour
             var config = resourceConfiguration[i];
             var resourceBar = newBar.GetComponent<ResourceBar>();
 
-            resourceBar.setResourceType(config.type, config.icon, config.fillColor);
+            resourceBar.setResourceType(config.type, config.icon, ResourceConfiguration.resourceColoring[config.type]);
 
             resourceBars[config.type] = resourceBar;
         }

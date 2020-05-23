@@ -24,7 +24,7 @@ public class ResourceInventory : MonoBehaviour
         get => _inventoryCapacity;
         set {
             _inventoryCapacity = value;
-            foreach (var resourceType in spaceFillingItems)
+            foreach (var resourceType in ResourceConfiguration.spaceFillingItems)
             {
                 resourceCapacityChanges?.Invoke(this, new ResourceChanged(resourceType, inventoryCapacity));
             }
@@ -35,8 +35,6 @@ public class ResourceInventory : MonoBehaviour
     public event EventHandler<ResourceChanged> resourceCapacityChanges;
 
     private Dictionary<ResourceType, float> inventory;
-
-    public static readonly ResourceType[] spaceFillingItems = new ResourceType[] { ResourceType.Food, ResourceType.Wood };
 
     void Awake()
     {
@@ -57,7 +55,7 @@ public class ResourceInventory : MonoBehaviour
         {
             this.setInventoryValue(resource, 0);
         }
-        foreach (var resourceType in spaceFillingItems)
+        foreach (var resourceType in ResourceConfiguration.spaceFillingItems)
         {
             resourceCapacityChanges?.Invoke(this, new ResourceChanged(resourceType, inventoryCapacity));
         }
@@ -136,7 +134,7 @@ public class ResourceInventory : MonoBehaviour
     /// <returns>the amount of the resource that was actuall added</returns>
     public float addResource(ResourceType type, float amount)
     {
-        if (spaceFillingItems.Contains(type))
+        if (ResourceConfiguration.spaceFillingItems.Contains(type))
         {
             if (getFullRatio() >= 1)
             {
@@ -151,7 +149,7 @@ public class ResourceInventory : MonoBehaviour
 
     public void emptySpaceFillingInventory()
     {
-        foreach (var item in spaceFillingItems)
+        foreach (var item in ResourceConfiguration.spaceFillingItems)
         {
             setInventoryValue(item, 0);
         }
@@ -166,7 +164,7 @@ public class ResourceInventory : MonoBehaviour
 
     public float totalFullSpace
     {
-        get => spaceFillingItems.Select(x => inventory[x]).Sum();
+        get => ResourceConfiguration.spaceFillingItems.Select(x => inventory[x]).Sum();
     }
 
     public float getFullRatio()

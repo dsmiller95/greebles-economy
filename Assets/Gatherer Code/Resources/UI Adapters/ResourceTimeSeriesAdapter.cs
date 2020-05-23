@@ -9,7 +9,7 @@ public class ResourceTimeSeriesAdapter : MonoBehaviour, IMultiPlottableSeries
     public struct ResourceGraphConfiguration
     {
         public ResourceType type;
-        public PlottableConfig plotConfig;
+        public float yScale;
     }
 
     public ResourceInventory inventory;
@@ -26,7 +26,14 @@ public class ResourceTimeSeriesAdapter : MonoBehaviour, IMultiPlottableSeries
     {
         foreach (var configuration in resourcePlotConfig)
         {
-            var newTimeSeries = new PlottableTimeSeries(Time.time, configuration.plotConfig, timeRange);
+            var coloring = ResourceConfiguration.resourceColoring[configuration.type];
+            var plotConfig = new PlottableConfig
+            {
+                dotColor = new Color(0, 0, 0, 0),
+                lineColor = coloring,
+                yScale = configuration.yScale
+            };
+            var newTimeSeries = new PlottableTimeSeries(Time.time, plotConfig, timeRange);
             newTimeSeries.AddPoint(this.inventory.getResource(configuration.type));
             inventoryTimeSeries.Add(configuration.type, newTimeSeries);
         }
