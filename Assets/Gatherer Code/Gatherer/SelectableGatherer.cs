@@ -5,6 +5,10 @@ using UnityEngine;
 public class SelectableGatherer : MonoBehaviour, ISelectable
 {
     public ResourceTimeSeriesAdapter ResourcePlotter;
+    public MeshRenderer meshRenderer;
+
+    public Material baseMaterial;
+    public Material selectedMaterial;
 
     // Start is called before the first frame update
     void Start()
@@ -28,11 +32,13 @@ public class SelectableGatherer : MonoBehaviour, ISelectable
 
     public void OnMeDeselected()
     {
+        this.meshRenderer.material = this.baseMaterial;
         Debug.Log($"{gameObject.name} deselected");
     }
 
     public void OnMeSelected()
     {
+        this.meshRenderer.material = this.selectedMaterial;
         Debug.Log($"{gameObject.name} selected");
     }
 }

@@ -232,6 +232,7 @@ MeshRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -308,6 +309,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ResourcePlotter: {fileID: 8001072084476251534}
+  meshRenderer: {fileID: 8082357802481383813}
+  baseMaterial: {fileID: 2100000, guid: e4472ff92035cb64abf974fe1e57824c, type: 2}
+  selectedMaterial: {fileID: 2100000, guid: f648d734d5f0e45458cea5b7c1465f8b, type: 2}
 --- !u!114 &8001072084476251534
 MonoBehaviour:
   m_ObjectHideFlags: 0
