@@ -807,9 +807,9 @@ MonoBehaviour:
     start: 1
     end: 10
     steps: 25
-    updateFrequency: 1
+    updateFrequency: 2
   plotConfig:
-    yScale: 1
+    yScale: 2
     lineColor: {r: 0, g: 0, b: 0.5647059, a: 0.59607846}
     dotColor: {r: 0.343533, g: 0.7735849, b: 0.15690638, a: 1}
 --- !u!1 &1606732905

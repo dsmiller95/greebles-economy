@@ -25,19 +25,17 @@ class PlotContainer
     }
 
 
-    public void InitGraphObjects()
+    public void Init()
     {
-        //var positions = GetPositionsInGraph().ToList();
-        //this.connections = positions
-        //    .RollingWindow(2)
-        //    .Select(pair => CreateDotConnection(pair[0], pair[1]))
-        //    .ToList();
-        //this.dots = positions
-        //    .Select(pos => CreateDot(pos))
-        //    .ToList();
+        this.plottable.SeriesUpdated += Plottable_SeriesUpdated;
     }
 
-    public void Update()
+    private void Plottable_SeriesUpdated(object sender)
+    {
+        this.UpdateGraph();
+    }
+
+    private void UpdateGraph()
     {
         var positions = GetPositionsInGraph().ToList();
 

@@ -33,19 +33,7 @@ public class Plotter : MonoBehaviour
     {
         foreach (var container in plotContainers)
         {
-            //container.InitGraphObjects();
-        }
-    }
-
-    private float lastUpdate = 0;
-    private void Update()
-    {
-        if(lastUpdate + updateTimeDelay < Time.time)
-        {
-            foreach (var container in plotContainers)
-            {
-                container.Update();
-            }
+            container.Init();
         }
     }
 }
