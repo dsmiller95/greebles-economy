@@ -159,8 +159,9 @@ public class ResourceInventory : MonoBehaviour
 
     private float setInventoryValue(ResourceType type, float newValue)
     {
+        inventory[type] = newValue;
         this.resourceAmountChanges?.Invoke(this, new ResourceChanged(type, newValue));
-        return inventory[type] = newValue;
+        return newValue;
     }
 
     public float totalFullSpace

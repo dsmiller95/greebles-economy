@@ -14,6 +14,7 @@ public class ResourceTimeSeriesAdapter : MonoBehaviour, IMultiPlottableSeries
 
     public ResourceInventory inventory;
     public float timeRange = 20;
+    public float timeStep = 0.2f;
     public ResourceGraphConfiguration[] resourcePlotConfig;
     private Dictionary<ResourceType, PlottableTimeSeries> inventoryTimeSeries = new Dictionary<ResourceType, PlottableTimeSeries>();
     // Start is called before the first frame update
@@ -25,13 +26,25 @@ public class ResourceTimeSeriesAdapter : MonoBehaviour, IMultiPlottableSeries
             newTimeSeries.AddPoint(this.inventory.getResource(configuration.type));
             inventoryTimeSeries.Add(configuration.type, newTimeSeries);
         }
-
-        inventory.resourceAmountChanges += Inventory_resourceAmountChanges;
     }
 
-    private void Inventory_resourceAmountChanges(object sender, ResourceChanged e)
+    private float lastPlot = 0;
+    private void Update()
     {
-        this.inventoryTimeSeries[e.type]?.AddPoint(e.newValue);
+
+        if (Time.time - lastPlot > timeStep)
+        {
+            lastPlot = Time.time;
+            this.LogCurrentResources();
+        }
+    }
+
+    private void LogCurrentResources()
+    {
+        foreach (var timeSeries in inventoryTimeSeries)
+        {
+            timeSeries.Value.AddPoint(this.inventory.getResource(timeSeries.Key));
+        }
     }
 
     public IEnumerable<IPlottableSeries> GetPlottableSeries()

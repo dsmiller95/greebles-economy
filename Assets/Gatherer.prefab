@@ -185,23 +185,24 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   inventory: {fileID: 7894513326273371995}
-  timeRange: 20
+  timeRange: 360
+  timeStep: 1
   resourcePlotConfig:
   - type: 4
     plotConfig:
       yScale: 200
-      lineColor: {r: 1, g: 0.99231744, b: 0.042452812, a: 0.57254905}
-      dotColor: {r: 1, g: 0.99607843, b: 0.043137256, a: 1}
+      lineColor: {r: 1, g: 0.99231744, b: 0.042452812, a: 0.5882353}
+      dotColor: {r: 1, g: 0.99607843, b: 0.043137256, a: 0}
   - type: 2
     plotConfig:
-      yScale: 2
-      lineColor: {r: 0, g: 0.4745098, b: 0, a: 0.37254903}
-      dotColor: {r: 0, g: 1, b: 0, a: 0.9019608}
+      yScale: 12
+      lineColor: {r: 0, g: 0.4745098, b: 0, a: 0.5882353}
+      dotColor: {r: 0, g: 1, b: 0, a: 0}
   - type: 1
     plotConfig:
-      yScale: 2
-      lineColor: {r: 0.7075472, g: 0.5537606, b: 0.23696157, a: 0.42745098}
-      dotColor: {r: 0.70980394, g: 0.5568628, b: 0.23921569, a: 1}
+      yScale: 12
+      lineColor: {r: 0.7075472, g: 0.5537606, b: 0.23696157, a: 0.5882353}
+      dotColor: {r: 0.70980394, g: 0.5568628, b: 0.23921569, a: 0}
 --- !u!1 &3538974859372260091
 GameObject:
   m_ObjectHideFlags: 0

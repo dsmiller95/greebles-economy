@@ -31,19 +31,17 @@ class PlottableTimeSeries : IPlottableSeries
     {
         var newPoint = new Vector2(Time.time, value);
         this.currentTimeSeries.Add(newPoint);
+
+        var timeShift = newPoint.x - (this.startTime + this.timeRange);
+        if (timeShift > 0)
+        {
+            //the new point is past the end of the graph; shift the rolling window
+            this.startTime += timeShift;
+            this.currentTimeSeries = this.currentTimeSeries
+                .Where(point => point.x > startTime)
+                .ToList();
+        }
         this.SeriesUpdated?.Invoke(this);
-
-        // TODO: implement rolling window
-        //var timeShift = newPoint.x - (this.startTime + this.timeRange);
-        //if(timeShift > 0)
-        //{
-        //    //the new point is past the end of the graph; shift the rolling window
-        //    this.startTime += timeShift;
-        //    this.currentTimeSeries = this.currentTimeSeries
-        //        .Where(point => point.x )
-        //}
-        //this.currentTimeSeries = this.currentTimeSeries.Where(point => point.x )
-
     }
 
     public IEnumerable<Vector2> GetSeries()
