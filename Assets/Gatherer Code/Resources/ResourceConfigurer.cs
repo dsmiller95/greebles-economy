@@ -6,7 +6,6 @@ using UnityEngine;
 
 public class ResourceConfigurer : MonoBehaviour
 {
-
     public ResourceType[] SpaceFillingItems;
 
     [Serializable]

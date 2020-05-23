@@ -29,7 +29,7 @@ public class ResourceTimeSeriesAdapter : MonoBehaviour, IMultiPlottableSeries
             var coloring = ResourceConfiguration.resourceColoring[configuration.type];
             var plotConfig = new PlottableConfig
             {
-                dotColor = new Color(0, 0, 0, 0),
+                dotColor = default,
                 lineColor = coloring,
                 yScale = configuration.yScale
             };

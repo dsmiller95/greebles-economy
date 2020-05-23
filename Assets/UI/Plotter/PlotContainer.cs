@@ -13,15 +13,25 @@ class PlotContainer
     private Plotter parent;
 
     private IList<GameObject> dots;
+    private bool hasDots;
     private IList<GameObject> connections;
+    private bool hasConnectors;
 
     public PlotContainer(IPlottableSeries plottable, Plotter parent)
     {
         this.parent = parent;
         this.config = plottable.GetPlottableConfig();
         this.plottable = plottable;
-        this.dots = new List<GameObject>();
-        this.connections = new List<GameObject>();
+        this.hasDots = config.dotColor != default;
+        this.hasConnectors = config.lineColor != default;
+        if (hasDots)
+        {
+            this.dots = new List<GameObject>();
+        }
+        if (hasConnectors)
+        {
+            this.connections = new List<GameObject>();
+        }
     }
 
 
@@ -44,24 +54,30 @@ class PlotContainer
     {
         var positions = GetPositionsInGraph().ToList();
 
-        this.connections = Utilities.EnsureAllObjectsCreated(
-            positions.Count - 1,
-            this.connections,
-            () => CreateUnpositionedDotConnection(),
-            connection => GameObject.Destroy(connection));
-        this.dots = Utilities.EnsureAllObjectsCreated(
-            positions.Count,
-            this.dots,
-            () => CreateUnpositionedDot(),
-            dot => GameObject.Destroy(dot));
-
-        foreach (var connection in positions.RollingWindow(2).Zip(connections, (pair, line) => new { pair, line }))
+        if (hasConnectors)
         {
-            UpdateDotConnection(connection.pair[0], connection.pair[1], connection.line);
+            this.connections = Utilities.EnsureAllObjectsCreated(
+                positions.Count - 1,
+                this.connections,
+                () => CreateUnpositionedDotConnection(),
+                connection => GameObject.Destroy(connection));
+            foreach (var connection in positions.RollingWindow(2).Zip(connections, (pair, line) => new { pair, line }))
+            {
+                UpdateDotConnection(connection.pair[0], connection.pair[1], connection.line);
+            }
         }
-        foreach (var dot in positions.Zip(dots, (pos, dot) => new { pos, dot }))
+
+        if (hasDots)
         {
-            UpdateDot(dot.pos, dot.dot);
+            this.dots = Utilities.EnsureAllObjectsCreated(
+                positions.Count,
+                this.dots,
+                () => CreateUnpositionedDot(),
+                dot => GameObject.Destroy(dot));
+            foreach (var dot in positions.Zip(dots, (pos, dot) => new { pos, dot }))
+            {
+                UpdateDot(dot.pos, dot.dot);
+            }
         }
     }
 
