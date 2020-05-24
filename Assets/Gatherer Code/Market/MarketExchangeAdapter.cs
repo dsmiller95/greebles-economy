@@ -20,13 +20,31 @@ class MarketExchangeAdapter : ISeller, IPurchaser
         this.sourceInventory = sourceInventory;
     }
 
-    public float Purchase(float amount, bool execute)
+    public PurchaseResult Purchase(float amount, bool execute)
     {
-        return this.market.PurchaseItemInto(this.sourceInventory, this.type, amount, execute).totalRevenue;
+        var purchaseResult = this.market.PurchaseItemInto(this.sourceInventory, this.type, amount, execute);
+
+        return new PurchaseResult
+        {
+            amount = purchaseResult.soldItems,
+            cost = purchaseResult.totalRevenue
+        };
+    }
+
+    public bool CanPurchase()
+    {
+        var currentAmount = this.market.inventory.getResource(this.type);
+        return currentAmount > 0;
     }
 
     public float Sell(float amount, bool execute)
     {
         return this.market.SellItemFrom(this.sourceInventory, this.type, amount, execute).totalRevenue;
+    }
+
+    public bool CanSell()
+    {
+        var currentAmount = this.sourceInventory.getResource(this.type);
+        return currentAmount > 0;
     }
 }

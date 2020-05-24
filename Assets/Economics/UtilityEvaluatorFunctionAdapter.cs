@@ -8,17 +8,22 @@ namespace Assets.Economics
 {
     class UtilityEvaluatorFunctionAdapter : IUtilityEvaluator
     {
-        private IUtilityFunction utilityFunction;
+        private IIncrementalFunction utilityFunction;
         private Func<float> getAmount;
-        public UtilityEvaluatorFunctionAdapter(IUtilityFunction utilityFunction, Func<float> getAmount)
+        public UtilityEvaluatorFunctionAdapter(IIncrementalFunction utilityFunction, Func<float> getAmount)
         {
             this.utilityFunction = utilityFunction;
             this.getAmount = getAmount;
         }
 
-        public float GetIncrementalUtility(float increment)
+        public float GetCurrentAmount()
         {
-            return this.utilityFunction.GetIncrementalUtility(this.getAmount(), increment);
+            return this.getAmount();
+        }
+
+        public float GetIncrementalUtility(float increment, float amount)
+        {
+            return this.utilityFunction.GetIncrementalValue(amount, increment);
         }
     }
 }

@@ -16,7 +16,14 @@ namespace Assets.Economics
         ///     Acts like an integral; if increment is negative utility will be inverted
         /// </summary>
         /// <param name="increment">the additional amount of the item</param>
+        /// <param name="amount">The point at which to evaluate the differential utility</param>
         /// <returns>The additional utility from gaining more item</returns>
-        float GetIncrementalUtility(float increment);
+        float GetIncrementalUtility(float increment, float amount);
+
+        /// <summary>
+        /// Returns the current amount in the inventory associated with this evaluator
+        /// </summary>
+        /// <returns>the amount in the inventory</returns>
+        float GetCurrentAmount();
     }
 }

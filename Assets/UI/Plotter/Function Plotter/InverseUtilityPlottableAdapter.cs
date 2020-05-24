@@ -8,7 +8,7 @@ public class InverseUtilityPlottableAdapter : MonoBehaviour, IPlottableFunction
     public float increment = 1f;
     public WeightedRegion[] weightedRegions;
     public float offset = 1;
-    private IUtilityFunction utilityFunction;
+    private IIncrementalFunction utilityFunction;
 
     void Awake()
     {
@@ -16,6 +16,6 @@ public class InverseUtilityPlottableAdapter : MonoBehaviour, IPlottableFunction
     }
     public float PlotAt(float x)
     {
-        return this.utilityFunction.GetIncrementalUtility(x, this.increment);
+        return this.utilityFunction.GetIncrementalValue(x, this.increment);
     }
 }

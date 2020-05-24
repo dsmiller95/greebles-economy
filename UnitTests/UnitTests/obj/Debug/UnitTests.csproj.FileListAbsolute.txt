@@ -128,3 +128,7 @@ C:\source\GreeblesEconomy\UnitTests\UnitTests\obj\Debug\UnitTests.csproj.CoreCom
 C:\source\GreeblesEconomy\UnitTests\UnitTests\obj\Debug\UnitTests.csproj.CopyComplete
 C:\source\GreeblesEconomy\UnitTests\UnitTests\obj\Debug\UnitTests.dll
 C:\source\GreeblesEconomy\UnitTests\UnitTests\obj\Debug\UnitTests.pdb
+C:\source\GreeblesEconomy\UnitTests\UnitTests\bin\Debug\Unity.CompilationPipeline.Common.dll
+C:\source\GreeblesEconomy\UnitTests\UnitTests\bin\Debug\UnityEngine.SubsystemsModule.dll
+C:\source\GreeblesEconomy\UnitTests\UnitTests\bin\Debug\UnityEngine.UI.pdb
+C:\source\GreeblesEconomy\UnitTests\UnitTests\bin\Debug\UnityEngine.SubsystemsModule.xml

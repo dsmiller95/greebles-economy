@@ -193,7 +193,12 @@ public class Gatherer : MonoBehaviour, IUtilityEvaluator
         return highestWeightCollider?.gameObject;
     }
 
-    public float GetIncrementalUtility(float increment)
+    public float GetIncrementalUtility(float increment, float amount)
+    {
+        throw new NotImplementedException();
+    }
+
+    public float GetCurrentAmount()
     {
         throw new NotImplementedException();
     }

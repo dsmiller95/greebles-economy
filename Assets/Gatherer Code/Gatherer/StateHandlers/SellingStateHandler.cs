@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
+using static Assets.Economics.PurchaseOptimizer;
 
 /// <summary>
 /// Will find the nearest market and sell all goods in the inventory when it reaches the market

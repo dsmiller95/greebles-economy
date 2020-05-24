@@ -19,7 +19,7 @@ namespace Assets.Economics
         public float RegionWeight;
     }
 
-    public class InverseWeightedUtility : IUtilityFunction
+    public class InverseWeightedUtility : IIncrementalFunction
     {
         private WeightedRegion[] regions;
         private float offset;
@@ -35,11 +35,15 @@ namespace Assets.Economics
         /// </summary>
         /// <param name="currentInventory">the current amount of the Item</param>
         /// <returns>The additional utility from gaining one more item</returns>
-        public float GetIncrementalUtility(float currentInventory, float increment)
+        public float GetIncrementalValue(float currentInventory, float increment)
         {
+            if(increment < 0)
+            {
+                return -GetIncrementalValue(currentInventory + increment, -increment);
+            }
             if(Math.Abs(increment - 1) > 0.0001)
             {
-                throw new NotImplementedException("Cannot calculate incremental utility in increments other than 1");
+                throw new NotImplementedException($"Cannot calculate incremental utility in increments other than 1. attempted {increment}");
             }
             var currentRegion = RegionAt(currentInventory);
             return currentRegion.RegionWeight * BaseUtility(currentInventory);
@@ -59,7 +63,6 @@ namespace Assets.Economics
                     .Last();
             } catch
             {
-                Debug.Log(regions);
                 throw new Exception($"no defined region at {inventory}");
             }
         }

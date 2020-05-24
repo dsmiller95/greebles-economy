@@ -14,8 +14,17 @@ namespace Assets.Gatherer_Code.Market
             this.sellPrice = price;
         }
 
+        /// <summary>
+        /// How many items were sold
+        /// </summary>
         public float soldItems;
+        /// <summary>
+        /// The price at which each item was sold
+        /// </summary>
         public float sellPrice;
+        /// <summary>
+        /// The total amount of money exchanged
+        /// </summary>
         public float totalRevenue { get => soldItems * sellPrice; }
     }
 }
