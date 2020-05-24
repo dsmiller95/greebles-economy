@@ -16,8 +16,10 @@ namespace UnitTests.Economics
     {
 
         public float selfInventory;
+        public float selfInventoryCapacity = 100;
         public TestBank selfBank;
         public float marketInventory;
+        public float marketInventoryCapacity = 100;
         public IIncrementalFunction utilityFunction;
         public float purchasePrice;
         public float sellPrice;
@@ -34,19 +36,24 @@ namespace UnitTests.Economics
             return this.selfInventory;
         }
 
-        public PurchaseResult Purchase(float amount, bool execute)
+        public PurchaseResult Purchase(float amount, bool execute, float simulatedMarketInventory = 0)
         {
-            var actualPurchase = Math.Min(amount, marketInventory);
+            simulatedMarketInventory = execute ? marketInventory : simulatedMarketInventory;
+            var actualPurchase = Math.Min(amount, simulatedMarketInventory);
             var price = actualPurchase * purchasePrice;
             if (execute)
             {
-                if(price > selfBank.money)
+                this.selfInventory += actualPurchase;
+                if (price > selfBank.money)
                 {
                     throw new Exception("Attempted to purchase more than current funds allow");
                 }
-                this.selfInventory += actualPurchase;
                 this.selfBank.money -= price;
 
+                if (actualPurchase > this.marketInventory)
+                {
+                    throw new Exception("Attempted to purchase more than is in the market");
+                }
                 this.marketInventory -= actualPurchase;
                 // TODO: give the market a bank as well
             }
@@ -58,9 +65,15 @@ namespace UnitTests.Economics
             };
         }
 
-        public bool CanPurchase()
+        public bool CanPurchase(float simulatedMarketInventory = -1)
         {
-            return this.marketInventory > 0;
+            simulatedMarketInventory = simulatedMarketInventory == -1 ? this.marketInventory : simulatedMarketInventory;
+            return simulatedMarketInventory > 0;
+        }
+
+        public float GetCurrentMarketInventory()
+        {
+            return this.marketInventory;
         }
 
         public float Sell(float amount, bool execute)
@@ -69,6 +82,10 @@ namespace UnitTests.Economics
             var price = actualSell * sellPrice;
             if (execute)
             {
+                if (actualSell > this.selfInventory)
+                {
+                    throw new Exception("Attempted to sell more than is in inventory");
+                }
                 this.selfInventory -= actualSell;
                 this.selfBank.money += price;
 

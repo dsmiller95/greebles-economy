@@ -14,7 +14,8 @@ namespace Assets.Economics
             public IPurchaser purchaser;
             public ISeller seller;
             public IUtilityEvaluator utilityFunction;
-            public float simulatedTransactionInventory;
+            public float simulatedSelfInventory;
+            public float simulatedMarketInventory;
         }
 
         private IList<CostUtilityAdapter> resources;
@@ -32,21 +33,21 @@ namespace Assets.Economics
             bank -= initialPurchase.totalCost;
 
             var executesPurchase = true;
-            for (var minUtility = GetHighestSellableValuePerUtility(increment); minUtility.HasValue && executesPurchase; minUtility = GetHighestSellableValuePerUtility(increment))
+            for (var minUtility = GetHighestSellableValuePerUtility(increment); minUtility != default && executesPurchase; minUtility = GetHighestSellableValuePerUtility(increment))
             {
-                var sellPrice = minUtility.Value.seller.Sell(increment, false);
+                var sellPrice = minUtility.seller.Sell(increment, false);
                 var purchaseOption = PurchaseResult.Purchase(this, sellPrice + bank);
                 executesPurchase = (purchaseOption.utilityGained
-                    + minUtility.Value.utilityFunction.GetIncrementalUtility(
+                    + minUtility.utilityFunction.GetIncrementalUtility(
                         -increment,
-                        minUtility.Value.utilityFunction.GetCurrentAmount()
+                        minUtility.utilityFunction.GetCurrentAmount()
                       ))
                       > 0;
                 if (executesPurchase)
                 {
                     bank += sellPrice - purchaseOption.totalCost;
                     // Must sell first to get the money; then purchase
-                    minUtility.Value.seller.Sell(increment, true);
+                    minUtility.seller.Sell(increment, true);
                     purchaseOption.ExecutePurchases();
                 }
             }
@@ -71,20 +72,22 @@ namespace Assets.Economics
                 purchases = new List<IPurchaser>();
                 utilityGained = 0f;
                 totalCost = 0f;
-                for (int i = 0; i < optimizer.resources.Count; i++)
+                foreach (var resource in optimizer.resources)
                 {
-                    var resource = optimizer.resources[i];
-                    resource.simulatedTransactionInventory = resource.utilityFunction.GetCurrentAmount();
+                    resource.simulatedSelfInventory = resource.utilityFunction.GetCurrentAmount();
+                    resource.simulatedMarketInventory = resource.purchaser.GetCurrentMarketInventory();
                 }
                 //drain the bank
-                for (var resource = optimizer.GetHighestPurchaseableUtility(bank - totalCost); resource.HasValue; resource = optimizer.GetHighestPurchaseableUtility(bank - totalCost))
+                for (var resource = optimizer.GetHighestPurchaseableUtility(bank - totalCost); resource != default; resource = optimizer.GetHighestPurchaseableUtility(bank - totalCost))
                 {
-                    var purchaseResult = resource.Value.purchaser.Purchase(optimizer.increment, false);
+                    var purchaseResult = resource.purchaser.Purchase(optimizer.increment, false, resource.simulatedMarketInventory);
                     totalCost += purchaseResult.cost;
-                    utilityGained += resource.Value.utilityFunction.GetIncrementalUtility(
+                    utilityGained += resource.utilityFunction.GetIncrementalUtility(
                         purchaseResult.amount,
-                        resource.Value.simulatedTransactionInventory);
-                    purchases.Add(resource.Value.purchaser);
+                        resource.simulatedSelfInventory);
+                    resource.simulatedSelfInventory += purchaseResult.amount;
+                    resource.simulatedMarketInventory -= purchaseResult.amount;
+                    purchases.Add(resource.purchaser);
                 }
             }
 
@@ -113,29 +116,29 @@ namespace Assets.Economics
         /// </summary>
         /// <param name="increment">The increment to which the value functions are evaluated</param>
         /// <returns></returns>
-        private CostUtilityAdapter? GetHighestSellableValuePerUtility(float increment)
+        private CostUtilityAdapter GetHighestSellableValuePerUtility(float increment)
         {
             return this.resources
                 .Where(resource => resource.seller.CanSell())
                 .Select(resource => new {
                     resource,
                     valuePerUtility = 
-                        resource.utilityFunction.GetIncrementalUtility(-increment, resource.utilityFunction.GetCurrentAmount())
-                        * resource.seller.Sell(increment, false)
+                        resource.seller.Sell(increment, false)
+                        / -resource.utilityFunction.GetIncrementalUtility(-increment, resource.utilityFunction.GetCurrentAmount())
                 })
                 .OrderBy(resource => resource.valuePerUtility)
                 .LastOrDefault()
                 ?.resource;
         }
 
-        private CostUtilityAdapter? GetHighestPurchaseableUtility(float maxPurchase)
+        private CostUtilityAdapter GetHighestPurchaseableUtility(float maxPurchase)
         {
             return this.resources
-                .Where(resource => resource.purchaser.CanPurchase())
-                .Where(resource => resource.purchaser.Purchase(increment, false).cost <= maxPurchase)
+                .Where(resource => resource.purchaser.CanPurchase(resource.simulatedMarketInventory))
+                .Where(resource => resource.purchaser.Purchase(increment, false, resource.simulatedMarketInventory).cost <= maxPurchase)
                 .Select(resource => new {
                     resource,
-                    utility = resource.utilityFunction.GetIncrementalUtility(increment, resource.utilityFunction.GetCurrentAmount()) })
+                    utility = resource.utilityFunction.GetIncrementalUtility(increment, resource.simulatedSelfInventory) })
                 .OrderBy(resource => resource.utility)
                 .LastOrDefault()
                 ?.resource;

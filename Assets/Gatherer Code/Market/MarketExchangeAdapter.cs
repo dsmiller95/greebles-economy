@@ -20,8 +20,9 @@ class MarketExchangeAdapter : ISeller, IPurchaser
         this.sourceInventory = sourceInventory;
     }
 
-    public PurchaseResult Purchase(float amount, bool execute)
+    public PurchaseResult Purchase(float amount, bool execute, float simulatedMarketInventory)
     {
+        //TODO: add support for simulated market inventory. The PurchaseItemInto method should accept a new parameter to allow for this
         var purchaseResult = this.market.PurchaseItemInto(this.sourceInventory, this.type, amount, execute);
 
         return new PurchaseResult
@@ -31,10 +32,15 @@ class MarketExchangeAdapter : ISeller, IPurchaser
         };
     }
 
-    public bool CanPurchase()
+    public bool CanPurchase(float simulatedPurchase)
     {
-        var currentAmount = this.market.inventory.getResource(this.type);
-        return currentAmount > 0;
+        var currentAmount = this.GetCurrentMarketInventory();
+        return currentAmount - simulatedPurchase > 0;
+    }
+
+    public float GetCurrentMarketInventory()
+    {
+        return this.market.inventory.getResource(this.type);
     }
 
     public float Sell(float amount, bool execute)

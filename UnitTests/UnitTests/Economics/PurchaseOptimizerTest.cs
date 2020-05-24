@@ -127,7 +127,7 @@ namespace UnitTests.Economics
         }
 
         [TestMethod]
-        // [Timeout(5000)]  // Milliseconds
+        [Timeout(5000)]  // Milliseconds
         public void ShouldExchangeExpensiveForCheapWhenEqualUtility()
         {
             selfBank = new TestBank { money = 0 };
@@ -181,6 +181,125 @@ namespace UnitTests.Economics
             Assert.AreEqual(0, selfBank.money);
             Assert.AreEqual(10, inventoryModel[1].selfInventory);
             Assert.AreEqual(0, inventoryModel[1].marketInventory);
+        }
+
+        [TestMethod]
+        [Timeout(5000)]  // Milliseconds
+        public void ShouldExchangeExpensiveForCheapWhenEqualUtilityLimitedByMarketInventory()
+        {
+            selfBank = new TestBank { money = 0 };
+            // Wood is expensive and plentiful
+            // Food is cheap and rare
+            // Selling one wood will net two food purchased
+            // but the market only has 7 food
+            inventoryModel = new List<TestExchangeModel>
+            {
+                new TestExchangeModel
+                {
+                    selfInventory = 10,
+                    selfBank = selfBank,
+                    marketInventory = 10,
+                    utilityFunction = new InverseWeightedUtility(new WeightedRegion[] {
+                            new WeightedRegion(0, 5),
+                            new WeightedRegion(2, 1)
+                        }),
+                    purchasePrice = 5,
+                    sellPrice = 4,
+                    name = "wood"
+                },
+                new TestExchangeModel
+                {
+                    selfInventory = 0,
+                    selfBank = selfBank,
+                    marketInventory = 7,
+                    utilityFunction = new InverseWeightedUtility(new WeightedRegion[] {
+                            new WeightedRegion(0, 5),
+                            new WeightedRegion(2, 1)
+                        }),
+                    purchasePrice = 2,
+                    sellPrice = 1,
+                    name = "food"
+                },
+            };
+
+            var optimizer = new PurchaseOptimizer(inventoryModel.Select(x => new CostUtilityAdapter
+            {
+                purchaser = x,
+                seller = x,
+                utilityFunction = x
+            }));
+
+            optimizer.Optimize(selfBank.money);
+
+            // should exchange wood for food until maximum utility is reached
+            // at 6 food at 7 wood; selling one more wood will only net one food since that's all that is left in the market
+            //  the utility of 7 -> 6 wood is equal to the utility of 6 -> 7 food; so no exchange should be preferred
+            Assert.AreEqual(7, inventoryModel[0].selfInventory);
+            Assert.AreEqual(13, inventoryModel[0].marketInventory);
+            Assert.AreEqual(0, selfBank.money);
+            Assert.AreEqual(6, inventoryModel[1].selfInventory);
+            Assert.AreEqual(1, inventoryModel[1].marketInventory);
+        }
+        [TestMethod]
+        [Timeout(5000)]  // Milliseconds
+        public void ShouldExchangeExpensiveForCheapWhenEqualUtilityLimitedBySelfInventoryCapacity()
+        {
+            selfBank = new TestBank { money = 0 };
+            // Wood is expensive and plentiful
+            // Food is cheap and rare
+            // Selling one wood will net two food purchased
+            // but self only has room for 7 food
+            inventoryModel = new List<TestExchangeModel>
+            {
+                new TestExchangeModel
+                {
+                    selfInventory = 10,
+                    selfInventoryCapacity = 10,
+                    selfBank = selfBank,
+                    marketInventory = 10,
+                    marketInventoryCapacity = 20,
+                    utilityFunction = new InverseWeightedUtility(new WeightedRegion[] {
+                            new WeightedRegion(0, 5),
+                            new WeightedRegion(2, 1)
+                        }),
+                    purchasePrice = 5,
+                    sellPrice = 4,
+                    name = "wood"
+                },
+                new TestExchangeModel
+                {
+                    selfInventory = 0,
+                    selfInventoryCapacity = 7,
+                    selfBank = selfBank,
+                    marketInventory = 10,
+                    marketInventoryCapacity = 20,
+                    utilityFunction = new InverseWeightedUtility(new WeightedRegion[] {
+                            new WeightedRegion(0, 5),
+                            new WeightedRegion(2, 1)
+                        }),
+                    purchasePrice = 2,
+                    sellPrice = 1,
+                    name = "food"
+                },
+            };
+
+            var optimizer = new PurchaseOptimizer(inventoryModel.Select(x => new CostUtilityAdapter
+            {
+                purchaser = x,
+                seller = x,
+                utilityFunction = x
+            }));
+
+            optimizer.Optimize(selfBank.money);
+
+            // should exchange wood for food until maximum utility is reached
+            // at 6 food at 7 wood; selling one more wood will only net one food since that's all that is left in the market
+            //  the utility of 7 -> 6 wood is equal to the utility of 6 -> 7 food; so no exchange should be preferred
+            Assert.AreEqual(7, inventoryModel[0].selfInventory);
+            Assert.AreEqual(13, inventoryModel[0].marketInventory);
+            Assert.AreEqual(0, selfBank.money);
+            Assert.AreEqual(6, inventoryModel[1].selfInventory);
+            Assert.AreEqual(1, inventoryModel[1].marketInventory);
         }
     }
 }

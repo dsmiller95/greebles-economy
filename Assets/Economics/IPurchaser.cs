@@ -24,15 +24,25 @@ namespace Assets.Economics
         /// Purchase given amount
         /// </summary>
         /// <param name="amount">the amount to purchase</param>
+        /// <param name="simulatedMarketInventory">Will evaluate the purchase price as if the market inventory contained this value.
+        ///     only used when execute is false
+        /// </param>
         /// <param name="execute">Whether or not to execute the purchase</param>
         /// <returns>A summary of the transaction</returns>
-        PurchaseResult Purchase(float amount, bool execute);
+        PurchaseResult Purchase(float amount, bool execute, float simulatedMarketInventory = 0);
 
         /// <summary>
         /// Determines whether or not this purchaser is capable of executing a purchase at this time.
         ///     An example of when it cannot execute a purchase is when the selling inventory is empty
         /// </summary>
+        /// <param name="simulatedPrepurchaseAmount">A simulated market inventory which stands in for the actual inventory when set</param>
         /// <returns>whether or not a purchase of any amount can be executed</returns>
-        bool CanPurchase();
+        bool CanPurchase(float simulatedMarketInventory = -1);
+
+        /// <summary>
+        /// Returns the current inventory of the market which will be purchased from
+        /// </summary>
+        /// <returns></returns>
+        float GetCurrentMarketInventory();
     }
 }
