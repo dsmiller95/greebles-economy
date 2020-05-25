@@ -19,12 +19,5 @@ namespace Assets.Economics
         /// <param name="increment">the additional amount of the item</param>
         /// <returns>The additional utility from gaining more item</returns>
         float GetIncrementalUtility(T inventory, float increment);
-
-        /// <summary>
-        /// Returns the current amount in the inventory
-        /// </summary>
-        /// <param name="inventory">The inventory to operate on</param>
-        /// <returns>the amount in the inventory</returns>
-        float GetCurrentAmount(T inventory);
     }
 }

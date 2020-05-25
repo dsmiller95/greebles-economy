@@ -28,11 +28,6 @@ namespace UnitTests.Economics
             return this.utilityFunction.GetIncrementalValue(inventory.GetSelf(resourceType), increment);
         }
 
-        public float GetCurrentAmount(TestInventoryModel inventory)
-        {
-            return inventory.GetSelf(this.resourceType);
-        }
-
         public PurchaseResult Purchase(TestInventoryModel inventory, float amount, bool execute)
         {
             var marketInventory = inventory.GetMarket(resourceType);
@@ -61,11 +56,6 @@ namespace UnitTests.Economics
         public bool CanPurchase(TestInventoryModel inventory)
         {
             return inventory.GetMarket(resourceType) > 0;
-        }
-
-        public float GetCurrentMarketInventory(TestInventoryModel inventory)
-        {
-            return inventory.GetMarket(resourceType);
         }
 
         public float Sell(TestInventoryModel inventory, float amount, bool execute)

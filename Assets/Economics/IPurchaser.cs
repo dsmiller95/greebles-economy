@@ -38,12 +38,5 @@ namespace Assets.Economics
         /// <param name="inventory">The inventory to operate on</param>
         /// <returns>whether or not a purchase of any amount can be executed</returns>
         bool CanPurchase(T inventory);
-
-        /// <summary>
-        /// Returns the current inventory of the market which will be purchased from
-        /// </summary>
-        /// <param name="inventory">The inventory to operate on</param>
-        /// <returns></returns>
-        float GetCurrentMarketInventory(T inventory);
     }
 }

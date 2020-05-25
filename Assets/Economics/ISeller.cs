@@ -8,7 +8,6 @@ namespace Assets.Economics
 {
     public interface ISeller<T> where T : IExchangeInventory
     {
-
         /// <summary>
         /// Sell of a certain amount of the resource. Should -only- change the state of <paramref name="inventory"/>
         /// </summary>
