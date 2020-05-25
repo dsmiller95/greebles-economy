@@ -25,13 +25,17 @@ namespace UnitTests.Economics
             return this.utilityFunction.GetIncrementalValue(self.Get(resourceType), increment);
         }
 
-        public ExchangeResult Purchase(float amount, bool execute, TestInventoryModel self, TestInventoryModel market)
+        public ActionOption<ExchangeResult> Purchase(float amount, TestInventoryModel self, TestInventoryModel market)
         {
             var marketInventory = market.Get(resourceType);
             var actualPurchase = Math.Min(amount, marketInventory);
             var price = actualPurchase * purchasePrice;
-            if (execute)
+
+            return new ActionOption<ExchangeResult>(new ExchangeResult
             {
+                cost = price,
+                amount = actualPurchase
+            }, () => {
                 self.Add(resourceType, actualPurchase);
                 if (price > self.bank)
                 {
@@ -40,14 +44,7 @@ namespace UnitTests.Economics
                 self.bank -= price;
 
                 market.Add(resourceType, -actualPurchase);
-                // TODO: give the market a bank as well
-            }
-
-            return new ExchangeResult
-            {
-                cost = price,
-                amount = actualPurchase
-            };
+            });
         }
 
         public bool CanPurchase(TestInventoryModel self, TestInventoryModel market)
@@ -55,24 +52,22 @@ namespace UnitTests.Economics
             return market.Get(resourceType) > 0;
         }
 
-        public ExchangeResult Sell(float amount, bool execute, TestInventoryModel self, TestInventoryModel market)
+        public ActionOption<ExchangeResult> Sell(float amount, TestInventoryModel self, TestInventoryModel market)
         {
             var actualSell = Math.Min(amount, self.Get(resourceType));
             var price = actualSell * sellPrice;
-            if (execute)
+
+            return new ActionOption<ExchangeResult>(new ExchangeResult
             {
+                cost = price,
+                amount = actualSell
+            }, () => {
                 self.Add(resourceType, -actualSell);
                 self.bank += price;
 
                 market.Add(resourceType, actualSell);
                 // TODO: give the market a bank as well
-            }
-
-            return new ExchangeResult
-            {
-                cost = price,
-                amount = actualSell
-            };
+            });
         }
         public bool CanSell(TestInventoryModel self, TestInventoryModel market)
         {

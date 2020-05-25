@@ -22,22 +22,18 @@ public class MarketExchangeAdapter<T>:
         this.moneyType = moneyType;
     }
 
-    public ExchangeResult Purchase(float amount, bool execute, SpaceFillingInventory<T> selfInventory, SpaceFillingInventory<T> marketInventory)
+    public ActionOption<ExchangeResult> Purchase(float amount, SpaceFillingInventory<T> selfInventory, SpaceFillingInventory<T> marketInventory)
     {
-        var withdrawn = marketInventory.transferResourceInto(type, selfInventory, amount, execute);
-        if (execute)
-        {
-            var value = this.exchangeRate * withdrawn;
-            selfInventory.Consume(moneyType, value);
-        }
-
-        var purchaseResult = new ResourceSellResult(withdrawn, exchangeRate);
-
-        return new ExchangeResult
-        {
-            amount = purchaseResult.soldItems,
-            cost = purchaseResult.totalRevenue
-        };
+        return marketInventory
+            .transferResourceInto(type, selfInventory, amount)
+            .Then(withdrawn => new ExchangeResult
+            {
+                amount = withdrawn,
+                cost = withdrawn * exchangeRate
+            }, exchangeResult =>
+            {
+                selfInventory.Consume(moneyType, exchangeResult.cost);
+            });
     }
 
     public bool CanPurchase(SpaceFillingInventory<T> selfInventory, SpaceFillingInventory<T> marketInventory)
@@ -47,22 +43,19 @@ public class MarketExchangeAdapter<T>:
             && selfInventory.CanFitMoreOf(type);
     }
 
-    public ExchangeResult Sell(float amount, bool execute, SpaceFillingInventory<T> selfInventory, SpaceFillingInventory<T> marketInventory)
+    public ActionOption<ExchangeResult> Sell(float amount, SpaceFillingInventory<T> selfInventory, SpaceFillingInventory<T> marketInventory)
     {
-        var deposited = selfInventory.transferResourceInto(type, marketInventory, amount, execute);
-        if (execute)
-        {
-            var value = this.exchangeRate * deposited;
-            selfInventory.Add(moneyType, value);
-        }
-
-        var sellResult = new ResourceSellResult(deposited, exchangeRate);
-
-        return new ExchangeResult
-        {
-            amount = sellResult.soldItems,
-            cost = sellResult.totalRevenue
-        };
+        return selfInventory
+            .transferResourceInto(type, marketInventory, amount)
+            .Then(totalDeposited => new ExchangeResult
+            {
+                amount = totalDeposited,
+                cost = totalDeposited * exchangeRate
+            }, exchangeResult =>
+            {
+                var value = exchangeResult.cost;
+                selfInventory.Add(moneyType, value).Execute();
+            });
     }
 
     public bool CanSell(SpaceFillingInventory<T> selfInventory, SpaceFillingInventory<T> marketInventory)

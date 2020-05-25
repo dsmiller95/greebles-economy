@@ -43,7 +43,8 @@ namespace Assets.Economics
                 var simOtherInventory = CloneOtherInventory();
                 // Execute all operations on a simulated inventory to make sure all prices, utilities, and any constraints on size are respected
 
-                minUtility.seller.Sell(increment, true, simSelfInventory, simOtherInventory);
+                minUtility.seller.Sell(increment, simSelfInventory, simOtherInventory).Execute();
+
                 var purchaseOption = PurchaseResult.Purchase(this, simSelfInventory, simOtherInventory);
                 executesPurchase = (purchaseOption.utilityGained
                     + minUtility.utilityFunction.GetIncrementalUtility(
@@ -54,7 +55,7 @@ namespace Assets.Economics
                 if (executesPurchase)
                 {
                     // Must sell first to get the money; then purchase
-                    minUtility.seller.Sell(increment, true, selfInventory, otherInventory);
+                    minUtility.seller.Sell(increment, selfInventory, otherInventory).Execute();
                     purchaseOption.ReExecutePurchases(selfInventory, otherInventory);
                 }
             }
@@ -99,12 +100,11 @@ namespace Assets.Economics
                     resource != default;
                     resource = optimizer.GetHighestPurchaseableUtility(simSelf, simOther))
                 {
-                    var purchaseResult = resource.purchaser.Purchase(optimizer.increment, false, simSelf, simOther);
+                    var purchaseResult = resource.purchaser.Purchase(optimizer.increment, simSelf, simOther);
                     utilityGained += resource.utilityFunction.GetIncrementalUtility(
                         simSelf,
-                        purchaseResult.amount);
-
-                    resource.purchaser.Purchase(optimizer.increment, true, simSelf, simOther);
+                        purchaseResult.info.amount);
+                    purchaseResult.Execute();
                     purchases.Add(resource.purchaser);
                 }
             }
@@ -123,7 +123,7 @@ namespace Assets.Economics
             {
                 foreach (var purchase in purchases)
                 {
-                    purchase.Purchase(optimizer.increment, true, simSelf, simOther);
+                    purchase.Purchase(optimizer.increment, simSelf, simOther).Execute();
                 }
             }
         }
@@ -141,7 +141,7 @@ namespace Assets.Economics
                 .Select(resource => new {
                     resource,
                     valuePerUtility = 
-                        resource.seller.Sell(increment, false, simSelf, simOther).cost
+                        resource.seller.Sell(increment, simSelf, simOther).info.cost
                         / -resource.utilityFunction.GetIncrementalUtility(simSelf, - increment)
                 })
                 .OrderBy(resource => resource.valuePerUtility)
@@ -153,7 +153,7 @@ namespace Assets.Economics
         {
             return this.resources
                 .Where(resource => resource.purchaser.CanPurchase(simSelf, simOther))
-                .Where(resource => resource.purchaser.Purchase(increment, false, simSelf, simOther).cost <= simSelf.GetCurrentFunds())
+                .Where(resource => resource.purchaser.Purchase(increment, simSelf, simOther).info.cost <= simSelf.GetCurrentFunds())
                 .Select(resource => new {
                     resource,
                     utility = resource.utilityFunction.GetIncrementalUtility(simSelf, increment) })

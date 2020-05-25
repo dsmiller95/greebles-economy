@@ -58,12 +58,22 @@ public class SpaceFillingInventory<T>: IExchangeInventory
         var result = new Dictionary<T, float>();
         foreach (var itemType in itemTypes)
         {
-            result[itemType] = this.transferResourceInto(itemType, target);
+            var transferOption = this.transferResourceInto(itemType, target);
+
+            result[itemType] = transferOption.info;
+            transferOption.Execute();
         }
         return result;
     }
 
-    public float transferResourceInto(T type, SpaceFillingInventory<T> target, float amount = -1, bool execute = true)
+    /// <summary>
+    /// Transfer <paramref name="amount"/> of <paramref name="type"/> into <paramref name="target"/>
+    /// </summary>
+    /// <param name="type">the type of resource to transfer</param>
+    /// <param name="target">the inventory to transfer into</param>
+    /// <param name="amount">the amount to transfer</param>
+    /// <returns>An option to execute the transfer, wrapping the amount which would be transferred</returns>
+    public ActionOption<float> transferResourceInto(T type, SpaceFillingInventory<T> target, float amount = -1)
     {
         if(amount == -1)
         {
@@ -75,12 +85,12 @@ public class SpaceFillingInventory<T>: IExchangeInventory
         }
         var toAdd = Mathf.Min(amount, Get(type));
 
-        var added = target.Add(type, toAdd, execute);
-        if (execute)
-        {
-            this.SetInventoryValue(type, Get(type) - added);
-        }
-        return added;
+        return target
+            .Add(type, toAdd)
+            .Then(added => added, totalAdded =>
+            {
+                this.SetInventoryValue(type, Get(type) - totalAdded);
+            });
     }
 
     public float Get(T type)
@@ -97,8 +107,8 @@ public class SpaceFillingInventory<T>: IExchangeInventory
     /// </summary>
     /// <param name="type">the type of resource to add</param>
     /// <param name="amount">the maximum amount of resource to add to the inventory</param>
-    /// <returns>the amount of the resource that was actually added</returns>
-    public float Add(T type, float amount, bool execute = true)
+    /// <returns>An option to execute the transfer, wrapping the amount of the resource that was actually added</returns>
+    public ActionOption<float> Add(T type, float amount)
     {
         if(amount < 0)
         {
@@ -108,16 +118,15 @@ public class SpaceFillingInventory<T>: IExchangeInventory
         {
             if (getFullRatio() >= 1)
             {
-                return 0;
+                return new ActionOption<float>(0, () => { });
             }
             var remainingSpace = Mathf.Max(0, this.inventoryCapacity - totalFullSpace);
             amount = Mathf.Min(remainingSpace, amount);
         }
-        if (execute)
+        return new ActionOption<float>(amount, () =>
         {
             SetInventoryValue(type, inventory[type] + amount);
-        }
-        return amount;
+        });
     }
 
     /// <summary>
