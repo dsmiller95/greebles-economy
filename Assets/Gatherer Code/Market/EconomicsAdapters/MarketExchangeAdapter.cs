@@ -24,8 +24,10 @@ public class MarketExchangeAdapter<T>:
 
     public ActionOption<ExchangeResult> Purchase(float amount, SpaceFillingInventory<T> selfInventory, SpaceFillingInventory<T> marketInventory)
     {
+        var maxPurchase = selfInventory.GetCurrentFunds() / exchangeRate;
+        var amountToPurchase = Math.Min(amount, maxPurchase);
         return marketInventory
-            .transferResourceInto(type, selfInventory, amount)
+            .transferResourceInto(type, selfInventory, amountToPurchase)
             .Then(withdrawn => new ExchangeResult
             {
                 amount = withdrawn,
