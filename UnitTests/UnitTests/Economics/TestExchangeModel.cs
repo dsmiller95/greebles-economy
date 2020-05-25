@@ -12,7 +12,7 @@ namespace UnitTests.Economics
         public float money;
     }
 
-    class TestExchangeModel : IPurchaser<TestInventoryModel>, ISeller<TestInventoryModel>, IUtilityEvaluator<TestInventoryModel>
+    class TestExchangeModel : IPurchaser<TestInventoryModel, TestInventoryModel>, ISeller<TestInventoryModel, TestInventoryModel>, IUtilityEvaluator<TestInventoryModel>
     {
         public float selfInventoryCapacity = 100;
         public float marketInventoryCapacity = 100;
@@ -23,26 +23,26 @@ namespace UnitTests.Economics
         public string resourceType;
 
 
-        public float GetIncrementalUtility(TestInventoryModel inventory, float increment)
+        public float GetIncrementalUtility(TestInventoryModel self, float increment)
         {
-            return this.utilityFunction.GetIncrementalValue(inventory.GetSelf(resourceType), increment);
+            return this.utilityFunction.GetIncrementalValue(self.Get(resourceType), increment);
         }
 
-        public PurchaseResult Purchase(TestInventoryModel inventory, float amount, bool execute)
+        public PurchaseResult Purchase(float amount, bool execute, TestInventoryModel self, TestInventoryModel market)
         {
-            var marketInventory = inventory.GetMarket(resourceType);
+            var marketInventory = market.Get(resourceType);
             var actualPurchase = Math.Min(amount, marketInventory);
             var price = actualPurchase * purchasePrice;
             if (execute)
             {
-                inventory.AddSelf(resourceType, actualPurchase);
-                if (price > inventory.selfBank)
+                self.Add(resourceType, actualPurchase);
+                if (price > self.bank)
                 {
                     throw new Exception($"Attempted to purchase more than current funds allow when purchasing {resourceType}");
                 }
-                inventory.selfBank -= price;
+                self.bank -= price;
 
-                inventory.AddMarket(resourceType, -actualPurchase);
+                market.Add(resourceType, -actualPurchase);
                 // TODO: give the market a bank as well
             }
 
@@ -53,29 +53,29 @@ namespace UnitTests.Economics
             };
         }
 
-        public bool CanPurchase(TestInventoryModel inventory)
+        public bool CanPurchase(TestInventoryModel self, TestInventoryModel market)
         {
-            return inventory.GetMarket(resourceType) > 0;
+            return market.Get(resourceType) > 0;
         }
 
-        public float Sell(TestInventoryModel inventory, float amount, bool execute)
+        public float Sell(float amount, bool execute, TestInventoryModel self, TestInventoryModel market)
         {
-            var actualSell = Math.Min(amount, inventory.GetSelf(resourceType));
+            var actualSell = Math.Min(amount, self.Get(resourceType));
             var price = actualSell * sellPrice;
             if (execute)
             {
-                inventory.AddSelf(resourceType, -actualSell);
-                inventory.selfBank += price;
+                self.Add(resourceType, -actualSell);
+                self.bank += price;
 
-                inventory.AddMarket(resourceType, actualSell);
+                market.Add(resourceType, actualSell);
                 // TODO: give the market a bank as well
             }
 
             return price;
         }
-        public bool CanSell(TestInventoryModel inventory)
+        public bool CanSell(TestInventoryModel self, TestInventoryModel market)
         {
-            return inventory.GetSelf(resourceType) > 0;
+            return self.Get(resourceType) > 0;
         }
     }
 }

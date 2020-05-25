@@ -18,25 +18,29 @@ namespace Assets.Economics
         /// </summary>
         public float amount;
     }
-    public interface IPurchaser<T> where T : IExchangeInventory
+    public interface IPurchaser<Self, Other>
+        where Self : class, IExchangeInventory
+        where Other : class, IExchangeInventory
     {
         // TODO: configure return values of purchases and sells to return an object which can be used to re-execute
         //      the exchange on a different inventory
         /// <summary>
         /// Purchase given amount. Should -only- change the state of <paramref name="inventory"/>
         /// </summary>
-        /// <param name="inventory">The inventory to operate on</param>
         /// <param name="amount">the amount to purchase</param>
         /// <param name="execute">Whether or not to execute the purchase</param>
+        /// <param name="selfInventory">The inventory to purchase into</param>
+        /// <param name="otherInventory">The inventory to purchase from</param>
         /// <returns>A summary of the transaction</returns>
-        PurchaseResult Purchase(T inventory, float amount, bool execute);
+        PurchaseResult Purchase(float amount, bool execute, Self selfInventory, Other otherInventory);
 
         /// <summary>
         /// Determines whether or not this purchaser is capable of executing a purchase at this time.
         ///     An example of when it cannot execute a purchase is when the selling inventory is empty
         /// </summary>
-        /// <param name="inventory">The inventory to operate on</param>
+        /// <param name="selfInventory">The inventory to purchase into</param>
+        /// <param name="otherInventory">The inventory to purchase from</param>
         /// <returns>whether or not a purchase of any amount can be executed</returns>
-        bool CanPurchase(T inventory);
+        bool CanPurchase(Self selfInventory, Other otherInventory);
     }
 }

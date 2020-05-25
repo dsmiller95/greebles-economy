@@ -9,48 +9,32 @@ namespace UnitTests.Economics
 {
     class TestInventoryModel : IExchangeInventory
     {
-        private Dictionary<string, float> selfInventory;
-        public float selfBank;
-        private Dictionary<string, float> marketInventory;
+        private Dictionary<string, float> inventory;
+        public float bank;
         public TestInventoryModel(
-            (string, float)[] selfInventory,
-            (string, float)[] marketInventory,
-            float selfBank)
+            (string, float)[] inventory,
+            float bank)
         {
-            this.selfInventory = selfInventory.ToDictionary(x => x.Item1, x => x.Item2);
-            this.marketInventory = marketInventory.ToDictionary(x => x.Item1, x => x.Item2);
-            this.selfBank = selfBank;
+            this.inventory = inventory.ToDictionary(x => x.Item1, x => x.Item2);
+            this.bank = bank;
         }
 
         private TestInventoryModel(TestInventoryModel other)
         {
-            this.selfInventory = new Dictionary<string, float>(other.selfInventory);
-            this.marketInventory = new Dictionary<string, float>(other.marketInventory);
-            this.selfBank = other.selfBank;
+            this.inventory = new Dictionary<string, float>(other.inventory);
+            this.bank = other.bank;
         }
 
-        public float GetSelf(string resource)
+        public float Get(string resource)
         {
-            return this.selfInventory[resource];
+            return this.inventory[resource];
         }
-        public void AddSelf(string resource, float amount)
+        public void Add(string resource, float amount)
         {
-            this.selfInventory[resource] += amount;
-            if (this.selfInventory[resource] < 0)
+            this.inventory[resource] += amount;
+            if (this.inventory[resource] < 0)
             {
                 throw new Exception($"Self inventory went below 0 on {resource}");
-            }
-        }
-        public float GetMarket(string resource)
-        {
-            return this.marketInventory[resource];
-        }
-        public void AddMarket(string resource, float amount)
-        {
-            this.marketInventory[resource] += amount;
-            if (this.marketInventory[resource] < 0)
-            {
-                throw new Exception($"Market inventory went below 0 on {resource}");
             }
         }
 
@@ -59,9 +43,9 @@ namespace UnitTests.Economics
             return new TestInventoryModel(this);
         }
 
-        public float GetCurrentSelfMoney()
+        public float GetCurrentFunds()
         {
-            return this.selfBank;
+            return this.bank;
         }
     }
 }

@@ -9,7 +9,7 @@ namespace Assets.Economics
     /// <summary>
     /// An object which can give the current incremental utility; keeping track of an inventory
     /// </summary>
-    public interface IUtilityEvaluator<T> where T: IExchangeInventory
+    public interface IUtilityEvaluator<Self> where Self: IExchangeInventory
     {
         /// <summary>
         /// Calculate the utility of getting increment more
@@ -18,6 +18,6 @@ namespace Assets.Economics
         /// <param name="inventory">The inventory to operate on</param>
         /// <param name="increment">the additional amount of the item</param>
         /// <returns>The additional utility from gaining more item</returns>
-        float GetIncrementalUtility(T inventory, float increment);
+        float GetIncrementalUtility(Self inventory, float increment);
     }
 }

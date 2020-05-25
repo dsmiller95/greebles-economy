@@ -8,7 +8,7 @@ namespace Assets.Economics
 {
     public interface IExchangeInventory
     {
-        float GetCurrentSelfMoney();
+        float GetCurrentFunds();
 
         /// <summary>
         /// Creates a copy of this exchange inventory to be used for evaluating simulated transactions
