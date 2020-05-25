@@ -6,20 +6,26 @@ using UnityEngine;
 public class Home : MonoBehaviour
 {
     public ResourceInventory inventory;
+    private SpaceFillingInventory<ResourceType> _inventory;
+
+    private void Awake()
+    {
+        _inventory = inventory.backingInventory;
+    }
 
     /// <summary>
     /// Deposit all the items from the given inventory into this inventory
     /// </summary>
     /// <param name="inventoryToDrain">the inventory to drain</param>
     /// <returns>True if the home's inventory is full</returns>
-    public bool depositAllGoods(ResourceInventory inventoryToDrain)
+    public bool depositAllGoods(SpaceFillingInventory<ResourceType> inventoryToDrain)
     {
-        inventoryToDrain.DrainAllInto(inventory, ResourceConfiguration.spaceFillingItems);
-        return this.inventory.getFullRatio() >= 1;
+        inventoryToDrain.DrainAllInto(_inventory, ResourceConfiguration.spaceFillingItems);
+        return _inventory.getFullRatio() >= 1;
     }
-    public void withdrawAllGoods(ResourceInventory inventoryToDepositTo)
+    public void withdrawAllGoods(SpaceFillingInventory<ResourceType> inventoryToDepositTo)
     {
-        inventory.DrainAllInto(inventoryToDepositTo, ResourceConfiguration.spaceFillingItems);
+        _inventory.DrainAllInto(inventoryToDepositTo, ResourceConfiguration.spaceFillingItems);
     }
 
     // Start is called before the first frame update

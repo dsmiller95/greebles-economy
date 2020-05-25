@@ -18,11 +18,13 @@ public class ResourceDisplay : MonoBehaviour
     public Vector2 offset = new Vector2(0, 10);
 
     public ResourceInventory inventoryToTrack;
+    public NotifyingInventory<ResourceType> _inventoryToTrack;
 
     private Dictionary<ResourceType, ResourceBar> resourceBars = new Dictionary<ResourceType, ResourceBar>();
 
     void Awake()
     {
+        _inventoryToTrack = inventoryToTrack.backingInventory;
         for (var i = 0; i < resourceConfiguration.Length; i++)
         {
             var newBar = Instantiate(ResourceBarPrefab, this.transform);
@@ -34,10 +36,10 @@ public class ResourceDisplay : MonoBehaviour
 
             resourceBars[config.type] = resourceBar;
         }
-        this.inventoryToTrack.resourceAmountChanges += (sender, change) => {
+        this._inventoryToTrack.resourceAmountChanges += (sender, change) => {
             this.setValue(change.type, change.newValue);
         };
-        this.inventoryToTrack.resourceCapacityChanges += (sender, change) => {
+        this._inventoryToTrack.resourceCapacityChanges += (sender, change) => {
             this.setMaxForType(change.type, change.newValue);
         };
     }

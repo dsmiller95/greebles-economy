@@ -5,15 +5,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-class MarketExchangeAdapter //TODO : ISeller, IPurchaser
+class MarketExchangeAdapter// TODO: ISeller<ResourceInventory, Market>, IPurchaser<ResourceInventory, Market>
 {
     private Market market;
-    private ResourceInventory sourceInventory;
+    private SpaceFillingInventory<ResourceType> sourceInventory;
     public ResourceType type {
         get;
         private set;
     }
-    public MarketExchangeAdapter(ResourceInventory sourceInventory, Market market, ResourceType type)
+    public MarketExchangeAdapter(SpaceFillingInventory<ResourceType> sourceInventory, Market market, ResourceType type)
     {
         this.market = market;
         this.type = type;
@@ -40,7 +40,7 @@ class MarketExchangeAdapter //TODO : ISeller, IPurchaser
 
     public float GetCurrentMarketInventory()
     {
-        return this.market.inventory.getResource(this.type);
+        return this.market._inventory.getResource(this.type);
     }
 
     public float Sell(float amount, bool execute)

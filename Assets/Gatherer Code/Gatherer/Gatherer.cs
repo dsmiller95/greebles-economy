@@ -25,7 +25,7 @@ public class Gatherer : MonoBehaviour // TODO , IUtilityEvaluator
     internal GameObject currentTarget;
     internal float lastTargetCheckTime = 0;
 
-    internal ResourceInventory inventory;
+    internal NotifyingInventory<ResourceType> inventory;
     internal ITimeTracker timeTracker;
     internal GatherBehaviorOptimizer optimizer;
 
@@ -68,7 +68,7 @@ public class Gatherer : MonoBehaviour // TODO , IUtilityEvaluator
     // Start is called before the first frame update
     void Start()
     {
-        this.inventory = this.GetComponent<ResourceInventory>();
+        this.inventory = this.GetComponent<ResourceInventory>().backingInventory;
 
         this.timeTracker = this.GetComponent<ITimeTracker>();
         this.optimizer = new GatherBehaviorOptimizer();

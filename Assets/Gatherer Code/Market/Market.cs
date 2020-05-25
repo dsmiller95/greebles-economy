@@ -20,10 +20,12 @@ public class Market : MonoBehaviour
 
     private Dictionary<ResourceType, float> exchangeRates;
     public ResourceInventory inventory;
+    public SpaceFillingInventory<ResourceType> _inventory;
 
     private void Awake()
     {
         exchangeRates = sellPrices.ToDictionary(x => x.type, x => x.price);
+        this._inventory = inventory.backingInventory;
     }
 
     // Start is called before the first frame update
@@ -38,9 +40,9 @@ public class Market : MonoBehaviour
 
     }
 
-    public ResourceSellResult PurchaseItemInto(ResourceInventory inventory, ResourceType type, float amountToPurchase, bool executePurchase)
+    public ResourceSellResult PurchaseItemInto(SpaceFillingInventory<ResourceType> inventory, ResourceType type, float amountToPurchase, bool executePurchase)
     {
-        var withdrawn = this.inventory.transferResourceInto(type, inventory, amountToPurchase, executePurchase);
+        var withdrawn = _inventory.transferResourceInto(type, inventory, amountToPurchase, executePurchase);
         if (executePurchase)
         {
             var value = this.exchangeRates[type] * withdrawn;
@@ -50,9 +52,9 @@ public class Market : MonoBehaviour
         return new ResourceSellResult(withdrawn, exchangeRates[type]);
     }
 
-    public ResourceSellResult SellItemFrom(ResourceInventory inventory, ResourceType type, float amount, bool executeSale)
+    public ResourceSellResult SellItemFrom(SpaceFillingInventory<ResourceType> inventory, ResourceType type, float amount, bool executeSale)
     {
-        var deposited = inventory.transferResourceInto(type, this.inventory, amount, executeSale);
+        var deposited = inventory.transferResourceInto(type, _inventory, amount, executeSale);
         if (executeSale)
         {
             var value = this.exchangeRates[type] * deposited;
@@ -62,12 +64,12 @@ public class Market : MonoBehaviour
         return new ResourceSellResult(deposited, exchangeRates[type]);
     }
 
-    public Dictionary<ResourceType, ResourceSellResult> sellAllGoodsInInventory(ResourceInventory inventory)
+    public Dictionary<ResourceType, ResourceSellResult> sellAllGoodsInInventory(SpaceFillingInventory<ResourceType> inventory)
     {
-        return SellAllGoods(inventory, this.inventory, ResourceConfiguration.spaceFillingItems, this.exchangeRates);
+        return SellAllGoods(inventory, _inventory, ResourceConfiguration.spaceFillingItems, this.exchangeRates);
     }
 
-    private static Dictionary<ResourceType, ResourceSellResult> SellAllGoods(ResourceInventory seller, ResourceInventory consumer, ResourceType[] types, Dictionary<ResourceType, float> prices)
+    private static Dictionary<ResourceType, ResourceSellResult> SellAllGoods(SpaceFillingInventory<ResourceType> seller, SpaceFillingInventory<ResourceType> consumer, ResourceType[] types, Dictionary<ResourceType, float> prices)
     {
         var result = seller.DrainAllInto(consumer, types)
             .Select(pair =>

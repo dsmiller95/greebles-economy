@@ -13,6 +13,7 @@ public class ResourceTimeSeriesAdapter : MonoBehaviour, IMultiPlottableSeries
     }
 
     public ResourceInventory inventory;
+    private SpaceFillingInventory<ResourceType> _inventory;
     public float timeRange = 20;
     /// <summary>
     /// total individual samples that should be on the screen at one time
@@ -21,6 +22,12 @@ public class ResourceTimeSeriesAdapter : MonoBehaviour, IMultiPlottableSeries
     private float timeStep;
     public ResourceGraphConfiguration[] resourcePlotConfig;
     private Dictionary<ResourceType, PlottableTimeSeries> inventoryTimeSeries = new Dictionary<ResourceType, PlottableTimeSeries>();
+
+    private void Awake()
+    {
+        _inventory = inventory.backingInventory;
+    }
+
     // Start is called before the first frame update
     void Start()
     {
@@ -34,7 +41,7 @@ public class ResourceTimeSeriesAdapter : MonoBehaviour, IMultiPlottableSeries
                 yScale = configuration.yScale
             };
             var newTimeSeries = new PlottableTimeSeries(Time.time, plotConfig, timeRange);
-            newTimeSeries.AddPoint(this.inventory.getResource(configuration.type));
+            newTimeSeries.AddPoint(_inventory.getResource(configuration.type));
             inventoryTimeSeries.Add(configuration.type, newTimeSeries);
         }
         this.timeStep = this.timeRange / this.totalSteps;
@@ -55,7 +62,7 @@ public class ResourceTimeSeriesAdapter : MonoBehaviour, IMultiPlottableSeries
     {
         foreach (var timeSeries in inventoryTimeSeries)
         {
-            timeSeries.Value.AddPoint(this.inventory.getResource(timeSeries.Key));
+            timeSeries.Value.AddPoint(_inventory.getResource(timeSeries.Key));
         }
     }
 
