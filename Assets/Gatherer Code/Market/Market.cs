@@ -1,5 +1,4 @@
 ﻿using Assets.Gatherer_Code;
-using Assets.Gatherer_Code.Market;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -28,6 +27,11 @@ public class Market : MonoBehaviour
         this._inventory = inventory.backingInventory;
     }
 
+    public IEnumerable<MarketExchangeAdapter> GetExchangeAdapters()
+    {
+        return this.exchangeRates.Select(exchange => new MarketExchangeAdapter(exchange.Key, exchange.Value));
+    }
+
     // Start is called before the first frame update
     void Start()
     {
@@ -38,30 +42,6 @@ public class Market : MonoBehaviour
     void Update()
     {
 
-    }
-
-    public ResourceSellResult PurchaseItemInto(SpaceFillingInventory<ResourceType> inventory, ResourceType type, float amountToPurchase, bool executePurchase)
-    {
-        var withdrawn = _inventory.transferResourceInto(type, inventory, amountToPurchase, executePurchase);
-        if (executePurchase)
-        {
-            var value = this.exchangeRates[type] * withdrawn;
-            inventory.Consume(ResourceType.Gold, value);
-        }
-
-        return new ResourceSellResult(withdrawn, exchangeRates[type]);
-    }
-
-    public ResourceSellResult SellItemFrom(SpaceFillingInventory<ResourceType> inventory, ResourceType type, float amount, bool executeSale)
-    {
-        var deposited = inventory.transferResourceInto(type, _inventory, amount, executeSale);
-        if (executeSale)
-        {
-            var value = this.exchangeRates[type] * deposited;
-            inventory.addResource(ResourceType.Gold, value);
-        }
-
-        return new ResourceSellResult(deposited, exchangeRates[type]);
     }
 
     public Dictionary<ResourceType, ResourceSellResult> sellAllGoodsInInventory(SpaceFillingInventory<ResourceType> inventory)

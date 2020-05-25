@@ -24,7 +24,11 @@ public class ResourceInventory: MonoBehaviour
             // create the key with default. Emit set events in Start(); once everyone has had a chance to subscribe to updates
             initialInventory[resource] = 0;
         }
-        backingInventory = new NotifyingInventory<ResourceType>(this.inventoryCapacitySetForUI, initialInventory, ResourceConfiguration.spaceFillingItems);
+        backingInventory = new NotifyingInventory<ResourceType>(
+            this.inventoryCapacitySetForUI,
+            initialInventory,
+            ResourceConfiguration.spaceFillingItems,
+            ResourceType.Gold);
     }
 
     public void Start()

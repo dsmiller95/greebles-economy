@@ -5,25 +5,29 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-class MarketExchangeAdapter// TODO: ISeller<ResourceInventory, Market>, IPurchaser<ResourceInventory, Market>
+public class MarketExchangeAdapter: ISeller<SpaceFillingInventory<ResourceType>, SpaceFillingInventory<ResourceType>>, IPurchaser<SpaceFillingInventory<ResourceType>, SpaceFillingInventory<ResourceType>>
 {
-    private Market market;
-    private SpaceFillingInventory<ResourceType> sourceInventory;
     public ResourceType type {
         get;
         private set;
     }
-    public MarketExchangeAdapter(SpaceFillingInventory<ResourceType> sourceInventory, Market market, ResourceType type)
+    private float exchangeRate;
+    public MarketExchangeAdapter(ResourceType type, float exchangeRate)
     {
-        this.market = market;
         this.type = type;
-        this.sourceInventory = sourceInventory;
+        this.exchangeRate = exchangeRate;
     }
 
-    public PurchaseResult Purchase(float amount, bool execute, float simulatedMarketInventory)
+    public PurchaseResult Purchase(float amount, bool execute, SpaceFillingInventory<ResourceType> selfInventory, SpaceFillingInventory<ResourceType> marketInventory)
     {
-        //TODO: add support for simulated market inventory. The PurchaseItemInto method should accept a new parameter to allow for this
-        var purchaseResult = this.market.PurchaseItemInto(this.sourceInventory, this.type, amount, execute);
+        var withdrawn = marketInventory.transferResourceInto(type, selfInventory, amount, execute);
+        if (execute)
+        {
+            var value = this.exchangeRate * withdrawn;
+            selfInventory.Consume(ResourceType.Gold, value);
+        }
+
+        var purchaseResult = new ResourceSellResult(withdrawn, exchangeRate);
 
         return new PurchaseResult
         {
@@ -32,25 +36,26 @@ class MarketExchangeAdapter// TODO: ISeller<ResourceInventory, Market>, IPurchas
         };
     }
 
-    public bool CanPurchase(float simulatedPurchase)
+    public bool CanPurchase(SpaceFillingInventory<ResourceType> selfInventory, SpaceFillingInventory<ResourceType> marketInventory)
     {
-        var currentAmount = this.GetCurrentMarketInventory();
-        return currentAmount - simulatedPurchase > 0;
+        return marketInventory.getResource(type) > 0;
     }
 
-    public float GetCurrentMarketInventory()
+    public float Sell(float amount, bool execute, SpaceFillingInventory<ResourceType> selfInventory, SpaceFillingInventory<ResourceType> marketInventory)
     {
-        return this.market._inventory.getResource(this.type);
+        var deposited = selfInventory.transferResourceInto(type, marketInventory, amount, execute);
+        if (execute)
+        {
+            var value = this.exchangeRate * deposited;
+            selfInventory.addResource(ResourceType.Gold, value);
+        }
+
+        var sellResult = new ResourceSellResult(deposited, exchangeRate);
+        return sellResult.totalRevenue;
     }
 
-    public float Sell(float amount, bool execute)
+    public bool CanSell(SpaceFillingInventory<ResourceType> selfInventory, SpaceFillingInventory<ResourceType> marketInventory)
     {
-        return this.market.SellItemFrom(this.sourceInventory, this.type, amount, execute).totalRevenue;
-    }
-
-    public bool CanSell()
-    {
-        var currentAmount = this.sourceInventory.getResource(this.type);
-        return currentAmount > 0;
+        return selfInventory.getResource(type) > 0;
     }
 }

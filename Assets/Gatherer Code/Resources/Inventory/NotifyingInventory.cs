@@ -21,7 +21,8 @@ public class NotifyingInventory<T> : SpaceFillingInventory<T>
     public event EventHandler<ResourceChanged<T>> resourceAmountChanges;
     public event EventHandler<ResourceChanged<T>> resourceCapacityChanges;
 
-    public NotifyingInventory(int capacity, IDictionary<T, float> initialItems, ICollection<T> spaceFillingItems): base(capacity, initialItems, spaceFillingItems)
+    public NotifyingInventory(int capacity, IDictionary<T, float> initialItems, ICollection<T> spaceFillingItems, T moneyType)
+        : base(capacity, initialItems, spaceFillingItems, moneyType)
     {
     }
 

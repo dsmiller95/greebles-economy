@@ -6,24 +6,19 @@ using System.Threading.Tasks;
 
 namespace Assets.Economics
 {
-    class UtilityEvaluatorFunctionAdapter //TODO : IUtilityEvaluator
+    class UtilityEvaluatorFunctionAdapter: IUtilityEvaluator<SpaceFillingInventory<ResourceType>>
     {
         private IIncrementalFunction utilityFunction;
-        private Func<float> getAmount;
-        public UtilityEvaluatorFunctionAdapter(IIncrementalFunction utilityFunction, Func<float> getAmount)
+        private ResourceType type;
+        public UtilityEvaluatorFunctionAdapter(IIncrementalFunction utilityFunction, ResourceType type)
         {
             this.utilityFunction = utilityFunction;
-            this.getAmount = getAmount;
+            this.type = type;
         }
 
-        public float GetCurrentAmount()
+        public float GetIncrementalUtility(SpaceFillingInventory<ResourceType> selfInventory, float increment)
         {
-            return this.getAmount();
-        }
-
-        public float GetIncrementalUtility(float increment, float amount)
-        {
-            return this.utilityFunction.GetIncrementalValue(amount, increment);
+            return this.utilityFunction.GetIncrementalValue(selfInventory.getResource(type), increment);
         }
     }
 }

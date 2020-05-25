@@ -2,20 +2,34 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Assets.Economics;
 using Assets.Gatherer_Code;
 using UnityEngine;
 
-public class SpaceFillingInventory<T>
+public class SpaceFillingInventory<T>: IExchangeInventory
 {
 
     private IDictionary<T, float> inventory;
     protected ISet<T> spaceFillingItems;
+    protected T moneyType;
 
-    public SpaceFillingInventory(int capacity, IDictionary<T, float> initialItems, ICollection<T> spaceFillingItems)
+    public SpaceFillingInventory(
+        int capacity,
+        IDictionary<T, float> initialItems,
+        ICollection<T> spaceFillingItems,
+        T moneyType)
     {
         this._inventoryCapacity = capacity;
         inventory = new Dictionary<T, float>(initialItems);
         this.spaceFillingItems = new HashSet<T>(spaceFillingItems);
+        this.moneyType = moneyType;
+    }
+
+    private SpaceFillingInventory(SpaceFillingInventory<T> other)
+    {
+        this._inventoryCapacity = other._inventoryCapacity;
+        inventory = new Dictionary<T, float>(other.inventory);
+        this.spaceFillingItems = new HashSet<T>(other.spaceFillingItems);
     }
 
     private int _inventoryCapacity;
@@ -115,15 +129,6 @@ public class SpaceFillingInventory<T>
         return amount;
     }
 
-    [Obsolete]
-    public void emptySpaceFillingInventory()
-    {
-        foreach (var item in this.spaceFillingItems)
-        {
-            SetInventoryValue(item, 0);
-        }
-    }
-
     protected virtual float SetInventoryValue(T type, float newValue)
     {
         inventory[type] = newValue;
@@ -138,5 +143,15 @@ public class SpaceFillingInventory<T>
     public float getFullRatio()
     {
         return totalFullSpace / inventoryCapacity;
+    }
+
+    public float GetCurrentFunds()
+    {
+        return this.getResource(moneyType);
+    }
+
+    public IExchangeInventory CreateSimulatedClone()
+    {
+        return new SpaceFillingInventory<T>(this);
     }
 }

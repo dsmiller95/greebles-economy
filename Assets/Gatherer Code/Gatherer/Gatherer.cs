@@ -9,7 +9,7 @@ using Assets.Economics;
 
 [RequireComponent(typeof(ResourceInventory))]
 [RequireComponent(typeof(TimeTracker))]
-public class Gatherer : MonoBehaviour // TODO , IUtilityEvaluator
+public class Gatherer : MonoBehaviour
 {
     public const int searchRadius = 100;
     public const float waitTimeBetweenSearches = 0.3f;
@@ -32,37 +32,37 @@ public class Gatherer : MonoBehaviour // TODO , IUtilityEvaluator
     internal Dictionary<ResourceType, float> gatheringWeights;
 
     private StateMachine<GathererState, Gatherer> stateMachine;
-    //public Dictionary<ResourceType, IUtilityEvaluator> utilityFunctions {
-    //    get;
-    //    private set;
-    //}
+    public Dictionary<ResourceType, IUtilityEvaluator<SpaceFillingInventory<ResourceType>>> utilityFunctions
+    {
+        get;
+        private set;
+    }
 
     private void Awake()
     {
-        // TODO
-        //this.utilityFunctions = new Dictionary<ResourceType, IUtilityEvaluator>()
-        //{
-        //    {
-        //        ResourceType.Food,
-        //        new UtilityEvaluatorFunctionAdapter(
-        //            new InverseWeightedUtility(new WeightedRegion[] {
-        //                new WeightedRegion(0, 10),
-        //                new WeightedRegion(2, 1)
-        //            }),
-        //            () => this.inventory.getResource(ResourceType.Food)
-        //        )
-        //    },
-        //    {
-        //        ResourceType.Wood,
-        //        new UtilityEvaluatorFunctionAdapter(
-        //            new InverseWeightedUtility(new WeightedRegion[] {
-        //                new WeightedRegion(0, 10),
-        //                new WeightedRegion(1, 0.5f)
-        //            }),
-        //            () => this.inventory.getResource(ResourceType.Wood)
-        //        )
-        //    }
-        //};
+        this.utilityFunctions = new Dictionary<ResourceType, IUtilityEvaluator<SpaceFillingInventory<ResourceType>>>()
+        {
+            {
+                ResourceType.Food,
+                new UtilityEvaluatorFunctionAdapter(
+                    new InverseWeightedUtility(new WeightedRegion[] {
+                        new WeightedRegion(0, 10),
+                        new WeightedRegion(2, 1)
+                    }),
+                    ResourceType.Food
+                )
+            },
+            {
+                ResourceType.Wood,
+                new UtilityEvaluatorFunctionAdapter(
+                    new InverseWeightedUtility(new WeightedRegion[] {
+                        new WeightedRegion(0, 10),
+                        new WeightedRegion(1, 0.5f)
+                    }),
+                    ResourceType.Food
+                )
+            }
+        };
     }
 
     // Start is called before the first frame update
@@ -192,15 +192,5 @@ public class Gatherer : MonoBehaviour // TODO , IUtilityEvaluator
             }
         }
         return highestWeightCollider?.gameObject;
-    }
-
-    public float GetIncrementalUtility(float increment, float amount)
-    {
-        throw new NotImplementedException();
-    }
-
-    public float GetCurrentAmount()
-    {
-        throw new NotImplementedException();
     }
 }
