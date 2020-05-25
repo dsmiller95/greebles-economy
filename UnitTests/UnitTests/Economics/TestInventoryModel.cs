@@ -61,7 +61,7 @@ namespace UnitTests.Economics
 
         public float GetCurrentSelfMoney()
         {
-            throw new NotImplementedException();
+            return this.selfBank;
         }
     }
 }

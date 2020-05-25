@@ -61,7 +61,7 @@ namespace UnitTests.Economics
                 utilityFunction = x
             }), inventoryModel);
 
-            optimizer.Optimize(inventoryModel.selfBank);
+            optimizer.Optimize();
 
             // should buy up all of the first item, to match the amount in the second inventory
             Assert.AreEqual(10, inventoryModel.GetSelf("wood"));
@@ -117,7 +117,7 @@ namespace UnitTests.Economics
                 utilityFunction = x
             }), inventoryModel);
 
-            optimizer.Optimize(inventoryModel.selfBank);
+            optimizer.Optimize();
 
             // should exchange food for wood until maximum utility is reached
             // at 2 food and 8 wood
@@ -174,7 +174,7 @@ namespace UnitTests.Economics
                 utilityFunction = x
             }), inventoryModel);
 
-            optimizer.Optimize(inventoryModel.selfBank);
+            optimizer.Optimize();
 
             // should exchange wood for food until maximum utility is reached
             // continuous integration of the utility function dictates that this will happen at 4.75 wood; 10.5 food
@@ -233,7 +233,7 @@ namespace UnitTests.Economics
                 utilityFunction = x
             }), inventoryModel);
 
-            optimizer.Optimize(inventoryModel.selfBank);
+            optimizer.Optimize();
 
             // should exchange wood for food until maximum utility is reached
             // at 6 food at 7 wood; selling one more wood will only net one food since that's all that is left in the market
@@ -295,7 +295,7 @@ namespace UnitTests.Economics
                 utilityFunction = x
             }), inventoryModel);
 
-            optimizer.Optimize(inventoryModel.selfBank);
+            optimizer.Optimize();
 
             // should exchange wood for food until maximum utility is reached
             // at 6 food at 7 wood; selling one more wood will only net one food since that's all that is left in the market
