@@ -35,7 +35,7 @@ public class NotifyingInventory<T> : SpaceFillingInventory<T>
     {
         foreach (var resource in this.GetAllResourceTypes())
         {
-            this.resourceAmountChanges?.Invoke(this, new ResourceChanged<T>(resource, this.getResource(resource)));
+            this.resourceAmountChanges?.Invoke(this, new ResourceChanged<T>(resource, this.Get(resource)));
         }
         this.NotifyAllCapacityChange();
         foreach (var capacityChange in extraCapacityChanges)

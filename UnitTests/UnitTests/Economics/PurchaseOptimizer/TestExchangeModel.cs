@@ -14,21 +14,18 @@ namespace UnitTests.Economics
 
     class TestExchangeModel : IPurchaser<TestInventoryModel, TestInventoryModel>, ISeller<TestInventoryModel, TestInventoryModel>, IUtilityEvaluator<TestInventoryModel>
     {
-        public float selfInventoryCapacity = 100;
-        public float marketInventoryCapacity = 100;
         public IIncrementalFunction utilityFunction;
         public float purchasePrice;
         public float sellPrice;
 
         public string resourceType;
 
-
         public float GetIncrementalUtility(TestInventoryModel self, float increment)
         {
             return this.utilityFunction.GetIncrementalValue(self.Get(resourceType), increment);
         }
 
-        public PurchaseResult Purchase(float amount, bool execute, TestInventoryModel self, TestInventoryModel market)
+        public ExchangeResult Purchase(float amount, bool execute, TestInventoryModel self, TestInventoryModel market)
         {
             var marketInventory = market.Get(resourceType);
             var actualPurchase = Math.Min(amount, marketInventory);
@@ -46,7 +43,7 @@ namespace UnitTests.Economics
                 // TODO: give the market a bank as well
             }
 
-            return new PurchaseResult
+            return new ExchangeResult
             {
                 cost = price,
                 amount = actualPurchase
@@ -58,7 +55,7 @@ namespace UnitTests.Economics
             return market.Get(resourceType) > 0;
         }
 
-        public float Sell(float amount, bool execute, TestInventoryModel self, TestInventoryModel market)
+        public ExchangeResult Sell(float amount, bool execute, TestInventoryModel self, TestInventoryModel market)
         {
             var actualSell = Math.Min(amount, self.Get(resourceType));
             var price = actualSell * sellPrice;
@@ -71,7 +68,11 @@ namespace UnitTests.Economics
                 // TODO: give the market a bank as well
             }
 
-            return price;
+            return new ExchangeResult
+            {
+                cost = price,
+                amount = actualSell
+            };
         }
         public bool CanSell(TestInventoryModel self, TestInventoryModel market)
         {

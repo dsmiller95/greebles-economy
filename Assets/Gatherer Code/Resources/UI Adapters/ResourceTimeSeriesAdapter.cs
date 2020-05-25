@@ -41,7 +41,7 @@ public class ResourceTimeSeriesAdapter : MonoBehaviour, IMultiPlottableSeries
                 yScale = configuration.yScale
             };
             var newTimeSeries = new PlottableTimeSeries(Time.time, plotConfig, timeRange);
-            newTimeSeries.AddPoint(_inventory.getResource(configuration.type));
+            newTimeSeries.AddPoint(_inventory.Get(configuration.type));
             inventoryTimeSeries.Add(configuration.type, newTimeSeries);
         }
         this.timeStep = this.timeRange / this.totalSteps;
@@ -62,7 +62,7 @@ public class ResourceTimeSeriesAdapter : MonoBehaviour, IMultiPlottableSeries
     {
         foreach (var timeSeries in inventoryTimeSeries)
         {
-            timeSeries.Value.AddPoint(_inventory.getResource(timeSeries.Key));
+            timeSeries.Value.AddPoint(_inventory.Get(timeSeries.Key));
         }
     }
 

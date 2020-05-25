@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace Assets.Economics
 {
 
-    public struct PurchaseResult
+    public struct ExchangeResult
     {
         /// <summary>
         /// The amount of money which is paid for the items
@@ -22,8 +22,9 @@ namespace Assets.Economics
         where Self : class, IExchangeInventory
         where Other : class, IExchangeInventory
     {
-        // TODO: configure return values of purchases and sells to return an object which can be used to re-execute
-        //      the exchange on a different inventory
+        // TODO: configure return values of purchases and sells to return an object which must be used to actually execute the exchange
+        //  That type of model will help to avoid calling each method twice, and prevent multiple re-checks inside the purchase method
+        //  It will have to check to ensure the inventory has not been modified before executing
         /// <summary>
         /// Purchase given amount. Should -only- change the state of <paramref name="inventory"/>
         /// </summary>
@@ -32,7 +33,7 @@ namespace Assets.Economics
         /// <param name="selfInventory">The inventory to purchase into</param>
         /// <param name="otherInventory">The inventory to purchase from</param>
         /// <returns>A summary of the transaction</returns>
-        PurchaseResult Purchase(float amount, bool execute, Self selfInventory, Other otherInventory);
+        ExchangeResult Purchase(float amount, bool execute, Self selfInventory, Other otherInventory);
 
         /// <summary>
         /// Determines whether or not this purchaser is capable of executing a purchase at this time.

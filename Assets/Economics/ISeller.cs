@@ -18,7 +18,7 @@ namespace Assets.Economics
         /// <param name="selfInventory">The inventory to sell from</param>
         /// <param name="otherInventory">The inventory to sell to</param>
         /// <returns>the amount gained from selling exactly amount</returns>
-        float Sell(float amount, bool execute, Self selfInventory, Other otherInventory);
+        ExchangeResult Sell(float amount, bool execute, Self selfInventory, Other otherInventory);
 
         /// <summary>
         /// Determines whether or not this seller is capable of executing a sell at this time.

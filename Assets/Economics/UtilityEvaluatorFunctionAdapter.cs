@@ -18,7 +18,7 @@ namespace Assets.Economics
 
         public float GetIncrementalUtility(SpaceFillingInventory<ResourceType> selfInventory, float increment)
         {
-            return this.utilityFunction.GetIncrementalValue(selfInventory.getResource(type), increment);
+            return this.utilityFunction.GetIncrementalValue(selfInventory.Get(type), increment);
         }
     }
 }

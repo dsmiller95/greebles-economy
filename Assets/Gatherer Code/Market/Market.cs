@@ -27,9 +27,9 @@ public class Market : MonoBehaviour
         this._inventory = inventory.backingInventory;
     }
 
-    public IEnumerable<MarketExchangeAdapter> GetExchangeAdapters()
+    public IEnumerable<MarketExchangeAdapter<ResourceType>> GetExchangeAdapters()
     {
-        return this.exchangeRates.Select(exchange => new MarketExchangeAdapter(exchange.Key, exchange.Value));
+        return this.exchangeRates.Select(exchange => new MarketExchangeAdapter<ResourceType>(exchange.Key, exchange.Value, ResourceType.Gold));
     }
 
     // Start is called before the first frame update
@@ -59,7 +59,7 @@ public class Market : MonoBehaviour
             })
             .ToDictionary(x => x.type, x => x.sellResult);
 
-        seller.addResource(ResourceType.Gold, result.Values.Sum(sellResult => sellResult.totalRevenue));
+        seller.Add(ResourceType.Gold, result.Values.Sum(sellResult => sellResult.totalRevenue));
         return result;
     }
 }

@@ -141,7 +141,7 @@ namespace Assets.Economics
                 .Select(resource => new {
                     resource,
                     valuePerUtility = 
-                        resource.seller.Sell(increment, false, simSelf, simOther)
+                        resource.seller.Sell(increment, false, simSelf, simOther).cost
                         / -resource.utilityFunction.GetIncrementalUtility(simSelf, - increment)
                 })
                 .OrderBy(resource => resource.valuePerUtility)

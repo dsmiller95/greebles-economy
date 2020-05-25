@@ -167,7 +167,7 @@ public class Gatherer : MonoBehaviour
         if (!resourceType.eaten)
         {
             resourceType.eaten = true;
-            this.inventory.addResource(resourceType.type, resourceType.value);
+            this.inventory.Add(resourceType.type, resourceType.value);
             Destroy(resource);
         }
     }

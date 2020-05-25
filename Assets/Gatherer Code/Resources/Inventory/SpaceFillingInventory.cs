@@ -67,20 +67,57 @@ public class SpaceFillingInventory<T>: IExchangeInventory
     {
         if(amount == -1)
         {
-            amount = getResource(type);
+            amount = Get(type);
         }
         else if (amount < 0)
         {
             throw new NotImplementedException();
         }
-        var toAdd = Mathf.Min(amount, getResource(type));
+        var toAdd = Mathf.Min(amount, Get(type));
 
-        var added = target.addResource(type, toAdd);
+        var added = target.Add(type, toAdd, execute);
         if (execute)
         {
-            this.SetInventoryValue(type, getResource(type) - added);
+            this.SetInventoryValue(type, Get(type) - added);
         }
         return added;
+    }
+
+    public float Get(T type)
+    {
+        return inventory[type];
+    }
+
+    protected IEnumerable<T> GetAllResourceTypes()
+    {
+        return this.inventory.Keys;
+    }
+    /// <summary>
+    /// Attempts to add as much of amount as possible into this inventory.
+    /// </summary>
+    /// <param name="type">the type of resource to add</param>
+    /// <param name="amount">the maximum amount of resource to add to the inventory</param>
+    /// <returns>the amount of the resource that was actually added</returns>
+    public float Add(T type, float amount, bool execute = true)
+    {
+        if(amount < 0)
+        {
+            throw new NotImplementedException("cannot add a negative amount. use Consume for that purpose");
+        }
+        if (this.spaceFillingItems.Contains(type))
+        {
+            if (getFullRatio() >= 1)
+            {
+                return 0;
+            }
+            var remainingSpace = Mathf.Max(0, this.inventoryCapacity - totalFullSpace);
+            amount = Mathf.Min(remainingSpace, amount);
+        }
+        if (execute)
+        {
+            SetInventoryValue(type, inventory[type] + amount);
+        }
+        return amount;
     }
 
     /// <summary>
@@ -95,38 +132,8 @@ public class SpaceFillingInventory<T>: IExchangeInventory
             throw new NotImplementedException();
         }
 
-        var toConsume = Mathf.Min(amount, getResource(type));
-        this.SetInventoryValue(type, getResource(type) - toConsume);
-    }
-
-    public float getResource(T type)
-    {
-        return inventory[type];
-    }
-
-    protected IEnumerable<T> GetAllResourceTypes()
-    {
-        return this.inventory.Keys;
-    }
-    /// <summary>
-    /// Attempts to add as much of amount as possible into this inventory.
-    /// </summary>
-    /// <param name="type">the type of resource to add</param>
-    /// <param name="amount">the maximum amount of resource to add to the inventory</param>
-    /// <returns>the amount of the resource that was actuall added</returns>
-    public float addResource(T type, float amount)
-    {
-        if (this.spaceFillingItems.Contains(type))
-        {
-            if (getFullRatio() >= 1)
-            {
-                return 0;
-            }
-            var remainingSpace = Mathf.Max(0, this.inventoryCapacity - totalFullSpace);
-            amount = Mathf.Min(remainingSpace, amount);
-        }
-        SetInventoryValue(type, inventory[type] + amount);
-        return amount;
+        var toConsume = Mathf.Min(amount, Get(type));
+        this.SetInventoryValue(type, Get(type) - toConsume);
     }
 
     protected virtual float SetInventoryValue(T type, float newValue)
@@ -145,9 +152,23 @@ public class SpaceFillingInventory<T>: IExchangeInventory
         return totalFullSpace / inventoryCapacity;
     }
 
+    /// <summary>
+    /// Determine if it's possible to fit any more of the given item in this inventory
+    /// </summary>
+    /// <param name="resource">The item to attempt to fit</param>
+    /// <returns>True if its possible to fit any amount of <paramref name="resource"/> into this inventory</returns>
+    public bool CanFitMoreOf(T resource)
+    {
+        if (spaceFillingItems.Contains(resource))
+        {
+            return getFullRatio() < 1;
+        }
+        return true;
+    }
+
     public float GetCurrentFunds()
     {
-        return this.getResource(moneyType);
+        return this.Get(moneyType);
     }
 
     public IExchangeInventory CreateSimulatedClone()
