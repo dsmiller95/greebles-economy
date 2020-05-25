@@ -12,49 +12,42 @@ namespace UnitTests.Economics
         public float money;
     }
 
-    class TestExchangeModel : IPurchaser, ISeller, IUtilityEvaluator
+    class TestExchangeModel : IPurchaser<TestInventoryModel>, ISeller<TestInventoryModel>, IUtilityEvaluator<TestInventoryModel>
     {
-
-        public float selfInventory;
         public float selfInventoryCapacity = 100;
-        public TestBank selfBank;
-        public float marketInventory;
         public float marketInventoryCapacity = 100;
         public IIncrementalFunction utilityFunction;
         public float purchasePrice;
         public float sellPrice;
-        public string name;
+
+        public string resourceType;
 
 
-        public float GetIncrementalUtility(float increment, float amount)
+        public float GetIncrementalUtility(TestInventoryModel inventory, float increment)
         {
-            return this.utilityFunction.GetIncrementalValue(amount, increment);
+            return this.utilityFunction.GetIncrementalValue(inventory.GetSelf(resourceType), increment);
         }
 
-        public float GetCurrentAmount()
+        public float GetCurrentAmount(TestInventoryModel inventory)
         {
-            return this.selfInventory;
+            return inventory.GetSelf(this.resourceType);
         }
 
-        public PurchaseResult Purchase(float amount, bool execute, float simulatedMarketInventory = 0)
+        public PurchaseResult Purchase(TestInventoryModel inventory, float amount, bool execute)
         {
-            simulatedMarketInventory = execute ? marketInventory : simulatedMarketInventory;
-            var actualPurchase = Math.Min(amount, simulatedMarketInventory);
+            var marketInventory = inventory.GetMarket(resourceType);
+            var actualPurchase = Math.Min(amount, marketInventory);
             var price = actualPurchase * purchasePrice;
             if (execute)
             {
-                this.selfInventory += actualPurchase;
-                if (price > selfBank.money)
+                inventory.AddSelf(resourceType, actualPurchase);
+                if (price > inventory.selfBank)
                 {
-                    throw new Exception("Attempted to purchase more than current funds allow");
+                    throw new Exception($"Attempted to purchase more than current funds allow when purchasing {resourceType}");
                 }
-                this.selfBank.money -= price;
+                inventory.selfBank -= price;
 
-                if (actualPurchase > this.marketInventory)
-                {
-                    throw new Exception("Attempted to purchase more than is in the market");
-                }
-                this.marketInventory -= actualPurchase;
+                inventory.AddMarket(resourceType, -actualPurchase);
                 // TODO: give the market a bank as well
             }
 
@@ -65,39 +58,34 @@ namespace UnitTests.Economics
             };
         }
 
-        public bool CanPurchase(float simulatedMarketInventory = -1)
+        public bool CanPurchase(TestInventoryModel inventory)
         {
-            simulatedMarketInventory = simulatedMarketInventory == -1 ? this.marketInventory : simulatedMarketInventory;
-            return simulatedMarketInventory > 0;
+            return inventory.GetMarket(resourceType) > 0;
         }
 
-        public float GetCurrentMarketInventory()
+        public float GetCurrentMarketInventory(TestInventoryModel inventory)
         {
-            return this.marketInventory;
+            return inventory.GetMarket(resourceType);
         }
 
-        public float Sell(float amount, bool execute)
+        public float Sell(TestInventoryModel inventory, float amount, bool execute)
         {
-            var actualSell = Math.Min(amount, selfInventory);
+            var actualSell = Math.Min(amount, inventory.GetSelf(resourceType));
             var price = actualSell * sellPrice;
             if (execute)
             {
-                if (actualSell > this.selfInventory)
-                {
-                    throw new Exception("Attempted to sell more than is in inventory");
-                }
-                this.selfInventory -= actualSell;
-                this.selfBank.money += price;
+                inventory.AddSelf(resourceType, -actualSell);
+                inventory.selfBank += price;
 
-                this.marketInventory += actualSell;
+                inventory.AddMarket(resourceType, actualSell);
                 // TODO: give the market a bank as well
             }
 
             return price;
         }
-        public bool CanSell()
+        public bool CanSell(TestInventoryModel inventory)
         {
-            return this.selfInventory > 0;
+            return inventory.GetSelf(resourceType) > 0;
         }
     }
 }

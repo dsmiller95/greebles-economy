@@ -7,50 +7,66 @@ using System.Threading.Tasks;
 namespace Assets.Economics
 {
 
-    public class PurchaseOptimizer
+    public class PurchaseOptimizer<T> where T: class, IExchangeInventory
     {
-        public class CostUtilityAdapter
+        public class ExchangeAdapter
         {
-            public IPurchaser purchaser;
-            public ISeller seller;
-            public IUtilityEvaluator utilityFunction;
-            public float simulatedSelfInventory;
-            public float simulatedMarketInventory;
+            public IPurchaser<T> purchaser;
+            public ISeller<T> seller;
+            public IUtilityEvaluator<T> utilityFunction;
         }
 
-        private IList<CostUtilityAdapter> resources;
+        private IList<ExchangeAdapter> resources;
+        private T baseInventory;
         private float increment = 1;
 
-        public PurchaseOptimizer(IEnumerable<CostUtilityAdapter> resources)
+        public PurchaseOptimizer(IEnumerable<ExchangeAdapter> exchangeAdapters, T inventory)
         {
-            this.resources = resources.ToList();
+            this.resources = exchangeAdapters.ToList();
+            this.baseInventory = inventory;
         }
 
         public void Optimize(float bank)
         {
-            var initialPurchase = PurchaseResult.Purchase(this, bank);
-            initialPurchase.ExecutePurchases();
+            var initialPurchase = PurchaseResult.Purchase(this, bank, CloneBaseInventory());
+            initialPurchase.ExecutePurchases(baseInventory);
             bank -= initialPurchase.totalCost;
 
             var executesPurchase = true;
-            for (var minUtility = GetHighestSellableValuePerUtility(increment); minUtility != default && executesPurchase; minUtility = GetHighestSellableValuePerUtility(increment))
+            for (var minUtility = GetHighestSellableValuePerUtility(increment, baseInventory);
+                minUtility != default && executesPurchase;
+                minUtility = GetHighestSellableValuePerUtility(increment, baseInventory))
             {
-                var sellPrice = minUtility.seller.Sell(increment, false);
-                var purchaseOption = PurchaseResult.Purchase(this, sellPrice + bank);
+                var simulatedInventory = CloneBaseInventory();
+                // Execute all operations on a simulated inventory to make sure all prices, utilities, and any constraints on size are respected
+
+
+                var sellPrice = minUtility.seller.Sell(simulatedInventory, increment, true);
+                var purchaseOption = PurchaseResult.Purchase(this, sellPrice + bank, simulatedInventory);
                 executesPurchase = (purchaseOption.utilityGained
                     + minUtility.utilityFunction.GetIncrementalUtility(
-                        -increment,
-                        minUtility.utilityFunction.GetCurrentAmount()
+                        baseInventory,
+                        -increment
                       ))
                       > 0;
                 if (executesPurchase)
                 {
                     bank += sellPrice - purchaseOption.totalCost;
                     // Must sell first to get the money; then purchase
-                    minUtility.seller.Sell(increment, true);
-                    purchaseOption.ExecutePurchases();
+                    minUtility.seller.Sell(baseInventory, increment, true);
+                    purchaseOption.ExecutePurchases(baseInventory);
                 }
             }
+        }
+
+        private T CloneBaseInventory()
+        {
+            var clonedInventory = baseInventory.CreateSimulatedClone();
+            if (clonedInventory is T correctTypedInventory)
+            {
+                return correctTypedInventory;
+            }
+            throw new ArgumentException("Clone of the base inventory did not return required type");
         }
 
         class PurchaseResult
@@ -64,29 +80,28 @@ namespace Assets.Economics
                 get;
                 private set;
             }
-            private IList<IPurchaser> purchases;
-            private PurchaseOptimizer optimizer;
-            private PurchaseResult(PurchaseOptimizer optimizer, float bank)
+            private IList<IPurchaser<T>> purchases;
+            private PurchaseOptimizer<T> optimizer;
+            private PurchaseResult(PurchaseOptimizer<T> optimizer, float bank, T simulatedInventory)
             {
                 this.optimizer = optimizer;
-                purchases = new List<IPurchaser>();
+                purchases = new List<IPurchaser<T>>();
                 utilityGained = 0f;
                 totalCost = 0f;
-                foreach (var resource in optimizer.resources)
-                {
-                    resource.simulatedSelfInventory = resource.utilityFunction.GetCurrentAmount();
-                    resource.simulatedMarketInventory = resource.purchaser.GetCurrentMarketInventory();
-                }
+                
                 //drain the bank
-                for (var resource = optimizer.GetHighestPurchaseableUtility(bank - totalCost); resource != default; resource = optimizer.GetHighestPurchaseableUtility(bank - totalCost))
+                for (
+                    var resource = optimizer.GetHighestPurchaseableUtility(bank - totalCost, simulatedInventory);
+                    resource != default;
+                    resource = optimizer.GetHighestPurchaseableUtility(bank - totalCost, simulatedInventory))
                 {
-                    var purchaseResult = resource.purchaser.Purchase(optimizer.increment, false, resource.simulatedMarketInventory);
-                    totalCost += purchaseResult.cost;
+                    var purchaseResult = resource.purchaser.Purchase(simulatedInventory, optimizer.increment, false);
                     utilityGained += resource.utilityFunction.GetIncrementalUtility(
-                        purchaseResult.amount,
-                        resource.simulatedSelfInventory);
-                    resource.simulatedSelfInventory += purchaseResult.amount;
-                    resource.simulatedMarketInventory -= purchaseResult.amount;
+                        simulatedInventory,
+                        purchaseResult.amount);
+                    totalCost += purchaseResult.cost;
+
+                    resource.purchaser.Purchase(simulatedInventory, optimizer.increment, true);
                     purchases.Add(resource.purchaser);
                 }
             }
@@ -96,16 +111,16 @@ namespace Assets.Economics
             /// </summary>
             /// <param name="bank">the amount of money which can be spent</param>
             /// <returns>the amount of utility gained during purchase</returns>
-            public static PurchaseResult Purchase(PurchaseOptimizer optimizer, float bank)
+            public static PurchaseResult Purchase(PurchaseOptimizer<T> optimizer, float bank, T simulatedInventory)
             {
-                return new PurchaseResult(optimizer, bank);
+                return new PurchaseResult(optimizer, bank, simulatedInventory);
             }
 
-            public void ExecutePurchases()
+            public void ExecutePurchases(T inventory)
             {
                 foreach (var purchase in purchases)
                 {
-                    purchase.Purchase(optimizer.increment, true);
+                    purchase.Purchase(inventory, optimizer.increment, true);
                 }
             }
         }
@@ -116,29 +131,29 @@ namespace Assets.Economics
         /// </summary>
         /// <param name="increment">The increment to which the value functions are evaluated</param>
         /// <returns></returns>
-        private CostUtilityAdapter GetHighestSellableValuePerUtility(float increment)
+        private ExchangeAdapter GetHighestSellableValuePerUtility(float increment, T inventory)
         {
             return this.resources
-                .Where(resource => resource.seller.CanSell())
+                .Where(resource => resource.seller.CanSell(inventory))
                 .Select(resource => new {
                     resource,
                     valuePerUtility = 
-                        resource.seller.Sell(increment, false)
-                        / -resource.utilityFunction.GetIncrementalUtility(-increment, resource.utilityFunction.GetCurrentAmount())
+                        resource.seller.Sell(inventory, increment, false)
+                        / -resource.utilityFunction.GetIncrementalUtility(inventory, - increment)
                 })
                 .OrderBy(resource => resource.valuePerUtility)
                 .LastOrDefault()
                 ?.resource;
         }
 
-        private CostUtilityAdapter GetHighestPurchaseableUtility(float maxPurchase)
+        private ExchangeAdapter GetHighestPurchaseableUtility(float maxPurchase, T inventory)
         {
             return this.resources
-                .Where(resource => resource.purchaser.CanPurchase(resource.simulatedMarketInventory))
-                .Where(resource => resource.purchaser.Purchase(increment, false, resource.simulatedMarketInventory).cost <= maxPurchase)
+                .Where(resource => resource.purchaser.CanPurchase(inventory))
+                .Where(resource => resource.purchaser.Purchase(inventory, increment, false).cost <= maxPurchase)
                 .Select(resource => new {
                     resource,
-                    utility = resource.utilityFunction.GetIncrementalUtility(increment, resource.simulatedSelfInventory) })
+                    utility = resource.utilityFunction.GetIncrementalUtility(inventory, increment) })
                 .OrderBy(resource => resource.utility)
                 .LastOrDefault()
                 ?.resource;

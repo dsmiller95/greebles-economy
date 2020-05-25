@@ -18,31 +18,32 @@ namespace Assets.Economics
         /// </summary>
         public float amount;
     }
-    public interface IPurchaser
+    public interface IPurchaser<T> where T : IExchangeInventory
     {
+        // TODO: configure return values of purchases and sells to return an object which can be used to re-execute
+        //      the exchange on a different inventory
         /// <summary>
-        /// Purchase given amount
+        /// Purchase given amount. Should -only- change the state of <paramref name="inventory"/>
         /// </summary>
+        /// <param name="inventory">The inventory to operate on</param>
         /// <param name="amount">the amount to purchase</param>
-        /// <param name="simulatedMarketInventory">Will evaluate the purchase price as if the market inventory contained this value.
-        ///     only used when execute is false
-        /// </param>
         /// <param name="execute">Whether or not to execute the purchase</param>
         /// <returns>A summary of the transaction</returns>
-        PurchaseResult Purchase(float amount, bool execute, float simulatedMarketInventory = 0);
+        PurchaseResult Purchase(T inventory, float amount, bool execute);
 
         /// <summary>
         /// Determines whether or not this purchaser is capable of executing a purchase at this time.
         ///     An example of when it cannot execute a purchase is when the selling inventory is empty
         /// </summary>
-        /// <param name="simulatedPrepurchaseAmount">A simulated market inventory which stands in for the actual inventory when set</param>
+        /// <param name="inventory">The inventory to operate on</param>
         /// <returns>whether or not a purchase of any amount can be executed</returns>
-        bool CanPurchase(float simulatedMarketInventory = -1);
+        bool CanPurchase(T inventory);
 
         /// <summary>
         /// Returns the current inventory of the market which will be purchased from
         /// </summary>
+        /// <param name="inventory">The inventory to operate on</param>
         /// <returns></returns>
-        float GetCurrentMarketInventory();
+        float GetCurrentMarketInventory(T inventory);
     }
 }

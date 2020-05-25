@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
-using static Assets.Economics.PurchaseOptimizer;
+
 
 /// <summary>
 /// Will find the nearest market and sell all goods in the inventory when it reaches the market
@@ -29,14 +29,17 @@ class SellingStateHandler : GenericStateHandler<GathererState, Gatherer>
         if (data.seekTargetToTouch())
         {
             var market = data.currentTarget.GetComponent<Market>();
-            IEnumerable<CostUtilityAdapter> optimizerAdapters = Enum.GetValues(typeof(ResourceType)).Cast<ResourceType>()
-                .Select(x => new MarketExchangeAdapter(data.inventory, market, x))
-                .Select(x => new CostUtilityAdapter()
-                {
-                    utilityFunction = data.utilityFunctions[x.type],
-                    purchaser = x,
-                    seller = x
-                });
+            // TODO:
+            //IEnumerable<ExchangeAdapter> optimizerAdapters = Enum.GetValues(typeof(ResourceType)).Cast<ResourceType>()
+            //    .Select(x => new MarketExchangeAdapter(data.inventory, market, x))
+            //    .Select(x => new ExchangeAdapter()
+            //    {
+            //        utilityFunction = data.utilityFunctions[x.type],
+            //        purchaser = x,
+            //        seller = x
+            //    });
+
+
             // TODO: acheive some metric of which items were most -valuable-
             //  Meaning which initial items ulitimitaly brought the most utility
             // var optimizer = new PurchaseOptimizer(optimizerAdapters);

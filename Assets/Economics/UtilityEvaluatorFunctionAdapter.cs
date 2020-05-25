@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Assets.Economics
 {
-    class UtilityEvaluatorFunctionAdapter : IUtilityEvaluator
+    class UtilityEvaluatorFunctionAdapter //TODO : IUtilityEvaluator
     {
         private IIncrementalFunction utilityFunction;
         private Func<float> getAmount;

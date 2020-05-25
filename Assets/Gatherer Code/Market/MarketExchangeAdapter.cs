@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-class MarketExchangeAdapter : ISeller, IPurchaser
+class MarketExchangeAdapter //TODO : ISeller, IPurchaser
 {
     private Market market;
     private ResourceInventory sourceInventory;
