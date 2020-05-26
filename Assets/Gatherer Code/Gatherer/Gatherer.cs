@@ -44,7 +44,7 @@ public class Gatherer : MonoBehaviour
         {
             {
                 ResourceType.Food,
-                new UtilityEvaluatorFunctionAdapter(
+                new UtilityEvaluatorFunctionAdapter<ResourceType>(
                     new InverseWeightedUtility(new WeightedRegion[] {
                         new WeightedRegion(0, 10),
                         new WeightedRegion(2, 1)
@@ -54,7 +54,7 @@ public class Gatherer : MonoBehaviour
             },
             {
                 ResourceType.Wood,
-                new UtilityEvaluatorFunctionAdapter(
+                new UtilityEvaluatorFunctionAdapter<ResourceType>(
                     new InverseWeightedUtility(new WeightedRegion[] {
                         new WeightedRegion(0, 10),
                         new WeightedRegion(1, 0.5f)

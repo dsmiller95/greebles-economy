@@ -193,6 +193,66 @@ namespace UnitTests.Economics
             Assert.AreEqual(0, marketInventory.Get("food"));
         }
 
+
+        [TestMethod]
+        // [Timeout(5000)]  // Milliseconds
+        public void ShouldExchangeExpensiveForCheapWhenEqualUtility2()
+        {
+            // Wood is expensive and plentiful
+            // Food is cheap and rare
+            // Selling one wood will net two food purchased
+            selfInventory = new TestInventoryModel(new[] {
+                ("wood", 10f),
+                ("food", 2f)
+            },
+            2);
+            marketInventory = new TestInventoryModel(new[] {
+                ("wood", 20f),
+                ("food", 20f)
+            },
+            5);
+            exchangeModel = new List<TestExchangeModel>
+            {
+                new TestExchangeModel
+                {
+                    utilityFunction = new InverseWeightedUtility(new WeightedRegion[] {
+                            new WeightedRegion(0, 1)
+                        }),
+                    purchasePrice = 2,
+                    sellPrice = 2,
+                    resourceType = "wood"
+                },
+                new TestExchangeModel
+                {
+                    utilityFunction = new InverseWeightedUtility(new WeightedRegion[] {
+                            new WeightedRegion(0, 1)
+                        }),
+                    purchasePrice = 1,
+                    sellPrice = 1,
+                    resourceType = "food"
+                },
+            };
+
+            var optimizer = new PurchaseOptimizer<TestInventoryModel, TestInventoryModel>(exchangeModel.Select(x => new ExchangeAdapter
+            {
+                purchaser = x,
+                seller = x,
+                utilityFunction = x
+            }), selfInventory, marketInventory);
+
+            optimizer.Optimize();
+
+            // should exchange wood for food until maximum utility is reached
+            // at 6 wood at 12 food; selling one more wood for two food will net a negative utility
+            Assert.AreEqual(12, selfInventory.Get("food"));
+            Assert.AreEqual(6, selfInventory.Get("wood"));
+
+            Assert.AreEqual(0, selfInventory.bank);
+
+            Assert.AreEqual(10, marketInventory.Get("food"));
+            Assert.AreEqual(24, marketInventory.Get("wood"));
+        }
+
         [TestMethod]
         [Timeout(5000)]  // Milliseconds
         public void ShouldExchangeExpensiveForCheapWhenEqualUtilityLimitedByMarketInventory()

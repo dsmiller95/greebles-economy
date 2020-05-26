@@ -96,9 +96,9 @@ namespace Assets.Economics
                 
                 //drain the bank
                 for (
-                    var resource = optimizer.GetHighestPurchaseableUtility(simSelf, simOther);
+                    var resource = optimizer.GetHighestPurchaseableUtilityPerCost(simSelf, simOther);
                     resource != default;
-                    resource = optimizer.GetHighestPurchaseableUtility(simSelf, simOther))
+                    resource = optimizer.GetHighestPurchaseableUtilityPerCost(simSelf, simOther))
                 {
                     var purchaseResult = resource.purchaser.Purchase(optimizer.increment, simSelf, simOther);
                     utilityGained += resource.utilityFunction.GetIncrementalUtility(
@@ -149,15 +149,19 @@ namespace Assets.Economics
                 ?.resource;
         }
 
-        private ExchangeAdapter GetHighestPurchaseableUtility(Self simSelf, Other simOther)
+        private ExchangeAdapter GetHighestPurchaseableUtilityPerCost(Self simSelf, Other simOther)
         {
             return this.resources
                 .Where(resource => resource.purchaser.CanPurchase(simSelf, simOther))
-                .Where(resource => resource.purchaser.Purchase(increment, simSelf, simOther).info.cost <= simSelf.GetCurrentFunds())
                 .Select(resource => new {
                     resource,
-                    utility = resource.utilityFunction.GetIncrementalUtility(simSelf, increment) })
-                .OrderBy(resource => resource.utility)
+                    utility = resource.utilityFunction.GetIncrementalUtility(simSelf, increment),
+                    purchase = resource.purchaser.Purchase(increment, simSelf, simOther).info
+                })
+                // The purchase could have been restricted in size based on available funds
+                .Where(resource => resource.purchase.amount == increment)
+                .Where(resource => resource.purchase.cost <= simSelf.GetCurrentFunds())
+                .OrderBy(resource => resource.utility / resource.purchase.cost)
                 .LastOrDefault()
                 ?.resource;
         }

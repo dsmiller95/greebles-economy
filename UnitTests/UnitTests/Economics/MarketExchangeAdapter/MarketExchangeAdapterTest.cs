@@ -3,42 +3,23 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace UnitTests.Economics.MarketExchangeAdapter
+namespace UnitTests.Economics
 {
+
     [TestClass]
     public class MarketExchangeAdapterTest
     {
-        enum TestItemType
-        {
-            Pesos,
-            Corn,
-            Cactus
-        }
-
-        private SpaceFillingInventory<TestItemType> CreateInventory(
-            (TestItemType, float)[] initialItems,
-            int capacity = 10,
-            TestItemType[] spaceFillingItems = null,
-            TestItemType moneyType = TestItemType.Pesos)
-        {
-            spaceFillingItems = spaceFillingItems ?? new[] { TestItemType.Cactus, TestItemType.Corn };
-            return new SpaceFillingInventory<TestItemType>(
-                capacity,
-                initialItems.ToDictionary(x => x.Item1, x => x.Item2),
-                spaceFillingItems,
-                moneyType);
-        }
 
         [TestMethod]
         public void ShouldExecuteSimplePurchase()
         {
-            var market = CreateInventory(new[]
+            var market = EconomicsTestUtilities.CreateInventory(new[]
             {
                 (TestItemType.Cactus,   2f),
                 (TestItemType.Corn,     2f),
                 (TestItemType.Pesos,    5f)
             });
-            var self = CreateInventory(new[]
+            var self = EconomicsTestUtilities.CreateInventory(new[]
             {
                 (TestItemType.Cactus,   2f),
                 (TestItemType.Corn,     2f),
@@ -63,13 +44,13 @@ namespace UnitTests.Economics.MarketExchangeAdapter
         [TestMethod]
         public void ShouldSimulateExecutionSimplePurchase()
         {
-            var market = CreateInventory(new[]
+            var market = EconomicsTestUtilities.CreateInventory(new[]
             {
                 (TestItemType.Cactus,   2f),
                 (TestItemType.Corn,     2f),
                 (TestItemType.Pesos,    5f)
             });
-            var self = CreateInventory(new[]
+            var self = EconomicsTestUtilities.CreateInventory(new[]
             {
                 (TestItemType.Cactus,   2f),
                 (TestItemType.Corn,     2f),
@@ -93,13 +74,13 @@ namespace UnitTests.Economics.MarketExchangeAdapter
         [TestMethod]
         public void WhenMarketIsEmptyShouldNotPurchase()
         {
-            var market = CreateInventory(new[]
+            var market = EconomicsTestUtilities.CreateInventory(new[]
             {
                 (TestItemType.Cactus,   2f),
                 (TestItemType.Corn,     0f),
                 (TestItemType.Pesos,    5f)
             });
-            var self = CreateInventory(new[]
+            var self = EconomicsTestUtilities.CreateInventory(new[]
             {
                 (TestItemType.Cactus,   2f),
                 (TestItemType.Corn,     2f),
@@ -124,13 +105,13 @@ namespace UnitTests.Economics.MarketExchangeAdapter
         [TestMethod]
         public void WhenSelfIsFullShouldNotPurchase()
         {
-            var market = CreateInventory(new[]
+            var market = EconomicsTestUtilities.CreateInventory(new[]
             {
                 (TestItemType.Cactus,   2f),
                 (TestItemType.Corn,     2f),
                 (TestItemType.Pesos,    5f)
             });
-            var self = CreateInventory(new[]
+            var self = EconomicsTestUtilities.CreateInventory(new[]
             {
                 (TestItemType.Cactus,   2f),
                 (TestItemType.Corn,     2f),
@@ -155,13 +136,13 @@ namespace UnitTests.Economics.MarketExchangeAdapter
         [TestMethod]
         public void WhenSelfIsBrokeShouldNotPurchase()
         {
-            var market = CreateInventory(new[]
+            var market = EconomicsTestUtilities.CreateInventory(new[]
             {
                 (TestItemType.Cactus,   2f),
                 (TestItemType.Corn,     2f),
                 (TestItemType.Pesos,    5f)
             });
-            var self = CreateInventory(new[]
+            var self = EconomicsTestUtilities.CreateInventory(new[]
             {
                 (TestItemType.Cactus,   2f),
                 (TestItemType.Corn,     2f),
@@ -186,13 +167,13 @@ namespace UnitTests.Economics.MarketExchangeAdapter
         [TestMethod]
         public void ShouldSimulateExecutionOfSimpleSell()
         {
-            var market = CreateInventory(new[]
+            var market = EconomicsTestUtilities.CreateInventory(new[]
             {
                 (TestItemType.Cactus,   2f),
                 (TestItemType.Corn,     2f),
                 (TestItemType.Pesos,    5f)
             });
-            var self = CreateInventory(new[]
+            var self = EconomicsTestUtilities.CreateInventory(new[]
             {
                 (TestItemType.Cactus,   2f),
                 (TestItemType.Corn,     2f),
@@ -216,13 +197,13 @@ namespace UnitTests.Economics.MarketExchangeAdapter
         [TestMethod]
         public void ShouldExecuteSimpleSell()
         {
-            var market = CreateInventory(new[]
+            var market = EconomicsTestUtilities.CreateInventory(new[]
             {
                 (TestItemType.Cactus,   2f),
                 (TestItemType.Corn,     2f),
                 (TestItemType.Pesos,    5f)
             });
-            var self = CreateInventory(new[]
+            var self = EconomicsTestUtilities.CreateInventory(new[]
             {
                 (TestItemType.Cactus,   2f),
                 (TestItemType.Corn,     2f),
@@ -247,13 +228,13 @@ namespace UnitTests.Economics.MarketExchangeAdapter
         [TestMethod]
         public void WhenSelfIsEmptyShouldNotSell()
         {
-            var market = CreateInventory(new[]
+            var market = EconomicsTestUtilities.CreateInventory(new[]
             {
                 (TestItemType.Cactus,   2f),
                 (TestItemType.Corn,     2f),
                 (TestItemType.Pesos,    5f)
             });
-            var self = CreateInventory(new[]
+            var self = EconomicsTestUtilities.CreateInventory(new[]
             {
                 (TestItemType.Cactus,   2f),
                 (TestItemType.Corn,     0f),
@@ -277,13 +258,13 @@ namespace UnitTests.Economics.MarketExchangeAdapter
         [TestMethod]
         public void WhenMarketIsFullShouldNotSell()
         {
-            var market = CreateInventory(new[]
+            var market = EconomicsTestUtilities.CreateInventory(new[]
             {
                 (TestItemType.Cactus,   2f),
                 (TestItemType.Corn,     2f),
                 (TestItemType.Pesos,    5f)
             }, 4);
-            var self = CreateInventory(new[]
+            var self = EconomicsTestUtilities.CreateInventory(new[]
             {
                 (TestItemType.Cactus,   2f),
                 (TestItemType.Corn,     2f),
