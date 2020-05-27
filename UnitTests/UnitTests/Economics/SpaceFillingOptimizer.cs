@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Linq;
-using Assets.Economics;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using static Assets.Economics.PurchaseOptimizer<SpaceFillingInventory<UnitTests.Economics.TestItemType>, SpaceFillingInventory<UnitTests.Economics.TestItemType>>;
+using TradeModeling.Economics;
+using TradeModeling.Inventories;
+using static TradeModeling.Economics.PurchaseOptimizer<TradeModeling.Inventories.SpaceFillingInventory<UnitTests.Economics.TestItemType>, TradeModeling.Inventories.SpaceFillingInventory<UnitTests.Economics.TestItemType>>;
 
 namespace UnitTests.Economics
 {

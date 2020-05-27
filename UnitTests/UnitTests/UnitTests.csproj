@@ -62,9 +62,9 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Assembly-CSharp.csproj">
-      <Project>{689e943f-83e6-e22f-5d71-60c8123866e7}</Project>
-      <Name>Assembly-CSharp</Name>
+    <ProjectReference Include="..\..\ExternalProjects\TradeModeling\TradeModeling.csproj">
+      <Project>{32d5b7b3-a7a3-471d-ab8c-c61294f9991b}</Project>
+      <Name>TradeModeling</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />

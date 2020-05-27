@@ -1,15 +1,12 @@
 ﻿using Assets.Economics;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-public class MarketExchangeAdapter<T>:
-    ISeller<SpaceFillingInventory<T>, SpaceFillingInventory<T>>,
-    IPurchaser<SpaceFillingInventory<T>, SpaceFillingInventory<T>>
+public class MarketExchangeAdapter<T> :
+ISeller<SpaceFillingInventory<T>, SpaceFillingInventory<T>>,
+IPurchaser<SpaceFillingInventory<T>, SpaceFillingInventory<T>>
 {
-    public T type {
+    public T type
+    {
         get;
         private set;
     }
