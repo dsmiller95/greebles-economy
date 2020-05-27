@@ -1,6 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Collections.Generic;
 using System.Linq;
 using TradeModeling;
 
@@ -21,7 +21,7 @@ namespace UnitTests
         public void WhenCreatingObjectsInEmptyList()
         {
             var beginningList = new List<TestClass>();
-            var resultList = Utilities.EnsureAllObjectsCreated(10, beginningList, () => new TestClass(2), obj => obj.myValue = 10);
+            var resultList = MyUtilities.EnsureAllObjectsCreated(10, beginningList, () => new TestClass(2), obj => obj.myValue = 10);
 
             Assert.AreEqual(10, resultList.Count);
             Assert.IsTrue(resultList.All(x => x.myValue == 2));
@@ -31,7 +31,7 @@ namespace UnitTests
         {
             var beginningList = new List<TestClass>() { new TestClass(3), new TestClass(3), new TestClass(3) };
             var beginningListCopy = beginningList.Select(x => x).ToList();
-            var resultList = Utilities.EnsureAllObjectsCreated(1, beginningList, () => new TestClass(2), obj => obj.myValue = 10);
+            var resultList = MyUtilities.EnsureAllObjectsCreated(1, beginningList, () => new TestClass(2), obj => obj.myValue = 10);
 
             Assert.AreEqual(1, resultList.Count);
             Assert.IsTrue(resultList.All(x => x.myValue == 3));
