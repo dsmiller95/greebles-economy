@@ -1,5 +1,4 @@
-﻿using Assets.Economics;
-using Assets.Gatherer_Code;
+﻿using Assets.Gatherer_Code;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -50,7 +49,7 @@ class SellingStateHandler : GenericStateHandler<GathererState, Gatherer>
             var timeSummary = data.timeTracker.getResourceTimeSummary();
 
             data.gatheringWeights = data.optimizer.generateNewWeights(data.gatheringWeights, timeSummary, sellResult);
-            Debug.Log(Utilities.SerializeDictionary(data.gatheringWeights));
+            Debug.Log(TradeModeling.MyUtilities.SerializeDictionary(data.gatheringWeights));
             data.timeTracker.clearTime();
             return GathererState.Gathering;
         }

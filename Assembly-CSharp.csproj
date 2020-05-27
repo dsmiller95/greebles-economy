@@ -64,15 +64,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\Billboard.cs" />
-    <Compile Include="Assets\Economics\ActionOption.cs" />
-    <Compile Include="Assets\Economics\IExchangeInventory.cs" />
-    <Compile Include="Assets\Economics\IIncrementalFunction.cs" />
-    <Compile Include="Assets\Economics\IPurchaser.cs" />
-    <Compile Include="Assets\Economics\ISeller.cs" />
-    <Compile Include="Assets\Economics\IUtilityEvaluator.cs" />
-    <Compile Include="Assets\Economics\InverseWeightedUtility.cs" />
-    <Compile Include="Assets\Economics\PurchaseOptimizer.cs" />
-    <Compile Include="Assets\Economics\UtilityEvaluatorFunctionAdapter.cs" />
     <Compile Include="Assets\Gatherer Code\Gatherer\GatherBehaviorOptimizer.cs" />
     <Compile Include="Assets\Gatherer Code\Gatherer\Gatherer.cs" />
     <Compile Include="Assets\Gatherer Code\Gatherer\GathererState.cs" />
@@ -84,12 +75,9 @@
     <Compile Include="Assets\Gatherer Code\Gatherer\TimeTracker.cs" />
     <Compile Include="Assets\Gatherer Code\Home\Home.cs" />
     <Compile Include="Assets\Gatherer Code\Home\SelectableHome.cs" />
-    <Compile Include="Assets\Gatherer Code\Market\EconomicsAdapters\MarketExchangeAdapter.cs" />
     <Compile Include="Assets\Gatherer Code\Market\Market.cs" />
     <Compile Include="Assets\Gatherer Code\Market\ResourceSellResult.cs" />
-    <Compile Include="Assets\Gatherer Code\Resources\Inventory\NotifyingInventory.cs" />
     <Compile Include="Assets\Gatherer Code\Resources\Inventory\ResourceInventory.cs" />
-    <Compile Include="Assets\Gatherer Code\Resources\Inventory\SpaceFillingInventory.cs" />
     <Compile Include="Assets\Gatherer Code\Resources\Resource.cs" />
     <Compile Include="Assets\Gatherer Code\Resources\ResourceConfiguration.cs" />
     <Compile Include="Assets\Gatherer Code\Resources\ResourceConfigurer.cs" />
@@ -116,7 +104,6 @@
     <Compile Include="Assets\UI\SelectionInfoPane\InfoPaneConfiguration.cs" />
     <Compile Include="Assets\UI\SelectionInfoPane\SelectionTracker.cs" />
     <Compile Include="Assets\UserLayerMasks.cs" />
-    <Compile Include="Assets\Utilities.cs" />
     <None Include="Assets\RTS_Camera\Demo\Projectors\Shaders\ProjectorLight.shader" />
     <None Include="Assets\RTS_Camera\Demo\Projectors\Shaders\ProjectorMultiply.shader" />
     <None Include="Assets\RTS_Camera\Demo\Projectors\Guidelines.txt" />
@@ -351,6 +338,9 @@
     </Reference>
     <Reference Include="UnityEngine.XRModule">
       <HintPath>C:/Program Files/Unity/Hub/Editor/2019.3.11f1/Editor/Data/Managed/UnityEngine/UnityEngine.XRModule.dll</HintPath>
+    </Reference>
+    <Reference Include="TradeModeling">
+      <HintPath>C:/source/greebles-economy/Assets/External/netstandard2.0/TradeModeling.dll</HintPath>
     </Reference>
     <Reference Include="mscorlib">
       <HintPath>C:/Program Files/Unity/Hub/Editor/2019.3.11f1/Editor/Data/MonoBleedingEdge/lib/mono/4.7.1-api/mscorlib.dll</HintPath>

@@ -1,6 +1,6 @@
-﻿using Assets.Economics;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
+using TradeModeling.Economics;
 using UnityEngine;
 
 public class InverseUtilityPlottableAdapter : MonoBehaviour, IPlottableFunction

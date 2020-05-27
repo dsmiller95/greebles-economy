@@ -5,7 +5,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
-using Assets.Economics;
+using TradeModeling.Inventories;
+using TradeModeling.Economics;
 
 [RequireComponent(typeof(ResourceInventory))]
 [RequireComponent(typeof(TimeTracker))]

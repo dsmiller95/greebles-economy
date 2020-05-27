@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace TradeModeling
 {
-    public static class Utilities
+    public static class MyUtilities
     {
         public static string SerializeDictionary<T, E>(Dictionary<E, T> dictionary, Func<T, string> serializer = null)
         {

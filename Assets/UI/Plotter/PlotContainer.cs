@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.UI;
+using TradeModeling;
 
 class PlotContainer
 {
@@ -56,7 +57,7 @@ class PlotContainer
 
         if (hasConnectors)
         {
-            this.connections = Utilities.EnsureAllObjectsCreated(
+            this.connections = MyUtilities.EnsureAllObjectsCreated(
                 positions.Count - 1,
                 this.connections,
                 () => CreateUnpositionedDotConnection(),
@@ -69,7 +70,7 @@ class PlotContainer
 
         if (hasDots)
         {
-            this.dots = Utilities.EnsureAllObjectsCreated(
+            this.dots = MyUtilities.EnsureAllObjectsCreated(
                 positions.Count,
                 this.dots,
                 () => CreateUnpositionedDot(),
