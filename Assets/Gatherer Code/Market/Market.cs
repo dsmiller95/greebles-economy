@@ -61,7 +61,7 @@ public class Market : MonoBehaviour
             })
             .ToDictionary(x => x.type, x => x.sellResult);
 
-        seller.Add(ResourceType.Gold, result.Values.Sum(sellResult => sellResult.totalRevenue));
+        seller.Add(ResourceType.Gold, result.Values.Sum(sellResult => sellResult.totalRevenue)).Execute();
         return result;
     }
 }

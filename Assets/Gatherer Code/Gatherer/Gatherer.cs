@@ -167,8 +167,9 @@ public class Gatherer : MonoBehaviour
         var resourceType = resource.GetComponent<Resource>();
         if (!resourceType.eaten)
         {
+            Debug.Log($"Eating {Enum.GetName(typeof(ResourceType), resourceType.type)}");
             resourceType.eaten = true;
-            this.inventory.Add(resourceType.type, resourceType.value);
+            this.inventory.Add(resourceType.type, resourceType.value).Execute();
             Destroy(resource);
         }
     }
