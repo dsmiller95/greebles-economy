@@ -118,7 +118,6 @@ namespace UnitTests.Economics
             Assert.AreEqual(17, market.Get(TestItemType.Corn));
         }
 
-
         [TestMethod]
         public void ShouldOptimizeForMaxUtilityWithRestrictedInventoryNoMoney()
         {

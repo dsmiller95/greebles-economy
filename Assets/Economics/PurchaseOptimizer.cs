@@ -18,6 +18,13 @@ namespace Assets.Economics
             public IUtilityEvaluator<Self> utilityFunction;
         }
 
+        public struct PurchaseOperationResult
+        {
+            public IList<ExchangeResult> exchages;
+            public float utilityGained;
+        }
+
+
         private IList<ExchangeAdapter> resources;
         private Self selfInventory;
         private Other otherInventory;
@@ -30,9 +37,15 @@ namespace Assets.Economics
             this.otherInventory = otherInventory;
         }
 
-        public void Optimize()
+        /// <summary>
+        /// Optimize transactions on the provided exchange
+        /// </summary>
+        /// <returns></returns>
+        public IList<(ExchangeResult?, PurchaseOperationResult)> Optimize()
         {
-            PurchaseResult.Purchase(this, selfInventory, otherInventory);
+            var transactionLedger = new List<(ExchangeResult?, PurchaseOperationResult)>();
+            var purchase = PurchaseResult.Purchase(this, selfInventory, otherInventory);
+            transactionLedger.Add((null, purchase.ledger));
 
             var executesPurchase = true;
             for (var minUtility = GetHighestSellableValuePerUtility(increment, selfInventory, otherInventory);
@@ -43,10 +56,11 @@ namespace Assets.Economics
                 var simOtherInventory = CloneOtherInventory();
                 // Execute all operations on a simulated inventory to make sure all prices, utilities, and any constraints on size are respected
 
-                minUtility.seller.Sell(increment, simSelfInventory, simOtherInventory).Execute();
+                var sellOption = minUtility.seller.Sell(increment, simSelfInventory, simOtherInventory);
+                sellOption.Execute();
 
                 var purchaseOption = PurchaseResult.Purchase(this, simSelfInventory, simOtherInventory);
-                executesPurchase = (purchaseOption.utilityGained
+                executesPurchase = (purchaseOption.ledger.utilityGained
                     + minUtility.utilityFunction.GetIncrementalUtility(
                         selfInventory,
                         -increment
@@ -57,8 +71,11 @@ namespace Assets.Economics
                     // Must sell first to get the money; then purchase
                     minUtility.seller.Sell(increment, selfInventory, otherInventory).Execute();
                     purchaseOption.ReExecutePurchases(selfInventory, otherInventory);
+                    transactionLedger.Add((sellOption.info, purchaseOption.ledger));
                 }
             }
+
+            return transactionLedger;
         }
 
         private Self CloneSelfInventory()
@@ -82,17 +99,19 @@ namespace Assets.Economics
 
         class PurchaseResult
         {
-            public float utilityGained {
+            private IList<IPurchaser<Self, Other>> purchases;
+            public PurchaseOperationResult ledger {
                 get;
                 private set;
             }
-            private IList<IPurchaser<Self, Other>> purchases;
             private PurchaseOptimizer<Self, Other> optimizer;
             private PurchaseResult(PurchaseOptimizer<Self, Other> optimizer, Self simSelf, Other simOther)
             {
                 this.optimizer = optimizer;
                 purchases = new List<IPurchaser<Self, Other>>();
-                utilityGained = 0f;
+                var ledger = new PurchaseOperationResult();
+                ledger.utilityGained = 0;
+                ledger.exchages = new List<ExchangeResult>();
                 
                 //drain the bank
                 for (
@@ -101,12 +120,15 @@ namespace Assets.Economics
                     resource = optimizer.GetHighestPurchaseableUtilityPerCost(simSelf, simOther))
                 {
                     var purchaseResult = resource.purchaser.Purchase(optimizer.increment, simSelf, simOther);
-                    utilityGained += resource.utilityFunction.GetIncrementalUtility(
+                    ledger.utilityGained += resource.utilityFunction.GetIncrementalUtility(
                         simSelf,
                         purchaseResult.info.amount);
                     purchaseResult.Execute();
+                    ledger.exchages.Add(purchaseResult.info);
                     purchases.Add(resource.purchaser);
                 }
+
+                this.ledger = ledger;
             }
 
             /// <summary>

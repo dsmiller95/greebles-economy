@@ -14,13 +14,8 @@ namespace UnitTests.Economics
         TestInventoryModel selfInventory;
         TestInventoryModel marketInventory;
 
-        [TestInitialize]
-        public void SetupInventoryModel()
-        {
-        }
 
         [TestMethod]
-        [Timeout(5000)]  // Milliseconds
         public void ShouldOptimizePurchaseWithBigBank()
         {
             selfInventory = new TestInventoryModel(new [] {
@@ -75,7 +70,6 @@ namespace UnitTests.Economics
         }
 
         [TestMethod]
-        [Timeout(5000)]  // Milliseconds
         public void ShouldExchangeHighValueForHighUtility()
         {
             // Wood is rare and of high utility
@@ -134,7 +128,6 @@ namespace UnitTests.Economics
         }
 
         [TestMethod]
-        [Timeout(5000)]  // Milliseconds
         public void ShouldExchangeExpensiveForCheapWhenEqualUtility()
         {
             // Wood is expensive and plentiful
@@ -195,7 +188,6 @@ namespace UnitTests.Economics
 
 
         [TestMethod]
-        // [Timeout(5000)]  // Milliseconds
         public void ShouldExchangeExpensiveForCheapWhenEqualUtility2()
         {
             // Wood is expensive and plentiful
@@ -254,7 +246,6 @@ namespace UnitTests.Economics
         }
 
         [TestMethod]
-        [Timeout(5000)]  // Milliseconds
         public void ShouldExchangeExpensiveForCheapWhenEqualUtilityLimitedByMarketInventory()
         {
             // Wood is expensive and plentiful
@@ -312,6 +303,81 @@ namespace UnitTests.Economics
             Assert.AreEqual(0, selfInventory.bank);
             Assert.AreEqual(6, selfInventory.Get("food"));
             Assert.AreEqual(1, marketInventory.Get("food"));
+        }
+
+        [TestMethod]
+        public void ShouldOptimizePurchaseAndReturnPurchaseRecord()
+        {
+            // Wood is expensive and locally plentiful
+            // Food is cheap and locally rare
+            // Selling one wood will net two food purchased
+            selfInventory = new TestInventoryModel(new[] {
+                ("wood", 10f),
+                ("food", 2f)
+            },
+            2);
+            marketInventory = new TestInventoryModel(new[] {
+                ("wood", 20f),
+                ("food", 20f)
+            },
+            5);
+            exchangeModel = new List<TestExchangeModel>
+            {
+                new TestExchangeModel
+                {
+                    utilityFunction = new InverseWeightedUtility(new WeightedRegion[] {
+                            new WeightedRegion(0, 1)
+                        }),
+                    purchasePrice = 2,
+                    sellPrice = 2,
+                    resourceType = "wood"
+                },
+                new TestExchangeModel
+                {
+                    utilityFunction = new InverseWeightedUtility(new WeightedRegion[] {
+                            new WeightedRegion(0, 1)
+                        }),
+                    purchasePrice = 1,
+                    sellPrice = 1,
+                    resourceType = "food"
+                },
+            };
+
+            var optimizer = new PurchaseOptimizer<TestInventoryModel, TestInventoryModel>(exchangeModel.Select(x => new ExchangeAdapter
+            {
+                purchaser = x,
+                seller = x,
+                utilityFunction = x
+            }), selfInventory, marketInventory);
+
+            var transactionLedger = optimizer.Optimize();
+
+            // should exchange wood for food until maximum utility is reached
+            // at 6 wood at 12 food; selling one more wood for two food will net a negative utility
+            Assert.AreEqual(12, selfInventory.Get("food"));
+            Assert.AreEqual(6, selfInventory.Get("wood"));
+
+            Assert.AreEqual(0, selfInventory.bank);
+
+            Assert.AreEqual(10, marketInventory.Get("food"));
+            Assert.AreEqual(24, marketInventory.Get("wood"));
+
+            Assert.AreEqual(5, transactionLedger.Count);
+            Assert.IsTrue(transactionLedger.All(transaction =>
+                transaction.Item2.exchages.All(purchase => purchase.amount == 1 && purchase.cost == 1)
+                && transaction.Item2.exchages.Count == 2
+            ));
+            Assert.IsTrue(transactionLedger.Skip(1).All(transaction =>
+                transaction.Item1.HasValue && transaction.Item1.Value.amount == 1 && transaction.Item1.Value.cost == 2
+            ));
+            Assert.IsTrue(transactionLedger.Select(trans => trans.Item2.utilityGained)
+                .SequenceEqual(new float[] {
+                    1/3f + 1/4f,
+                    1/5f + 1/6f,
+                    1/7f + 1/8f,
+                    1/9f + 1/10f,
+                    1/11f + 1/12f
+                }));
         }
     }
 }
