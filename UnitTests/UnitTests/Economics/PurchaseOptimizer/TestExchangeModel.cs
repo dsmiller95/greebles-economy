@@ -23,17 +23,18 @@ namespace UnitTests.Economics
             return utilityFunctions[resourceType].GetIncrementalValue(self.Get(resourceType), increment);
         }
 
-        public ActionOption<ExchangeResult> Purchase(string resourceType, float amount, TestInventoryModel self, TestInventoryModel market)
+        public ActionOption<ExchangeResult<string>> Purchase(string resourceType, float amount, TestInventoryModel self, TestInventoryModel market)
         {
             var purchasePrice = purchasePrices[resourceType];
             var marketInventory = market.Get(resourceType);
             var actualPurchase = Math.Min(amount, marketInventory);
             var price = actualPurchase * purchasePrice;
 
-            return new ActionOption<ExchangeResult>(new ExchangeResult
+            return new ActionOption<ExchangeResult<string>>(new ExchangeResult<string>
             {
                 cost = price,
-                amount = actualPurchase
+                amount = actualPurchase,
+                type = resourceType
             }, () => {
                 self.Add(resourceType, actualPurchase);
                 if (price > self.bank)
@@ -51,16 +52,17 @@ namespace UnitTests.Economics
             return market.Get(resourceType) > 0;
         }
 
-        public ActionOption<ExchangeResult> Sell(string resourceType, float amount, TestInventoryModel self, TestInventoryModel market)
+        public ActionOption<ExchangeResult<string>> Sell(string resourceType, float amount, TestInventoryModel self, TestInventoryModel market)
         {
             var sellPrice = sellPrices[resourceType];
             var actualSell = Math.Min(amount, self.Get(resourceType));
             var price = actualSell * sellPrice;
 
-            return new ActionOption<ExchangeResult>(new ExchangeResult
+            return new ActionOption<ExchangeResult<string>>(new ExchangeResult<string>
             {
                 cost = price,
-                amount = actualSell
+                amount = actualSell,
+                type = resourceType
             }, () => {
                 self.Add(resourceType, -actualSell);
                 self.bank += price;

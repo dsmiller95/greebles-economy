@@ -364,11 +364,14 @@ namespace UnitTests.Economics
 
             Assert.AreEqual(5, transactionLedger.Count);
             Assert.IsTrue(transactionLedger.All(transaction =>
-                transaction.Item2.exchages.All(purchase => purchase.amount == 1 && purchase.cost == 1)
+                transaction.Item2.exchages.All(purchase => purchase.amount == 1 && purchase.cost == 1 && purchase.type == "food")
                 && transaction.Item2.exchages.Count == 2
             ));
             Assert.IsTrue(transactionLedger.Skip(1).All(transaction =>
-                transaction.Item1.HasValue && transaction.Item1.Value.amount == 1 && transaction.Item1.Value.cost == 2
+                transaction.Item1.HasValue
+                && transaction.Item1.Value.amount == 1
+                && transaction.Item1.Value.cost == 2
+                && transaction.Item1.Value.type == "wood"
             ));
             Assert.IsTrue(transactionLedger.Select(trans => trans.Item2.utilityGained)
                 .SequenceEqual(new float[] {

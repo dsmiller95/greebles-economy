@@ -20,17 +20,18 @@ namespace TradeModeling.Exchanges
             this.moneyType = moneyType;
         }
 
-        public ActionOption<ExchangeResult> Purchase(T type, float amount, SpaceFillingInventory<T> selfInventory, SpaceFillingInventory<T> marketInventory)
+        public ActionOption<ExchangeResult<T>> Purchase(T type, float amount, SpaceFillingInventory<T> selfInventory, SpaceFillingInventory<T> marketInventory)
         {
             var exchangeRate = exchangeRates[type];
             var maxPurchase = selfInventory.GetCurrentFunds() / exchangeRate;
             var amountToPurchase = Math.Min(amount, maxPurchase);
             return marketInventory
                 .transferResourceInto(type, selfInventory, amountToPurchase)
-                .Then(withdrawn => new ExchangeResult
+                .Then(withdrawn => new ExchangeResult<T>
                 {
                     amount = withdrawn,
-                    cost = withdrawn * exchangeRate
+                    cost = withdrawn * exchangeRate,
+                    type = type
                 }, exchangeResult =>
                 {
                     selfInventory.Consume(moneyType, exchangeResult.cost);
@@ -44,15 +45,16 @@ namespace TradeModeling.Exchanges
                 && selfInventory.CanFitMoreOf(type);
         }
 
-        public ActionOption<ExchangeResult> Sell(T type, float amount, SpaceFillingInventory<T> selfInventory, SpaceFillingInventory<T> marketInventory)
+        public ActionOption<ExchangeResult<T>> Sell(T type, float amount, SpaceFillingInventory<T> selfInventory, SpaceFillingInventory<T> marketInventory)
         {
             var exchangeRate = exchangeRates[type];
             return selfInventory
                 .transferResourceInto(type, marketInventory, amount)
-                .Then(totalDeposited => new ExchangeResult
+                .Then(totalDeposited => new ExchangeResult<T>
                 {
                     amount = totalDeposited,
-                    cost = totalDeposited * exchangeRate
+                    cost = totalDeposited * exchangeRate,
+                    type = type
                 }, exchangeResult =>
                 {
                     var value = exchangeResult.cost;

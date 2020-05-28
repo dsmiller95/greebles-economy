@@ -13,7 +13,7 @@ namespace TradeModeling.Economics
     {
         public struct PurchaseOperationResult
         {
-            public IList<ExchangeResult> exchages;
+            public IList<ExchangeResult<Resource>> exchages;
             public float utilityGained;
         }
 
@@ -46,9 +46,9 @@ namespace TradeModeling.Economics
         /// Optimize transactions on the provided exchange
         /// </summary>
         /// <returns></returns>
-        public IList<(ExchangeResult?, PurchaseOperationResult)> Optimize()
+        public IList<(ExchangeResult<Resource>?, PurchaseOperationResult)> Optimize()
         {
-            var transactionLedger = new List<(ExchangeResult?, PurchaseOperationResult)>();
+            var transactionLedger = new List<(ExchangeResult<Resource>?, PurchaseOperationResult)>();
             var purchase = PurchaseResult.Purchase(this, selfInventory, otherInventory);
             transactionLedger.Add((null, purchase.ledger));
 
@@ -117,7 +117,7 @@ namespace TradeModeling.Economics
                 purchases = new List<Resource>();
                 var ledger = new PurchaseOperationResult();
                 ledger.utilityGained = 0;
-                ledger.exchages = new List<ExchangeResult>();
+                ledger.exchages = new List<ExchangeResult<Resource>>();
                 
                 //drain the bank
                 for (

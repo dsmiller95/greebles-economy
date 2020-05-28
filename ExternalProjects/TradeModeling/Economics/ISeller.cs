@@ -18,7 +18,7 @@ namespace TradeModeling.Economics
         /// <param name="selfInventory">The inventory to sell from</param>
         /// <param name="otherInventory">The inventory to sell to</param>
         /// <returns>the amount gained from selling exactly amount</returns>
-        ActionOption<ExchangeResult> Sell(Resource type, float amount, Self selfInventory, Other otherInventory);
+        ActionOption<ExchangeResult<Resource>> Sell(Resource type, float amount, Self selfInventory, Other otherInventory);
 
         /// <summary>
         /// Determines whether or not this seller is capable of executing a sell at this time.

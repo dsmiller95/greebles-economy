@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace TradeModeling.Economics
 {
 
-    public struct ExchangeResult
+    public struct ExchangeResult<Resource>
     {
         /// <summary>
         /// The amount of money which is paid for the items
@@ -17,6 +17,7 @@ namespace TradeModeling.Economics
         /// Actual amount of items purchased. this can be lower than requested if the selling inventory is empty
         /// </summary>
         public float amount;
+        public Resource type;
     }
     public interface IPurchaser<Resource, Self, Other>
         where Self : class, IExchangeInventory
@@ -31,7 +32,7 @@ namespace TradeModeling.Economics
         /// <param name="selfInventory">The inventory to purchase into</param>
         /// <param name="otherInventory">The inventory to purchase from</param>
         /// <returns>A summary of the transaction</returns>
-        ActionOption<ExchangeResult> Purchase(Resource type, float amount, Self selfInventory, Other otherInventory);
+        ActionOption<ExchangeResult<Resource>> Purchase(Resource type, float amount, Self selfInventory, Other otherInventory);
 
         /// <summary>
         /// Determines whether or not this purchaser is capable of executing a purchase at this time.
