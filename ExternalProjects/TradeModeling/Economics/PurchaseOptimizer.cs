@@ -7,34 +7,39 @@ using System.Threading.Tasks;
 namespace TradeModeling.Economics
 {
 
-    public class PurchaseOptimizer<Self, Other>
+    public class PurchaseOptimizer<Resource, Self, Other>
         where Self : class, IExchangeInventory
         where Other : class, IExchangeInventory
     {
-        public class ExchangeAdapter
-        {
-            public IPurchaser<Self, Other> purchaser;
-            public ISeller<Self, Other> seller;
-            public IUtilityEvaluator<Self> utilityFunction;
-        }
-
         public struct PurchaseOperationResult
         {
             public IList<ExchangeResult> exchages;
             public float utilityGained;
         }
 
-
-        private IList<ExchangeAdapter> resources;
         private Self selfInventory;
         private Other otherInventory;
+        private IList<Resource> tradeableResources;
+        private IPurchaser<Resource, Self, Other> purchaser;
+        private ISeller<Resource, Self, Other> seller;
+        private IUtilityEvaluator<Resource, Self> utilityFunction;
+
         private float increment = 1;
 
-        public PurchaseOptimizer(IEnumerable<ExchangeAdapter> exchangeAdapters, Self selfInventory, Other otherInventory)
+        public PurchaseOptimizer(
+            Self selfInventory,
+            Other otherInventory,
+            IEnumerable<Resource> tradeableResources,
+            IPurchaser<Resource, Self, Other> purchaser,
+            ISeller<Resource, Self, Other> seller,
+            IUtilityEvaluator<Resource, Self> utilityFunction)
         {
-            this.resources = exchangeAdapters.ToList();
             this.selfInventory = selfInventory;
             this.otherInventory = otherInventory;
+            this.tradeableResources = tradeableResources.ToList();
+            this.purchaser = purchaser;
+            this.seller = seller;
+            this.utilityFunction = utilityFunction;
         }
 
         /// <summary>
@@ -49,19 +54,20 @@ namespace TradeModeling.Economics
 
             var executesPurchase = true;
             for (var minUtility = GetHighestSellableValuePerUtility(increment, selfInventory, otherInventory);
-                minUtility != default && executesPurchase;
+                !EqualityComparer<Resource>.Default.Equals(minUtility, default) && executesPurchase;
                 minUtility = GetHighestSellableValuePerUtility(increment, selfInventory, otherInventory))
             {
                 var simSelfInventory = CloneSelfInventory();
                 var simOtherInventory = CloneOtherInventory();
                 // Execute all operations on a simulated inventory to make sure all prices, utilities, and any constraints on size are respected
 
-                var sellOption = minUtility.seller.Sell(increment, simSelfInventory, simOtherInventory);
+                var sellOption = seller.Sell(minUtility, increment, simSelfInventory, simOtherInventory);
                 sellOption.Execute();
 
                 var purchaseOption = PurchaseResult.Purchase(this, simSelfInventory, simOtherInventory);
                 executesPurchase = (purchaseOption.ledger.utilityGained
-                    + minUtility.utilityFunction.GetIncrementalUtility(
+                    + utilityFunction.GetIncrementalUtility(
+                        minUtility,
                         selfInventory,
                         -increment
                       ))
@@ -69,7 +75,7 @@ namespace TradeModeling.Economics
                 if (executesPurchase)
                 {
                     // Must sell first to get the money; then purchase
-                    minUtility.seller.Sell(increment, selfInventory, otherInventory).Execute();
+                    seller.Sell(minUtility, increment, selfInventory, otherInventory).Execute();
                     purchaseOption.ReExecutePurchases(selfInventory, otherInventory);
                     transactionLedger.Add((sellOption.info, purchaseOption.ledger));
                 }
@@ -99,16 +105,16 @@ namespace TradeModeling.Economics
 
         class PurchaseResult
         {
-            private IList<IPurchaser<Self, Other>> purchases;
+            private IList<Resource> purchases;
             public PurchaseOperationResult ledger {
                 get;
                 private set;
             }
-            private PurchaseOptimizer<Self, Other> optimizer;
-            private PurchaseResult(PurchaseOptimizer<Self, Other> optimizer, Self simSelf, Other simOther)
+            private PurchaseOptimizer<Resource, Self, Other> optimizer;
+            private PurchaseResult(PurchaseOptimizer<Resource, Self, Other> optimizer, Self simSelf, Other simOther)
             {
                 this.optimizer = optimizer;
-                purchases = new List<IPurchaser<Self, Other>>();
+                purchases = new List<Resource>();
                 var ledger = new PurchaseOperationResult();
                 ledger.utilityGained = 0;
                 ledger.exchages = new List<ExchangeResult>();
@@ -116,16 +122,17 @@ namespace TradeModeling.Economics
                 //drain the bank
                 for (
                     var resource = optimizer.GetHighestPurchaseableUtilityPerCost(simSelf, simOther);
-                    resource != default;
+                    !EqualityComparer<Resource>.Default.Equals(resource, default);
                     resource = optimizer.GetHighestPurchaseableUtilityPerCost(simSelf, simOther))
                 {
-                    var purchaseResult = resource.purchaser.Purchase(optimizer.increment, simSelf, simOther);
-                    ledger.utilityGained += resource.utilityFunction.GetIncrementalUtility(
+                    var purchaseResult = optimizer.purchaser.Purchase(resource, optimizer.increment, simSelf, simOther);
+                    ledger.utilityGained += optimizer.utilityFunction.GetIncrementalUtility(
+                        resource,
                         simSelf,
                         purchaseResult.info.amount);
                     purchaseResult.Execute();
                     ledger.exchages.Add(purchaseResult.info);
-                    purchases.Add(resource.purchaser);
+                    purchases.Add(resource);
                 }
 
                 this.ledger = ledger;
@@ -136,7 +143,7 @@ namespace TradeModeling.Economics
             /// </summary>
             /// <param name="bank">the amount of money which can be spent</param>
             /// <returns>the amount of utility gained during purchase</returns>
-            public static PurchaseResult Purchase(PurchaseOptimizer<Self, Other> optimizer, Self simSelf, Other simOther)
+            public static PurchaseResult Purchase(PurchaseOptimizer<Resource, Self, Other> optimizer, Self simSelf, Other simOther)
             {
                 return new PurchaseResult(optimizer, simSelf, simOther);
             }
@@ -145,7 +152,7 @@ namespace TradeModeling.Economics
             {
                 foreach (var purchase in purchases)
                 {
-                    purchase.Purchase(optimizer.increment, simSelf, simOther).Execute();
+                    optimizer.purchaser.Purchase(purchase, optimizer.increment, simSelf, simOther).Execute();
                 }
             }
         }
@@ -156,36 +163,46 @@ namespace TradeModeling.Economics
         /// </summary>
         /// <param name="increment">The increment to which the value functions are evaluated</param>
         /// <returns></returns>
-        private ExchangeAdapter GetHighestSellableValuePerUtility(float increment, Self simSelf, Other simOther)
+        private Resource GetHighestSellableValuePerUtility(float increment, Self simSelf, Other simOther)
         {
-            return this.resources
-                .Where(resource => resource.seller.CanSell(simSelf, simOther))
+            var resourceObject = tradeableResources
+                .Where(resource => seller.CanSell(resource, simSelf, simOther))
                 .Select(resource => new {
                     resource,
                     valuePerUtility = 
-                        resource.seller.Sell(increment, simSelf, simOther).info.cost
-                        / -resource.utilityFunction.GetIncrementalUtility(simSelf, - increment)
+                        seller.Sell(resource, increment, simSelf, simOther).info.cost
+                        / -utilityFunction.GetIncrementalUtility(resource, simSelf, - increment)
                 })
                 .OrderBy(resource => resource.valuePerUtility)
-                .LastOrDefault()
-                ?.resource;
+                .LastOrDefault();
+
+            if (resourceObject == default)
+            {
+                return default(Resource);
+            }
+            return resourceObject.resource;
         }
 
-        private ExchangeAdapter GetHighestPurchaseableUtilityPerCost(Self simSelf, Other simOther)
+        private Resource GetHighestPurchaseableUtilityPerCost(Self simSelf, Other simOther)
         {
-            return this.resources
-                .Where(resource => resource.purchaser.CanPurchase(simSelf, simOther))
+            var resourceObject = tradeableResources
+                .Where(resource => purchaser.CanPurchase(resource, simSelf, simOther))
                 .Select(resource => new {
                     resource,
-                    utility = resource.utilityFunction.GetIncrementalUtility(simSelf, increment),
-                    purchase = resource.purchaser.Purchase(increment, simSelf, simOther).info
+                    utility = utilityFunction.GetIncrementalUtility(resource, simSelf, increment),
+                    purchase = purchaser.Purchase(resource, increment, simSelf, simOther).info
                 })
                 // The purchase could have been restricted in size based on available funds
                 .Where(resource => resource.purchase.amount == increment)
                 .Where(resource => resource.purchase.cost <= simSelf.GetCurrentFunds())
                 .OrderBy(resource => resource.utility / resource.purchase.cost)
-                .LastOrDefault()
-                ?.resource;
+                .LastOrDefault();
+
+            if(resourceObject == default)
+            {
+                return default(Resource);
+            }
+            return resourceObject.resource;
         }
     }
 }

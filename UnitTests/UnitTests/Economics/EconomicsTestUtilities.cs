@@ -32,21 +32,10 @@ namespace UnitTests.Economics
         }
 
         public static MarketExchangeAdapter<TestItemType> CreateExchangeAdapter(
-            TestItemType type,
-            float exchangeRate,
+            (TestItemType, float)[] exchangeRates,
             TestItemType moneyType = TestItemType.Pesos)
         {
-            return new MarketExchangeAdapter<TestItemType>(type, exchangeRate, moneyType);
-        }
-
-        public static IUtilityEvaluator<SpaceFillingInventory<TestItemType>> CreateUtilityFunction(
-            TestItemType type,
-            WeightedRegion[] regions)
-        {
-            return new UtilityEvaluatorFunctionAdapter<TestItemType>(
-                new InverseWeightedUtility(regions),
-                type
-            );
+            return new MarketExchangeAdapter<TestItemType>(exchangeRates.ToDictionary(x => x.Item1, x => x.Item2), moneyType);
         }
     }
 }

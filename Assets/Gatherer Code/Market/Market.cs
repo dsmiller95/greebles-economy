@@ -29,9 +29,9 @@ public class Market : MonoBehaviour
         this._inventory = inventory.backingInventory;
     }
 
-    public IEnumerable<MarketExchangeAdapter<ResourceType>> GetExchangeAdapters()
+    public MarketExchangeAdapter<ResourceType> GetExchangeAdapter()
     {
-        return this.exchangeRates.Select(exchange => new MarketExchangeAdapter<ResourceType>(exchange.Key, exchange.Value, ResourceType.Gold));
+        return new MarketExchangeAdapter<ResourceType>(exchangeRates, ResourceType.Gold);
     }
 
     // Start is called before the first frame update

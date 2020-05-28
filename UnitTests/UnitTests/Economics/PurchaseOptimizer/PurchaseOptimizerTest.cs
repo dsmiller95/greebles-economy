@@ -3,14 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using TradeModeling.Economics;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using static TradeModeling.Economics.PurchaseOptimizer<UnitTests.Economics.TestInventoryModel, UnitTests.Economics.TestInventoryModel>;
+// using static TradeModeling.Economics.PurchaseOptimizer<UnitTests.Economics.TestInventoryModel, UnitTests.Economics.TestInventoryModel>;
 
 namespace UnitTests.Economics
 {
     [TestClass]
     public class PurchaseOptimizerTest
     {
-        IList<TestExchangeModel> exchangeModel;
+        TestExchangeModel exchangeModel;
         TestInventoryModel selfInventory;
         TestInventoryModel marketInventory;
 
@@ -28,36 +28,36 @@ namespace UnitTests.Economics
                 ("food", 10f)
             },
             0);
-            exchangeModel = new List<TestExchangeModel>
+            exchangeModel = new TestExchangeModel()
             {
-                new TestExchangeModel
+                utilityFunctions = new Dictionary<string, IIncrementalFunction>
                 {
-                    utilityFunction = new InverseWeightedUtility(new WeightedRegion[] {
-                            new WeightedRegion(0, 5),
-                            new WeightedRegion(2, 1)
-                        }),
-                    purchasePrice = 3,
-                    sellPrice = 2,
-                    resourceType = "wood"
+                    { "wood", new InverseWeightedUtility(new WeightedRegion[] {
+                        new WeightedRegion(0, 5),
+                        new WeightedRegion(2, 1)
+                    }) },
+                    { "food", new InverseWeightedUtility(new WeightedRegion[] {
+                        new WeightedRegion(0, 5),
+                        new WeightedRegion(2, 1)
+                    }) }
                 },
-                new TestExchangeModel
+                purchasePrices = new Dictionary<string, float>
                 {
-                    utilityFunction = new InverseWeightedUtility(new WeightedRegion[] {
-                            new WeightedRegion(0, 5),
-                            new WeightedRegion(2, 1)
-                        }),
-                    purchasePrice = 3,
-                    sellPrice = 2,
-                    resourceType = "food"
+                    { "wood", 3 },
+                    { "food", 3 },
                 },
+                sellPrices = new Dictionary<string, float>
+                {
+                    { "wood", 2 },
+                    { "food", 2 },
+                }
             };
 
-            var optimizer = new PurchaseOptimizer<TestInventoryModel, TestInventoryModel>(exchangeModel.Select(x => new ExchangeAdapter
-            {
-                purchaser = x,
-                seller = x,
-                utilityFunction = x
-            }), selfInventory, marketInventory);
+            var optimizer = new PurchaseOptimizer<string, TestInventoryModel, TestInventoryModel>(
+                selfInventory,
+                marketInventory,
+                new[] { "wood", "food" },
+                exchangeModel, exchangeModel, exchangeModel);
 
             optimizer.Optimize();
 
@@ -85,36 +85,36 @@ namespace UnitTests.Economics
                 ("food", 10f)
             },
             0);
-            exchangeModel = new List<TestExchangeModel>
+            exchangeModel = new TestExchangeModel()
             {
-                new TestExchangeModel
+                utilityFunctions = new Dictionary<string, IIncrementalFunction>
                 {
-                    utilityFunction = new InverseWeightedUtility(new WeightedRegion[] {
+                    { "wood", new InverseWeightedUtility(new WeightedRegion[] {
                             new WeightedRegion(0, 5),
                             new WeightedRegion(10, 1)
-                        }),
-                    purchasePrice = 3,
-                    sellPrice = 2,
-                    resourceType = "wood"
-                },
-                new TestExchangeModel
-                {
-                    utilityFunction = new InverseWeightedUtility(new WeightedRegion[] {
+                        }) },
+                    { "food", new InverseWeightedUtility(new WeightedRegion[] {
                             new WeightedRegion(0, 5),
                             new WeightedRegion(2, 1)
-                        }),
-                    purchasePrice = 4,
-                    sellPrice = 3,
-                    resourceType = "food",
+                        }) }
                 },
+                purchasePrices = new Dictionary<string, float>
+                {
+                    { "wood", 3 },
+                    { "food", 4 },
+                },
+                sellPrices = new Dictionary<string, float>
+                {
+                    { "wood", 2 },
+                    { "food", 3 },
+                }
             };
 
-            var optimizer = new PurchaseOptimizer<TestInventoryModel, TestInventoryModel>(exchangeModel.Select(x => new ExchangeAdapter
-            {
-                purchaser = x,
-                seller = x,
-                utilityFunction = x
-            }), selfInventory, marketInventory);
+            var optimizer = new PurchaseOptimizer<string, TestInventoryModel, TestInventoryModel>(
+                selfInventory,
+                marketInventory,
+                new[] { "wood", "food" },
+                exchangeModel, exchangeModel, exchangeModel);
 
             optimizer.Optimize();
 
@@ -143,36 +143,36 @@ namespace UnitTests.Economics
                 ("food", 10f)
             },
             0);
-            exchangeModel = new List<TestExchangeModel>
+            exchangeModel = new TestExchangeModel()
             {
-                new TestExchangeModel
+                utilityFunctions = new Dictionary<string, IIncrementalFunction>
                 {
-                    utilityFunction = new InverseWeightedUtility(new WeightedRegion[] {
+                    { "wood", new InverseWeightedUtility(new WeightedRegion[] {
                             new WeightedRegion(0, 5),
                             new WeightedRegion(2, 1)
-                        }),
-                    purchasePrice = 5,
-                    sellPrice = 4,
-                    resourceType = "wood"
-                },
-                new TestExchangeModel
-                {
-                    utilityFunction = new InverseWeightedUtility(new WeightedRegion[] {
+                        }) },
+                    { "food", new InverseWeightedUtility(new WeightedRegion[] {
                             new WeightedRegion(0, 5),
                             new WeightedRegion(2, 1)
-                        }),
-                    purchasePrice = 2,
-                    sellPrice = 1,
-                    resourceType = "food"
+                        }) }
                 },
+                purchasePrices = new Dictionary<string, float>
+                {
+                    { "wood", 5 },
+                    { "food", 2 },
+                },
+                sellPrices = new Dictionary<string, float>
+                {
+                    { "wood", 4 },
+                    { "food", 1 },
+                }
             };
 
-            var optimizer = new PurchaseOptimizer<TestInventoryModel, TestInventoryModel>(exchangeModel.Select(x => new ExchangeAdapter
-            {
-                purchaser = x,
-                seller = x,
-                utilityFunction = x
-            }), selfInventory, marketInventory);
+            var optimizer = new PurchaseOptimizer<string, TestInventoryModel, TestInventoryModel>(
+                selfInventory,
+                marketInventory,
+                new[] { "wood", "food" },
+                exchangeModel, exchangeModel, exchangeModel);
 
             optimizer.Optimize();
 
@@ -203,34 +203,34 @@ namespace UnitTests.Economics
                 ("food", 20f)
             },
             5);
-            exchangeModel = new List<TestExchangeModel>
+            exchangeModel = new TestExchangeModel()
             {
-                new TestExchangeModel
+                utilityFunctions = new Dictionary<string, IIncrementalFunction>
                 {
-                    utilityFunction = new InverseWeightedUtility(new WeightedRegion[] {
+                    { "wood", new InverseWeightedUtility(new WeightedRegion[] {
                             new WeightedRegion(0, 1)
-                        }),
-                    purchasePrice = 2,
-                    sellPrice = 2,
-                    resourceType = "wood"
+                        }) },
+                    { "food", new InverseWeightedUtility(new WeightedRegion[] {
+                            new WeightedRegion(0, 1)
+                        }) }
                 },
-                new TestExchangeModel
+                purchasePrices = new Dictionary<string, float>
                 {
-                    utilityFunction = new InverseWeightedUtility(new WeightedRegion[] {
-                            new WeightedRegion(0, 1)
-                        }),
-                    purchasePrice = 1,
-                    sellPrice = 1,
-                    resourceType = "food"
+                    { "wood", 2 },
+                    { "food", 1 },
                 },
+                sellPrices = new Dictionary<string, float>
+                {
+                    { "wood", 2 },
+                    { "food", 1 },
+                }
             };
 
-            var optimizer = new PurchaseOptimizer<TestInventoryModel, TestInventoryModel>(exchangeModel.Select(x => new ExchangeAdapter
-            {
-                purchaser = x,
-                seller = x,
-                utilityFunction = x
-            }), selfInventory, marketInventory);
+            var optimizer = new PurchaseOptimizer<string, TestInventoryModel, TestInventoryModel>(
+                selfInventory,
+                marketInventory,
+                new[] { "wood", "food" },
+                exchangeModel, exchangeModel, exchangeModel);
 
             optimizer.Optimize();
 
@@ -262,36 +262,36 @@ namespace UnitTests.Economics
                 ("food", 7f)
             },
             0);
-            exchangeModel = new List<TestExchangeModel>
+            exchangeModel = new TestExchangeModel()
             {
-                new TestExchangeModel
+                utilityFunctions = new Dictionary<string, IIncrementalFunction>
                 {
-                    utilityFunction = new InverseWeightedUtility(new WeightedRegion[] {
+                    { "wood", new InverseWeightedUtility(new WeightedRegion[] {
                             new WeightedRegion(0, 5),
                             new WeightedRegion(2, 1)
-                        }),
-                    purchasePrice = 5,
-                    sellPrice = 4,
-                    resourceType = "wood"
-                },
-                new TestExchangeModel
-                {
-                    utilityFunction = new InverseWeightedUtility(new WeightedRegion[] {
+                        }) },
+                    { "food", new InverseWeightedUtility(new WeightedRegion[] {
                             new WeightedRegion(0, 5),
                             new WeightedRegion(2, 1)
-                        }),
-                    purchasePrice = 2,
-                    sellPrice = 1,
-                    resourceType = "food"
+                        }) }
                 },
+                purchasePrices = new Dictionary<string, float>
+                {
+                    { "wood", 5 },
+                    { "food", 2 },
+                },
+                sellPrices = new Dictionary<string, float>
+                {
+                    { "wood", 4 },
+                    { "food", 1 },
+                }
             };
 
-            var optimizer = new PurchaseOptimizer<TestInventoryModel, TestInventoryModel>(exchangeModel.Select(x => new ExchangeAdapter
-            {
-                purchaser = x,
-                seller = x,
-                utilityFunction = x
-            }), selfInventory, marketInventory);
+            var optimizer = new PurchaseOptimizer<string, TestInventoryModel, TestInventoryModel>(
+                selfInventory,
+                marketInventory,
+                new[] { "wood", "food" },
+                exchangeModel, exchangeModel, exchangeModel);
 
             optimizer.Optimize();
 
@@ -321,34 +321,34 @@ namespace UnitTests.Economics
                 ("food", 20f)
             },
             5);
-            exchangeModel = new List<TestExchangeModel>
+            exchangeModel = new TestExchangeModel()
             {
-                new TestExchangeModel
+                utilityFunctions = new Dictionary<string, IIncrementalFunction>
                 {
-                    utilityFunction = new InverseWeightedUtility(new WeightedRegion[] {
+                    { "wood", new InverseWeightedUtility(new WeightedRegion[] {
                             new WeightedRegion(0, 1)
-                        }),
-                    purchasePrice = 2,
-                    sellPrice = 2,
-                    resourceType = "wood"
+                        }) },
+                    { "food", new InverseWeightedUtility(new WeightedRegion[] {
+                            new WeightedRegion(0, 1)
+                        }) }
                 },
-                new TestExchangeModel
+                purchasePrices = new Dictionary<string, float>
                 {
-                    utilityFunction = new InverseWeightedUtility(new WeightedRegion[] {
-                            new WeightedRegion(0, 1)
-                        }),
-                    purchasePrice = 1,
-                    sellPrice = 1,
-                    resourceType = "food"
+                    { "wood", 2 },
+                    { "food", 1 },
                 },
+                sellPrices = new Dictionary<string, float>
+                {
+                    { "wood", 2 },
+                    { "food", 1 },
+                }
             };
 
-            var optimizer = new PurchaseOptimizer<TestInventoryModel, TestInventoryModel>(exchangeModel.Select(x => new ExchangeAdapter
-            {
-                purchaser = x,
-                seller = x,
-                utilityFunction = x
-            }), selfInventory, marketInventory);
+            var optimizer = new PurchaseOptimizer<string, TestInventoryModel, TestInventoryModel>(
+                selfInventory,
+                marketInventory,
+                new[] { "wood", "food" },
+                exchangeModel, exchangeModel, exchangeModel);
 
             var transactionLedger = optimizer.Optimize();
 

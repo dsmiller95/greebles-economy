@@ -1,9 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TradeModeling.Economics;
 using TradeModeling.Inventories;
-using static TradeModeling.Economics.PurchaseOptimizer<TradeModeling.Inventories.SpaceFillingInventory<UnitTests.Economics.TestItemType>, TradeModeling.Inventories.SpaceFillingInventory<UnitTests.Economics.TestItemType>>;
+using static TradeModeling.Economics.PurchaseOptimizer<UnitTests.Economics.TestItemType, TradeModeling.Inventories.SpaceFillingInventory<UnitTests.Economics.TestItemType>, TradeModeling.Inventories.SpaceFillingInventory<UnitTests.Economics.TestItemType>>;
 
 namespace UnitTests.Economics
 {
@@ -26,33 +27,29 @@ namespace UnitTests.Economics
                 (TestItemType.Pesos,    5f)
             }, 100);
 
-            var exchangeAdapters = new[]
-            {
-                EconomicsTestUtilities.CreateExchangeAdapter(TestItemType.Cactus, 2),
-                EconomicsTestUtilities.CreateExchangeAdapter(TestItemType.Corn, 1),
-            };
+            var exchangeAdapter = EconomicsTestUtilities.CreateExchangeAdapter(
+                new[] { (TestItemType.Cactus, 2f), (TestItemType.Corn, 1f) }
+                );
 
-            var utilityFunctions = new[]
+            var utilityFunctions = new UtilityEvaluatorFunctionMapper<TestItemType>(new Dictionary<TestItemType, IIncrementalFunction>
             {
-                EconomicsTestUtilities.CreateUtilityFunction(TestItemType.Cactus, new []
+                { TestItemType.Cactus, new InverseWeightedUtility(new []
                 {
                     new WeightedRegion(0, 1)
-                }),
-                EconomicsTestUtilities.CreateUtilityFunction(TestItemType.Corn, new []
+                }) },
+                { TestItemType.Corn, new InverseWeightedUtility(new []
                 {
                     new WeightedRegion(0, 1)
-                })
-            };
+                }) }
+            });
 
-            var optimizer = new PurchaseOptimizer<SpaceFillingInventory<TestItemType>, SpaceFillingInventory<TestItemType>>(
-                exchangeAdapters.Zip(utilityFunctions, (exchange, utility) => new ExchangeAdapter
-                {
-                    purchaser = exchange,
-                    seller = exchange,
-                    utilityFunction = utility
-                }),
+            var optimizer = new PurchaseOptimizer<TestItemType, SpaceFillingInventory<TestItemType>, SpaceFillingInventory<TestItemType>>(
                 self,
-                market);
+                market,
+                new[] { TestItemType.Cactus, TestItemType.Corn },
+                exchangeAdapter,
+                exchangeAdapter,
+                utilityFunctions);
 
             optimizer.Optimize();
 
@@ -80,33 +77,29 @@ namespace UnitTests.Economics
                 (TestItemType.Pesos,    5f)
             }, 100);
 
-            var exchangeAdapters = new[]
-            {
-                EconomicsTestUtilities.CreateExchangeAdapter(TestItemType.Cactus, 1),
-                EconomicsTestUtilities.CreateExchangeAdapter(TestItemType.Corn, 1),
-            };
+            var exchangeAdapter = EconomicsTestUtilities.CreateExchangeAdapter(
+                new[] { (TestItemType.Cactus, 1f), (TestItemType.Corn, 1f) }
+                );
 
-            var utilityFunctions = new[]
+            var utilityFunctions = new UtilityEvaluatorFunctionMapper<TestItemType>(new Dictionary<TestItemType, IIncrementalFunction>
             {
-                EconomicsTestUtilities.CreateUtilityFunction(TestItemType.Cactus, new []
+                { TestItemType.Cactus, new InverseWeightedUtility(new []
                 {
                     new WeightedRegion(0, 2)
-                }),
-                EconomicsTestUtilities.CreateUtilityFunction(TestItemType.Corn, new []
+                }) },
+                { TestItemType.Corn, new InverseWeightedUtility(new []
                 {
                     new WeightedRegion(0, 1)
-                })
-            };
+                }) }
+            });
 
-            var optimizer = new PurchaseOptimizer<SpaceFillingInventory<TestItemType>, SpaceFillingInventory<TestItemType>>(
-                exchangeAdapters.Zip(utilityFunctions, (exchange, utility) => new ExchangeAdapter
-                {
-                    purchaser = exchange,
-                    seller = exchange,
-                    utilityFunction = utility
-                }),
+            var optimizer = new PurchaseOptimizer<TestItemType, SpaceFillingInventory<TestItemType>, SpaceFillingInventory<TestItemType>>(
                 self,
-                market);
+                market,
+                new[] { TestItemType.Cactus, TestItemType.Corn },
+                exchangeAdapter,
+                exchangeAdapter,
+                utilityFunctions);
 
             optimizer.Optimize();
 
@@ -135,33 +128,29 @@ namespace UnitTests.Economics
                 (TestItemType.Pesos,    5f)
             }, 100);
 
-            var exchangeAdapters = new[]
-            {
-                EconomicsTestUtilities.CreateExchangeAdapter(TestItemType.Cactus, 1),
-                EconomicsTestUtilities.CreateExchangeAdapter(TestItemType.Corn, 1),
-            };
+            var exchangeAdapter = EconomicsTestUtilities.CreateExchangeAdapter(
+                new[] { (TestItemType.Cactus, 1f), (TestItemType.Corn, 1f) }
+                );
 
-            var utilityFunctions = new[]
+            var utilityFunctions = new UtilityEvaluatorFunctionMapper<TestItemType>(new Dictionary<TestItemType, IIncrementalFunction>
             {
-                EconomicsTestUtilities.CreateUtilityFunction(TestItemType.Cactus, new []
+                { TestItemType.Cactus, new InverseWeightedUtility(new []
                 {
                     new WeightedRegion(0, 2)
-                }),
-                EconomicsTestUtilities.CreateUtilityFunction(TestItemType.Corn, new []
+                }) },
+                { TestItemType.Corn, new InverseWeightedUtility(new []
                 {
                     new WeightedRegion(0, 1)
-                })
-            };
+                }) }
+            });
 
-            var optimizer = new PurchaseOptimizer<SpaceFillingInventory<TestItemType>, SpaceFillingInventory<TestItemType>>(
-                exchangeAdapters.Zip(utilityFunctions, (exchange, utility) => new ExchangeAdapter
-                {
-                    purchaser = exchange,
-                    seller = exchange,
-                    utilityFunction = utility
-                }),
+            var optimizer = new PurchaseOptimizer<TestItemType, SpaceFillingInventory<TestItemType>, SpaceFillingInventory<TestItemType>>(
                 self,
-                market);
+                market,
+                new[] { TestItemType.Cactus, TestItemType.Corn },
+                exchangeAdapter,
+                exchangeAdapter,
+                utilityFunctions);
 
             optimizer.Optimize();
 

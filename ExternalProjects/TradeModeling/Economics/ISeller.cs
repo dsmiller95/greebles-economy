@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace TradeModeling.Economics
 {
-    public interface ISeller<Self, Other>
+    public interface ISeller<Resource, Self, Other>
         where Self : class, IExchangeInventory
         where Other : class, IExchangeInventory
     {
@@ -18,7 +18,7 @@ namespace TradeModeling.Economics
         /// <param name="selfInventory">The inventory to sell from</param>
         /// <param name="otherInventory">The inventory to sell to</param>
         /// <returns>the amount gained from selling exactly amount</returns>
-        ActionOption<ExchangeResult> Sell(float amount, Self selfInventory, Other otherInventory);
+        ActionOption<ExchangeResult> Sell(Resource type, float amount, Self selfInventory, Other otherInventory);
 
         /// <summary>
         /// Determines whether or not this seller is capable of executing a sell at this time.
@@ -27,6 +27,6 @@ namespace TradeModeling.Economics
         /// <param name="selfInventory">The inventory selling from</param>
         /// <param name="otherInventory">The inventory to sell to</param>
         /// <returns>whether or not a sell of any amount can be executed</returns>
-        bool CanSell(Self selfInventory, Other otherInventory);
+        bool CanSell(Resource type, Self selfInventory, Other otherInventory);
     }
 }

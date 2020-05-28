@@ -33,7 +33,7 @@ public class Gatherer : MonoBehaviour
     internal Dictionary<ResourceType, float> gatheringWeights;
 
     private StateMachine<GathererState, Gatherer> stateMachine;
-    public Dictionary<ResourceType, IUtilityEvaluator<SpaceFillingInventory<ResourceType>>> utilityFunctions
+    public IUtilityEvaluator<ResourceType, SpaceFillingInventory<ResourceType>> utilityFunction
     {
         get;
         private set;
@@ -41,29 +41,23 @@ public class Gatherer : MonoBehaviour
 
     private void Awake()
     {
-        this.utilityFunctions = new Dictionary<ResourceType, IUtilityEvaluator<SpaceFillingInventory<ResourceType>>>()
+        this.utilityFunction = new UtilityEvaluatorFunctionMapper<ResourceType>(new Dictionary<ResourceType, IIncrementalFunction>()
         {
             {
                 ResourceType.Food,
-                new UtilityEvaluatorFunctionAdapter<ResourceType>(
-                    new InverseWeightedUtility(new WeightedRegion[] {
-                        new WeightedRegion(0, 10),
-                        new WeightedRegion(2, 1)
-                    }),
-                    ResourceType.Food
-                )
+                new InverseWeightedUtility(new WeightedRegion[] {
+                    new WeightedRegion(0, 10),
+                    new WeightedRegion(2, 1)
+                })
             },
             {
                 ResourceType.Wood,
-                new UtilityEvaluatorFunctionAdapter<ResourceType>(
-                    new InverseWeightedUtility(new WeightedRegion[] {
-                        new WeightedRegion(0, 10),
-                        new WeightedRegion(1, 0.5f)
-                    }),
-                    ResourceType.Food
-                )
+                new InverseWeightedUtility(new WeightedRegion[] {
+                    new WeightedRegion(0, 10),
+                    new WeightedRegion(1, 0.5f)
+                })
             }
-        };
+        });
     }
 
     // Start is called before the first frame update

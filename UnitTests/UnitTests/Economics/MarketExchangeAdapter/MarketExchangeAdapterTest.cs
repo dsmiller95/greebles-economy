@@ -27,11 +27,11 @@ namespace UnitTests.Economics
                 (TestItemType.Pesos,    5f)
             });
 
-            var adapter = new MarketExchangeAdapter<TestItemType>(TestItemType.Corn, 2, TestItemType.Pesos);
+            var adapter = new MarketExchangeAdapter<TestItemType>(new Dictionary<TestItemType, float> { { TestItemType.Corn, 2 } }, TestItemType.Pesos);
 
-            Assert.IsTrue(adapter.CanPurchase(self, market));
+            Assert.IsTrue(adapter.CanPurchase(TestItemType.Corn, self, market));
 
-            var purchaseResult = adapter.Purchase(1, self, market);
+            var purchaseResult = adapter.Purchase(TestItemType.Corn, 1, self, market);
             Assert.AreEqual(1, purchaseResult.info.amount);
             Assert.AreEqual(2, purchaseResult.info.cost);
 
@@ -58,10 +58,10 @@ namespace UnitTests.Economics
                 (TestItemType.Pesos,    5f)
             });
 
-            var adapter = new MarketExchangeAdapter<TestItemType>(TestItemType.Corn, 2, TestItemType.Pesos);
+            var adapter = new MarketExchangeAdapter<TestItemType>(new Dictionary<TestItemType, float> { { TestItemType.Corn, 2 } }, TestItemType.Pesos);
 
-            Assert.IsTrue(adapter.CanPurchase(self, market));
-            var purchaseResult = adapter.Purchase(1, self, market);
+            Assert.IsTrue(adapter.CanPurchase(TestItemType.Corn, self, market));
+            var purchaseResult = adapter.Purchase(TestItemType.Corn, 1, self, market);
 
             Assert.AreEqual(1, purchaseResult.info.amount);
             Assert.AreEqual(2, purchaseResult.info.cost);
@@ -88,11 +88,11 @@ namespace UnitTests.Economics
                 (TestItemType.Pesos,    5f)
             });
 
-            var adapter = new MarketExchangeAdapter<TestItemType>(TestItemType.Corn, 2, TestItemType.Pesos);
+            var adapter = new MarketExchangeAdapter<TestItemType>(new Dictionary<TestItemType, float> { { TestItemType.Corn, 2 } }, TestItemType.Pesos);
 
-            Assert.IsFalse(adapter.CanPurchase(self, market));
+            Assert.IsFalse(adapter.CanPurchase(TestItemType.Corn, self, market));
 
-            var purchaseResult = adapter.Purchase(1, self, market);
+            var purchaseResult = adapter.Purchase(TestItemType.Corn, 1, self, market);
             Assert.AreEqual(0, purchaseResult.info.amount);
             Assert.AreEqual(0, purchaseResult.info.cost);
 
@@ -118,11 +118,11 @@ namespace UnitTests.Economics
                 (TestItemType.Corn,     2f),
                 (TestItemType.Pesos,    5f)
             }, 4);
+            
+            var adapter = new MarketExchangeAdapter<TestItemType>(new Dictionary<TestItemType, float> { { TestItemType.Corn, 2 } }, TestItemType.Pesos);
 
-            var adapter = new MarketExchangeAdapter<TestItemType>(TestItemType.Corn, 2, TestItemType.Pesos);
-
-            Assert.IsFalse(adapter.CanPurchase(self, market));
-            var purchaseResult = adapter.Purchase(1, self, market);
+            Assert.IsFalse(adapter.CanPurchase(TestItemType.Corn, self, market));
+            var purchaseResult = adapter.Purchase(TestItemType.Corn, 1, self, market);
 
             Assert.AreEqual(0, purchaseResult.info.amount);
             Assert.AreEqual(0, purchaseResult.info.cost);
@@ -150,10 +150,10 @@ namespace UnitTests.Economics
                 (TestItemType.Pesos,    0f)
             });
 
-            var adapter = new MarketExchangeAdapter<TestItemType>(TestItemType.Corn, 2, TestItemType.Pesos);
+            var adapter = new MarketExchangeAdapter<TestItemType>(new Dictionary<TestItemType, float> { { TestItemType.Corn, 2 } }, TestItemType.Pesos);
 
-            Assert.IsFalse(adapter.CanPurchase(self, market));
-            var purchaseResult = adapter.Purchase(1, self, market);
+            Assert.IsFalse(adapter.CanPurchase(TestItemType.Corn, self, market));
+            var purchaseResult = adapter.Purchase(TestItemType.Corn, 1, self, market);
 
             Assert.AreEqual(0, purchaseResult.info.amount);
             Assert.AreEqual(0, purchaseResult.info.cost);
@@ -181,10 +181,10 @@ namespace UnitTests.Economics
                 (TestItemType.Pesos,    5f)
             });
 
-            var adapter = new MarketExchangeAdapter<TestItemType>(TestItemType.Corn, 2, TestItemType.Pesos);
+            var adapter = new MarketExchangeAdapter<TestItemType>(new Dictionary<TestItemType, float> { { TestItemType.Corn, 2 } }, TestItemType.Pesos);
 
-            Assert.IsTrue(adapter.CanSell(self, market));
-            var sellResult = adapter.Sell(1, self, market);
+            Assert.IsTrue(adapter.CanSell(TestItemType.Corn, self, market));
+            var sellResult = adapter.Sell(TestItemType.Corn, 1, self, market);
 
             Assert.AreEqual(1, sellResult.info.amount);
             Assert.AreEqual(2, sellResult.info.cost);
@@ -211,10 +211,10 @@ namespace UnitTests.Economics
                 (TestItemType.Pesos,    5f)
             });
 
-            var adapter = new MarketExchangeAdapter<TestItemType>(TestItemType.Corn, 2, TestItemType.Pesos);
+            var adapter = new MarketExchangeAdapter<TestItemType>(new Dictionary<TestItemType, float> { { TestItemType.Corn, 2 } }, TestItemType.Pesos);
 
-            Assert.IsTrue(adapter.CanSell(self, market));
-            var sellResult = adapter.Sell(1, self, market);
+            Assert.IsTrue(adapter.CanSell(TestItemType.Corn, self, market));
+            var sellResult = adapter.Sell(TestItemType.Corn, 1, self, market);
 
             Assert.AreEqual(1, sellResult.info.amount);
             Assert.AreEqual(2, sellResult.info.cost);
@@ -242,10 +242,10 @@ namespace UnitTests.Economics
                 (TestItemType.Pesos,    5f)
             });
 
-            var adapter = new MarketExchangeAdapter<TestItemType>(TestItemType.Corn, 2, TestItemType.Pesos);
+            var adapter = new MarketExchangeAdapter<TestItemType>(new Dictionary<TestItemType, float> { { TestItemType.Corn, 2 } }, TestItemType.Pesos);
 
-            Assert.IsFalse(adapter.CanSell(self, market));
-            var sellResult = adapter.Sell(1, self, market);
+            Assert.IsFalse(adapter.CanSell(TestItemType.Corn, self, market));
+            var sellResult = adapter.Sell(TestItemType.Corn, 1, self, market);
             Assert.AreEqual(0, sellResult.info.amount);
             Assert.AreEqual(0, sellResult.info.cost);
 
@@ -272,10 +272,10 @@ namespace UnitTests.Economics
                 (TestItemType.Pesos,    5f)
             });
 
-            var adapter = new MarketExchangeAdapter<TestItemType>(TestItemType.Corn, 2, TestItemType.Pesos);
+            var adapter = new MarketExchangeAdapter<TestItemType>(new Dictionary<TestItemType, float> { { TestItemType.Corn, 2 } }, TestItemType.Pesos);
 
-            Assert.IsFalse(adapter.CanSell(self, market));
-            var sellResult = adapter.Sell(1, self, market);
+            Assert.IsFalse(adapter.CanSell(TestItemType.Corn, self, market));
+            var sellResult = adapter.Sell(TestItemType.Corn, 1, self, market);
             Assert.AreEqual(0, sellResult.info.amount);
             Assert.AreEqual(0, sellResult.info.cost);
 

@@ -18,7 +18,7 @@ namespace TradeModeling.Economics
         /// </summary>
         public float amount;
     }
-    public interface IPurchaser<Self, Other>
+    public interface IPurchaser<Resource, Self, Other>
         where Self : class, IExchangeInventory
         where Other : class, IExchangeInventory
     {
@@ -31,7 +31,7 @@ namespace TradeModeling.Economics
         /// <param name="selfInventory">The inventory to purchase into</param>
         /// <param name="otherInventory">The inventory to purchase from</param>
         /// <returns>A summary of the transaction</returns>
-        ActionOption<ExchangeResult> Purchase(float amount, Self selfInventory, Other otherInventory);
+        ActionOption<ExchangeResult> Purchase(Resource type, float amount, Self selfInventory, Other otherInventory);
 
         /// <summary>
         /// Determines whether or not this purchaser is capable of executing a purchase at this time.
@@ -40,6 +40,6 @@ namespace TradeModeling.Economics
         /// <param name="selfInventory">The inventory to purchase into</param>
         /// <param name="otherInventory">The inventory to purchase from</param>
         /// <returns>whether or not a purchase of any amount can be executed</returns>
-        bool CanPurchase(Self selfInventory, Other otherInventory);
+        bool CanPurchase(Resource type, Self selfInventory, Other otherInventory);
     }
 }

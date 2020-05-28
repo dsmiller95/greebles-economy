@@ -12,21 +12,20 @@ namespace UnitTests.Economics
         public float money;
     }
 
-    class TestExchangeModel : IPurchaser<TestInventoryModel, TestInventoryModel>, ISeller<TestInventoryModel, TestInventoryModel>, IUtilityEvaluator<TestInventoryModel>
+    class TestExchangeModel : IPurchaser<string, TestInventoryModel, TestInventoryModel>, ISeller<string, TestInventoryModel, TestInventoryModel>, IUtilityEvaluator<string, TestInventoryModel>
     {
-        public IIncrementalFunction utilityFunction;
-        public float purchasePrice;
-        public float sellPrice;
+        public IDictionary<string, IIncrementalFunction> utilityFunctions;
+        public IDictionary<string, float> purchasePrices;
+        public IDictionary<string, float> sellPrices;
 
-        public string resourceType;
-
-        public float GetIncrementalUtility(TestInventoryModel self, float increment)
+        public float GetIncrementalUtility(string resourceType, TestInventoryModel self, float increment)
         {
-            return this.utilityFunction.GetIncrementalValue(self.Get(resourceType), increment);
+            return utilityFunctions[resourceType].GetIncrementalValue(self.Get(resourceType), increment);
         }
 
-        public ActionOption<ExchangeResult> Purchase(float amount, TestInventoryModel self, TestInventoryModel market)
+        public ActionOption<ExchangeResult> Purchase(string resourceType, float amount, TestInventoryModel self, TestInventoryModel market)
         {
+            var purchasePrice = purchasePrices[resourceType];
             var marketInventory = market.Get(resourceType);
             var actualPurchase = Math.Min(amount, marketInventory);
             var price = actualPurchase * purchasePrice;
@@ -47,13 +46,14 @@ namespace UnitTests.Economics
             });
         }
 
-        public bool CanPurchase(TestInventoryModel self, TestInventoryModel market)
+        public bool CanPurchase(string resourceType, TestInventoryModel self, TestInventoryModel market)
         {
             return market.Get(resourceType) > 0;
         }
 
-        public ActionOption<ExchangeResult> Sell(float amount, TestInventoryModel self, TestInventoryModel market)
+        public ActionOption<ExchangeResult> Sell(string resourceType, float amount, TestInventoryModel self, TestInventoryModel market)
         {
+            var sellPrice = sellPrices[resourceType];
             var actualSell = Math.Min(amount, self.Get(resourceType));
             var price = actualSell * sellPrice;
 
@@ -69,7 +69,7 @@ namespace UnitTests.Economics
                 // TODO: give the market a bank as well
             });
         }
-        public bool CanSell(TestInventoryModel self, TestInventoryModel market)
+        public bool CanSell(string resourceType, TestInventoryModel self, TestInventoryModel market)
         {
             return self.Get(resourceType) > 0;
         }
