@@ -9,6 +9,8 @@ namespace TradeModeling.Economics
     public class UtilityAnalyzer<Resource>
     {
 
+        // TODO: support ledgers that contain intermediate transactions. Currently this will only work when all bought resources
+        //  are never sold after they have been bought
         public Dictionary<Resource, float> GetUtilityPerInitialResource(
             IList<Resource> tradeableResources,
             SpaceFillingInventory<Resource> endingInventory,
@@ -16,23 +18,32 @@ namespace TradeModeling.Economics
             IUtilityEvaluator<Resource, SpaceFillingInventory<Resource>> utilityEvaluator
             )
         {
-            var result = tradeableResources.ToDictionary(x => x, x => 0f);
+            
             var endingUtilities = tradeableResources.ToDictionary(
                 resource => resource,
                 resource => utilityEvaluator.GetTotalUtility(resource, endingInventory)
               );
-
+            var result = tradeableResources.ToDictionary(x => x, x => 0f);
             var allTransactions = GetTransactionMapFromLedger(tradeableResources, transactionLedger);
 
-            var derivedUtilities = tradeableResources.ToDictionary(x => x,
-                resource =>
+            foreach (var sold in tradeableResources)
+            {
+                foreach (var bought in tradeableResources.Where(x => !EqualityComparer<Resource>.Default.Equals(x, sold)))
                 {
-                    var derivedUtility = 0f;
-
-
-
-                    return derivedUtility;
-                });
+                    if (endingInventory.Get(bought) == 0)
+                    {
+                        continue;
+                    }
+                    var transaction = allTransactions.GetTransactionAmounts(sold, bought);
+                    if(transaction.Item1 < 0)
+                    {
+                        var soldRatio = -transaction.Item1 / endingInventory.Get(bought);
+                        var transferredUtility = endingUtilities[bought] * soldRatio;
+                        endingUtilities[bought] -= transferredUtility;
+                        endingUtilities[sold] += transferredUtility;
+                    }
+                }
+            }
             
 
             return endingUtilities;
