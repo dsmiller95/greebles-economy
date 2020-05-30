@@ -48,6 +48,17 @@ namespace TradeModeling.Economics
             return currentRegion.RegionWeight * BaseUtility(currentInventory);
         }
 
+        public float GetNetValue(float startPoint)
+        {
+            int realStartPoint = (int)startPoint;
+            float totalUtility = 0;
+            for (int i = realStartPoint - 1; i >= 0; i--)
+            {
+                totalUtility += this.GetIncrementalValue(i, 1);
+            }
+            return totalUtility;
+        }
+
         private float BaseUtility(float inventory)
         {
             return 1f / (inventory + offset);

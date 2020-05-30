@@ -7,15 +7,15 @@ using System.Threading.Tasks;
 namespace TradeModeling.Economics
 {
 
+    public struct PurchaseOperationResult<Resource>
+    {
+        public IList<ExchangeResult<Resource>> exchages;
+        public float utilityGained;
+    }
     public class PurchaseOptimizer<Resource, Self, Other>
         where Self : class, IExchangeInventory
         where Other : class, IExchangeInventory
     {
-        public struct PurchaseOperationResult
-        {
-            public IList<ExchangeResult<Resource>> exchages;
-            public float utilityGained;
-        }
 
         private Self selfInventory;
         private Other otherInventory;
@@ -46,9 +46,9 @@ namespace TradeModeling.Economics
         /// Optimize transactions on the provided exchange
         /// </summary>
         /// <returns></returns>
-        public IList<(ExchangeResult<Resource>?, PurchaseOperationResult)> Optimize()
+        public IList<(ExchangeResult<Resource>?, PurchaseOperationResult<Resource>)> Optimize()
         {
-            var transactionLedger = new List<(ExchangeResult<Resource>?, PurchaseOperationResult)>();
+            var transactionLedger = new List<(ExchangeResult<Resource>?, PurchaseOperationResult<Resource>)>();
             var purchase = PurchaseResult.Purchase(this, selfInventory, otherInventory);
             transactionLedger.Add((null, purchase.ledger));
 
@@ -106,7 +106,7 @@ namespace TradeModeling.Economics
         class PurchaseResult
         {
             private IList<Resource> purchases;
-            public PurchaseOperationResult ledger {
+            public PurchaseOperationResult<Resource> ledger {
                 get;
                 private set;
             }
@@ -115,7 +115,7 @@ namespace TradeModeling.Economics
             {
                 this.optimizer = optimizer;
                 purchases = new List<Resource>();
-                var ledger = new PurchaseOperationResult();
+                var ledger = new PurchaseOperationResult<Resource>();
                 ledger.utilityGained = 0;
                 ledger.exchages = new List<ExchangeResult<Resource>>();
                 

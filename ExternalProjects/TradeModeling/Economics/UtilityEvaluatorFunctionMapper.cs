@@ -19,5 +19,10 @@ namespace TradeModeling.Economics
         {
             return this.utilityFunctions[type].GetIncrementalValue(selfInventory.Get(type), increment);
         }
+
+        public float GetTotalUtility(T type, SpaceFillingInventory<T> inventory)
+        {
+            return this.utilityFunctions[type].GetNetValue(inventory.Get(type));
+        }
     }
 }

@@ -13,6 +13,8 @@ namespace UnitTests.Economics
     {
         Pesos,
         Corn,
+        Chips,
+        Chilis,
         Cactus
     }
     public static class EconomicsTestUtilities

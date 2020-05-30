@@ -12,7 +12,10 @@ namespace UnitTests.Economics
         public float money;
     }
 
-    class TestExchangeModel : IPurchaser<string, TestInventoryModel, TestInventoryModel>, ISeller<string, TestInventoryModel, TestInventoryModel>, IUtilityEvaluator<string, TestInventoryModel>
+    class TestExchangeModel :
+        IPurchaser<string, TestInventoryModel, TestInventoryModel>,
+        ISeller<string, TestInventoryModel, TestInventoryModel>,
+        IUtilityEvaluator<string, TestInventoryModel>
     {
         public IDictionary<string, IIncrementalFunction> utilityFunctions;
         public IDictionary<string, float> purchasePrices;
@@ -74,6 +77,11 @@ namespace UnitTests.Economics
         public bool CanSell(string resourceType, TestInventoryModel self, TestInventoryModel market)
         {
             return self.Get(resourceType) > 0;
+        }
+
+        public float GetTotalUtility(string type, TestInventoryModel inventory)
+        {
+            throw new NotImplementedException();
         }
     }
 }

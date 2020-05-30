@@ -19,5 +19,13 @@ namespace TradeModeling.Economics
         /// <param name="increment">the additional amount of the item</param>
         /// <returns>The additional utility from gaining more item</returns>
         float GetIncrementalUtility(Resource type, Self inventory, float increment);
+
+        /// <summary>
+        /// Calculate the total utility of <paramref name="type"/> in <paramref name="inventory"/>
+        /// </summary>
+        /// <param name="type">The item type</param>
+        /// <param name="inventory">The inventory to operate on</param>
+        /// <returns>The additional utility from gaining more item</returns>
+        float GetTotalUtility(Resource type, Self inventory);
     }
 }
