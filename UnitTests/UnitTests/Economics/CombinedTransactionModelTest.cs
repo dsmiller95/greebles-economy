@@ -67,5 +67,29 @@ namespace UnitTests.Economics
             Assert.AreEqual((-1, 3), combinedModel.GetTransactionAmounts("cactus", "corn"));
             Assert.AreEqual((3, -1), combinedModel.GetTransactionAmounts("corn", "cactus"));
         }
+
+        [TestMethod]
+        public void ShouldModelManyTransactionsSeperatelyAndAddTogether()
+        {
+            var validTransactionItems = new[] { "corn", "cactus", "chili", "chips" };
+            var model1 = new CombinedTransactionModel<string>(validTransactionItems);
+            model1.SetTransactionValue("cactus", "corn", -1, 9);
+            var model2 = new CombinedTransactionModel<string>(validTransactionItems);
+            model2.SetTransactionValue("cactus", "chili", -1, 8);
+            var model3 = new CombinedTransactionModel<string>(validTransactionItems);
+            model3.SetTransactionValue("chili", "corn", -1, 7);
+            var model4 = new CombinedTransactionModel<string>(validTransactionItems);
+            model4.SetTransactionValue("chips", "chili", -1, 5);
+            var model5 = new CombinedTransactionModel<string>(validTransactionItems);
+            model5.SetTransactionValue("chips", "corn", -1, 4);
+
+            var combinedModel = model1 + model2 + model3 + model4 + model5;
+
+            Assert.AreEqual((-1, 9), combinedModel.GetTransactionAmounts("cactus", "corn"));
+            Assert.AreEqual((-1, 8), combinedModel.GetTransactionAmounts("cactus", "chili"));
+            Assert.AreEqual((-1, 7), combinedModel.GetTransactionAmounts("chili", "corn"));
+            Assert.AreEqual((-1, 5), combinedModel.GetTransactionAmounts("chips", "chili"));
+            Assert.AreEqual((-1, 4), combinedModel.GetTransactionAmounts("chips", "corn"));
+        }
     }
 }

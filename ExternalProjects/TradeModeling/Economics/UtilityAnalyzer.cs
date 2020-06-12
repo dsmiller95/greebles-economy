@@ -6,7 +6,7 @@ using TradeModeling.Inventories;
 
 namespace TradeModeling.Economics
 {
-    public class UtilityAnalyzer<Resource>
+    public class UtilityAnalyzer<Resource> where Resource : IComparable
     {
 
         // TODO: support ledgers that contain intermediate transactions. Currently this will only work when all bought resources
@@ -71,5 +71,26 @@ namespace TradeModeling.Economics
 
             return allTransactions;
         }
+
+
+        //private CombinedTransactionModel<Resource> GetTransactionMapFromSingleTransaction(
+        //    IList<Resource> tradeableResources,
+        //    (ExchangeResult<Resource>, PurchaseOperationResult<Resource>) transaction)
+        //{
+
+        //    var transactionModel = new CombinedTransactionModel<Resource>(tradeableResources);
+
+        //    var sourceResourcePerResultResource = transaction.Item1.amount / transaction.Item2.exchages.Count;
+        //    foreach (var boughtItem in transaction.Item2.exchages)
+        //    {
+        //        transactionModel.AddTransaction(
+        //            transaction.Item1.type,
+        //            boughtItem.type,
+        //            -sourceResourcePerResultResource,
+        //            boughtItem.amount);
+        //    }
+
+        //    return transactionModel;
+        //}
     }
 }
