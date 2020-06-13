@@ -43,9 +43,10 @@ namespace TradeModeling.Economics
         }
 
         /// <summary>
-        /// Optimize transactions on the provided exchange
+        /// Optimize transactions on the provided exchange. This will execute purchases via the exchange methods provided, after
+        ///     finding an available trade which can increase utility.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>a summary of all exchanges made during the optimization</returns>
         public IList<(ExchangeResult<Resource>?, PurchaseOperationResult<Resource>)> Optimize()
         {
             var transactionLedger = new List<(ExchangeResult<Resource>?, PurchaseOperationResult<Resource>)>();

@@ -33,6 +33,7 @@ public class Gatherer : MonoBehaviour
     internal Dictionary<ResourceType, float> gatheringWeights;
 
     private StateMachine<GathererState, Gatherer> stateMachine;
+    public IDictionary<GathererState, dynamic> stateData;
     public IUtilityEvaluator<ResourceType, SpaceFillingInventory<ResourceType>> utilityFunction
     {
         get;
@@ -41,20 +42,21 @@ public class Gatherer : MonoBehaviour
 
     private void Awake()
     {
+        this.stateData = new Dictionary<GathererState, dynamic>();
         this.utilityFunction = new UtilityEvaluatorFunctionMapper<ResourceType>(new Dictionary<ResourceType, IIncrementalFunction>()
         {
             {
                 ResourceType.Food,
                 new InverseWeightedUtility(new WeightedRegion[] {
-                    new WeightedRegion(0, 10),
-                    new WeightedRegion(2, 1)
+                    new WeightedRegion(0, 10f),
+                    new WeightedRegion(2, 1f)
                 })
             },
             {
                 ResourceType.Wood,
                 new InverseWeightedUtility(new WeightedRegion[] {
                     new WeightedRegion(0, 10),
-                    new WeightedRegion(1, 0.5f)
+                    new WeightedRegion(2, 1f)
                 })
             }
         });
@@ -80,6 +82,8 @@ public class Gatherer : MonoBehaviour
         stateMachine.registerGenericHandler(new GatheringStateHandler());
         stateMachine.registerGenericHandler(new SellingStateHandler());
         stateMachine.registerGenericHandler(new GoingHomeStateHandler());
+        stateMachine.registerGenericHandler(new GoingToConsumeHandler());
+        stateMachine.registerGenericHandler(new ConsumingStateHandler());
     }
 
     // Update is called once per frame
@@ -161,7 +165,6 @@ public class Gatherer : MonoBehaviour
         var resourceType = resource.GetComponent<Resource>();
         if (!resourceType.eaten)
         {
-            Debug.Log($"Eating {Enum.GetName(typeof(ResourceType), resourceType.type)}");
             resourceType.eaten = true;
             this.inventory.Add(resourceType.type, resourceType.value).Execute();
             Destroy(resource);

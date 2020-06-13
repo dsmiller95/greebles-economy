@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TradeModeling.Economics;
+using TradeModeling.Inventories;
 using UnityEngine;
 
 
@@ -29,31 +31,54 @@ class SellingStateHandler : GenericStateHandler<GathererState, Gatherer>
         {
             var market = data.currentTarget.GetComponent<Market>();
             // TODO:
-            //IEnumerable<ExchangeAdapter> optimizerAdapters = Enum.GetValues(typeof(ResourceType)).Cast<ResourceType>()
-            //    .Select(x => new MarketExchangeAdapter(data.inventory, market, x))
-            //    .Select(x => new ExchangeAdapter()
-            //    {
-            //        utilityFunction = data.utilityFunctions[x.type],
-            //        purchaser = x,
-            //        seller = x
-            //    });
 
+            var exchangeAdapters = market.GetExchangeAdapter();
+            var optimizer = new PurchaseOptimizer<ResourceType, SpaceFillingInventory<ResourceType>, SpaceFillingInventory<ResourceType>>(
+                data.inventory,
+                market._inventory,
+                ResourceConfiguration.spaceFillingItems,
+                exchangeAdapters, exchangeAdapters,
+                data.utilityFunction
+                );
 
-            // TODO: acheive some metric of which items were most -valuable-
-            //  Meaning which initial items ulitimitaly brought the most utility
-            // var optimizer = new PurchaseOptimizer(optimizerAdapters);
+            var ledger = optimizer.Optimize();
+            var sourceUtilities = (new UtilityAnalyzer<ResourceType>()).GetUtilityPerInitialResource(
+                ResourceConfiguration.spaceFillingItems,
+                data.inventory,
+                ledger,
+                data.utilityFunction);
 
-            var sellResult = market.sellAllGoodsInInventory(data.inventory);
-
+            Debug.Log("Ledger");
+            foreach (var transaction in ledger)
+            {
+                Debug.Log($"Sold: {transaction.Item1?.amount} {this.str(transaction.Item1?.type)}");
+                foreach (var bought in transaction.Item2.exchages)
+                {
+                    Debug.Log($"Bought: {bought.amount} {this.str(bought.type)}");
+                }
+            }
+            Debug.Log(data.inventory.ToString(x => Enum.GetName(typeof(ResourceType), x)));
+            Debug.Log(TradeModeling.MyUtilities.SerializeEnumDictionary(sourceUtilities));
 
             var timeSummary = data.timeTracker.getResourceTimeSummary();
 
-            data.gatheringWeights = data.optimizer.generateNewWeights(data.gatheringWeights, timeSummary, sellResult);
-            Debug.Log(TradeModeling.MyUtilities.SerializeDictionary(data.gatheringWeights));
+            data.gatheringWeights = data.optimizer.generateNewWeights(data.gatheringWeights, timeSummary, sourceUtilities);
+            Debug.Log(TradeModeling.MyUtilities.SerializeEnumDictionary(data.gatheringWeights));
             data.timeTracker.clearTime();
-            return GathererState.Gathering;
+            return GathererState.GoingHomeToEat;
         }
         return GathererState.Selling;
+    }
+
+    private string str(ResourceType? type)
+    {
+        if (type.HasValue)
+        {
+            return Enum.GetName(typeof(ResourceType), type);
+        } else
+        {
+            return "none";
+        }
     }
 
     public GathererState validPreviousStates => GathererState.GoingHome;
@@ -62,9 +87,8 @@ class SellingStateHandler : GenericStateHandler<GathererState, Gatherer>
 
     }
 
-    public GathererState validNextStates => GathererState.Gathering;
+    public GathererState validNextStates => GathererState.GoingHomeToEat;
     public void TransitionOutOfState(Gatherer data)
     {
-        data.removeBackpack();
     }
 }

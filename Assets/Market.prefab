@@ -171,7 +171,7 @@ MonoBehaviour:
   - type: 1
     price: 1
   - type: 2
-    price: 3
+    price: 1
   inventory: {fileID: 2938998355160009592}
 --- !u!114 &2938998355160009592
 MonoBehaviour:
@@ -186,6 +186,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   inventoryCapacitySetForUI: 500
+  startingInventoryAmounts:
+  - type: 1
+    amount: 20
+  - type: 2
+    amount: 20
 --- !u!1 &7219099098458843105
 GameObject:
   m_ObjectHideFlags: 0

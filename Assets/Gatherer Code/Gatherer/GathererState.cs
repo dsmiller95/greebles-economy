@@ -10,5 +10,7 @@ public enum GathererState
     Gathering = 1,
     GoingHome = 2,
     Selling = 4,
-    All = 7
+    GoingHomeToEat = 8,
+    Consuming = 16,
+    All = Gathering | GoingHome | Selling | GoingHomeToEat | Consuming
 }

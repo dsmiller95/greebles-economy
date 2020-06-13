@@ -6,9 +6,18 @@ using Assets.Gatherer_Code;
 using TradeModeling.Inventories;
 using UnityEngine;
 
+[Serializable]
+public struct StartingInventoryAmount
+{
+    public ResourceType type;
+    public float amount;
+}
+
 public class ResourceInventory: MonoBehaviour
 {
     public int inventoryCapacitySetForUI = 10;
+
+    public StartingInventoryAmount[] startingInventoryAmounts;
 
     public NotifyingInventory<ResourceType> backingInventory
     {
@@ -24,6 +33,10 @@ public class ResourceInventory: MonoBehaviour
         {
             // create the key with default. Emit set events in Start(); once everyone has had a chance to subscribe to updates
             initialInventory[resource] = 0;
+        }
+        foreach (var startingAmount in startingInventoryAmounts)
+        {
+            initialInventory[startingAmount.type] = startingAmount.amount;
         }
         backingInventory = new NotifyingInventory<ResourceType>(
             this.inventoryCapacitySetForUI,

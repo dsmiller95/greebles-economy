@@ -8,10 +8,14 @@ namespace TradeModeling
 {
     public static class MyUtilities
     {
-        public static string SerializeDictionary<T, E>(Dictionary<E, T> dictionary, Func<T, string> serializer = null)
+        public static string SerializeEnumDictionary<T, E>(IDictionary<E, T> dictionary, Func<T, string> serializer = null)
         {
-            serializer = serializer ?? (s => s.ToString());
-            return dictionary.Select(entry => $"{Enum.GetName(typeof(E), entry.Key)}: {serializer(entry.Value)}").Aggregate((agg, current) => agg + "; " + current);
+            return MyUtilities.SerializeDictionary(dictionary, key => Enum.GetName(typeof(E), key), serializer);
+        }
+        public static string SerializeDictionary<E, T>(IDictionary<E, T> dictionary, Func<E, string> keySerializer = null, Func<T, string> valueSerializer = null)
+        {
+            valueSerializer = valueSerializer ?? (s => s.ToString());
+            return dictionary.Select(entry => $"{keySerializer(entry.Key)}: {valueSerializer(entry.Value)}").Aggregate((agg, current) => agg + "; " + current);
         }
 
         /// <summary>

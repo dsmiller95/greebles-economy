@@ -29,6 +29,7 @@ namespace TradeModeling.Inventories
             this._inventoryCapacity = other._inventoryCapacity;
             inventory = new Dictionary<T, float>(other.inventory);
             this.spaceFillingItems = new HashSet<T>(other.spaceFillingItems);
+            this.moneyType = other.moneyType;
         }
 
         private int _inventoryCapacity;
@@ -183,6 +184,11 @@ namespace TradeModeling.Inventories
         public IExchangeInventory CreateSimulatedClone()
         {
             return new SpaceFillingInventory<T>(this);
+        }
+
+        public string ToString(Func<T, string> serializer)
+        {
+            return MyUtilities.SerializeDictionary(this.inventory, serializer, num => num.ToString());
         }
     }
 }

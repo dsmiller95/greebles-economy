@@ -13,24 +13,24 @@ public class GatherBehaviorOptimizer
     public Dictionary<ResourceType, float> generateNewWeights(
         Dictionary<ResourceType, float> previousWeights,
         Dictionary<ResourceType, float> timeSpent,
-        Dictionary<ResourceType, ResourceSellResult> sellResults)
+        Dictionary<ResourceType, float> utilityPerResource)
     {
         //TODO: counteract the single-gather case. If the agent only gathered one type of resource, We shouldn't make much if any changes to the weights
         // Because no new comparitive information was gained
-        var profitPerTime = sellResults.Keys
+        var utilityPerTime = utilityPerResource.Keys
             .Where(type => timeSpent.ContainsKey(type))
             .Select(type => {
-                var profit = sellResults[type].totalRevenue;
+                var gainedUtility = utilityPerResource[type];
                 var time = timeSpent[type];
                 return new
                 {
                     type,
-                    profitPerTime = time == 0 ? 0 : profit / time
+                    profitPerTime = time == 0 ? 0 : gainedUtility / time
                 };
             });
 
-        var totalProfitPerTime = profitPerTime.Select(x => x.profitPerTime).Sum();
-        var newWeightsGenerated = profitPerTime.Select(pair => new { pair.type, weight = pair.profitPerTime / totalProfitPerTime });
+        var totalProfitPerTime = utilityPerTime.Select(x => x.profitPerTime).Sum();
+        var newWeightsGenerated = utilityPerTime.Select(pair => new { pair.type, weight = pair.profitPerTime / totalProfitPerTime });
 
         var regeneratedWeights = newWeightsGenerated.ToDictionary(pair => pair.type, pair => pair.weight);
 
