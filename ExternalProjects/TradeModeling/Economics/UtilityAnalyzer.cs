@@ -6,6 +6,15 @@ using TradeModeling.Inventories;
 
 namespace TradeModeling.Economics
 {
+
+    /// <summary>
+    /// This class can be used to evaluate which initial resources are responsible for the ending utility
+    ///     For Example, if after selling 2 cactus for 2 corn, leaving a total of 3 corn and 0 cactus. When
+    ///     the utility of 3 corn is 6, then this algorithm will backtrack across the transaction and distribute
+    ///     2/3 of the ending utility. So the returned value would be (6 * 2/3) = 4 utility for cactus,
+    ///     and (6 * 1/3) = 2 utility for corn. 
+    /// </summary>
+    /// <typeparam name="Resource"></typeparam>
     public class UtilityAnalyzer<Resource> where Resource : IComparable
     {
         public Dictionary<Resource, float> GetUtilityPerInitialResource(
@@ -55,15 +64,15 @@ namespace TradeModeling.Economics
             {
                 foreach (var bought in tradeableResources.Where(x => !EqualityComparer<Resource>.Default.Equals(x, sold)))
                 {
-                    var resourceAmount = endingInventory[bought];
-                    if (resourceAmount == 0)
+                    var amountOfBought = endingInventory[bought];
+                    if (amountOfBought == 0)
                     {
                         continue;
                     }
                     var singleTransaction = transaction.GetTransactionAmounts(sold, bought);
                     if (singleTransaction.Item1 < 0)
                     {
-                        var soldRatio = -singleTransaction.Item1 / resourceAmount;
+                        var soldRatio = singleTransaction.Item2 / amountOfBought;
                         var transferredUtility = utilities[bought] * soldRatio;
                         utilities[bought] -= transferredUtility;
                         utilities[sold] += transferredUtility;

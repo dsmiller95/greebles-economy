@@ -117,6 +117,111 @@ namespace UnitTests.Economics.UtilityAnalyzerTests
                     $"Utility not equal for {Enum.GetName(typeof(TestItemType), utilityPair.Key)}.");
             }
         }
+        [TestMethod]
+        public void ShouldEvaluateUtilityWhenOneCornTradedForTwoCactus()
+        {
+            var endingInventory = EconomicsTestUtilities.CreateInventory(new[]
+            {
+                (TestItemType.Cactus, 2f),
+                (TestItemType.Corn, 0f)
+            });
+            var ledger = new (ExchangeResult<TestItemType>?, PurchaseOperationResult<TestItemType>)[] {
+                GetLedgerTransaction(TestItemType.Corn, TestItemType.Cactus, 1, 2)
+                };
+            var utilityEvaluator = GetGenericUtilityFunction(1, 1);
+            var utilityAnalyzer = new UtilityAnalyzer<TestItemType>();
+
+            var utility = utilityAnalyzer.GetUtilityPerInitialResource(
+                new[] { TestItemType.Cactus, TestItemType.Corn },
+                endingInventory,
+                ledger,
+                utilityEvaluator);
+
+            var expetedUtility = new Dictionary<TestItemType, float>() {
+                { TestItemType.Cactus, 0f },
+                { TestItemType.Corn, 1.5f }
+            };
+
+            foreach (var utilityPair in utility)
+            {
+                Assert.AreEqual(expetedUtility[utilityPair.Key], utilityPair.Value,
+                    $"Utility not equal for {Enum.GetName(typeof(TestItemType), utilityPair.Key)}.");
+            }
+        }
+        [TestMethod]
+        public void ShouldEvaluateUtilityWhenOneCornTradedForTwoCactusOverBaseInventory()
+        {
+            var endingInventory = EconomicsTestUtilities.CreateInventory(new[]
+            {
+                (TestItemType.Cactus, 3f),
+                (TestItemType.Corn, 1f)
+            });
+            var ledger = new (ExchangeResult<TestItemType>?, PurchaseOperationResult<TestItemType>)[] {
+                GetLedgerTransaction(TestItemType.Corn, TestItemType.Cactus, 1, 2)
+                };
+            var utilityEvaluator = GetGenericUtilityFunction(1, 1);
+            var utilityAnalyzer = new UtilityAnalyzer<TestItemType>();
+
+            var utility = utilityAnalyzer.GetUtilityPerInitialResource(
+                new[] { TestItemType.Cactus, TestItemType.Corn },
+                endingInventory,
+                ledger,
+                utilityEvaluator);
+
+            var transferredCactusUtility = utilityEvaluator.GetTotalUtility(TestItemType.Cactus, endingInventory)
+                * (2f / 3f);
+            var expectedCactusUtility = utilityEvaluator.GetTotalUtility(TestItemType.Cactus, endingInventory) - transferredCactusUtility;
+            var expectedCornUtility = utilityEvaluator.GetTotalUtility(TestItemType.Corn, endingInventory) + transferredCactusUtility;
+
+            var expetedUtility = new Dictionary<TestItemType, float>() {
+                { TestItemType.Cactus, expectedCactusUtility },
+                { TestItemType.Corn, expectedCornUtility }
+            };
+            foreach (var utilityPair in utility)
+            {
+                Assert.AreEqual(expetedUtility[utilityPair.Key], utilityPair.Value,
+                    $"Utility not equal for {Enum.GetName(typeof(TestItemType), utilityPair.Key)}.");
+            }
+        }
+
+        [TestMethod]
+        public void ShouldEvaluateUtilityWhenAllCornTradedForCactus2DifferentAmounts()
+        {
+            var endingInventory = EconomicsTestUtilities.CreateInventory(new[]
+            {
+                (TestItemType.Cactus, 6f),
+                (TestItemType.Corn, 12f)
+            });
+            var ledger = new (ExchangeResult<TestItemType>?, PurchaseOperationResult<TestItemType>)[] {
+                GetLedgerTransaction(TestItemType.Cactus, TestItemType.Corn, 1, 2),
+                GetLedgerTransaction(TestItemType.Cactus, TestItemType.Corn, 1, 2),
+                GetLedgerTransaction(TestItemType.Cactus, TestItemType.Corn, 1, 2),
+                GetLedgerTransaction(TestItemType.Cactus, TestItemType.Corn, 1, 2),
+                };
+            var utilityEvaluator = GetGenericUtilityFunction(1, 1);
+            var utilityAnalyzer = new UtilityAnalyzer<TestItemType>();
+
+            var utility = utilityAnalyzer.GetUtilityPerInitialResource(
+                new[] { TestItemType.Cactus, TestItemType.Corn },
+                endingInventory,
+                ledger,
+                utilityEvaluator);
+            var transferredCornUtility = utilityEvaluator.GetTotalUtility(TestItemType.Corn, endingInventory)
+                * (8f / 12f);
+            var expectedCactusUtility = utilityEvaluator.GetTotalUtility(TestItemType.Cactus, endingInventory) + transferredCornUtility;
+            var expectedCornUtility = utilityEvaluator.GetTotalUtility(TestItemType.Corn, endingInventory) - transferredCornUtility;
+
+            var expetedUtility = new Dictionary<TestItemType, float>() {
+                { TestItemType.Cactus, expectedCactusUtility },
+                { TestItemType.Corn, expectedCornUtility }
+            };
+
+            foreach (var utilityPair in utility)
+            {
+                Assert.AreEqual(expetedUtility[utilityPair.Key], utilityPair.Value,
+                    $"Utility not equal for {Enum.GetName(typeof(TestItemType), utilityPair.Key)}.");
+            }
+        }
 
         [TestMethod]
         public void ShouldEvaluateUtilityWhenTradedThroughIntermediary()
