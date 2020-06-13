@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TradeModeling.Economics;
 
@@ -90,6 +92,48 @@ namespace UnitTests.Economics
             Assert.AreEqual((-1, 7), combinedModel.GetTransactionAmounts("chili", "corn"));
             Assert.AreEqual((-1, 5), combinedModel.GetTransactionAmounts("chips", "chili"));
             Assert.AreEqual((-1, 4), combinedModel.GetTransactionAmounts("chips", "corn"));
+        }
+
+
+
+        [TestMethod]
+        public void ShouldModelManyTransactionsAndApplyToInventoryModel()
+        {
+            var validTransactionItems = new[] { "corn", "cactus", "chili", "chips" };
+            var combinedModel = new CombinedTransactionModel<string>(validTransactionItems);
+            combinedModel.SetTransactionValue("cactus", "corn", -1, 2);
+            combinedModel.SetTransactionValue("cactus", "chili", -1, 2);
+            combinedModel.SetTransactionValue("chili", "corn", -1, 1);
+            combinedModel.SetTransactionValue("chips", "corn", -1, 3);
+
+            Assert.AreEqual((-1, 2), combinedModel.GetTransactionAmounts("cactus", "corn"));
+            Assert.AreEqual((-1, 2), combinedModel.GetTransactionAmounts("cactus", "chili"));
+            Assert.AreEqual((-1, 1), combinedModel.GetTransactionAmounts("chili", "corn"));
+            Assert.AreEqual((-1, 3), combinedModel.GetTransactionAmounts("chips", "corn"));
+
+            var inventory = new Dictionary<string, float>()
+            {
+                {"corn", 0f },
+                {"cactus", 2f },
+                {"chili", 10f },
+                {"chips", 1f },
+            };
+
+            var addedInventory = inventory + combinedModel;
+
+            var expectedInventory = new Dictionary<string, float>()
+            {
+                {"corn", 6f },
+                {"cactus", 0f },
+                {"chili", 11f },
+                {"chips", 0f },
+            };
+
+            Assert.IsTrue(expectedInventory.SequenceEqual(addedInventory));
+
+            // Subtracting the transaction should leave us with the original inventory
+            var subtractedInventory = addedInventory - combinedModel;
+            Assert.IsTrue(inventory.SequenceEqual(subtractedInventory));
         }
     }
 }

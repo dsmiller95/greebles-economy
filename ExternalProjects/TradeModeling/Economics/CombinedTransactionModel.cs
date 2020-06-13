@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Resources;
 using System.Runtime.CompilerServices;
 using System.Text;
 
@@ -50,6 +51,20 @@ namespace TradeModeling.Economics
                 });
         }
 
+        /// <summary>
+        /// create a new combined transaction model, by cloning a different transaction
+        /// </summary>
+        /// <param name="toClone">The transaction to clone</param>
+        private CombinedTransactionModel(CombinedTransactionModel<Resource> toClone)
+        {
+            this.mappedResources = new HashSet<Resource>(toClone.mappedResources);
+
+            this.transactionMaps = toClone.transactionMaps.ToDictionary(
+                kvp => kvp.Key,
+                kvp =>  (kvp.Value.Item1, kvp.Value.Item2)
+                );
+        }
+
         public (float, float) GetTransactionAmounts(Resource sold, Resource bought)
         {
             if (sold.CompareTo(bought) > 0)
@@ -93,9 +108,41 @@ namespace TradeModeling.Economics
             }
         }
 
+        public static Dictionary<Resource, float> operator +(
+            Dictionary<Resource, float> resourceCount, 
+            CombinedTransactionModel<Resource> transaction)
+        {
+            var newResources = new Dictionary<Resource, float>(resourceCount);
+            foreach (var singleTransaction in transaction.transactionMaps)
+            {
+                newResources[singleTransaction.Key.Item1] += singleTransaction.Value.Item1;
+                newResources[singleTransaction.Key.Item2] += singleTransaction.Value.Item2;
+            }
+            return newResources;
+        }
+
+        public static CombinedTransactionModel<Resource> operator -(CombinedTransactionModel<Resource> a)
+        {
+            var newModel = new CombinedTransactionModel<Resource>(a);
+            newModel.transactionMaps = newModel.transactionMaps.ToDictionary(kvp => kvp.Key, kvp => (-kvp.Value.Item1, -kvp.Value.Item2));
+            return newModel;
+        }
+
         public static CombinedTransactionModel<Resource> operator +(CombinedTransactionModel<Resource> a, CombinedTransactionModel<Resource> b)
         {
             return new CombinedTransactionModel<Resource>(a, b);
+        }
+        public static Dictionary<Resource, float> operator -(
+            Dictionary<Resource, float> resourceCount,
+            CombinedTransactionModel<Resource> transaction)
+        {
+            return resourceCount + (-transaction);
+        }
+        public static Dictionary<Resource, float> operator +(
+            CombinedTransactionModel<Resource> transaction,
+            Dictionary<Resource, float> resourceCount)
+        {
+            return resourceCount + transaction;
         }
     }
 }
