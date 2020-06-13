@@ -8,9 +8,6 @@ namespace TradeModeling.Economics
 {
     public class UtilityAnalyzer<Resource> where Resource : IComparable
     {
-
-        // TODO: support ledgers that contain intermediate transactions. Currently this will only work when all bought resources
-        //  are never sold after they have been bought
         public Dictionary<Resource, float> GetUtilityPerInitialResource(
             IList<Resource> tradeableResources,
             SpaceFillingInventory<Resource> endingInventory,
@@ -18,35 +15,61 @@ namespace TradeModeling.Economics
             IUtilityEvaluator<Resource, SpaceFillingInventory<Resource>> utilityEvaluator
             )
         {
-            
             var endingUtilities = tradeableResources.ToDictionary(
                 resource => resource,
                 resource => utilityEvaluator.GetTotalUtility(resource, endingInventory)
               );
-            var result = tradeableResources.ToDictionary(x => x, x => 0f);
-            var allTransactions = GetTransactionMapFromLedger(tradeableResources, transactionLedger);
+            var endingInventoryDictionary = tradeableResources.ToDictionary(
+                resource => resource,
+                resource => endingInventory.Get(resource)
+              );
 
+            var transactionListReverse = transactionLedger
+                .Select(transaction =>
+                    this.GetTransactionMapFromSingleTransaction(tradeableResources, transaction)
+                ).Reverse();
+
+            foreach(var transaction in transactionListReverse)
+            {
+                this.DistributeUtilityBasedOnTransaction(tradeableResources, endingUtilities, transaction, endingInventoryDictionary);
+                endingInventoryDictionary = endingInventoryDictionary - transaction;
+            }
+
+            return endingUtilities;
+        }
+
+        /// <summary>
+        /// Move the utility through the utilities dictionary based on the amount of items transferred thorugh
+        ///     The utility per item is evaluated based on the ending inventory: so any amount that is moved as a result
+        ///     of the transaction moves an amount of utility based on the ratio between the amount of resource moved vs the total inventory
+        /// </summary>
+        /// <param name="utilities"></param>
+        /// <param name="transaction"></param>
+        private void DistributeUtilityBasedOnTransaction(
+            IList<Resource> tradeableResources,
+            Dictionary<Resource, float> utilities,
+            CombinedTransactionModel<Resource> transaction,
+            Dictionary<Resource, float> endingInventory)
+        {
             foreach (var sold in tradeableResources)
             {
                 foreach (var bought in tradeableResources.Where(x => !EqualityComparer<Resource>.Default.Equals(x, sold)))
                 {
-                    if (endingInventory.Get(bought) == 0)
+                    var resourceAmount = endingInventory[bought];
+                    if (resourceAmount == 0)
                     {
                         continue;
                     }
-                    var transaction = allTransactions.GetTransactionAmounts(sold, bought);
-                    if(transaction.Item1 < 0)
+                    var singleTransaction = transaction.GetTransactionAmounts(sold, bought);
+                    if (singleTransaction.Item1 < 0)
                     {
-                        var soldRatio = -transaction.Item1 / endingInventory.Get(bought);
-                        var transferredUtility = endingUtilities[bought] * soldRatio;
-                        endingUtilities[bought] -= transferredUtility;
-                        endingUtilities[sold] += transferredUtility;
+                        var soldRatio = -singleTransaction.Item1 / resourceAmount;
+                        var transferredUtility = utilities[bought] * soldRatio;
+                        utilities[bought] -= transferredUtility;
+                        utilities[sold] += transferredUtility;
                     }
                 }
             }
-            
-
-            return endingUtilities;
         }
 
         public CombinedTransactionModel<Resource> GetTransactionMapFromLedger(
@@ -72,25 +95,27 @@ namespace TradeModeling.Economics
             return allTransactions;
         }
 
+        private CombinedTransactionModel<Resource> GetTransactionMapFromSingleTransaction(
+            IList<Resource> tradeableResources,
+            (ExchangeResult<Resource>?, PurchaseOperationResult<Resource>) transaction)
+        {
 
-        //private CombinedTransactionModel<Resource> GetTransactionMapFromSingleTransaction(
-        //    IList<Resource> tradeableResources,
-        //    (ExchangeResult<Resource>, PurchaseOperationResult<Resource>) transaction)
-        //{
+            var transactionModel = new CombinedTransactionModel<Resource>(tradeableResources);
 
-        //    var transactionModel = new CombinedTransactionModel<Resource>(tradeableResources);
+            if (transaction.Item1.HasValue)
+            {
+                var sourceResourcePerResultResource = transaction.Item1.Value.amount / transaction.Item2.exchages.Count;
+                foreach (var boughtItem in transaction.Item2.exchages)
+                {
+                    transactionModel.AddTransaction(
+                        transaction.Item1.Value.type,
+                        boughtItem.type,
+                        -sourceResourcePerResultResource,
+                        boughtItem.amount);
+                }
+            }
 
-        //    var sourceResourcePerResultResource = transaction.Item1.amount / transaction.Item2.exchages.Count;
-        //    foreach (var boughtItem in transaction.Item2.exchages)
-        //    {
-        //        transactionModel.AddTransaction(
-        //            transaction.Item1.type,
-        //            boughtItem.type,
-        //            -sourceResourcePerResultResource,
-        //            boughtItem.amount);
-        //    }
-
-        //    return transactionModel;
-        //}
+            return transactionModel;
+        }
     }
 }
