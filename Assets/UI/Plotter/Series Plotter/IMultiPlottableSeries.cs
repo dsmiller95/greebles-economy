@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 
-interface IMultiPlottableSeries
+public interface IMultiPlottableSeries
 {
     IEnumerable<IPlottableSeries> GetPlottableSeries();
 }

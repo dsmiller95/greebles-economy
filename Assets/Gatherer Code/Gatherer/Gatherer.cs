@@ -80,7 +80,9 @@ public class Gatherer : MonoBehaviour
         });
 
         stateMachine.registerGenericHandler(new GatheringStateHandler());
-        stateMachine.registerGenericHandler(new SellingStateHandler());
+        var sellingStateHandler = new SellingStateHandler();
+        sellingStateHandler.InstantiateOnObject(this);
+        stateMachine.registerGenericHandler(sellingStateHandler);
         stateMachine.registerGenericHandler(new GoingHomeStateHandler());
         stateMachine.registerGenericHandler(new GoingToConsumeHandler());
         stateMachine.registerGenericHandler(new ConsumingStateHandler());

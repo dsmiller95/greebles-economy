@@ -79,13 +79,16 @@
     <Compile Include="Assets\Gatherer Code\Home\SelectableHome.cs" />
     <Compile Include="Assets\Gatherer Code\Market\Market.cs" />
     <Compile Include="Assets\Gatherer Code\Market\ResourceSellResult.cs" />
+    <Compile Include="Assets\Gatherer Code\Market\SelectableMarket.cs" />
     <Compile Include="Assets\Gatherer Code\Resources\Inventory\ResourceInventory.cs" />
     <Compile Include="Assets\Gatherer Code\Resources\Resource.cs" />
     <Compile Include="Assets\Gatherer Code\Resources\ResourceConfiguration.cs" />
     <Compile Include="Assets\Gatherer Code\Resources\ResourceConfigurer.cs" />
     <Compile Include="Assets\Gatherer Code\Resources\ResourceType.cs" />
     <Compile Include="Assets\Gatherer Code\Resources\UI Adapters\ResourceBar.cs" />
+    <Compile Include="Assets\Gatherer Code\Resources\UI Adapters\ResourceDictionaryTimeSeries.cs" />
     <Compile Include="Assets\Gatherer Code\Resources\UI Adapters\ResourceDisplay.cs" />
+    <Compile Include="Assets\Gatherer Code\Resources\UI Adapters\ResourceInventoryTimeSeries.cs" />
     <Compile Include="Assets\Gatherer Code\Resources\UI Adapters\ResourceTimeSeriesAdapter.cs" />
     <Compile Include="Assets\Gatherer Code\resource spawner\SpawnController.cs" />
     <Compile Include="Assets\LinqExtensions.cs" />
@@ -97,6 +100,7 @@
     <Compile Include="Assets\UI\Plotter\Function Plotter\InverseUtilityPlottableAdapter.cs" />
     <Compile Include="Assets\UI\Plotter\PlotContainer.cs" />
     <Compile Include="Assets\UI\Plotter\Plotter.cs" />
+    <Compile Include="Assets\UI\Plotter\Series Plotter\GenericTimeSeries.cs" />
     <Compile Include="Assets\UI\Plotter\Series Plotter\IMultiPlottableSeries.cs" />
     <Compile Include="Assets\UI\Plotter\Series Plotter\IPlottableSeries.cs" />
     <Compile Include="Assets\UI\Plotter\Series Plotter\PlottableFunctionToSeriesAdapter.cs" />

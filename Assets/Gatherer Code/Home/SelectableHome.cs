@@ -26,7 +26,12 @@ public class SelectableHome : MonoBehaviour, ISelectable
     {
         return new InfoPaneConfiguration()
         {
-            plottables = new List<GameObject>() { ResourcePlotter.gameObject }
+            plottables = new List<PlotPaneConfig>() {
+                new PlotPaneConfig {
+                    plot = ResourcePlotter,
+                    header = "Inventory"
+                }
+            }
         };
     }
     public void OnMeDeselected()

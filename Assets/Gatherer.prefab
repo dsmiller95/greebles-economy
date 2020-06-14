@@ -162,6 +162,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   inventoryCapacitySetForUI: 1
+  startingInventoryAmounts: []
 --- !u!114 &4335989833534531825
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -183,19 +184,19 @@ MonoBehaviour:
   m_GameObject: {fileID: 3070155397435437859}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c9727deb5bc5c694b8607f22bc18a289, type: 3}
+  m_Script: {fileID: 11500000, guid: 1f634cf9c5a23a84da5b09649786bd51, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  inventory: {fileID: 7894513326273371995}
-  timeRange: 30
-  totalSteps: 60
+  timeRange: 20
+  totalSteps: 40
   resourcePlotConfig:
-  - type: 4
-    yScale: 200
-  - type: 2
-    yScale: 11
   - type: 1
-    yScale: 11
+    yScale: 10
+  - type: 2
+    yScale: 10
+  - type: 4
+    yScale: 30
+  inventory: {fileID: 7894513326273371995}
 --- !u!114 &7835220949394996051
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -209,6 +210,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ResourcePlotter: {fileID: 3460751752712892426}
+  gatherer: {fileID: 3211332059854456477}
   meshRenderer: {fileID: 892986496046212966}
   baseMaterial: {fileID: 2100000, guid: 1a1299152cdc7a445ae272a808d55557, type: 2}
   selectedMaterial: {fileID: 2100000, guid: efc4040f501c69346ab6960a4b4974f6, type: 2}

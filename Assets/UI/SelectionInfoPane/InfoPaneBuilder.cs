@@ -20,11 +20,17 @@ public class InfoPaneBuilder : MonoBehaviour
     {
         this.ClearUI();
         var paneConfig = e.GetInfoPaneConfiguration();
-        if(paneConfig.plottables.Count > 0)
+        var plotVerticalOffset = 0f;
+        foreach(var plottableConfig in paneConfig.plottables)
         {
             var newPlottable = Instantiate(plottablePrefab, this.transform);
+
             var plotter = newPlottable.GetComponentInChildren<Plotter>();
-            plotter.plots = paneConfig.plottables.ToArray();
+            plotter.SetPlottablesPreStart(plottableConfig.plot.GetPlottableSeries());
+
+            var positioning = newPlottable.GetComponentInChildren<RectTransform>();
+            positioning.position -= new Vector3(0, plotVerticalOffset);
+            plotVerticalOffset += positioning.sizeDelta.y;
         }
     }
 

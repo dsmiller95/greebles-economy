@@ -16,6 +16,36 @@ using UnityEngine;
 /// </summary>
 class SellingStateHandler : GenericStateHandler<GathererState, Gatherer>
 {
+    public void InstantiateOnObject(Gatherer obj)
+    {
+        var weightsChart = obj.gameObject.AddComponent<ResourceDictionaryTimeSeries>();
+        obj.stateData[this.stateHandle] = new SellingStateData
+        {
+            weightsChart = weightsChart
+        };
+        weightsChart.values = obj.gatheringWeights;
+        weightsChart.resourcePlotConfig = new[]
+        {
+            new ResourceGraphConfiguration
+            {
+                type = ResourceType.Food,
+                yScale = 1f
+            },
+            new ResourceGraphConfiguration
+            {
+                type = ResourceType.Wood,
+                yScale = 1f
+            }
+        };
+        weightsChart.timeRange = 360f;
+        weightsChart.totalSteps = 180f;
+    }
+    public class SellingStateData
+    {
+        public ResourceDictionaryTimeSeries weightsChart;
+    }
+
+
     public GathererState stateHandle => GathererState.Selling;
     public GathererState HandleState(Gatherer data)
     {

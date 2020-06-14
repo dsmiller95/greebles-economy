@@ -15,6 +15,11 @@ public class Plotter : MonoBehaviour
 
     private IList<PlotContainer> plotContainers;
 
+    public void SetPlottablesPreStart(IEnumerable<IPlottableSeries> plottables)
+    {
+        this.plottables = plottables.ToList();
+    }
+
     private void Awake()
     {
     }
@@ -22,15 +27,17 @@ public class Plotter : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        this.plottables = plots
-            .Select(gameObject => gameObject.GetComponent<IPlottableSeries>())
-            .Where(plottable => plottable != default)
-            .Concat(plots
-                .Select(gameObject => gameObject.GetComponent<IMultiPlottableSeries>())
-                .Where(multiPlottable => multiPlottable != default)
-                .Select(multiPlottable => multiPlottable.GetPlottableSeries())
-                .SelectMany(plottable => plottable))
-            .ToList();
+        if(this.plottables == default)
+        {
+            this.plottables = plots
+                .SelectMany(gameObject => gameObject.GetComponents<IPlottableSeries>())
+                .Where(plottable => plottable != default)
+                .Concat(plots
+                    .SelectMany(gameObject => gameObject.GetComponents<IMultiPlottableSeries>())
+                    .Where(multiPlottable => multiPlottable != default)
+                    .SelectMany(multiPlottable => multiPlottable.GetPlottableSeries()))
+                .ToList();
+        }
         Debug.Log($"found {plottables.Count} plots");
         plotContainers = this.plottables
             .Select(plottable => new PlotContainer(plottable, this))

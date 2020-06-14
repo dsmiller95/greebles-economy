@@ -36,7 +36,6 @@ public class ConsumingStateHandler : GenericStateHandler<GathererState, Gatherer
             {
                 return GathererState.Gathering;
             }
-            Debug.Log($"consuming some {Enum.GetName(typeof(ResourceType), firstAvailableResource)}");
             data.inventory.Consume(firstAvailableResource, 1);
         }
         return GathererState.Consuming;
