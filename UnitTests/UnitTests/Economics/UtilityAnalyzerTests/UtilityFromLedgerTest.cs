@@ -75,14 +75,14 @@ namespace UnitTests.Economics.UtilityAnalyzerTests
                 ledger,
                 utilityEvaluator);
 
-            var expetedUtility = new Dictionary<TestItemType, float>() {
-                { TestItemType.Cactus, 1f },
-                { TestItemType.Corn, 1.5f }
+            var expetedUtilityPerBeginningResource = new Dictionary<TestItemType, float>() {
+                { TestItemType.Cactus, 1f / 1f },
+                { TestItemType.Corn, 1.5f / 2f }
             };
 
             foreach (var utilityPair in utility)
             {
-                Assert.AreEqual(expetedUtility[utilityPair.Key], utilityPair.Value,
+                Assert.AreEqual(expetedUtilityPerBeginningResource[utilityPair.Key], utilityPair.Value,
                     $"Utility not equal for {Enum.GetName(typeof(TestItemType), utilityPair.Key)}.");
             }
         }
@@ -106,14 +106,14 @@ namespace UnitTests.Economics.UtilityAnalyzerTests
                 ledger,
                 utilityEvaluator);
 
-            var expetedUtility = new Dictionary<TestItemType, float>() {
-                { TestItemType.Cactus, 2.25f },
-                { TestItemType.Corn, 2.25f }
+            var expetedUtilityPerBeginningResource = new Dictionary<TestItemType, float>() {
+                { TestItemType.Cactus, 2.25f / 1f },
+                { TestItemType.Corn, 2.25f / 1f }
             };
 
             foreach (var utilityPair in utility)
             {
-                Assert.AreEqual(expetedUtility[utilityPair.Key], utilityPair.Value,
+                Assert.AreEqual(expetedUtilityPerBeginningResource[utilityPair.Key], utilityPair.Value,
                     $"Utility not equal for {Enum.GetName(typeof(TestItemType), utilityPair.Key)}.");
             }
         }
@@ -137,14 +137,14 @@ namespace UnitTests.Economics.UtilityAnalyzerTests
                 ledger,
                 utilityEvaluator);
 
-            var expetedUtility = new Dictionary<TestItemType, float>() {
-                { TestItemType.Cactus, 0f },
-                { TestItemType.Corn, 1.5f }
+            var expetedUtiexpetedUtilityPerBeginningResourceity = new Dictionary<TestItemType, float>() {
+                { TestItemType.Cactus, float.NaN },
+                { TestItemType.Corn, 1.5f / 1f }
             };
 
             foreach (var utilityPair in utility)
             {
-                Assert.AreEqual(expetedUtility[utilityPair.Key], utilityPair.Value,
+                Assert.AreEqual(expetedUtiexpetedUtilityPerBeginningResourceity[utilityPair.Key], utilityPair.Value,
                     $"Utility not equal for {Enum.GetName(typeof(TestItemType), utilityPair.Key)}.");
             }
         }
@@ -170,16 +170,16 @@ namespace UnitTests.Economics.UtilityAnalyzerTests
 
             var transferredCactusUtility = utilityEvaluator.GetTotalUtility(TestItemType.Cactus, endingInventory)
                 * (2f / 3f);
-            var expectedCactusUtility = utilityEvaluator.GetTotalUtility(TestItemType.Cactus, endingInventory) - transferredCactusUtility;
-            var expectedCornUtility = utilityEvaluator.GetTotalUtility(TestItemType.Corn, endingInventory) + transferredCactusUtility;
+            var expectedTotalCactusUtility = utilityEvaluator.GetTotalUtility(TestItemType.Cactus, endingInventory) - transferredCactusUtility;
+            var expectedTotalCornUtility = utilityEvaluator.GetTotalUtility(TestItemType.Corn, endingInventory) + transferredCactusUtility;
 
-            var expetedUtility = new Dictionary<TestItemType, float>() {
-                { TestItemType.Cactus, expectedCactusUtility },
-                { TestItemType.Corn, expectedCornUtility }
+            var expetedUtilityPerBeginningResource = new Dictionary<TestItemType, float>() {
+                { TestItemType.Cactus, expectedTotalCactusUtility / 1f },
+                { TestItemType.Corn, expectedTotalCornUtility / 2f }
             };
             foreach (var utilityPair in utility)
             {
-                Assert.AreEqual(expetedUtility[utilityPair.Key], utilityPair.Value,
+                Assert.AreEqual(expetedUtilityPerBeginningResource[utilityPair.Key], utilityPair.Value,
                     $"Utility not equal for {Enum.GetName(typeof(TestItemType), utilityPair.Key)}.");
             }
         }
@@ -198,6 +198,11 @@ namespace UnitTests.Economics.UtilityAnalyzerTests
                 GetLedgerTransaction(TestItemType.Cactus, TestItemType.Corn, 1, 2),
                 GetLedgerTransaction(TestItemType.Cactus, TestItemType.Corn, 1, 2),
                 };
+            var beginningInventory = new Dictionary<TestItemType, float>
+            {
+                {TestItemType.Cactus, 10f },
+                {TestItemType.Corn, 4f }
+            };
             var utilityEvaluator = GetGenericUtilityFunction(1, 1);
             var utilityAnalyzer = new UtilityAnalyzer<TestItemType>();
 
@@ -208,12 +213,12 @@ namespace UnitTests.Economics.UtilityAnalyzerTests
                 utilityEvaluator);
             var transferredCornUtility = utilityEvaluator.GetTotalUtility(TestItemType.Corn, endingInventory)
                 * (8f / 12f);
-            var expectedCactusUtility = utilityEvaluator.GetTotalUtility(TestItemType.Cactus, endingInventory) + transferredCornUtility;
-            var expectedCornUtility = utilityEvaluator.GetTotalUtility(TestItemType.Corn, endingInventory) - transferredCornUtility;
-
+            var expectedTotalCactusUtility = utilityEvaluator.GetTotalUtility(TestItemType.Cactus, endingInventory) + transferredCornUtility;
+            var expectedTotalCornUtility = utilityEvaluator.GetTotalUtility(TestItemType.Corn, endingInventory) - transferredCornUtility;
+            
             var expetedUtility = new Dictionary<TestItemType, float>() {
-                { TestItemType.Cactus, expectedCactusUtility },
-                { TestItemType.Corn, expectedCornUtility }
+                { TestItemType.Cactus, expectedTotalCactusUtility / beginningInventory[TestItemType.Cactus] },
+                { TestItemType.Corn, expectedTotalCornUtility / beginningInventory[TestItemType.Corn] }
             };
 
             foreach (var utilityPair in utility)
@@ -246,9 +251,9 @@ namespace UnitTests.Economics.UtilityAnalyzerTests
                 utilityEvaluator);
 
             var expetedUtility = new Dictionary<TestItemType, float>() {
-                { TestItemType.Cactus, 2.25f },
-                { TestItemType.Chilis, 2.25f },
-                { TestItemType.Corn, 0f }
+                { TestItemType.Cactus, 2.25f / 1f },
+                { TestItemType.Chilis, 2.25f / 1f },
+                { TestItemType.Corn, float.NaN }
             };
 
             foreach (var respource in expetedUtility.Keys)

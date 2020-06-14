@@ -12,7 +12,7 @@ public class SpawnController : MonoBehaviour
 
     [Header("Boost Settings")]
     [Tooltip("Amount of extra probability to add on top of the base spawn probability when there are no spawned items")]
-    [Range(0, 5)]
+    [Min(0)]
     public float boostProbabilityAt0 = 0f;
     [Tooltip("offset of the boost curve. higher numbers will result in a flatter curve")]
     [Min(float.Epsilon)]

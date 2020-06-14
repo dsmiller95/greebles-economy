@@ -28,7 +28,7 @@ namespace TradeModeling.Economics
                 resource => resource,
                 resource => utilityEvaluator.GetTotalUtility(resource, endingInventory)
               );
-            var endingInventoryDictionary = tradeableResources.ToDictionary(
+            var retractingInventory = tradeableResources.ToDictionary(
                 resource => resource,
                 resource => endingInventory.Get(resource)
               );
@@ -40,11 +40,14 @@ namespace TradeModeling.Economics
 
             foreach(var transaction in transactionListReverse)
             {
-                this.DistributeUtilityBasedOnTransaction(tradeableResources, endingUtilities, transaction, endingInventoryDictionary);
-                endingInventoryDictionary = endingInventoryDictionary - transaction;
+                this.DistributeUtilityBasedOnTransaction(tradeableResources, endingUtilities, transaction, retractingInventory);
+                retractingInventory = retractingInventory - transaction;
             }
 
-            return endingUtilities;
+            return endingUtilities.ToDictionary(
+                kvp => kvp.Key,
+                kvp => kvp.Value / retractingInventory[kvp.Key]
+            );
         }
 
         /// <summary>

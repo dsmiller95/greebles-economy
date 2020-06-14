@@ -30,7 +30,7 @@ public class Gatherer : MonoBehaviour
     internal ITimeTracker timeTracker;
     internal GatherBehaviorOptimizer optimizer;
 
-    internal Dictionary<ResourceType, float> gatheringWeights;
+    internal IDictionary<ResourceType, float> gatheringWeights;
 
     private StateMachine<GathererState, Gatherer> stateMachine;
     public IDictionary<GathererState, dynamic> stateData;

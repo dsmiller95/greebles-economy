@@ -145,7 +145,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   home: {fileID: 766137350524498339}
-  speed: 10
+  speed: 50
   touchDistance: 1
   backpackSize: 10
   pocketSize: 1

@@ -9,7 +9,7 @@ using UnityEngine;
 public class ConsumingStateHandler : GenericStateHandler<GathererState, Gatherer>
 {
     private float timeDelay;
-    public ConsumingStateHandler(float timeDelay = 0.5f)
+    public ConsumingStateHandler(float timeDelay = 0.2f)
     {
         this.timeDelay = timeDelay;
     }

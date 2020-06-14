@@ -49,6 +49,7 @@ class SellingStateHandler : GenericStateHandler<GathererState, Gatherer>
     public GathererState stateHandle => GathererState.Selling;
     public GathererState HandleState(Gatherer data)
     {
+        var sellingStateDate = data.stateData[this.stateHandle] as SellingStateData;
         data.attemptToEnsureTarget(UserLayerMasks.Market,
             (gameObject, distance) => {
                 if (gameObject?.GetComponent<Market>() != null)
@@ -92,7 +93,9 @@ class SellingStateHandler : GenericStateHandler<GathererState, Gatherer>
 
             var timeSummary = data.timeTracker.getResourceTimeSummary();
 
-            data.gatheringWeights = data.optimizer.generateNewWeights(data.gatheringWeights, timeSummary, sourceUtilities);
+            data.gatheringWeights = data.optimizer.nextWeights(timeSummary, sourceUtilities);
+            sellingStateDate.weightsChart.values = data.gatheringWeights;
+
             Debug.Log(TradeModeling.MyUtilities.SerializeEnumDictionary(data.gatheringWeights));
             data.timeTracker.clearTime();
             return GathererState.GoingHomeToEat;
