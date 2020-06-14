@@ -18,10 +18,8 @@ public abstract class GenericTimeSeries<TSeriesKey> : MonoBehaviour, IMultiPlott
     private Func<TSeriesKey, float> getValue;
 
     [Tooltip("Range of time in seconds that the chart should cover.")]
-    [InspectorName("Time Range (s)")]
     public float timeRange = 20;
     [Tooltip("Total individual samples that should be on the screen at one time.")]
-    [InspectorName("Steps")]
     public float totalSteps = 40;
 
 
