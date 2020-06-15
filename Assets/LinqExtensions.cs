@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using UnityEngine;
 
 public static class LinqExtensions
 {
@@ -31,6 +32,37 @@ public static class LinqExtensions
             workingList.Add(value);
             yield return workingList.ToList();
         }
+    }
+    public static IDictionary<T, float> SumTogether<T>(this IEnumerable<IDictionary<T, float>> source)
+    {
+        var result = new Dictionary<T, float>();
+        var iterator = source.GetEnumerator();
+
+        while (iterator.MoveNext())
+        {
+            var value = iterator.Current;
+            foreach (var key in value.Keys)
+            {
+                if (!result.ContainsKey(key))
+                {
+                    result[key] = 0f;
+                }
+                result[key] += value[key];
+            }
+        }
+
+        return result;
+    }
+
+    public static IDictionary<TKey, TOut> SelectDictionary<TKey, TIn, TOut>(this IDictionary<TKey, TIn> source, Func<TIn, TOut> func)
+    {
+        return source.ToDictionary(x => x.Key, x => func(x.Value));
+    }
+
+    public static IDictionary<TKey, float> Normalize<TKey>(this IDictionary<TKey, float> source)
+    {
+        var sum = source.Values.Sum();
+        return source.SelectDictionary(f => f / sum);
     }
 }
 

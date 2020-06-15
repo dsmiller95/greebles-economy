@@ -60,8 +60,9 @@ class SellingStateHandler : GenericStateHandler<GathererState, Gatherer>
             });
         if (data.seekTargetToTouch())
         {
+            var initialInventory = ResourceConfiguration.spaceFillingItems.ToDictionary(type => type, type => data.inventory.Get(type));
+
             var market = data.currentTarget.GetComponent<Market>();
-            // TODO:
 
             var exchangeAdapters = market.GetExchangeAdapter();
             var optimizer = new PurchaseOptimizer<ResourceType, SpaceFillingInventory<ResourceType>, SpaceFillingInventory<ResourceType>>(
@@ -79,19 +80,22 @@ class SellingStateHandler : GenericStateHandler<GathererState, Gatherer>
                 ledger,
                 data.utilityFunction);
 
-            Debug.Log("Ledger");
-            foreach (var transaction in ledger)
-            {
-                Debug.Log($"Sold: {transaction.Item1?.amount} {this.str(transaction.Item1?.type)}");
-                foreach (var bought in transaction.Item2.exchages)
-                {
-                    Debug.Log($"Bought: {bought.amount} {this.str(bought.type)}");
-                }
-            }
-            Debug.Log(data.inventory.ToString(x => Enum.GetName(typeof(ResourceType), x)));
-            Debug.Log(TradeModeling.MyUtilities.SerializeEnumDictionary(sourceUtilities));
+            //Debug.Log("Ledger");
+            //foreach (var transaction in ledger)
+            //{
+            //    Debug.Log($"Sold: {transaction.Item1?.amount} {this.str(transaction.Item1?.type)}");
+            //    foreach (var bought in transaction.Item2.exchages)
+            //    {
+            //        Debug.Log($"Bought: {bought.amount} {this.str(bought.type)}");
+            //    }
+            //}
+
 
             var timeSummary = data.timeTracker.getResourceTimeSummary();
+
+            Debug.Log(data.inventory.ToString(x => Enum.GetName(typeof(ResourceType), x)));
+            Debug.Log(TradeModeling.MyUtilities.SerializeEnumDictionary(sourceUtilities));
+            Debug.Log(TradeModeling.MyUtilities.SerializeEnumDictionary(timeSummary));
 
             data.gatheringWeights = data.optimizer.nextWeights(timeSummary, sourceUtilities);
             sellingStateDate.weightsChart.values = data.gatheringWeights;

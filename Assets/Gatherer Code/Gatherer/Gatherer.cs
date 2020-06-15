@@ -164,13 +164,8 @@ public class Gatherer : MonoBehaviour
 
     internal void eatResource(GameObject resource)
     {
-        var resourceType = resource.GetComponent<Resource>();
-        if (!resourceType.eaten)
-        {
-            resourceType.eaten = true;
-            this.inventory.Add(resourceType.type, resourceType.value).Execute();
-            Destroy(resource);
-        }
+        var resourceType = resource.GetComponent<IResource>();
+        resourceType.Eat(this.inventory);
     }
 
     private GameObject getClosestObjectSatisfyingCondition(UserLayerMasks layerMask, Func<GameObject, float, float> weightFunction)

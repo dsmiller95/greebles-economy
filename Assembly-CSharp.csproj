@@ -80,10 +80,12 @@
     <Compile Include="Assets\Gatherer Code\Market\Market.cs" />
     <Compile Include="Assets\Gatherer Code\Market\ResourceSellResult.cs" />
     <Compile Include="Assets\Gatherer Code\Market\SelectableMarket.cs" />
+    <Compile Include="Assets\Gatherer Code\Resources\IResource.cs" />
     <Compile Include="Assets\Gatherer Code\Resources\Inventory\ResourceInventory.cs" />
     <Compile Include="Assets\Gatherer Code\Resources\Resource.cs" />
     <Compile Include="Assets\Gatherer Code\Resources\ResourceConfiguration.cs" />
     <Compile Include="Assets\Gatherer Code\Resources\ResourceConfigurer.cs" />
+    <Compile Include="Assets\Gatherer Code\Resources\ResourceInfinite.cs" />
     <Compile Include="Assets\Gatherer Code\Resources\ResourceType.cs" />
     <Compile Include="Assets\Gatherer Code\Resources\UI Adapters\ResourceBar.cs" />
     <Compile Include="Assets\Gatherer Code\Resources\UI Adapters\ResourceDictionaryTimeSeries.cs" />

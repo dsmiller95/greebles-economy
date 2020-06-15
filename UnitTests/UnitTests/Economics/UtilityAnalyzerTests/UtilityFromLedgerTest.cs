@@ -76,8 +76,8 @@ namespace UnitTests.Economics.UtilityAnalyzerTests
                 utilityEvaluator);
 
             var expetedUtilityPerBeginningResource = new Dictionary<TestItemType, float>() {
-                { TestItemType.Cactus, 1f / 1f },
-                { TestItemType.Corn, 1.5f / 2f }
+                { TestItemType.Cactus, 1f },
+                { TestItemType.Corn, 1.5f }
             };
 
             foreach (var utilityPair in utility)
@@ -107,8 +107,8 @@ namespace UnitTests.Economics.UtilityAnalyzerTests
                 utilityEvaluator);
 
             var expetedUtilityPerBeginningResource = new Dictionary<TestItemType, float>() {
-                { TestItemType.Cactus, 2.25f / 1f },
-                { TestItemType.Corn, 2.25f / 1f }
+                { TestItemType.Cactus, 2.25f },
+                { TestItemType.Corn, 2.25f }
             };
 
             foreach (var utilityPair in utility)
@@ -138,8 +138,8 @@ namespace UnitTests.Economics.UtilityAnalyzerTests
                 utilityEvaluator);
 
             var expetedUtiexpetedUtilityPerBeginningResourceity = new Dictionary<TestItemType, float>() {
-                { TestItemType.Cactus, float.NaN },
-                { TestItemType.Corn, 1.5f / 1f }
+                { TestItemType.Cactus, 0f },
+                { TestItemType.Corn, 1.5f }
             };
 
             foreach (var utilityPair in utility)
@@ -174,8 +174,8 @@ namespace UnitTests.Economics.UtilityAnalyzerTests
             var expectedTotalCornUtility = utilityEvaluator.GetTotalUtility(TestItemType.Corn, endingInventory) + transferredCactusUtility;
 
             var expetedUtilityPerBeginningResource = new Dictionary<TestItemType, float>() {
-                { TestItemType.Cactus, expectedTotalCactusUtility / 1f },
-                { TestItemType.Corn, expectedTotalCornUtility / 2f }
+                { TestItemType.Cactus, expectedTotalCactusUtility },
+                { TestItemType.Corn, expectedTotalCornUtility }
             };
             foreach (var utilityPair in utility)
             {
@@ -198,11 +198,6 @@ namespace UnitTests.Economics.UtilityAnalyzerTests
                 GetLedgerTransaction(TestItemType.Cactus, TestItemType.Corn, 1, 2),
                 GetLedgerTransaction(TestItemType.Cactus, TestItemType.Corn, 1, 2),
                 };
-            var beginningInventory = new Dictionary<TestItemType, float>
-            {
-                {TestItemType.Cactus, 10f },
-                {TestItemType.Corn, 4f }
-            };
             var utilityEvaluator = GetGenericUtilityFunction(1, 1);
             var utilityAnalyzer = new UtilityAnalyzer<TestItemType>();
 
@@ -217,8 +212,8 @@ namespace UnitTests.Economics.UtilityAnalyzerTests
             var expectedTotalCornUtility = utilityEvaluator.GetTotalUtility(TestItemType.Corn, endingInventory) - transferredCornUtility;
             
             var expetedUtility = new Dictionary<TestItemType, float>() {
-                { TestItemType.Cactus, expectedTotalCactusUtility / beginningInventory[TestItemType.Cactus] },
-                { TestItemType.Corn, expectedTotalCornUtility / beginningInventory[TestItemType.Corn] }
+                { TestItemType.Cactus, expectedTotalCactusUtility },
+                { TestItemType.Corn, expectedTotalCornUtility }
             };
 
             foreach (var utilityPair in utility)
@@ -251,9 +246,9 @@ namespace UnitTests.Economics.UtilityAnalyzerTests
                 utilityEvaluator);
 
             var expetedUtility = new Dictionary<TestItemType, float>() {
-                { TestItemType.Cactus, 2.25f / 1f },
-                { TestItemType.Chilis, 2.25f / 1f },
-                { TestItemType.Corn, float.NaN }
+                { TestItemType.Cactus, 2.25f },
+                { TestItemType.Chilis, 2.25f },
+                { TestItemType.Corn, 0f }
             };
 
             foreach (var respource in expetedUtility.Keys)

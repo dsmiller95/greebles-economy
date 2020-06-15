@@ -325,8 +325,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1f634cf9c5a23a84da5b09649786bd51, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  timeRange: 360
-  totalSteps: 120
+  timeRange: 120
+  totalSteps: 80
   resourcePlotConfig:
   - type: 1
     yScale: 10

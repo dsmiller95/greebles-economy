@@ -44,10 +44,7 @@ namespace TradeModeling.Economics
                 retractingInventory = retractingInventory - transaction;
             }
 
-            return endingUtilities.ToDictionary(
-                kvp => kvp.Key,
-                kvp => kvp.Value / retractingInventory[kvp.Key]
-            );
+            return endingUtilities;
         }
 
         /// <summary>

@@ -13,16 +13,16 @@ class GatheringStateHandler : GenericStateHandler<GathererState, Gatherer>
     {
         if (data.attemptToEnsureTarget(UserLayerMasks.Resources,
             (gameObject, distance) => {
-                var resource = gameObject?.GetComponent<Resource>();
+                var resource = gameObject?.GetComponent<IResource>();
                 if (resource != null)
                 {
-                    var type = resource.type;
+                    var type = resource._type;
                     return -(distance / data.gatheringWeights[type]);
                 }
                 return float.MinValue;
             }))
         {
-            data.timeTracker.startTrackingResource(data.currentTarget.GetComponent<Resource>().type);
+            data.timeTracker.startTrackingResource(data.currentTarget.GetComponent<IResource>()._type);
         };
         if (data.seekTargetToTouch())
         {

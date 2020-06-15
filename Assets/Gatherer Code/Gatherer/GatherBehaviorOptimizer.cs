@@ -10,46 +10,73 @@ public class GatherBehaviorOptimizer
     public const float weightChangeFactor = 0.6f;
 
     private Queue<IDictionary<ResourceType, float>> pastWeights;
+    private Queue<IDictionary<ResourceType, float>> pastUtilities;
+    private Queue<IDictionary<ResourceType, float>> pastTimeCosts;
+
     public int rollingAverageWindow = 6;
 
     public GatherBehaviorOptimizer()
     {
         this.pastWeights = new Queue<IDictionary<ResourceType, float>>();
         this.pastWeights.Enqueue(this.generateInitialWeights());
+
+        this.pastUtilities = new Queue<IDictionary<ResourceType, float>>();
+        this.pastTimeCosts = new Queue<IDictionary<ResourceType, float>>();
     }
 
     public IDictionary<ResourceType, float> nextWeights(
+        IDictionary<ResourceType, float> timeSpentTotal,
+        IDictionary<ResourceType, float> totalUtilityPerResource)
+    {
+        this.AddInRollingWindow(this.pastUtilities, new Dictionary<ResourceType, float>(totalUtilityPerResource));
+        this.AddInRollingWindow(this.pastTimeCosts, new Dictionary<ResourceType, float>(timeSpentTotal));
+
+        var summedTimeSpend = pastTimeCosts.SumTogether();
+        var summedUtilities = pastUtilities.SumTogether();
+
+        Debug.Log("Summation info");
+        Debug.Log(TradeModeling.MyUtilities.SerializeEnumDictionary(summedUtilities));
+        Debug.Log(TradeModeling.MyUtilities.SerializeEnumDictionary(summedTimeSpend));
+
+        return this.GetWeightsFromTimeSpentAndUtilityGained(summedTimeSpend, summedUtilities);
+    }
+
+    private IDictionary<ResourceType, float> GetWeightsFromTimeSpentAndUtilityGained(
         IDictionary<ResourceType, float> timeSpent,
         IDictionary<ResourceType, float> utilityPerResource)
     {
-        //TODO: counteract the single-gather case. If the agent only gathered one type of resource, We shouldn't make much if any changes to the weights
-        // Because no new comparitive information was gained
-        var utilityGained = utilityPerResource.Keys
-            .Where(type => !float.IsNaN(utilityPerResource[type]))
-            .Select(type => {
+        var utilityGainedPerTime = utilityPerResource.Keys
+            .Where(type => 
+                !float.IsNaN(utilityPerResource[type]) && utilityPerResource[type] > 0f
+                && timeSpent.ContainsKey(type) && timeSpent[type] > 0f)
+            .ToDictionary(type => type, type => {
                 var gainedUtility = utilityPerResource[type];
                 var time = timeSpent[type];
-                return new
-                {
-                    type,
-                    utility = gainedUtility
-                };
+                return gainedUtility / time;
             });
 
-        var totalUtilityPerResource = utilityGained.Select(x => x.utility).Sum();
-        var newWeightsGenerated = utilityGained.Select(pair => new { pair.type, weight = pair.utility / totalUtilityPerResource });
+        var totalUtilityPerResourcePerTime = utilityGainedPerTime.Select(x => x.Value).Sum();
+        // In some cases we may not have gathered any of some types of resources
+        //  We will take the average value of all entries in the dictionary and pad
+        //  the resources we haven't gathered with that average
+        var averageUtilityPResourcePTime = totalUtilityPerResourcePerTime / utilityGainedPerTime.Count();
+        var paddedUtilityPerTime = ResourceConfiguration.spaceFillingItems.ToDictionary(
+            resource => resource,
+            resource => utilityGainedPerTime.ContainsKey(resource) ? utilityGainedPerTime[resource] : averageUtilityPResourcePTime);
 
-        var regeneratedWeights = newWeightsGenerated.ToDictionary(pair => pair.type, pair => pair.weight);
+        var newWeightsGenerated = paddedUtilityPerTime.Normalize();
 
-        var nextWeights = new Dictionary<ResourceType, float>(this.pastWeights.Last());
-        ApplyNewWeightsByFactorInPlace(nextWeights, regeneratedWeights, 1);
-        this.pastWeights.Enqueue(nextWeights);
-        if (this.pastWeights.Count > rollingAverageWindow)
+        return newWeightsGenerated;
+    }
+
+    private void AddInRollingWindow<T>(Queue<T> queue, T value)
+    {
+        queue.Enqueue(value);
+        if (queue.Count > rollingAverageWindow)
         {
-            this.pastWeights.Dequeue();
+            queue.Dequeue();
         }
 
-        return this.AverageOverAll(this.pastWeights);
     }
 
     /// <summary>
