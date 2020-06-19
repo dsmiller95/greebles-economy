@@ -3,9 +3,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Assets.Gatherer_Code;
-using System;
 using TradeModeling.Inventories;
 using System.Threading.Tasks;
+using TradeModeling.Economics;
+using System.Threading;
 
 public class Resource : MonoBehaviour, IResource
 {
@@ -19,35 +20,51 @@ public class Resource : MonoBehaviour, IResource
 
     private bool isCompletelyEaten = false;
 
-    public async Task Eat(SpaceFillingInventory<ResourceType> inventory, float amount = -1)
+    private int currentConsumerCount = 0;
+
+    public async Task<bool> Eat(SpaceFillingInventory<ResourceType> inventory, float amount = -1)
     {
-        if (amount == -1)
-        {
-            amount = this.value;
-        }
-        var eatOption = inventory.Add(_type, amount);
+        ActionOption<float> eatOption;
         lock (this)
         {
+            if (amount == -1)
+            {
+                amount = this.value;
+            }
+            eatOption = inventory.Add(_type, amount);
             /* Determine if this resource will be completely consumed by this operation
              * If it will be, mark as completely eaten and then get rid of the gameObject when this operation completes
              */
             if (this.isCompletelyEaten)
             {
-                return;
+                return false;
             }
             this.value -= eatOption.info;
-            if (Math.Abs(value) <= float.Epsilon * 10)
+            if (Mathf.Abs(value) <= float.Epsilon * 10)
             {
                 this.isCompletelyEaten = true;
             }
+            currentConsumerCount++;
         }
         await Task.Delay((int)(this.gatherTime * 1000));
-        if (this.isCompletelyEaten)
+        eatOption.Execute();
+
+        this.DestroyIfNoOtherConsumers();
+        
+        return true;
+    }
+
+    private void DestroyIfNoOtherConsumers()
+    {
+        var willDestroy = false;
+        lock (this)
         {
-            // Should only ever get here once
+            currentConsumerCount--;
+            willDestroy = currentConsumerCount == 0 && this.isCompletelyEaten;
+        }
+        if(willDestroy)
+        {
             Destroy(this.gameObject);
         }
-        eatOption.Execute();
-        return;
     }
 }

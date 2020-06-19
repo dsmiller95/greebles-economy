@@ -109,7 +109,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   type: 1
-  value: 1
+  value: 5
+  gatherTime: 0.5
 --- !u!54 &-6853645583858474221
 Rigidbody:
   m_ObjectHideFlags: 0

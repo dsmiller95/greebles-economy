@@ -10,5 +10,5 @@ interface IResource
 {
     ResourceType _type { get; }
     float amount { get; }
-    Task Eat(SpaceFillingInventory<ResourceType> inventory, float amount = -1);
+    Task<bool> Eat(SpaceFillingInventory<ResourceType> inventory, float amount = -1);
 }

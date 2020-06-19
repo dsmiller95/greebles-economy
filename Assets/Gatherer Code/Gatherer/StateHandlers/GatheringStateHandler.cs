@@ -22,12 +22,10 @@ class GatheringStateHandler : GenericStateHandler<GathererState, Gatherer>
                 return float.MinValue;
             }))
         {
-            Debug.Log($"{data.gameObject.name} Found target {data.currentTarget.gameObject.name}"); 
             data.timeTracker.startTrackingResource(data.currentTarget.GetComponent<IResource>()._type);
         };
         if (data.seekTargetToTouch())
         {
-            Debug.Log($"{data.gameObject.name} Touched target {data.currentTarget.gameObject.name}");
             await data.eatResource(data.currentTarget);
             data.ClearCurrentTarget();
         }

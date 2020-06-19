@@ -16,7 +16,7 @@ public class ResourceInfinite : MonoBehaviour, IResource
     public ResourceType type;
     public float gatherTime = 1;
 
-    public async Task Eat(SpaceFillingInventory<ResourceType> inventory, float amount = -1)
+    public async Task<bool> Eat(SpaceFillingInventory<ResourceType> inventory, float amount = -1)
     {
         await Task.Delay((int)(this.gatherTime * 1000));
         if (amount == -1)
@@ -25,5 +25,6 @@ public class ResourceInfinite : MonoBehaviour, IResource
         }
         var eatenInfo = inventory.Add(_type, amount);
         eatenInfo.Execute();
+        return true;
     }
 }

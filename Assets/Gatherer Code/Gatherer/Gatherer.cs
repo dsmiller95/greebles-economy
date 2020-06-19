@@ -23,7 +23,6 @@ public class Gatherer : MonoBehaviour
     public int backpackSize = 10;
     public int pocketSize = 1;
 
-
     internal GameObject currentTarget;
     internal float lastTargetCheckTime = 0;
 
@@ -169,10 +168,10 @@ public class Gatherer : MonoBehaviour
         return new Vector3(difference.x, difference.y, difference.z).magnitude;
     }
 
-    internal async Task eatResource(GameObject resource)
+    internal async Task<bool> eatResource(GameObject resource)
     {
         var resourceType = resource.GetComponent<IResource>();
-        await resourceType.Eat(this.inventory);
+        return await resourceType.Eat(this.inventory);
     }
 
     private GameObject getClosestObjectSatisfyingCondition(UserLayerMasks layerMask, Func<GameObject, float, float> weightFunction)
