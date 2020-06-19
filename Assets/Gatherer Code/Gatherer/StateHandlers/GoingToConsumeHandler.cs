@@ -9,13 +9,13 @@ using UnityEngine;
 class GoingToConsumeHandler : GenericStateHandler<GathererState, Gatherer>
 {
     public GathererState stateHandle => GathererState.GoingHomeToEat;
-    public GathererState HandleState(Gatherer data)
+    public Task<GathererState> HandleState(Gatherer data)
     {
         if (data.seekTargetToTouch())
         {
-            return GathererState.Consuming;
+            return Task.FromResult(GathererState.Consuming);
         }
-        return GathererState.GoingHomeToEat;
+        return Task.FromResult(GathererState.GoingHomeToEat);
     }
 
     public GathererState validPreviousStates => GathererState.Gathering | GathererState.Selling | GathererState.GoingHome;

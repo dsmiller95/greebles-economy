@@ -47,7 +47,7 @@ class SellingStateHandler : GenericStateHandler<GathererState, Gatherer>
 
 
     public GathererState stateHandle => GathererState.Selling;
-    public GathererState HandleState(Gatherer data)
+    public Task<GathererState> HandleState(Gatherer data)
     {
         var sellingStateDate = data.stateData[this.stateHandle] as SellingStateData;
         data.attemptToEnsureTarget(UserLayerMasks.Market,
@@ -102,9 +102,9 @@ class SellingStateHandler : GenericStateHandler<GathererState, Gatherer>
 
             Debug.Log(TradeModeling.MyUtilities.SerializeEnumDictionary(data.gatheringWeights));
             data.timeTracker.clearTime();
-            return GathererState.GoingHomeToEat;
+            return Task.FromResult(GathererState.GoingHomeToEat);
         }
-        return GathererState.Selling;
+        return Task.FromResult(GathererState.Selling);
     }
 
     private string str(ResourceType? type)

@@ -7,6 +7,7 @@ using UnityEngine;
 using System.Linq;
 using TradeModeling.Inventories;
 using TradeModeling.Economics;
+using System.Threading.Tasks;
 
 [RequireComponent(typeof(ResourceInventory))]
 [RequireComponent(typeof(TimeTracker))]
@@ -32,7 +33,7 @@ public class Gatherer : MonoBehaviour
 
     internal IDictionary<ResourceType, float> gatheringWeights;
 
-    private StateMachine<GathererState, Gatherer> stateMachine;
+    private AsyncStateMachine<GathererState, Gatherer> stateMachine;
     public IDictionary<GathererState, dynamic> stateData;
     public IUtilityEvaluator<ResourceType, SpaceFillingInventory<ResourceType>> utilityFunction
     {
@@ -71,7 +72,7 @@ public class Gatherer : MonoBehaviour
         this.optimizer = new GatherBehaviorOptimizer();
         this.gatheringWeights = optimizer.generateInitialWeights();
 
-        this.stateMachine = new StateMachine<GathererState, Gatherer>(GathererState.Gathering);
+        this.stateMachine = new AsyncStateMachine<GathererState, Gatherer>(GathererState.Gathering);
 
         stateMachine.registerStateTransitionHandler(GathererState.All, GathererState.All, (x) =>
         {
@@ -140,6 +141,12 @@ public class Gatherer : MonoBehaviour
         return isTouchingCurrentTarget();
     }
 
+    public void ClearCurrentTarget()
+    {
+        this.currentTarget = null;
+        this.lastTargetCheckTime = 0;
+    }
+
     private void moveTowardsPosition(Vector3 targetPostion)
     {
         var difference = targetPostion - this.transform.position;
@@ -162,10 +169,10 @@ public class Gatherer : MonoBehaviour
         return new Vector3(difference.x, difference.y, difference.z).magnitude;
     }
 
-    internal void eatResource(GameObject resource)
+    internal async Task eatResource(GameObject resource)
     {
         var resourceType = resource.GetComponent<IResource>();
-        resourceType.Eat(this.inventory);
+        await resourceType.Eat(this.inventory);
     }
 
     private GameObject getClosestObjectSatisfyingCondition(UserLayerMasks layerMask, Func<GameObject, float, float> weightFunction)

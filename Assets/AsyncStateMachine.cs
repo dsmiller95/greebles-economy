@@ -7,7 +7,14 @@ using UnityEngine;
 
 namespace Assets
 {
-    public class StateMachine<T, ParamType> where T : Enum
+    /// <summary>
+    /// A state machine which supports asynchronous operations
+    ///     If a state handler returns a long-running task, all other attempts to update the state will be blocked
+    ///     until the long running task completes
+    /// </summary>
+    /// <typeparam name="T">The enum type which represents the state options</typeparam>
+    /// <typeparam name="ParamType">The type of object which all state handlers will pull their data from</typeparam>
+    public class AsyncStateMachine<T, ParamType> where T : Enum
     {
         public struct StateChangeHandler
         {
@@ -18,18 +25,18 @@ namespace Assets
 
         private T state;
 
-        private Dictionary<T, Func<ParamType, T>> updateHandlers;
+        private Dictionary<T, Func<ParamType, Task<T>>> updateHandlers;
         private IList<StateChangeHandler> stateChangeHandlers;
 
 
-        public StateMachine(T initalState)
+        public AsyncStateMachine(T initalState)
         {
-            updateHandlers = new Dictionary<T, Func<ParamType, T>>();
+            updateHandlers = new Dictionary<T, Func<ParamType, Task<T>>>();
             this.state = initalState;
             this.stateChangeHandlers = new List<StateChangeHandler>();
         }
 
-        public void registerStateHandler(T state, Func<ParamType, T> handler)
+        public void registerStateHandler(T state, Func<ParamType, Task<T>> handler)
         {
             updateHandlers[state] = handler;
         }
@@ -64,15 +71,32 @@ namespace Assets
                 param => genericHandler.TransitionOutOfState(param));
         }
 
-        public void update(ParamType updateParam)
-        {
+        private bool stateLocked = false;
 
-            Func<ParamType, T> updateAction;
+        /// <summary>
+        /// Attempt to step the state machine. Returns true if the machine has stepped, false if the machine is in the middle of an
+        ///     asyncronous step and it cannot advance
+        /// This method can be fired off and ignored safely, as long as the caller does not care about when the effects are executed
+        /// </summary>
+        /// <param name="updateParam">The data</param>
+        /// <returns>true if the state machine executed a step or attempted to execute a step</returns>
+        public async Task<bool> update(ParamType updateParam)
+        {
+            lock (this)
+            {
+                if (stateLocked)
+                {
+                    return false;
+                }
+                this.stateLocked = true;
+            }
+
+            Func<ParamType, Task<T>> updateAction;
             if (!updateHandlers.TryGetValue(state, out updateAction))
             {
                 throw new NotImplementedException($"no state handler found for state {Enum.GetName(typeof(T), state)}");
             }
-            var newState = updateAction(updateParam);
+            var newState = await updateAction(updateParam);
 
             if(!newState.Equals(state))
             {
@@ -86,7 +110,13 @@ namespace Assets
                 }
             }
 
+            lock (this)
+            {
+                this.stateLocked = false;
+            }
+
             this.state = newState;
+            return true;
         }
     }
 }

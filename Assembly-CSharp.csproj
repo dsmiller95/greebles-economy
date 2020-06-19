@@ -63,6 +63,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\AsyncStateMachine.cs" />
     <Compile Include="Assets\Billboard.cs" />
     <Compile Include="Assets\Gatherer Code\Gatherer\GatherBehaviorOptimizer.cs" />
     <Compile Include="Assets\Gatherer Code\Gatherer\Gatherer.cs" />
@@ -97,7 +98,6 @@
     <Compile Include="Assets\RTS_Camera\Demo\DemoScene.cs" />
     <Compile Include="Assets\RTS_Camera\Demo\TargetSelector.cs" />
     <Compile Include="Assets\RTS_Camera\Scripts\RTS_Camera.cs" />
-    <Compile Include="Assets\StateMachine.cs" />
     <Compile Include="Assets\UI\Plotter\Function Plotter\IPlottableFunction.cs" />
     <Compile Include="Assets\UI\Plotter\Function Plotter\InverseUtilityPlottableAdapter.cs" />
     <Compile Include="Assets\UI\Plotter\PlotContainer.cs" />

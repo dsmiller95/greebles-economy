@@ -9,7 +9,7 @@ using UnityEngine;
 class GoingHomeStateHandler : GenericStateHandler<GathererState, Gatherer>
 {
     public GathererState stateHandle => GathererState.GoingHome;
-    public GathererState HandleState(Gatherer data)
+    public Task<GathererState> HandleState(Gatherer data)
     {
         if (data.seekTargetToTouch())
         {
@@ -18,11 +18,11 @@ class GoingHomeStateHandler : GenericStateHandler<GathererState, Gatherer>
                 //Our home is full; time to go to market
                 data.attachBackpack();
                 data.home.withdrawAllGoods(data.inventory);
-                return GathererState.Selling;
+                return Task.FromResult(GathererState.Selling);
             }
-            return GathererState.Gathering;
+            return Task.FromResult(GathererState.Gathering);
         }
-        return GathererState.GoingHome;
+        return Task.FromResult(GathererState.GoingHome);
     }
 
     public GathererState validPreviousStates => GathererState.Gathering;

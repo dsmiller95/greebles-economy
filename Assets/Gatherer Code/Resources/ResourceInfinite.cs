@@ -5,14 +5,20 @@ using UnityEngine;
 using Assets.Gatherer_Code;
 using System;
 using TradeModeling.Inventories;
+using System.Threading.Tasks;
 
 public class ResourceInfinite : MonoBehaviour, IResource
 {
     public ResourceType _type => type;
-    public ResourceType type;
 
-    public void Eat(SpaceFillingInventory<ResourceType> inventory, float amount = -1)
+    public float amount => float.MaxValue;
+
+    public ResourceType type;
+    public float gatherTime = 1;
+
+    public async Task Eat(SpaceFillingInventory<ResourceType> inventory, float amount = -1)
     {
+        await Task.Delay((int)(this.gatherTime * 1000));
         if (amount == -1)
         {
             amount = inventory.inventoryCapacity;

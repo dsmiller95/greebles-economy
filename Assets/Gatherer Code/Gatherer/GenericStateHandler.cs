@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 public interface GenericStateHandler<T, ParamType> where T : Enum
 {
     T stateHandle { get; }
-    T HandleState(ParamType data);
+    Task<T> HandleState(ParamType data);
     T validPreviousStates { get; }
     void TransitionIntoState(ParamType data);
     T validNextStates { get; }

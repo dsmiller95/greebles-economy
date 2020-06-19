@@ -21,7 +21,7 @@ public class ConsumingStateHandler : GenericStateHandler<GathererState, Gatherer
 
     public GathererState stateHandle => GathererState.Consuming;
 
-    public GathererState HandleState(Gatherer data)
+    public Task<GathererState> HandleState(Gatherer data)
     {
         ConsumingStateData myState = data.stateData[GathererState.Consuming];
         if ((myState.lastConsumedTime + timeDelay) < Time.time)
@@ -34,11 +34,11 @@ public class ConsumingStateHandler : GenericStateHandler<GathererState, Gatherer
 
             if (firstAvailableResource == default)
             {
-                return GathererState.Gathering;
+                return Task.FromResult(GathererState.Gathering);
             }
             data.inventory.Consume(firstAvailableResource, 1);
         }
-        return GathererState.Consuming;
+        return Task.FromResult(GathererState.Consuming);
     }
 
     public GathererState validPreviousStates => GathererState.GoingHomeToEat;
