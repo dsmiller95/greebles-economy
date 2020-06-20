@@ -31,13 +31,13 @@ namespace TradeModeling.Economics
                 execute(newInfo, this.info);
             });
         }
-        public ActionOption<T1> Then<T1>(Func<OptionInfo, T1> infoGenerator, Action<T1> execute)
+        public ActionOption<T1> Then<T1>(Func<OptionInfo, T1> infoGenerator, Action<T1> execute = null)
         {
             var newInfo = infoGenerator(this.info);
             return new ActionOption<T1>(newInfo, () =>
             {
                 this.Execute();
-                execute(newInfo);
+                execute?.Invoke(newInfo);
             });
         }
     }

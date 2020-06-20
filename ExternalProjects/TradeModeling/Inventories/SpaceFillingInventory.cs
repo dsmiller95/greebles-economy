@@ -59,7 +59,7 @@ namespace TradeModeling.Inventories
             var result = new Dictionary<T, float>();
             foreach (var itemType in itemTypes)
             {
-                var transferOption = this.transferResourceInto(itemType, target);
+                var transferOption = this.transferResourceInto(itemType, target, Get(itemType));
 
                 result[itemType] = transferOption.info;
                 transferOption.Execute();
@@ -74,15 +74,12 @@ namespace TradeModeling.Inventories
         /// <param name="target">the inventory to transfer into</param>
         /// <param name="amount">the amount to transfer</param>
         /// <returns>An option to execute the transfer, wrapping the amount which would be transferred</returns>
-        public ActionOption<float> transferResourceInto(T type, SpaceFillingInventory<T> target, float amount = -1)
+        public ActionOption<float> transferResourceInto(T type, SpaceFillingInventory<T> target, float amount)
         {
-            if (amount == -1)
+            if (amount < 0)
             {
-                amount = Get(type);
-            }
-            else if (amount < 0)
-            {
-                throw new NotImplementedException();
+                return target.transferResourceInto(type, this, -amount)
+                    .Then(added => -added);
             }
             var toAdd = Math.Min(amount, Get(type));
 

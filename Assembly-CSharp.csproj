@@ -93,7 +93,10 @@
     <Compile Include="Assets\Scripts\Resources\UI Adapters\ResourceDisplay.cs" />
     <Compile Include="Assets\Scripts\Resources\UI Adapters\ResourceInventoryTimeSeries.cs" />
     <Compile Include="Assets\Scripts\Resources\UI Adapters\ResourceTimeSeriesAdapter.cs" />
-    <Compile Include="Assets\Scripts\Trader\StateHandlers\TradeStateHandler.cs" />
+    <Compile Include="Assets\Scripts\Trader\SelectableTrader.cs" />
+    <Compile Include="Assets\Scripts\Trader\StateHandlers\InitalStateHandler.cs" />
+    <Compile Include="Assets\Scripts\Trader\StateHandlers\TradeExecuteStateHandler.cs" />
+    <Compile Include="Assets\Scripts\Trader\StateHandlers\TradeTransitStateHandler.cs" />
     <Compile Include="Assets\Scripts\Trader\TraderBehavior.cs" />
     <Compile Include="Assets\Scripts\Trader\TraderState.cs" />
     <Compile Include="Assets\Scripts\resource spawner\SpawnController.cs" />

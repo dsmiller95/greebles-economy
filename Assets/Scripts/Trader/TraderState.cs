@@ -10,6 +10,9 @@ namespace Assets.Scripts.Trader
     public enum TraderState
     {
         TradeTransit = 1,
-        All = TradeTransit
+        TradeExecute = 2,
+        Initial = 4,
+        All = TradeTransit | TradeExecute | Initial,
+        None = 0
     }
 }
