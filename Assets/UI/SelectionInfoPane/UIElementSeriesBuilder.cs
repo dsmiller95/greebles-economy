@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 namespace Assets.UI.InfoPane
@@ -16,7 +12,7 @@ namespace Assets.UI.InfoPane
         public UIElementSeriesBuilder(GameObject container)
         {
             this.container = container;
-            this.uiElementVerticalOffset = 0;
+            uiElementVerticalOffset = 0;
         }
 
         public void AddNextPanel(GameObject panel)
@@ -30,7 +26,7 @@ namespace Assets.UI.InfoPane
         {
             foreach (var panel in panels)
             {
-                this.AddNextPanel(panel);
+                AddNextPanel(panel);
             }
         }
 

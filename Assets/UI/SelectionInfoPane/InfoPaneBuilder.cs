@@ -20,12 +20,12 @@ namespace Assets.UI.InfoPane
 
         private void Start()
         {
-            panelBuilder = new UIElementSeriesBuilder(this.gameObject);
+            panelBuilder = new UIElementSeriesBuilder(gameObject);
         }
 
         private void OnSelectionChanged(object sender, ISelectable e)
         {
-            this.panelBuilder.ClearContainer();
+            panelBuilder.ClearContainer();
             var paneConfig = e.GetInfoPaneConfiguration();
             foreach (var plottableConfig in paneConfig.plottables)
             {
@@ -33,7 +33,7 @@ namespace Assets.UI.InfoPane
 
                 var plotter = newPlottable.GetComponentInChildren<GraphPlotter>();
                 plotter.SetPlottablesPreStart(plottableConfig.plot.GetPlottableSeries());
-                this.panelBuilder.AddNextPanel(newPlottable);
+                panelBuilder.AddNextPanel(newPlottable);
             }
             if (paneConfig.uiObjects != default)
             {
@@ -41,7 +41,7 @@ namespace Assets.UI.InfoPane
                 {
                     var newUIObject = Instantiate(genericUIObject.prefabToInit, transform);
                     genericUIObject.postInitHook(newUIObject);
-                    this.panelBuilder.AddNextPanel(newUIObject);
+                    panelBuilder.AddNextPanel(newUIObject);
                 }
             }
         }
