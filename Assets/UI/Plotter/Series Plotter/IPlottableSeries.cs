@@ -5,22 +5,26 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 
-public delegate void SeriesUpdatedHandler(object sender);
-public interface IPlottableSeries
-{
-    event SeriesUpdatedHandler SeriesUpdated;
-    IEnumerable<Vector2> GetSeries();
-    float GetPointRange();
-    PlottableConfig GetPlottableConfig();
-}
 
-[Serializable]
-public struct PlottableConfig
+namespace Assets.UI.Plotter.Series
 {
-    /// <summary>
-    /// The actual value of the plot is divided by this to attempt to normalize it into a range of [0, 1]
-    /// </summary>
-    public float yScale;
-    public Color lineColor;
-    public Color dotColor;
+    public delegate void SeriesUpdatedHandler(object sender);
+    public interface IPlottableSeries
+    {
+        event SeriesUpdatedHandler SeriesUpdated;
+        IEnumerable<Vector2> GetSeries();
+        float GetPointRange();
+        PlottableConfig GetPlottableConfig();
+    }
+
+    [Serializable]
+    public struct PlottableConfig
+    {
+        /// <summary>
+        /// The actual value of the plot is divided by this to attempt to normalize it into a range of [0, 1]
+        /// </summary>
+        public float yScale;
+        public Color lineColor;
+        public Color dotColor;
+    }
 }

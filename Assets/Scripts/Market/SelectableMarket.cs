@@ -1,48 +1,53 @@
-﻿using System.Collections;
+﻿using Assets.Scrips.Resources.UI;
+using Assets.UI.InfoPane;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SelectableMarket : MonoBehaviour, ISelectable
+namespace Assets.Scrips.Market
 {
-    public ResourceTimeSeriesAdapter ResourcePlotter;
-    public MeshRenderer meshRenderer;
-
-    public Material baseMaterial;
-    public Material selectedMaterial;
-
-    // Start is called before the first frame update
-    void Start()
+    public class SelectableMarket : MonoBehaviour, ISelectable
     {
-        
-    }
+        public ResourceTimeSeriesAdapter ResourcePlotter;
+        public MeshRenderer meshRenderer;
 
-    // Update is called once per frame
-    void Update()
-    {
+        public Material baseMaterial;
+        public Material selectedMaterial;
 
-    }
-
-    public InfoPaneConfiguration GetInfoPaneConfiguration()
-    {
-        return new InfoPaneConfiguration()
+        // Start is called before the first frame update
+        void Start()
         {
-            plottables = new List<PlotPaneConfig>() {
+
+        }
+
+        // Update is called once per frame
+        void Update()
+        {
+
+        }
+
+        public InfoPaneConfiguration GetInfoPaneConfiguration()
+        {
+            return new InfoPaneConfiguration()
+            {
+                plottables = new List<PlotPaneConfig>() {
                 new PlotPaneConfig {
                     plot = ResourcePlotter,
                     header = "Inventory"
                 }
             }
-        };
-    }
-    public void OnMeDeselected()
-    {
-        this.meshRenderer.material = this.baseMaterial;
-        Debug.Log($"{gameObject.name} deselected");
-    }
+            };
+        }
+        public void OnMeDeselected()
+        {
+            this.meshRenderer.material = this.baseMaterial;
+            Debug.Log($"{gameObject.name} deselected");
+        }
 
-    public void OnMeSelected()
-    {
-        this.meshRenderer.material = this.selectedMaterial;
-        Debug.Log($"{gameObject.name} selected");
+        public void OnMeSelected()
+        {
+            this.meshRenderer.material = this.selectedMaterial;
+            Debug.Log($"{gameObject.name} selected");
+        }
     }
 }

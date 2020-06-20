@@ -1,46 +1,50 @@
-﻿using System.Collections;
+﻿using Assets.UI.Plotter;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-[RequireComponent(typeof(SelectionTracker))]
-public class InfoPaneBuilder : MonoBehaviour
+namespace Assets.UI.InfoPane
 {
-    public GameObject plottablePrefab;
-
-    private SelectionTracker selectionTracker;
-
-    private void Awake()
+    [RequireComponent(typeof(SelectionTracker))]
+    public class InfoPaneBuilder : MonoBehaviour
     {
-        this.selectionTracker = this.GetComponent<SelectionTracker>();
-        this.selectionTracker.SelectionChanged += OnSelectionChanged;
-    }
+        public GameObject plottablePrefab;
 
-    private void OnSelectionChanged(object sender, ISelectable e)
-    {
-        this.ClearUI();
-        var paneConfig = e.GetInfoPaneConfiguration();
-        var plotVerticalOffset = 0f;
-        foreach(var plottableConfig in paneConfig.plottables)
+        private SelectionTracker selectionTracker;
+
+        private void Awake()
         {
-            var newPlottable = Instantiate(plottablePrefab, this.transform);
-
-            var plotter = newPlottable.GetComponentInChildren<Plotter>();
-            plotter.SetPlottablesPreStart(plottableConfig.plot.GetPlottableSeries());
-
-            var positioning = newPlottable.GetComponentInChildren<RectTransform>();
-            positioning.position -= new Vector3(0, plotVerticalOffset);
-            plotVerticalOffset += positioning.sizeDelta.y;
+            this.selectionTracker = this.GetComponent<SelectionTracker>();
+            this.selectionTracker.SelectionChanged += OnSelectionChanged;
         }
-    }
 
-    private void ClearUI()
-    {
-        // transform does not implement a generic IEnumerable,
-        //   but it will return all transform children when iterated
-        foreach (Transform child in transform)
+        private void OnSelectionChanged(object sender, ISelectable e)
         {
-            GameObject.Destroy(child.gameObject);
+            this.ClearUI();
+            var paneConfig = e.GetInfoPaneConfiguration();
+            var plotVerticalOffset = 0f;
+            foreach (var plottableConfig in paneConfig.plottables)
+            {
+                var newPlottable = Instantiate(plottablePrefab, this.transform);
+
+                var plotter = newPlottable.GetComponentInChildren<GraphPlotter>();
+                plotter.SetPlottablesPreStart(plottableConfig.plot.GetPlottableSeries());
+
+                var positioning = newPlottable.GetComponentInChildren<RectTransform>();
+                positioning.position -= new Vector3(0, plotVerticalOffset);
+                plotVerticalOffset += positioning.sizeDelta.y;
+            }
+        }
+
+        private void ClearUI()
+        {
+            // transform does not implement a generic IEnumerable,
+            //   but it will return all transform children when iterated
+            foreach (Transform child in transform)
+            {
+                GameObject.Destroy(child.gameObject);
+            }
         }
     }
 }

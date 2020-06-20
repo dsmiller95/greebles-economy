@@ -1,9 +1,9 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
-using Assets.Gatherer_Code;
 using System.Linq;
 using System;
+using Assets.Scrips.Resources;
 
 namespace Assets.Scrips.Gatherer
 {

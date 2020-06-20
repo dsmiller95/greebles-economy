@@ -1,4 +1,4 @@
-﻿using Assets.Gatherer_Code;
+﻿using Assets.Scrips.Resources;
 using Assets.Utilities;
 using System;
 using System.Collections.Generic;
@@ -9,7 +9,7 @@ using UnityEngine;
 
 namespace Assets.Scrips.Gatherer.StateHandlers
 {
-    public class ConsumingStateHandler : GenericStateHandler<GathererState, Gatherer>
+    public class ConsumingStateHandler : GenericStateHandler<GathererState, GathererBehavior>
     {
         private float timeDelay;
         public ConsumingStateHandler(float timeDelay = 0.2f)
@@ -24,7 +24,7 @@ namespace Assets.Scrips.Gatherer.StateHandlers
 
         public GathererState stateHandle => GathererState.Consuming;
 
-        public Task<GathererState> HandleState(Gatherer data)
+        public Task<GathererState> HandleState(GathererBehavior data)
         {
             ConsumingStateData myState = data.stateData[GathererState.Consuming];
             if ((myState.lastConsumedTime + timeDelay) < Time.time)
@@ -45,7 +45,7 @@ namespace Assets.Scrips.Gatherer.StateHandlers
         }
 
         public GathererState validPreviousStates => GathererState.GoingHomeToEat;
-        public void TransitionIntoState(Gatherer data)
+        public void TransitionIntoState(GathererBehavior data)
         {
             data.stateData[GathererState.Consuming] = new ConsumingStateData
             {
@@ -55,7 +55,7 @@ namespace Assets.Scrips.Gatherer.StateHandlers
         }
 
         public GathererState validNextStates => GathererState.Gathering;
-        public void TransitionOutOfState(Gatherer data)
+        public void TransitionOutOfState(GathererBehavior data)
         {
             data.removeBackpack();
         }

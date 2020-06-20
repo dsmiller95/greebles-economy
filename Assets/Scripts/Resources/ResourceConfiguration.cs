@@ -5,9 +5,12 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 
-public static class ResourceConfiguration
+namespace Assets.Scrips.Resources
 {
-    public static bool configSet = false;
-    public static ResourceType[] spaceFillingItems;
-    public static Dictionary<ResourceType, Color> resourceColoring;
+    public static class ResourceConfiguration
+    {
+        public static bool configSet = false;
+        public static ResourceType[] spaceFillingItems;
+        public static Dictionary<ResourceType, Color> resourceColoring;
+    }
 }

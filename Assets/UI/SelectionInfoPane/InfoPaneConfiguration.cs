@@ -1,17 +1,16 @@
-﻿using System;
+﻿using Assets.UI.Plotter.Series;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using UnityEngine;
 
-public class PlotPaneConfig
+namespace Assets.UI.InfoPane
 {
-    public IMultiPlottableSeries plot;
-    public string header;
-}
+    public class PlotPaneConfig
+    {
+        public IMultiPlottableSeries plot;
+        public string header;
+    }
 
-public class InfoPaneConfiguration
-{
-    public IList<PlotPaneConfig> plottables;
+    public class InfoPaneConfiguration
+    {
+        public IList<PlotPaneConfig> plottables;
+    }
 }

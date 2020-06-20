@@ -4,12 +4,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-class ResourceDictionaryTimeSeries : ResourceTimeSeriesAdapter
+namespace Assets.Scrips.Resources.UI
 {
-    public IDictionary<ResourceType, float> values;
-
-    protected override float GetResourceValue(ResourceType resourceType)
+    class ResourceDictionaryTimeSeries : ResourceTimeSeriesAdapter
     {
-        return values[resourceType];
+        public IDictionary<ResourceType, float> values;
+
+        protected override float GetResourceValue(ResourceType resourceType)
+        {
+            return values[resourceType];
+        }
     }
 }

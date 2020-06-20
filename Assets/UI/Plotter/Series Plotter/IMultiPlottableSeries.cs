@@ -5,7 +5,10 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 
-public interface IMultiPlottableSeries
+namespace Assets.UI.Plotter.Series
 {
-    IEnumerable<IPlottableSeries> GetPlottableSeries();
+    public interface IMultiPlottableSeries
+    {
+        IEnumerable<IPlottableSeries> GetPlottableSeries();
+    }
 }

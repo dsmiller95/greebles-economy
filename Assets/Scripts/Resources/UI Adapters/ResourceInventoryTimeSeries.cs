@@ -1,23 +1,27 @@
-﻿using System;
+﻿using Assets.Scrips.Resources.Inventory;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using TradeModeling.Inventories;
 using UnityEngine;
 
-public class ResourceInventoryTimeSeries : ResourceTimeSeriesAdapter
+namespace Assets.Scrips.Resources.UI
 {
-
-    public ResourceInventory inventory;
-    private SpaceFillingInventory<ResourceType> _inventory;
-
-    private void Awake()
+    public class ResourceInventoryTimeSeries : ResourceTimeSeriesAdapter
     {
-        _inventory = inventory.backingInventory;
-    }
 
-    protected override float GetResourceValue(ResourceType resourceType)
-    {
-        return this._inventory.Get(resourceType);
+        public ResourceInventory inventory;
+        private SpaceFillingInventory<ResourceType> _inventory;
+
+        private void Awake()
+        {
+            _inventory = inventory.backingInventory;
+        }
+
+        protected override float GetResourceValue(ResourceType resourceType)
+        {
+            return this._inventory.Get(resourceType);
+        }
     }
 }

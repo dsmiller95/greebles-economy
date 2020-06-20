@@ -1,5 +1,4 @@
-﻿using Assets.Gatherer_Code;
-using Assets.Utilities;
+﻿using Assets.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,10 +8,10 @@ using UnityEngine;
 
 namespace Assets.Scrips.Gatherer.StateHandlers
 {
-    class GoingToConsumeHandler : GenericStateHandler<GathererState, Gatherer>
+    class GoingToConsumeHandler : GenericStateHandler<GathererState, GathererBehavior>
     {
         public GathererState stateHandle => GathererState.GoingHomeToEat;
-        public Task<GathererState> HandleState(Gatherer data)
+        public Task<GathererState> HandleState(GathererBehavior data)
         {
             if (data.seekTargetToTouch())
             {
@@ -22,13 +21,13 @@ namespace Assets.Scrips.Gatherer.StateHandlers
         }
 
         public GathererState validPreviousStates => GathererState.Gathering | GathererState.Selling | GathererState.GoingHome;
-        public void TransitionIntoState(Gatherer data)
+        public void TransitionIntoState(GathererBehavior data)
         {
             data.currentTarget = data.home.gameObject;
         }
 
         public GathererState validNextStates => GathererState.Consuming;
-        public void TransitionOutOfState(Gatherer data)
+        public void TransitionOutOfState(GathererBehavior data)
         {
         }
     }

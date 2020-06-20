@@ -4,9 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-public interface ISelectable
+namespace Assets.UI.InfoPane
 {
-    void OnMeSelected();
-    void OnMeDeselected();
-    InfoPaneConfiguration GetInfoPaneConfiguration();
+    public interface ISelectable
+    {
+        void OnMeSelected();
+        void OnMeDeselected();
+        InfoPaneConfiguration GetInfoPaneConfiguration();
+    }
 }

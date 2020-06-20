@@ -4,24 +4,27 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-public class ResourceSellResult
+namespace Assets.Scrips.Market
 {
-    public ResourceSellResult(float items, float price)
+    public class ResourceSellResult
     {
-        this.soldItems = items;
-        this.sellPrice = price;
-    }
+        public ResourceSellResult(float items, float price)
+        {
+            this.soldItems = items;
+            this.sellPrice = price;
+        }
 
-    /// <summary>
-    /// How many items were sold
-    /// </summary>
-    public float soldItems;
-    /// <summary>
-    /// The price at which each item was sold
-    /// </summary>
-    public float sellPrice;
-    /// <summary>
-    /// The total amount of money exchanged
-    /// </summary>
-    public float totalRevenue { get => soldItems * sellPrice; }
+        /// <summary>
+        /// How many items were sold
+        /// </summary>
+        public float soldItems;
+        /// <summary>
+        /// The price at which each item was sold
+        /// </summary>
+        public float sellPrice;
+        /// <summary>
+        /// The total amount of money exchanged
+        /// </summary>
+        public float totalRevenue { get => soldItems * sellPrice; }
+    }
 }

@@ -8,7 +8,8 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>10.0.20506</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <RootNamespace></RootNamespace>
+    <RootNamespace>
+    </RootNamespace>
     <ProjectGuid>{1144D9EE-2470-658C-6630-CB5874EC2F29}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
@@ -67,7 +68,7 @@
     <Compile Include="Assets\External\RTS_Camera\Demo\TargetSelector.cs" />
     <Compile Include="Assets\External\RTS_Camera\Scripts\RTS_Camera.cs" />
     <Compile Include="Assets\Scripts\Gatherer\GatherBehaviorOptimizer.cs" />
-    <Compile Include="Assets\Scripts\Gatherer\Gatherer.cs" />
+    <Compile Include="Assets\Scripts\Gatherer\GathererBehavior.cs" />
     <Compile Include="Assets\Scripts\Gatherer\GathererState.cs" />
     <Compile Include="Assets\Scripts\Gatherer\SelectableGatherer.cs" />
     <Compile Include="Assets\Scripts\Gatherer\StateHandlers\ConsumingStateHandler.cs" />
@@ -76,9 +77,9 @@
     <Compile Include="Assets\Scripts\Gatherer\StateHandlers\GoingToConsumeHandler.cs" />
     <Compile Include="Assets\Scripts\Gatherer\StateHandlers\SellingStateHandler.cs" />
     <Compile Include="Assets\Scripts\Gatherer\TimeTracker.cs" />
-    <Compile Include="Assets\Scripts\Home\Home.cs" />
+    <Compile Include="Assets\Scripts\Home\HomeBehavior.cs" />
     <Compile Include="Assets\Scripts\Home\SelectableHome.cs" />
-    <Compile Include="Assets\Scripts\Market\Market.cs" />
+    <Compile Include="Assets\Scripts\Market\MarketBehavior.cs" />
     <Compile Include="Assets\Scripts\Market\ResourceSellResult.cs" />
     <Compile Include="Assets\Scripts\Market\SelectableMarket.cs" />
     <Compile Include="Assets\Scripts\Resources\IResource.cs" />
@@ -99,8 +100,8 @@
     <Compile Include="Assets\UI\Billboard.cs" />
     <Compile Include="Assets\UI\Plotter\Function Plotter\IPlottableFunction.cs" />
     <Compile Include="Assets\UI\Plotter\Function Plotter\InverseUtilityPlottableAdapter.cs" />
+    <Compile Include="Assets\UI\Plotter\GraphPlotter.cs" />
     <Compile Include="Assets\UI\Plotter\PlotContainer.cs" />
-    <Compile Include="Assets\UI\Plotter\Plotter.cs" />
     <Compile Include="Assets\UI\Plotter\Series Plotter\GenericTimeSeries.cs" />
     <Compile Include="Assets\UI\Plotter\Series Plotter\IMultiPlottableSeries.cs" />
     <Compile Include="Assets\UI\Plotter\Series Plotter\IPlottableSeries.cs" />

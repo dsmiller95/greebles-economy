@@ -4,40 +4,43 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class SelectionTracker : MonoBehaviour
+namespace Assets.UI.InfoPane
 {
-    public string cameraName;
-
-
-    private ISelectable currentlySelected;
-    public event EventHandler<ISelectable> SelectionChanged;
-    private Camera cam;
-    // Start is called before the first frame update
-    void Start()
+    public class SelectionTracker : MonoBehaviour
     {
-        this.cam = GameObject.FindGameObjectsWithTag("MainCamera")
-            .Where(gameObject => gameObject.name == this.cameraName).First()
-            .GetComponent<Camera>();
-    }
+        public string cameraName;
 
-    // Update is called once per frame
-    void Update()
-    {
-        if (Input.GetMouseButtonDown(0))
+
+        private ISelectable currentlySelected;
+        public event EventHandler<ISelectable> SelectionChanged;
+        private Camera cam;
+        // Start is called before the first frame update
+        void Start()
         {
-            Ray ray = cam.ScreenPointToRay(Input.mousePosition);
-            RaycastHit hit;
+            this.cam = GameObject.FindGameObjectsWithTag("MainCamera")
+                .Where(gameObject => gameObject.name == this.cameraName).First()
+                .GetComponent<Camera>();
+        }
 
-            if (Physics.Raycast(ray, out hit, 1000))
+        // Update is called once per frame
+        void Update()
+        {
+            if (Input.GetMouseButtonDown(0))
             {
-                var hitGameObject = hit.transform.gameObject;
-                var selectable = hitGameObject.GetComponent<ISelectable>();
-                if (selectable != default)
+                Ray ray = cam.ScreenPointToRay(Input.mousePosition);
+                RaycastHit hit;
+
+                if (Physics.Raycast(ray, out hit, 1000))
                 {
-                    this.currentlySelected?.OnMeDeselected();
-                    selectable.OnMeSelected();
-                    this.currentlySelected = selectable;
-                    SelectionChanged?.Invoke(this, this.currentlySelected);
+                    var hitGameObject = hit.transform.gameObject;
+                    var selectable = hitGameObject.GetComponent<ISelectable>();
+                    if (selectable != default)
+                    {
+                        this.currentlySelected?.OnMeDeselected();
+                        selectable.OnMeSelected();
+                        this.currentlySelected = selectable;
+                        SelectionChanged?.Invoke(this, this.currentlySelected);
+                    }
                 }
             }
         }

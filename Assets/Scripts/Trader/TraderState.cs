@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Assets.Trader
+namespace Assets.Scripts.Trader
 {
     [Flags]
     public enum TraderState

@@ -1,4 +1,6 @@
-﻿using System.Collections;
+﻿using Assets.Scrips.Resources.UI;
+using Assets.UI.InfoPane;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using static Assets.Scrips.Gatherer.StateHandlers.SellingStateHandler;
@@ -8,7 +10,7 @@ namespace Assets.Scrips.Gatherer
     public class SelectableGatherer : MonoBehaviour, ISelectable
     {
         public ResourceTimeSeriesAdapter ResourcePlotter;
-        public Gatherer gatherer;
+        public GathererBehavior gatherer;
         public MeshRenderer meshRenderer;
 
         public Material baseMaterial;

@@ -1,9 +1,9 @@
-﻿using Assets.Gatherer_Code;
+﻿using Assets.Scrips.Market;
+using Assets.Scrips.Resources;
+using Assets.Scrips.Resources.UI;
 using Assets.Utilities;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using TradeModeling.Economics;
 using TradeModeling.Inventories;
@@ -17,9 +17,9 @@ namespace Assets.Scrips.Gatherer.StateHandlers
     /// 
     /// Will also adjust the gathering weights based on the optimizer attached to the Gatherer
     /// </summary>
-    class SellingStateHandler : GenericStateHandler<GathererState, Gatherer>
+    class SellingStateHandler : GenericStateHandler<GathererState, GathererBehavior>
     {
-        public void InstantiateOnObject(Gatherer obj)
+        public void InstantiateOnObject(GathererBehavior obj)
         {
             var weightsChart = obj.gameObject.AddComponent<ResourceDictionaryTimeSeries>();
             obj.stateData[this.stateHandle] = new SellingStateData
@@ -50,13 +50,13 @@ namespace Assets.Scrips.Gatherer.StateHandlers
 
 
         public GathererState stateHandle => GathererState.Selling;
-        public Task<GathererState> HandleState(Gatherer data)
+        public Task<GathererState> HandleState(GathererBehavior data)
         {
             var sellingStateDate = data.stateData[this.stateHandle] as SellingStateData;
             data.attemptToEnsureTarget(UserLayerMasks.Market,
                 (gameObject, distance) =>
                 {
-                    if (gameObject?.GetComponent<Market>() != null)
+                    if (gameObject?.GetComponent<MarketBehavior>() != null)
                     {
                         return -distance;
                     }
@@ -66,7 +66,7 @@ namespace Assets.Scrips.Gatherer.StateHandlers
             {
                 var initialInventory = ResourceConfiguration.spaceFillingItems.ToDictionary(type => type, type => data.inventory.Get(type));
 
-                var market = data.currentTarget.GetComponent<Market>();
+                var market = data.currentTarget.GetComponent<MarketBehavior>();
 
                 var exchangeAdapters = market.GetExchangeAdapter();
                 var optimizer = new PurchaseOptimizer<ResourceType, SpaceFillingInventory<ResourceType>, SpaceFillingInventory<ResourceType>>(
@@ -124,13 +124,13 @@ namespace Assets.Scrips.Gatherer.StateHandlers
         }
 
         public GathererState validPreviousStates => GathererState.GoingHome;
-        public void TransitionIntoState(Gatherer data)
+        public void TransitionIntoState(GathererBehavior data)
         {
 
         }
 
         public GathererState validNextStates => GathererState.GoingHomeToEat;
-        public void TransitionOutOfState(Gatherer data)
+        public void TransitionOutOfState(GathererBehavior data)
         {
         }
     }

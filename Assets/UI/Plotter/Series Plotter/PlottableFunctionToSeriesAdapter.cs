@@ -1,66 +1,70 @@
-﻿using System;
+﻿using Assets.UI.Plotter.Function;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 
-class PlottableFunctionToSeriesAdapter: MonoBehaviour, IPlottableSeries
+namespace Assets.UI.Plotter.Series
 {
-    public GameObject plottableFunctionObject;
-    public PlottableFunctionConfig functionConfig;
-    public PlottableConfig plotConfig;
-    private IList<Vector2> plotSeries;
-
-
-    private IPlottableFunction function;
-
-    private void Awake()
+    class PlottableFunctionToSeriesAdapter : MonoBehaviour, IPlottableSeries
     {
-        this.function = plottableFunctionObject.GetComponent<IPlottableFunction>();
-    }
+        public GameObject plottableFunctionObject;
+        public PlottableFunctionConfig functionConfig;
+        public PlottableConfig plotConfig;
+        private IList<Vector2> plotSeries;
 
-    private float lastPlot = 0;
-    public void Update()
-    {
-        if(Time.time - lastPlot > functionConfig.updateFrequency)
+
+        private IPlottableFunction function;
+
+        private void Awake()
         {
-            lastPlot = Time.time;
-            this.PlotFunction();
+            this.function = plottableFunctionObject.GetComponent<IPlottableFunction>();
         }
-    }
 
-    private void PlotFunction()
-    {
-        this.plotSeries = this.GeneratePlotVectors().ToArray();
-        this.SeriesUpdated?.Invoke(this);
-    }
-    private IEnumerable<Vector2> GeneratePlotVectors()
-    {
-        float xStep = (functionConfig.end - functionConfig.start) / functionConfig.steps;
-        for (int i = 0; i < functionConfig.steps; i++)
+        private float lastPlot = 0;
+        public void Update()
         {
-            var xPos = i * xStep;
-            var value = function.PlotAt(xPos);
-            var dotPos = new Vector2(xPos, value);
-            yield return dotPos;
+            if (Time.time - lastPlot > functionConfig.updateFrequency)
+            {
+                lastPlot = Time.time;
+                this.PlotFunction();
+            }
         }
-    }
 
-    public event SeriesUpdatedHandler SeriesUpdated;
+        private void PlotFunction()
+        {
+            this.plotSeries = this.GeneratePlotVectors().ToArray();
+            this.SeriesUpdated?.Invoke(this);
+        }
+        private IEnumerable<Vector2> GeneratePlotVectors()
+        {
+            float xStep = (functionConfig.end - functionConfig.start) / functionConfig.steps;
+            for (int i = 0; i < functionConfig.steps; i++)
+            {
+                var xPos = i * xStep;
+                var value = function.PlotAt(xPos);
+                var dotPos = new Vector2(xPos, value);
+                yield return dotPos;
+            }
+        }
 
-    public float GetPointRange()
-    {
-        return this.functionConfig.end - this.functionConfig.start;
-    }
+        public event SeriesUpdatedHandler SeriesUpdated;
 
-    public IEnumerable<Vector2> GetSeries()
-    {
-        return this.plotSeries ?? new List<Vector2>();
-    }
+        public float GetPointRange()
+        {
+            return this.functionConfig.end - this.functionConfig.start;
+        }
 
-    public PlottableConfig GetPlottableConfig()
-    {
-        return this.plotConfig;
+        public IEnumerable<Vector2> GetSeries()
+        {
+            return this.plotSeries ?? new List<Vector2>();
+        }
+
+        public PlottableConfig GetPlottableConfig()
+        {
+            return this.plotConfig;
+        }
     }
 }

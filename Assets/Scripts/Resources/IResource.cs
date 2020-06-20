@@ -6,9 +6,12 @@ using System.Text;
 using System.Threading.Tasks;
 using TradeModeling.Inventories;
 
-interface IResource
+namespace Assets.Scrips.Resources
 {
-    ResourceType _type { get; }
-    float amount { get; }
-    Task<bool> Eat(SpaceFillingInventory<ResourceType> inventory, float amount = -1);
+    interface IResource
+    {
+        ResourceType _type { get; }
+        float amount { get; }
+        Task<bool> Eat(SpaceFillingInventory<ResourceType> inventory, float amount = -1);
+    }
 }

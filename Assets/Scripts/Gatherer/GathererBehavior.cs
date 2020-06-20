@@ -1,5 +1,4 @@
 ﻿using Assets;
-using Assets.Gatherer_Code;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -10,17 +9,20 @@ using TradeModeling.Economics;
 using System.Threading.Tasks;
 using Assets.Utilities;
 using Assets.Scrips.Gatherer.StateHandlers;
+using Assets.Scrips.Resources.Inventory;
+using Assets.Scrips.Resources;
+using Assets.Scrips.Home;
 
 namespace Assets.Scrips.Gatherer
 {
     [RequireComponent(typeof(ResourceInventory))]
     [RequireComponent(typeof(TimeTracker))]
-    public class Gatherer : MonoBehaviour
+    public class GathererBehavior : MonoBehaviour
     {
         public const int searchRadius = 100;
         public const float waitTimeBetweenSearches = 0.3f;
 
-        public Home home;
+        public HomeBehavior home;
 
         public float speed = 1;
         public float touchDistance = 1f;
@@ -36,7 +38,7 @@ namespace Assets.Scrips.Gatherer
 
         internal IDictionary<ResourceType, float> gatheringWeights;
 
-        private AsyncStateMachine<GathererState, Gatherer> stateMachine;
+        private AsyncStateMachine<GathererState, GathererBehavior> stateMachine;
         public IDictionary<GathererState, dynamic> stateData;
         public IUtilityEvaluator<ResourceType, SpaceFillingInventory<ResourceType>> utilityFunction
         {
@@ -75,7 +77,7 @@ namespace Assets.Scrips.Gatherer
             this.optimizer = new GatherBehaviorOptimizer();
             this.gatheringWeights = optimizer.generateInitialWeights();
 
-            this.stateMachine = new AsyncStateMachine<GathererState, Gatherer>(GathererState.Gathering);
+            this.stateMachine = new AsyncStateMachine<GathererState, GathererBehavior>(GathererState.Gathering);
 
             stateMachine.registerStateTransitionHandler(GathererState.All, GathererState.All, (x) =>
             {

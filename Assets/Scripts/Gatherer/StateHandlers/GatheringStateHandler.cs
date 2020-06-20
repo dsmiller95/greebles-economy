@@ -1,4 +1,4 @@
-﻿using Assets.Gatherer_Code;
+﻿using Assets.Scrips.Resources;
 using Assets.Utilities;
 using System;
 using System.Collections.Generic;
@@ -9,10 +9,10 @@ using UnityEngine;
 
 namespace Assets.Scrips.Gatherer.StateHandlers
 {
-    class GatheringStateHandler : GenericStateHandler<GathererState, Gatherer>
+    class GatheringStateHandler : GenericStateHandler<GathererState, GathererBehavior>
     {
         public GathererState stateHandle => GathererState.Gathering;
-        public async Task<GathererState> HandleState(Gatherer data)
+        public async Task<GathererState> HandleState(GathererBehavior data)
         {
             if (data.attemptToEnsureTarget(UserLayerMasks.Resources,
                 (gameObject, distance) =>
@@ -42,12 +42,12 @@ namespace Assets.Scrips.Gatherer.StateHandlers
         }
 
         public GathererState validPreviousStates => GathererState.GoingHome | GathererState.Selling;
-        public void TransitionIntoState(Gatherer data)
+        public void TransitionIntoState(GathererBehavior data)
         {
         }
 
         public GathererState validNextStates => GathererState.GoingHome;
-        public void TransitionOutOfState(Gatherer data)
+        public void TransitionOutOfState(GathererBehavior data)
         {
             data.timeTracker.pauseTracking();
         }

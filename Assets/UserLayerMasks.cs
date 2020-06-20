@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Assets.Gatherer_Code
+namespace Assets
 {
     public enum UserLayerMasks
     {
