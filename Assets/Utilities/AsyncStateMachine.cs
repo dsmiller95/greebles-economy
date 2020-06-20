@@ -1,12 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.Rendering;
 
 namespace Assets.Utilities
 {
+
+
+    public enum StateChangeExecutionOrder
+    {
+        StateExit = 0,
+        StateEntry = 10
+    }
     /// <summary>
     /// A state machine which supports asynchronous operations
     ///     If a state handler returns a long-running task, all other attempts to update the state will be blocked
@@ -21,23 +28,28 @@ namespace Assets.Utilities
             public T fromState;
             public T toState;
             public Action<ParamType> handler;
+            public StateChangeExecutionOrder executionOrder;
         }
 
         private T state;
 
         private Dictionary<T, Func<ParamType, Task<T>>> updateHandlers;
-        private IList<StateChangeHandler> stateChangeHandlers;
+        private IEnumerable<StateChangeHandler> stateChangeHandlers;
 
 
         public AsyncStateMachine(T initalState)
         {
             updateHandlers = new Dictionary<T, Func<ParamType, Task<T>>>();
-            this.state = initalState;
-            this.stateChangeHandlers = new List<StateChangeHandler>();
+            state = initalState;
+            stateChangeHandlers = new List<StateChangeHandler>();
         }
 
         public void registerStateHandler(T state, Func<ParamType, Task<T>> handler)
         {
+            if (updateHandlers.ContainsKey(state))
+            {
+                Debug.LogWarning($"Warning: {Enum.GetName(typeof(T), state)} already has a declared state handler. overwriting");
+            }
             updateHandlers[state] = handler;
         }
 
@@ -48,27 +60,45 @@ namespace Assets.Utilities
         /// <param name="initialState">The possible initial state, or states if the enum is flags</param>
         /// <param name="endState">the possible end state, or states if the enum is flags</param>
         /// <param name="handler">the handler to execute</param>
-        public void registerStateTransitionHandler(T initialState, T endState, Action<ParamType> handler)
+        /// <param name="isStateEntry">Whether or not this represents an entry into a state, or an exit from a state.
+        ///     All state handlers which represent a state Exit will run before any which represent a state Entry</param>
+        public void registerStateTransitionHandler(T initialState, T endState, Action<ParamType> handler, StateChangeExecutionOrder executionOrder)
         {
-            this.stateChangeHandlers.Add(new StateChangeHandler
+            var newHandler = new StateChangeHandler
             {
                 fromState = initialState,
                 toState = endState,
-                handler = handler
-            });
+                handler = handler,
+                executionOrder = executionOrder
+            };
+            stateChangeHandlers = stateChangeHandlers.Append(newHandler);
+        }
+
+        private bool buildingState = true;
+
+        public void LockStateHandlers()
+        {
+            this.buildingState = false;
+            this.stateChangeHandlers = this.stateChangeHandlers
+                .OrderBy(handler => handler.executionOrder)
+                .ToList();
         }
 
         public void registerGenericHandler(GenericStateHandler<T, ParamType> genericHandler)
         {
-            this.registerStateHandler(genericHandler.stateHandle, param => genericHandler.HandleState(param));
-            this.registerStateTransitionHandler(
+            if (!this.buildingState)
+            {
+                throw new Exception("Error: not in state handler building mode");
+            }
+            registerStateHandler(genericHandler.stateHandle, param => genericHandler.HandleState(param));
+            registerStateTransitionHandler(
                 genericHandler.validPreviousStates,
                 genericHandler.stateHandle,
-                param => genericHandler.TransitionIntoState(param));
-            this.registerStateTransitionHandler(
+                param => genericHandler.TransitionIntoState(param), StateChangeExecutionOrder.StateEntry);
+            registerStateTransitionHandler(
                 genericHandler.stateHandle,
                 genericHandler.validNextStates,
-                param => genericHandler.TransitionOutOfState(param));
+                param => genericHandler.TransitionOutOfState(param), StateChangeExecutionOrder.StateExit);
         }
 
         private bool stateLocked = false;
@@ -82,13 +112,17 @@ namespace Assets.Utilities
         /// <returns>true if the state machine executed a step or attempted to execute a step</returns>
         public async Task<bool> update(ParamType updateParam)
         {
+            if (this.buildingState)
+            {
+                throw new Exception("Error: Must lock modifications to the state handlers before running the state machine");
+            }
             lock (this)
             {
                 if (stateLocked)
                 {
                     return false;
                 }
-                this.stateLocked = true;
+                stateLocked = true;
             }
 
             Func<ParamType, Task<T>> updateAction;
@@ -98,7 +132,7 @@ namespace Assets.Utilities
             }
             var newState = await updateAction(updateParam);
 
-            if(!newState.Equals(state))
+            if (!newState.Equals(state))
             {
                 //Debug.Log($"Transitioning from {Enum.GetName(typeof(T), state)} into {Enum.GetName(typeof(T), newState)}");
                 foreach (var changeHandler in stateChangeHandlers)
@@ -112,10 +146,10 @@ namespace Assets.Utilities
 
             lock (this)
             {
-                this.stateLocked = false;
+                stateLocked = false;
             }
 
-            this.state = newState;
+            state = newState;
             return true;
         }
     }

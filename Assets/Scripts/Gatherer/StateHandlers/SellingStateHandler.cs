@@ -97,14 +97,14 @@ namespace Assets.Scripts.Gatherer.StateHandlers
 
                 var timeSummary = data.timeTracker.getResourceTimeSummary();
 
-                Debug.Log(data.inventory.ToString(x => Enum.GetName(typeof(ResourceType), x)));
-                Debug.Log(TradeModeling.MyUtilities.SerializeEnumDictionary(sourceUtilities));
-                Debug.Log(TradeModeling.MyUtilities.SerializeEnumDictionary(timeSummary));
+                //Debug.Log(data.inventory.ToString(x => Enum.GetName(typeof(ResourceType), x)));
+                //Debug.Log(TradeModeling.MyUtilities.SerializeEnumDictionary(sourceUtilities));
+                //Debug.Log(TradeModeling.MyUtilities.SerializeEnumDictionary(timeSummary));
 
                 data.gatheringWeights = data.optimizer.nextWeights(timeSummary, sourceUtilities);
                 sellingStateDate.weightsChart.values = data.gatheringWeights;
 
-                Debug.Log(TradeModeling.MyUtilities.SerializeEnumDictionary(data.gatheringWeights));
+                //Debug.Log(TradeModeling.MyUtilities.SerializeEnumDictionary(data.gatheringWeights));
                 data.timeTracker.clearTime();
                 return Task.FromResult(GathererState.GoingHomeToEat);
             }

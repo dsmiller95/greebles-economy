@@ -47,22 +47,22 @@ namespace Assets.Scripts.Gatherer
         {
             this.stateData = new Dictionary<GathererState, dynamic>();
             this.utilityFunction = new UtilityEvaluatorFunctionMapper<ResourceType>(new Dictionary<ResourceType, IIncrementalFunction>()
-        {
-            {
-                ResourceType.Food,
-                new InverseWeightedUtility(new WeightedRegion[] {
-                    new WeightedRegion(0, 10f),
-                    new WeightedRegion(2, 1f)
-                })
-            },
-            {
-                ResourceType.Wood,
-                new InverseWeightedUtility(new WeightedRegion[] {
-                    new WeightedRegion(0, 10),
-                    new WeightedRegion(2, 1f)
-                })
-            }
-        });
+                {
+                    {
+                        ResourceType.Food,
+                        new InverseWeightedUtility(new WeightedRegion[] {
+                            new WeightedRegion(0, 10f),
+                            new WeightedRegion(2, 1f)
+                        })
+                    },
+                    {
+                        ResourceType.Wood,
+                        new InverseWeightedUtility(new WeightedRegion[] {
+                            new WeightedRegion(0, 10),
+                            new WeightedRegion(2, 1f)
+                        })
+                    }
+                });
         }
 
         // Start is called before the first frame update
@@ -80,7 +80,7 @@ namespace Assets.Scripts.Gatherer
             {
                 currentTarget = null;
                 lastTargetCheckTime = 0;
-            });
+            }, StateChangeExecutionOrder.StateExit);
 
             stateMachine.registerGenericHandler(new GatheringStateHandler());
             var sellingStateHandler = new SellingStateHandler();
@@ -89,6 +89,7 @@ namespace Assets.Scripts.Gatherer
             stateMachine.registerGenericHandler(new GoingHomeStateHandler());
             stateMachine.registerGenericHandler(new GoingToConsumeHandler());
             stateMachine.registerGenericHandler(new ConsumingStateHandler());
+            stateMachine.LockStateHandlers();
         }
 
         // Update is called once per frame

@@ -36,9 +36,9 @@ namespace Assets.Scripts.Gatherer
             var summedTimeSpend = pastTimeCosts.SumTogether();
             var summedUtilities = pastUtilities.SumTogether();
 
-            Debug.Log("Summation info");
-            Debug.Log(TradeModeling.MyUtilities.SerializeEnumDictionary(summedUtilities));
-            Debug.Log(TradeModeling.MyUtilities.SerializeEnumDictionary(summedTimeSpend));
+            //Debug.Log("Summation info");
+            //Debug.Log(TradeModeling.MyUtilities.SerializeEnumDictionary(summedUtilities));
+            //Debug.Log(TradeModeling.MyUtilities.SerializeEnumDictionary(summedTimeSpend));
 
             return this.GetWeightsFromTimeSpentAndUtilityGained(summedTimeSpend, summedUtilities);
         }
