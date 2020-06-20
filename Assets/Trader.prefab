@@ -276,8 +276,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ResourcePlotter: {fileID: 2520451541431826768}
-  gatherer: {fileID: -9082106501863833953}
+  trader: {fileID: -9082106501863833953}
   meshRenderer: {fileID: 2205066498059021884}
+  tradePanelPrefab: {fileID: 2986112439536874786, guid: c601b3dada949924c99ee05c45c8a394,
+    type: 3}
   baseMaterial: {fileID: 2100000, guid: ccd6a5bb280b04b45982965190fe62f9, type: 2}
   selectedMaterial: {fileID: 2100000, guid: efc4040f501c69346ab6960a4b4974f6, type: 2}
 --- !u!1 &5848019200659954162

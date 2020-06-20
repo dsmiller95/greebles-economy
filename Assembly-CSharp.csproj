@@ -114,6 +114,9 @@
     <Compile Include="Assets\UI\SelectionInfoPane\InfoPaneBuilder.cs" />
     <Compile Include="Assets\UI\SelectionInfoPane\InfoPaneConfiguration.cs" />
     <Compile Include="Assets\UI\SelectionInfoPane\SelectionTracker.cs" />
+    <Compile Include="Assets\UI\SelectionInfoPane\UIElementSeriesBuilder.cs" />
+    <Compile Include="Assets\UI\TraderConfigPanel\SingleTradeNode.cs" />
+    <Compile Include="Assets\UI\TraderConfigPanel\TradeNodeList.cs" />
     <Compile Include="Assets\UserLayerMasks.cs" />
     <Compile Include="Assets\Utilities\AsyncStateMachine.cs" />
     <Compile Include="Assets\Utilities\GenericStateHandler.cs" />

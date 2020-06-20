@@ -1,7 +1,4 @@
 ﻿using Assets.UI.Plotter;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
 namespace Assets.UI.InfoPane
@@ -13,37 +10,39 @@ namespace Assets.UI.InfoPane
 
         private SelectionTracker selectionTracker;
 
+        private UIElementSeriesBuilder panelBuilder;
+
         private void Awake()
         {
-            this.selectionTracker = this.GetComponent<SelectionTracker>();
-            this.selectionTracker.SelectionChanged += OnSelectionChanged;
+            selectionTracker = GetComponent<SelectionTracker>();
+            selectionTracker.SelectionChanged += OnSelectionChanged;
+        }
+
+        private void Start()
+        {
+            panelBuilder = new UIElementSeriesBuilder(this.gameObject);
         }
 
         private void OnSelectionChanged(object sender, ISelectable e)
         {
-            this.ClearUI();
+            this.panelBuilder.ClearContainer();
             var paneConfig = e.GetInfoPaneConfiguration();
-            var plotVerticalOffset = 0f;
             foreach (var plottableConfig in paneConfig.plottables)
             {
-                var newPlottable = Instantiate(plottablePrefab, this.transform);
+                var newPlottable = Instantiate(plottablePrefab, transform);
 
                 var plotter = newPlottable.GetComponentInChildren<GraphPlotter>();
                 plotter.SetPlottablesPreStart(plottableConfig.plot.GetPlottableSeries());
-
-                var positioning = newPlottable.GetComponentInChildren<RectTransform>();
-                positioning.position -= new Vector3(0, plotVerticalOffset);
-                plotVerticalOffset += positioning.sizeDelta.y;
+                this.panelBuilder.AddNextPanel(newPlottable);
             }
-        }
-
-        private void ClearUI()
-        {
-            // transform does not implement a generic IEnumerable,
-            //   but it will return all transform children when iterated
-            foreach (Transform child in transform)
+            if (paneConfig.uiObjects != default)
             {
-                GameObject.Destroy(child.gameObject);
+                foreach (var genericUIObject in paneConfig.uiObjects)
+                {
+                    var newUIObject = Instantiate(genericUIObject.prefabToInit, transform);
+                    genericUIObject.postInitHook(newUIObject);
+                    this.panelBuilder.AddNextPanel(newUIObject);
+                }
             }
         }
     }

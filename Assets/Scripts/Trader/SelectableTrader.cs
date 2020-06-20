@@ -1,6 +1,7 @@
 ﻿using Assets.Scripts.Resources.UI;
 using Assets.Scripts.Trader;
 using Assets.UI.InfoPane;
+using Assets.UI.TraderConfigPanel;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -11,8 +12,10 @@ namespace Assets.Scripts.Gatherer
     public class SelectableTrader : MonoBehaviour, ISelectable
     {
         public ResourceTimeSeriesAdapter ResourcePlotter;
-        public TraderBehavior gatherer;
+        public TraderBehavior trader;
         public MeshRenderer meshRenderer;
+
+        public GameObject tradePanelPrefab;
 
         public Material baseMaterial;
         public Material selectedMaterial;
@@ -31,6 +34,7 @@ namespace Assets.Scripts.Gatherer
 
         public InfoPaneConfiguration GetInfoPaneConfiguration()
         {
+            //var traderPanel = GameObject.Instantiate(tradePanelPrefab, )
             return new InfoPaneConfiguration()
             {
                 plottables = new List<PlotPaneConfig>() {
@@ -38,7 +42,16 @@ namespace Assets.Scripts.Gatherer
                     plot = ResourcePlotter,
                     header = "Inventory"
                 },
-            }
+            },
+                uiObjects = new List<GenericUIObjectConfig>()
+                {new GenericUIObjectConfig{
+                    prefabToInit = tradePanelPrefab,
+                    postInitHook = (panel) =>
+                    {
+                        var tradeNodeList = panel.GetComponentInChildren<TradeNodeList>();
+                        tradeNodeList.linkedTrader = this.trader;
+                    }
+                } }
             };
         }
 
