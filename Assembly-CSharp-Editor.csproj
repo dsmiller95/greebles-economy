@@ -63,8 +63,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Assets\RTS_Camera\Scripts\Editor\LayoutHelpers.cs" />
-    <Compile Include="Assets\RTS_Camera\Scripts\Editor\RTS_CameraEditor.cs" />
+    <Compile Include="Assets\External\RTS_Camera\Scripts\Editor\LayoutHelpers.cs" />
+    <Compile Include="Assets\External\RTS_Camera\Scripts\Editor\RTS_CameraEditor.cs" />
     <Reference Include="UnityEditor.TestRunner">
       <HintPath>C:/source/greebles-economy/Library/ScriptAssemblies/UnityEditor.TestRunner.dll</HintPath>
     </Reference>
