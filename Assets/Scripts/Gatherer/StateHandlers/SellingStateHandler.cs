@@ -1,6 +1,6 @@
-﻿using Assets.Scrips.Market;
-using Assets.Scrips.Resources;
-using Assets.Scrips.Resources.UI;
+﻿using Assets.Scripts.Market;
+using Assets.Scripts.Resources;
+using Assets.Scripts.Resources.UI;
 using Assets.Utilities;
 using System;
 using System.Linq;
@@ -10,7 +10,7 @@ using TradeModeling.Inventories;
 using UnityEngine;
 
 
-namespace Assets.Scrips.Gatherer.StateHandlers
+namespace Assets.Scripts.Gatherer.StateHandlers
 {
     /// <summary>
     /// Will find the nearest market and sell all goods in the inventory when it reaches the market

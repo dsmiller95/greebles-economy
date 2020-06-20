@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Assets.Scrips.Market
+namespace Assets.Scripts.Market
 {
     public class ResourceSellResult
     {

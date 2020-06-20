@@ -1,10 +1,10 @@
-﻿using Assets.Scrips.Resources.UI;
+﻿using Assets.Scripts.Resources.UI;
 using Assets.UI.InfoPane;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Assets.Scrips.Market
+namespace Assets.Scripts.Market
 {
     public class SelectableMarket : MonoBehaviour, ISelectable
     {

@@ -6,7 +6,7 @@ using System;
 using TradeModeling.Inventories;
 using System.Threading.Tasks;
 
-namespace Assets.Scrips.Resources
+namespace Assets.Scripts.Resources
 {
     public class ResourceInfinite : MonoBehaviour, IResource
     {

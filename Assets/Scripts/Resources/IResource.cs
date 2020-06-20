@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using TradeModeling.Inventories;
 
-namespace Assets.Scrips.Resources
+namespace Assets.Scripts.Resources
 {
     interface IResource
     {

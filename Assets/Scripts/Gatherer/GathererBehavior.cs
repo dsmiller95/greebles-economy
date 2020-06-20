@@ -1,19 +1,16 @@
-﻿using Assets;
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using System.Linq;
-using TradeModeling.Inventories;
-using TradeModeling.Economics;
-using System.Threading.Tasks;
+﻿using Assets.Scripts.Gatherer.StateHandlers;
+using Assets.Scripts.Home;
+using Assets.Scripts.Resources;
+using Assets.Scripts.Resources.Inventory;
 using Assets.Utilities;
-using Assets.Scrips.Gatherer.StateHandlers;
-using Assets.Scrips.Resources.Inventory;
-using Assets.Scrips.Resources;
-using Assets.Scrips.Home;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using TradeModeling.Economics;
+using TradeModeling.Inventories;
+using UnityEngine;
 
-namespace Assets.Scrips.Gatherer
+namespace Assets.Scripts.Gatherer
 {
     [RequireComponent(typeof(ResourceInventory))]
     [RequireComponent(typeof(TimeTracker))]

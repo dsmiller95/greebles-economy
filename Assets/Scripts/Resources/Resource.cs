@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using TradeModeling.Economics;
 using System.Threading;
 
-namespace Assets.Scrips.Resources
+namespace Assets.Scripts.Resources
 {
     public class Resource : MonoBehaviour, IResource
     {

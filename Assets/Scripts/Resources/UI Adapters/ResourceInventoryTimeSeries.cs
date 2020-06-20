@@ -1,4 +1,4 @@
-﻿using Assets.Scrips.Resources.Inventory;
+﻿using Assets.Scripts.Resources.Inventory;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -6,7 +6,7 @@ using System.Linq;
 using TradeModeling.Inventories;
 using UnityEngine;
 
-namespace Assets.Scrips.Resources.UI
+namespace Assets.Scripts.Resources.UI
 {
     public class ResourceInventoryTimeSeries : ResourceTimeSeriesAdapter
     {

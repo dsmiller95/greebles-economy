@@ -5,7 +5,7 @@ using System.Text;
 using TradeModeling.Inventories;
 using UnityEngine;
 
-namespace Assets.Scrips.Resources.Inventory
+namespace Assets.Scripts.Resources.Inventory
 {
     [Serializable]
     public struct StartingInventoryAmount

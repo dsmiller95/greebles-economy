@@ -2,9 +2,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using System;
-using Assets.Scrips.Resources;
+using Assets.Scripts.Resources;
 
-namespace Assets.Scrips.Gatherer
+namespace Assets.Scripts.Gatherer
 {
     public class TimeTracker : MonoBehaviour, ITimeTracker
     {

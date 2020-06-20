@@ -1,9 +1,9 @@
-﻿using Assets.Scrips.Resources.UI;
+﻿using Assets.Scripts.Resources.UI;
 using Assets.UI.InfoPane;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Assets.Scrips.Home
+namespace Assets.Scripts.Home
 {
     public class SelectableHome : MonoBehaviour, ISelectable
     {

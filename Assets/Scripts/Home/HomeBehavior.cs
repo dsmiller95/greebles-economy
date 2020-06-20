@@ -1,12 +1,12 @@
-﻿using Assets.Scrips.Resources;
-using Assets.Scrips.Resources.Inventory;
+﻿using Assets.Scripts.Resources;
+using Assets.Scripts.Resources.Inventory;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using TradeModeling.Inventories;
 using UnityEngine;
 
-namespace Assets.Scrips.Home
+namespace Assets.Scripts.Home
 {
     public class HomeBehavior : MonoBehaviour
     {

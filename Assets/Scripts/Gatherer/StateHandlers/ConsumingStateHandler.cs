@@ -1,4 +1,4 @@
-﻿using Assets.Scrips.Resources;
+﻿using Assets.Scripts.Resources;
 using Assets.Utilities;
 using System;
 using System.Collections.Generic;
@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 
-namespace Assets.Scrips.Gatherer.StateHandlers
+namespace Assets.Scripts.Gatherer.StateHandlers
 {
     public class ConsumingStateHandler : GenericStateHandler<GathererState, GathererBehavior>
     {

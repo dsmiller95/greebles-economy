@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Assets.Scrips.Resources.UI
+namespace Assets.Scripts.Resources.UI
 {
     public class ResourceBar : MonoBehaviour
     {

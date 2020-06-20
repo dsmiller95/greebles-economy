@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 
-namespace Assets.Scrips.Resources
+namespace Assets.Scripts.Resources
 {
     public static class ResourceConfiguration
     {

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-namespace Assets.Scrips.Resources
+namespace Assets.Scripts.Resources
 {
     public class ResourceConfigurer : MonoBehaviour
     {

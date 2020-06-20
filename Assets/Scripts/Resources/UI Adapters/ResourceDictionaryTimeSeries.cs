@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Assets.Scrips.Resources.UI
+namespace Assets.Scripts.Resources.UI
 {
     class ResourceDictionaryTimeSeries : ResourceTimeSeriesAdapter
     {

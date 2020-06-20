@@ -1,11 +1,11 @@
-﻿using Assets.Scrips.Resources.UI;
+﻿using Assets.Scripts.Resources.UI;
 using Assets.UI.InfoPane;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using static Assets.Scrips.Gatherer.StateHandlers.SellingStateHandler;
+using static Assets.Scripts.Gatherer.StateHandlers.SellingStateHandler;
 
-namespace Assets.Scrips.Gatherer
+namespace Assets.Scripts.Gatherer
 {
     public class SelectableGatherer : MonoBehaviour, ISelectable
     {

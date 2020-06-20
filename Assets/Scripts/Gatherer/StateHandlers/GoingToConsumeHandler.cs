@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 
-namespace Assets.Scrips.Gatherer.StateHandlers
+namespace Assets.Scripts.Gatherer.StateHandlers
 {
     class GoingToConsumeHandler : GenericStateHandler<GathererState, GathererBehavior>
     {
