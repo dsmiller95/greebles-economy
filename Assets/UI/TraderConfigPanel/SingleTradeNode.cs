@@ -1,5 +1,4 @@
 ﻿using Assets.Scripts.Trader;
-using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -8,6 +7,8 @@ namespace Assets.UI.TraderConfigPanel
     public class SingleTradeNode : MonoBehaviour
     {
         public TradeNode tradeNode;
+        public float maxTradeAmount;
+
         public Text description;
 
         [Header("Button Expander")]
@@ -25,20 +26,21 @@ namespace Assets.UI.TraderConfigPanel
             description.text = $"Target: {tradeNode.targetMarket.name}";
 
             //var tradeNodes = tradeNode.trades.Select(node => CreateSingleResourceTrade(node)).ToList();
-            expandButton.onClick.AddListener(this.ExpandButtonClicked);
+            expandButton.onClick.AddListener(ExpandButtonClicked);
         }
 
         private void ExpandButtonClicked()
         {
             if (expanded)
             {
-                foreach(Transform child in singleResourceTradeContainer.transform)
+                foreach (Transform child in singleResourceTradeContainer.transform)
                 {
                     Destroy(child.gameObject);
                 }
-            } else
+            }
+            else
             {
-                foreach(var node in tradeNode.trades)
+                foreach (var node in tradeNode.trades)
                 {
                     CreateSingleResourceTrade(node);
                 }
@@ -47,13 +49,28 @@ namespace Assets.UI.TraderConfigPanel
             expandButtonText.text = expanded ? "^" : "v";
         }
 
-        private GameObject CreateSingleResourceTrade(ResourceTrade trade)
+        private SingleMaterialTrade CreateSingleResourceTrade(ResourceTrade trade)
         {
-            var newTradeNode = GameObject.Instantiate(singleResourceTradePrefab, singleResourceTradeContainer.transform);
-            var singleResourceTradeScript = newTradeNode.GetComponent<SingleMaterialTrade>();
-            singleResourceTradeScript.trade = trade;
+            return SingleMaterialTrade.InstantiateOnObject(
+                singleResourceTradePrefab,
+                singleResourceTradeContainer,
+                trade,
+                (int)maxTradeAmount);
+        }
 
-            return newTradeNode;
+        public static SingleTradeNode InstantiateOnObject(
+            GameObject selfPrefab,
+            GameObject container,
+            TradeNode node,
+            float maxTradeAmount)
+        {
+            Debug.Log($"Creating single node with {node.targetMarket.name}");
+            var newTradeNode = GameObject.Instantiate(selfPrefab, container.transform);
+            var selfScript = newTradeNode.GetComponent<SingleTradeNode>();
+            selfScript.tradeNode = node;
+            selfScript.maxTradeAmount = maxTradeAmount;
+            Debug.Log($"Assigned node with {node.trades.Length} trades");
+            return selfScript;
         }
 
         // Update is called once per frame

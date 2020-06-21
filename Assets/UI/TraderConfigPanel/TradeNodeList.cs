@@ -13,17 +13,19 @@ namespace Assets.UI.TraderConfigPanel
         void Start()
         {
             Debug.Log($"Node list opened with {linkedTrader?.name}");
-            var tradeNodes = linkedTrader.tradeRoute.Select(node => CreateSingleTradeNode(node)).ToList();
+            var largestTrade = linkedTrader.inventory.inventoryCapacity;
+            var tradeNodes = linkedTrader.tradeRoute
+                .Select(node => CreateSingleTradeNode(node, largestTrade))
+                .ToList();
         }
 
-        private GameObject CreateSingleTradeNode(TradeNode node)
+        private SingleTradeNode CreateSingleTradeNode(TradeNode node, float maxTradeAmount)
         {
-            Debug.Log($"Creating single node with {node.targetMarket.name}");
-            var newTradeNode = GameObject.Instantiate(singleTradeNodePrefab, transform);
-            var singleTradeNodeScript = newTradeNode.GetComponent<SingleTradeNode>();
-            singleTradeNodeScript.tradeNode = node;
-            Debug.Log($"Assigned node with {node.trades.Length} trades");
-            return newTradeNode;
+            return SingleTradeNode.InstantiateOnObject(
+                singleTradeNodePrefab,
+                this.gameObject,
+                node,
+                maxTradeAmount);
         }
 
         // Update is called once per frame

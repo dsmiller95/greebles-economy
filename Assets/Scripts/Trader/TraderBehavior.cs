@@ -12,7 +12,7 @@ namespace Assets.Scripts.Trader
 {
 
     [Serializable]
-    public struct ResourceTrade
+    public class ResourceTrade
     {
         /// <summary>
         /// The type of resource to move
@@ -26,7 +26,7 @@ namespace Assets.Scripts.Trader
     }
 
     [Serializable]
-    public struct TradeNode
+    public class TradeNode
     {
         public MarketBehavior targetMarket;
         /// <summary>
