@@ -12,10 +12,7 @@ namespace Assets.UI.PathPlotter
         public float arrowOffset = 3;
         public float diplacementPerSecond = 0.2f;
         public Vector3 scale = new Vector3(1, 1, 1);
-
-        private MeshFilter pathMesh;
         private Vector3 start => transform.position;
-        // Start is called before the first frame update
         void Awake()
         {
             // Get instantiated mesh

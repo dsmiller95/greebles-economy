@@ -1,9 +1,11 @@
 ﻿using Assets.Scripts.Resources.UI;
 using Assets.Scripts.Trader;
 using Assets.UI.InfoPane;
+using Assets.UI.PathPlotter;
 using Assets.UI.TraderConfigPanel;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using static Assets.Scripts.Gatherer.StateHandlers.SellingStateHandler;
 
@@ -14,8 +16,10 @@ namespace Assets.Scripts.Gatherer
         public ResourceTimeSeriesAdapter ResourcePlotter;
         public TraderBehavior trader;
         public MeshRenderer meshRenderer;
-
+        
         public GameObject tradePanelPrefab;
+        public GameObject multiPathPlotterPrefab;
+        private MultiPathPlotter mulitPathPlotter;
 
         public Material baseMaterial;
         public Material selectedMaterial;
@@ -59,12 +63,17 @@ namespace Assets.Scripts.Gatherer
         {
             this.meshRenderer.material = this.baseMaterial;
             Debug.Log($"{gameObject.name} deselected");
+            Destroy(this.mulitPathPlotter.gameObject);
         }
 
         public void OnMeSelected()
         {
             this.meshRenderer.material = this.selectedMaterial;
             Debug.Log($"{gameObject.name} selected");
+
+            var plotter = Instantiate(multiPathPlotterPrefab);
+            this.mulitPathPlotter = plotter.GetComponent<MultiPathPlotter>();
+            this.mulitPathPlotter.path = trader.tradeRoute.Select(x => x.targetMarket.transform.position).ToArray();
         }
     }
 }
