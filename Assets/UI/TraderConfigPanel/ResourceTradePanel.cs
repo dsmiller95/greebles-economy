@@ -1,10 +1,11 @@
 ﻿using Assets.Scripts.Trader;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 namespace Assets.UI.TraderConfigPanel
 {
-    public class SingleMaterialTrade : MonoBehaviour
+    public class ResourceTradePanel : MonoBehaviour
     {
         public ResourceTrade trade;
         public int maxTradeAmount;
@@ -50,14 +51,14 @@ namespace Assets.UI.TraderConfigPanel
 
         }
 
-        public static SingleMaterialTrade InstantiateOnObject(
+        public static ResourceTradePanel InstantiateOnObject(
             GameObject selfPrefab,
             GameObject container,
             ResourceTrade trade,
             int maxTradeAmount)
         {
             var newTradeNode = GameObject.Instantiate(selfPrefab, container.transform);
-            var selfScript = newTradeNode.GetComponent<SingleMaterialTrade>();
+            var selfScript = newTradeNode.GetComponent<ResourceTradePanel>();
             selfScript.trade = trade;
             selfScript.maxTradeAmount = maxTradeAmount;
 

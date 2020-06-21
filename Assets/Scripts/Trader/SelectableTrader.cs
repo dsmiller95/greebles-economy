@@ -3,11 +3,9 @@ using Assets.Scripts.Trader;
 using Assets.UI.InfoPane;
 using Assets.UI.PathPlotter;
 using Assets.UI.TraderConfigPanel;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using static Assets.Scripts.Gatherer.StateHandlers.SellingStateHandler;
 
 namespace Assets.Scripts.Gatherer
 {
@@ -16,7 +14,7 @@ namespace Assets.Scripts.Gatherer
         public ResourceTimeSeriesAdapter ResourcePlotter;
         public TraderBehavior trader;
         public MeshRenderer meshRenderer;
-        
+
         public GameObject tradePanelPrefab;
         public GameObject multiPathPlotterPrefab;
         private MultiPathPlotter mulitPathPlotter;
@@ -53,7 +51,12 @@ namespace Assets.Scripts.Gatherer
                     postInitHook = (panel) =>
                     {
                         var tradeNodeList = panel.GetComponentInChildren<TradeNodeList>();
-                        tradeNodeList.linkedTrader = this.trader;
+                        tradeNodeList.linkedTrader = trader;
+                        tradeNodeList.tradeRouteUpdated = (tradeRoute) =>
+                        {
+                            trader.SetNewTradeRoute(tradeRoute);
+                            mulitPathPlotter.SetPath(trader.tradeRoute.Select(x => x.targetMarket.transform.position));
+                        };
                     }
                 } }
             };
@@ -61,19 +64,28 @@ namespace Assets.Scripts.Gatherer
 
         public void OnMeDeselected()
         {
-            this.meshRenderer.material = this.baseMaterial;
+            meshRenderer.material = baseMaterial;
             Debug.Log($"{gameObject.name} deselected");
-            Destroy(this.mulitPathPlotter.gameObject);
+            TeardownPathPlot();
         }
 
         public void OnMeSelected()
         {
-            this.meshRenderer.material = this.selectedMaterial;
+            meshRenderer.material = selectedMaterial;
             Debug.Log($"{gameObject.name} selected");
+            SetupPathPlot();
+        }
 
+        private void TeardownPathPlot()
+        {
+            Destroy(mulitPathPlotter.gameObject);
+        }
+
+        private void SetupPathPlot()
+        {
             var plotter = Instantiate(multiPathPlotterPrefab);
-            this.mulitPathPlotter = plotter.GetComponent<MultiPathPlotter>();
-            this.mulitPathPlotter.path = trader.tradeRoute.Select(x => x.targetMarket.transform.position).ToArray();
+            mulitPathPlotter = plotter.GetComponent<MultiPathPlotter>();
+            mulitPathPlotter.SetPath(trader.tradeRoute.Select(x => x.targetMarket.transform.position));
         }
     }
 }

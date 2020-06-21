@@ -5,6 +5,7 @@ using Assets.Scripts.Trader.StateHandlers;
 using Assets.Utilities;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using TradeModeling.Inventories;
 using UnityEngine;
 
@@ -88,6 +89,15 @@ namespace Assets.Scripts.Trader
         public void NextTradeRoute()
         {
             currentTradeTargetIndex = (currentTradeTargetIndex + 1) % tradeRoute.Length;
+        }
+        public void SetNewTradeRoute(TradeNode[] tradeRoute)
+        {
+            var previousTarget = currentTradeNodeTarget.targetMarket;
+            this.tradeRoute = tradeRoute;
+            this.currentTradeTargetIndex = tradeRoute
+                .Select((trade, index) => new { trade.targetMarket, index })
+                .Where(x => x.targetMarket == previousTarget)
+                .First().index;
         }
 
 

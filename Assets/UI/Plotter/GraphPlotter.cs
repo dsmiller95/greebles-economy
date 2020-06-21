@@ -41,7 +41,6 @@ namespace Assets.UI.Plotter
                         .SelectMany(multiPlottable => multiPlottable.GetPlottableSeries()))
                     .ToList();
             }
-            Debug.Log($"found {plottables.Count} plots");
             plotContainers = this.plottables
                 .Select(plottable => new PlotContainer(plottable, this))
                 .ToList();
