@@ -4,6 +4,7 @@ using UnityEngine;
 namespace Assets.UI.PathPlotter
 {
 
+    [ExecuteInEditMode]
     public class SinglePathPlotter : MonoBehaviour
     {
         public Mesh pathSegmentMesh;
@@ -80,7 +81,7 @@ namespace Assets.UI.PathPlotter
         {
             var directionVector = (end - start).normalized;
 
-            return Quaternion.LookRotation(directionVector);
+            return Quaternion.LookRotation(directionVector, Vector3.up);
         }
 
         private void OnDrawGizmos()
