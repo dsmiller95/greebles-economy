@@ -11,7 +11,7 @@ namespace Assets.UI.InfoPane
 
         private void Start()
         {
-            SelectionTracker.globalTracker.AddSelectionInput(this);
+            SelectionTracker.globalTracker.PushSelectionInput(this);
             panelBuilder = new UIElementSeriesBuilder(gameObject);
         }
 
@@ -39,9 +39,6 @@ namespace Assets.UI.InfoPane
 
         #region Selection Managing
         private GameObject currentlySelected;
-        public void BeginSelectionInput()
-        {
-        }
 
         public bool IsValidSelection(GameObject o)
         {
@@ -51,16 +48,24 @@ namespace Assets.UI.InfoPane
         public bool SelectedObject(GameObject o)
         {
 
-            currentlySelected?.GetComponent<IHighlightable>()?.SetHighlighted(HighlightState.None);
+            currentlySelected?.GetComponentInChildren<IHighlightable>()?.SetHighlighted(HighlightState.None);
             currentlySelected?.GetComponent<IFocusable>().OnMeDeselected();
 
             currentlySelected = o;
 
             var currentFocusable = currentlySelected.GetComponent<IFocusable>();
             currentFocusable.OnMeSelected();
-            currentlySelected.GetComponent<IHighlightable>()?.SetHighlighted(HighlightState.Selected);
+            currentlySelected.GetComponentInChildren<IHighlightable>()?.SetHighlighted(HighlightState.Selected);
 
-            this.SetNewPaneConfig(currentFocusable.GetInfoPaneConfiguration());
+            SetNewPaneConfig(currentFocusable.GetInfoPaneConfiguration());
+            return false;
+        }
+
+        public void BeginSelectionInput() { }
+        public void CloseSelectionInput() { }
+
+        public bool Supersceded(ISelectionInput other)
+        {
             return false;
         }
         #endregion

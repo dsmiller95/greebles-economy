@@ -50,20 +50,54 @@ namespace Assets.UI.SelectionManager
                     {
                         if (inputCommand.SelectedObject(hitGameObject))
                         {
-                            inputRequests.Pop();
-                            if (inputRequests.Count <= 0)
-                            {
-                                Debug.LogWarning("Selection input stack is empty");
-                            }
+                            PopSelectionInput();
                         }
                         SelectionChanged?.Invoke(this, hitGameObject);
                     }
                 }
             }
         }
-        public void AddSelectionInput(ISelectionInput input)
+
+        private void PopSelectionInput()
         {
+            inputRequests.Pop().CloseSelectionInput();
+            if (inputRequests.Count <= 0)
+            {
+                Debug.LogWarning("Selection input stack is empty");
+            }
+            inputRequests.Peek().BeginSelectionInput();
+        }
+
+        public void PushSelectionInputs(IList<ISelectionInput> inputs)
+        {
+            if (inputRequests.Count > 0)
+            {
+                var top = inputRequests.Peek();
+                top.CloseSelectionInput();
+                if (top.Supersceded(inputs[0]))
+                {
+                    inputRequests.Pop();
+                }
+            }
+            foreach (var input in inputs)
+            {
+                inputRequests.Push(input);
+            }
+            inputRequests.Peek()?.BeginSelectionInput();
+        }
+        public void PushSelectionInput(ISelectionInput input)
+        {
+            if (inputRequests.Count > 0)
+            {
+                var top = inputRequests.Peek();
+                top.CloseSelectionInput();
+                if (top.Supersceded(input))
+                {
+                    inputRequests.Pop();
+                }
+            }
             inputRequests.Push(input);
+            input.BeginSelectionInput();
         }
     }
 }

@@ -1,6 +1,8 @@
-﻿using Assets.Scripts.Trader;
+﻿using Assets.Scripts.Market;
+using Assets.Scripts.Trader;
+using Assets.UI.SelectionManager;
+using Assets.UI.SelectionManager.GetObjectSelector;
 using UnityEngine;
-using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 namespace Assets.UI.TraderConfigPanel
@@ -12,11 +14,14 @@ namespace Assets.UI.TraderConfigPanel
 
         public Text description;
 
+        public Button changeMarketButton;
+
         [Header("Button Expander")]
         public Button expandButton;
         public Text expandButtonText;
-
         public MaterialListDragZone materialItemList;
+
+
 
         private bool expanded = false;
         // Start is called before the first frame update
@@ -24,11 +29,23 @@ namespace Assets.UI.TraderConfigPanel
         {
             description.text = $"Target: {tradeNode.targetMarket.name}";
 
-            materialItemList.tradeNode = this.tradeNode;
-            materialItemList.maxTradeAmount = this.maxTradeAmount;
+            materialItemList.tradeNode = tradeNode;
+            materialItemList.maxTradeAmount = maxTradeAmount;
 
             //var tradeNodes = tradeNode.trades.Select(node => CreateSingleResourceTrade(node)).ToList();
             expandButton.onClick.AddListener(ExpandButtonClicked);
+            changeMarketButton.onClick.AddListener(SwitchMarketClicked);
+        }
+
+        private void SwitchMarketClicked()
+        {
+            SelectionTracker.globalTracker.PushSelectionInput(new SingleObjectHighlightSelector<MarketBehavior>(
+                market => true,
+                market =>
+                {
+                    Debug.Log("Picked something");
+                    Debug.Log($"Market Picked: {market.name}");
+                }));
         }
 
         private void ExpandButtonClicked()

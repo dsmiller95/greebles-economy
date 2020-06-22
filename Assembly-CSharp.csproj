@@ -134,6 +134,7 @@
     <None Include="Assets\External\RTS_Camera\Demo\Projectors\Shaders\ProjectorLight.shader" />
     <None Include="Assets\External\RTS_Camera\Demo\Projectors\Shaders\ProjectorMultiply.shader" />
     <None Include="Assets\External\RTS_Camera\Demo\Projectors\Guidelines.txt" />
+    <None Include="Assets\Materials\outlineSource.shader" />
     <None Include="Assets\UI\Icons34x34byAilsEnglish2013\Readme.txt" />
     <Reference Include="Unity.RenderPipeline.Universal.ShaderLibrary">
       <HintPath>C:/source/greebles-economy/Library/ScriptAssemblies/Unity.RenderPipeline.Universal.ShaderLibrary.dll</HintPath>
