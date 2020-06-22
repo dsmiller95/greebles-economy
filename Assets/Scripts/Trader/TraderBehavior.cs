@@ -103,6 +103,7 @@ namespace Assets.Scripts.Trader
 
         /********************************************
          * code governing moving towards a target
+         * TODO: put the movement code into a shared component. something which can seek a target and remember what it's seeking over time?
          */
         public float speed = 1;
         public float touchDistance = 1f;

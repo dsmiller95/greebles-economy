@@ -27,6 +27,10 @@ namespace Assets.Scripts.Trader.StateHandlers
         public Task<TraderState> HandleState(TraderBehavior data)
         {
             TradeExecuteStateData myState = data.stateData[stateHandle];
+            if (myState.remainingTrades.Count == 0)
+            {
+                return Task.FromResult(TraderState.TradeTransit);
+            }
             if ((myState.lastExchangeTime + timeDelay) < Time.time)
             {
                 myState.lastExchangeTime = Time.time;
@@ -40,10 +44,6 @@ namespace Assets.Scripts.Trader.StateHandlers
                 if (Mathf.Abs(option.info) <= 1E-05 || Mathf.Abs(remainingToTrade) <= 1E-05)
                 {
                     myState.remainingTrades.RemoveAt(0);
-                    if (myState.remainingTrades.Count == 0)
-                    {
-                        return Task.FromResult(TraderState.TradeTransit);
-                    }
                 }
                 else
                 {
