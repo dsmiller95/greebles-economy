@@ -1,25 +1,17 @@
 ﻿using Assets.UI.Plotter;
 using Assets.UI.SelectionManager;
-using Assets.UI.SelectionMananger;
 using UnityEngine;
 
 namespace Assets.UI.InfoPane
 {
-    [RequireComponent(typeof(SelectionTracker))]
     public class InfoPaneBuilder : MonoBehaviour, ISelectionInput
     {
         public GameObject plottablePrefab;
-        private SelectionTracker selectionTracker;
         private UIElementSeriesBuilder panelBuilder;
-
-        private void Awake()
-        {
-            selectionTracker = GetComponent<SelectionTracker>();
-            selectionTracker.AddSelectionInput(this);
-        }
 
         private void Start()
         {
+            SelectionTracker.globalTracker.AddSelectionInput(this);
             panelBuilder = new UIElementSeriesBuilder(gameObject);
         }
 
@@ -46,8 +38,8 @@ namespace Assets.UI.InfoPane
         }
 
         #region Selection Managing
-        private IFocusable currentlySelected;
-        public void BeginSelection()
+        private GameObject currentlySelected;
+        public void BeginSelectionInput()
         {
         }
 
@@ -58,13 +50,17 @@ namespace Assets.UI.InfoPane
 
         public bool SelectedObject(GameObject o)
         {
-            this.currentlySelected?.OnMeDeselected();
 
-            var focusable = o.GetComponent<IFocusable>();
-            focusable.OnMeSelected();
-            this.currentlySelected = focusable;
+            currentlySelected?.GetComponent<IHighlightable>()?.SetHighlighted(HighlightState.None);
+            currentlySelected?.GetComponent<IFocusable>().OnMeDeselected();
 
-            this.SetNewPaneConfig(focusable.GetInfoPaneConfiguration());
+            currentlySelected = o;
+
+            var currentFocusable = currentlySelected.GetComponent<IFocusable>();
+            currentFocusable.OnMeSelected();
+            currentlySelected.GetComponent<IHighlightable>()?.SetHighlighted(HighlightState.Selected);
+
+            this.SetNewPaneConfig(currentFocusable.GetInfoPaneConfiguration());
             return false;
         }
         #endregion

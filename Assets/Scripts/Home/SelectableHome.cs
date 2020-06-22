@@ -9,10 +9,6 @@ namespace Assets.Scripts.Home
     public class SelectableHome : MonoBehaviour, IFocusable
     {
         public ResourceTimeSeriesAdapter ResourcePlotter;
-        public MeshRenderer meshRenderer;
-
-        public Material baseMaterial;
-        public Material selectedMaterial;
 
         // Start is called before the first frame update
         void Start()
@@ -40,13 +36,11 @@ namespace Assets.Scripts.Home
         }
         public void OnMeDeselected()
         {
-            meshRenderer.material = baseMaterial;
             Debug.Log($"{gameObject.name} deselected");
         }
 
         public void OnMeSelected()
         {
-            meshRenderer.material = selectedMaterial;
             Debug.Log($"{gameObject.name} selected");
         }
     }

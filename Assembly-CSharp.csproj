@@ -117,10 +117,12 @@
     <Compile Include="Assets\UI\SelectionInfoPane\InfoPaneBuilder.cs" />
     <Compile Include="Assets\UI\SelectionInfoPane\InfoPaneConfiguration.cs" />
     <Compile Include="Assets\UI\SelectionInfoPane\UIElementSeriesBuilder.cs" />
-    <Compile Include="Assets\UI\SelectionMananger\FocusableSelectionInput.cs" />
-    <Compile Include="Assets\UI\SelectionMananger\IFocusable.cs" />
-    <Compile Include="Assets\UI\SelectionMananger\ISelectionInput.cs" />
-    <Compile Include="Assets\UI\SelectionMananger\SelectionTracker.cs" />
+    <Compile Include="Assets\UI\SelectionManager\GetObjectSelector\SingleObjectHighlightSelector.cs" />
+    <Compile Include="Assets\UI\SelectionManager\IFocusable.cs" />
+    <Compile Include="Assets\UI\SelectionManager\IHighlightable.cs" />
+    <Compile Include="Assets\UI\SelectionManager\ISelectionInput.cs" />
+    <Compile Include="Assets\UI\SelectionManager\MaterialHighlighter.cs" />
+    <Compile Include="Assets\UI\SelectionManager\SelectionTracker.cs" />
     <Compile Include="Assets\UI\TraderConfigPanel\MaterialListDragZone.cs" />
     <Compile Include="Assets\UI\TraderConfigPanel\ResourceTradePanel.cs" />
     <Compile Include="Assets\UI\TraderConfigPanel\TradeNodeList.cs" />

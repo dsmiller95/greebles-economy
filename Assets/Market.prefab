@@ -75,6 +75,7 @@ GameObject:
   - component: {fileID: 2938998355160009592}
   - component: {fileID: 1838689708058528886}
   - component: {fileID: 7186735388572575617}
+  - component: {fileID: 8417152671465263086}
   m_Layer: 10
   m_Name: Market
   m_TagString: Untagged
@@ -231,6 +232,20 @@ MonoBehaviour:
   - type: 4
     yScale: 100
   inventory: {fileID: 2938998355160009592}
+--- !u!114 &8417152671465263086
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4861457521204343749}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 17a1329ecfd54714e8086ab67edda2bd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  baseMaterial: {fileID: 2100000, guid: 7127dc5c79065644d998cb90db8d70a6, type: 2}
+  selectedMaterial: {fileID: 2100000, guid: 26706517f297d074ea6f30ffb185cd9a, type: 2}
 --- !u!1 &7219099098458843105
 GameObject:
   m_ObjectHideFlags: 0

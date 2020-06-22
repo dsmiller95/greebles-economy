@@ -188,6 +188,7 @@ GameObject:
   - component: {fileID: 7441600364289305773}
   - component: {fileID: 2685221537397483264}
   - component: {fileID: 8001072084476251534}
+  - component: {fileID: 3765077002960980271}
   m_Layer: 10
   m_Name: Home
   m_TagString: Untagged
@@ -335,3 +336,17 @@ MonoBehaviour:
   - type: 4
     yScale: 100
   inventory: {fileID: 7441600364289305773}
+--- !u!114 &3765077002960980271
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8082357802481383815}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 17a1329ecfd54714e8086ab67edda2bd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  baseMaterial: {fileID: 2100000, guid: e4472ff92035cb64abf974fe1e57824c, type: 2}
+  selectedMaterial: {fileID: 2100000, guid: f648d734d5f0e45458cea5b7c1465f8b, type: 2}

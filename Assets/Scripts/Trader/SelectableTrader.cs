@@ -14,14 +14,10 @@ namespace Assets.Scripts.Gatherer
     {
         public ResourceTimeSeriesAdapter ResourcePlotter;
         public TraderBehavior trader;
-        public MeshRenderer meshRenderer;
 
         public GameObject tradePanelPrefab;
         public GameObject multiPathPlotterPrefab;
         private MultiPathPlotter mulitPathPlotter;
-
-        public Material baseMaterial;
-        public Material selectedMaterial;
 
         // Start is called before the first frame update
         void Start()
@@ -65,14 +61,12 @@ namespace Assets.Scripts.Gatherer
 
         public void OnMeDeselected()
         {
-            meshRenderer.material = baseMaterial;
             Debug.Log($"{gameObject.name} deselected");
             TeardownPathPlot();
         }
 
         public void OnMeSelected()
         {
-            meshRenderer.material = selectedMaterial;
             Debug.Log($"{gameObject.name} selected");
             SetupPathPlot();
         }

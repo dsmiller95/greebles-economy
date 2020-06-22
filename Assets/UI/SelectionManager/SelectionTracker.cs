@@ -1,5 +1,4 @@
-﻿using Assets.UI.SelectionMananger;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -8,6 +7,8 @@ namespace Assets.UI.SelectionManager
 {
     public class SelectionTracker : MonoBehaviour
     {
+        public static SelectionTracker globalTracker;
+
         public string cameraName;
 
         public event EventHandler<GameObject> SelectionChanged;
@@ -15,6 +16,14 @@ namespace Assets.UI.SelectionManager
 
         private Stack<ISelectionInput> inputRequests = new Stack<ISelectionInput>();
 
+        private void Awake()
+        {
+            if (SelectionTracker.globalTracker != default)
+            {
+                Debug.LogError("Cannot register more than one selection tracker");
+            }
+            SelectionTracker.globalTracker = this;
+        }
 
         // Start is called before the first frame update
         void Start()
@@ -49,14 +58,6 @@ namespace Assets.UI.SelectionManager
                         }
                         SelectionChanged?.Invoke(this, hitGameObject);
                     }
-                    //var selectable = hitGameObject.GetComponent<IFocusable>();
-                    //if (selectable != default)
-                    //{
-                    //    currentlySelected?.OnMeDeselected();
-                    //    selectable.OnMeSelected();
-                    //    currentlySelected = selectable;
-                    //    SelectionChanged?.Invoke(this, currentlySelected);
-                    //}
                 }
             }
         }

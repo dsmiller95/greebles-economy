@@ -11,10 +11,6 @@ namespace Assets.Scripts.Gatherer
     {
         public ResourceTimeSeriesAdapter ResourcePlotter;
         public GathererBehavior gatherer;
-        public MeshRenderer meshRenderer;
-
-        public Material baseMaterial;
-        public Material selectedMaterial;
 
         // Start is called before the first frame update
         void Start()
@@ -49,13 +45,11 @@ namespace Assets.Scripts.Gatherer
 
         public void OnMeDeselected()
         {
-            meshRenderer.material = baseMaterial;
             Debug.Log($"{gameObject.name} deselected");
         }
 
         public void OnMeSelected()
         {
-            meshRenderer.material = selectedMaterial;
             Debug.Log($"{gameObject.name} selected");
         }
     }

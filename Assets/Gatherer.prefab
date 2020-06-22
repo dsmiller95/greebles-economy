@@ -130,6 +130,7 @@ GameObject:
   - component: {fileID: 3373752437233279403}
   - component: {fileID: 2520451541431826768}
   - component: {fileID: 9097611823120724489}
+  - component: {fileID: 5190111888768820412}
   m_Layer: 9
   m_Name: Gatherer
   m_TagString: Untagged
@@ -292,6 +293,21 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ResourcePlotter: {fileID: 2520451541431826768}
   gatherer: {fileID: 4498409171599806407}
+  meshRenderer: {fileID: 2205066498059021884}
+  baseMaterial: {fileID: 2100000, guid: 1a1299152cdc7a445ae272a808d55557, type: 2}
+  selectedMaterial: {fileID: 2100000, guid: d4d215fcc7017e94eb8defeee9bfecaa, type: 2}
+--- !u!114 &5190111888768820412
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4063966645591292537}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 17a1329ecfd54714e8086ab67edda2bd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
   meshRenderer: {fileID: 2205066498059021884}
   baseMaterial: {fileID: 2100000, guid: 1a1299152cdc7a445ae272a808d55557, type: 2}
   selectedMaterial: {fileID: 2100000, guid: d4d215fcc7017e94eb8defeee9bfecaa, type: 2}

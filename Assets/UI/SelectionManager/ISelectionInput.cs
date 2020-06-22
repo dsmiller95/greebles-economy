@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 
-namespace Assets.UI.SelectionMananger
+namespace Assets.UI.SelectionManager
 {
     /// <summary>
     /// An interface which represents a prompt to the user to select something off of the screen
@@ -15,7 +15,7 @@ namespace Assets.UI.SelectionMananger
         /// <summary>
         /// Begin the selection input -- can be used to highlight certain objects on the screen
         /// </summary>
-        void BeginSelection();
+        void BeginSelectionInput();
         /// <summary>
         /// Check if the given GameObject is a valid option for this input
         /// </summary>
