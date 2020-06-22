@@ -17,15 +17,21 @@ namespace Assets.UI.PathPlotter
         {
             // Get instantiated mesh
             Mesh mesh = new Mesh();// GetComponent<MeshFilter>().mesh;
-            this.SetupModelInMesh(mesh);
+            SetupModelInMesh(mesh);
             GetComponent<MeshFilter>().mesh = mesh;
         }
 
         // Update is called once per frame
         void Update()
         {
-            this.transform.rotation = this.GetRotation();
-            SetupModelInMesh(GetComponent<MeshFilter>().mesh);
+            var mesh = GetComponent<MeshFilter>().mesh;
+            mesh.Clear();
+            if (Vector3.Distance(start, end) < arrowOffset)
+            {
+                return;
+            }
+            SetupModelInMesh(mesh);
+            transform.rotation = GetRotation();
         }
 
         float movementFactor = 0f;

@@ -1,8 +1,6 @@
 ﻿using Assets.Scripts.Trader;
 using Assets.UI.Draggable;
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
@@ -27,16 +25,20 @@ namespace Assets.UI.TraderConfigPanel
         }
         private void SetOrder()
         {
-            this.tradeRouteUpdated?.Invoke(this.GetComponentsInChildren<TradeNodePanel>().Select(x => x.tradeNode).ToArray());
+            tradeRouteUpdated?.Invoke(GetComponentsInChildren<TradeNodePanel>().Select(x => x.tradeNode).ToArray());
         }
 
         private TradeNodePanel CreateSingleTradeNode(TradeNode node, float maxTradeAmount)
         {
             return TradeNodePanel.InstantiateOnObject(
                 singleTradeNodePrefab,
-                this.gameObject,
+                gameObject,
                 node,
-                maxTradeAmount);
+                maxTradeAmount,
+                () =>
+                {
+                    tradeRouteUpdated?.Invoke(linkedTrader.tradeRoute);
+                });
         }
 
         // Update is called once per frame

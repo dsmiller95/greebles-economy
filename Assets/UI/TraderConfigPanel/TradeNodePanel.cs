@@ -2,6 +2,7 @@
 using Assets.Scripts.Trader;
 using Assets.UI.SelectionManager;
 using Assets.UI.SelectionManager.GetObjectSelector;
+using System;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -22,7 +23,7 @@ namespace Assets.UI.TraderConfigPanel
         public MaterialListDragZone materialItemList;
 
 
-
+        private Action marketChanged;
         private bool expanded = false;
         // Start is called before the first frame update
         void Start()
@@ -43,9 +44,16 @@ namespace Assets.UI.TraderConfigPanel
                 market => true,
                 market =>
                 {
-                    Debug.Log("Picked something");
-                    Debug.Log($"Market Picked: {market.name}");
+                    MarketChanged(market);
                 }));
+        }
+
+        private void MarketChanged(MarketBehavior market)
+        {
+            Debug.Log($"Market Picked: {market.name}");
+            tradeNode.targetMarket = market;
+            description.text = $"Target: {tradeNode.targetMarket.name}";
+            marketChanged?.Invoke();
         }
 
         private void ExpandButtonClicked()
@@ -59,12 +67,14 @@ namespace Assets.UI.TraderConfigPanel
             GameObject selfPrefab,
             GameObject container,
             TradeNode node,
-            float maxTradeAmount)
+            float maxTradeAmount,
+            Action marketChanged)
         {
             var newTradeNode = GameObject.Instantiate(selfPrefab, container.transform);
             var selfScript = newTradeNode.GetComponent<TradeNodePanel>();
             selfScript.tradeNode = node;
             selfScript.maxTradeAmount = maxTradeAmount;
+            selfScript.marketChanged = marketChanged;
             return selfScript;
         }
 
