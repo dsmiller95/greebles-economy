@@ -1,13 +1,13 @@
 ﻿using Assets.Scripts.Resources.UI;
 using Assets.UI.InfoPane;
-using System.Collections;
+using Assets.UI.SelectionManager;
 using System.Collections.Generic;
 using UnityEngine;
 using static Assets.Scripts.Gatherer.StateHandlers.SellingStateHandler;
 
 namespace Assets.Scripts.Gatherer
 {
-    public class SelectableGatherer : MonoBehaviour, ISelectable
+    public class SelectableGatherer : MonoBehaviour, IFocusable
     {
         public ResourceTimeSeriesAdapter ResourcePlotter;
         public GathererBehavior gatherer;
@@ -30,7 +30,7 @@ namespace Assets.Scripts.Gatherer
 
         public InfoPaneConfiguration GetInfoPaneConfiguration()
         {
-            var sellingData = this.gatherer.stateData[GathererState.Selling] as SellingStateData;
+            var sellingData = gatherer.stateData[GathererState.Selling] as SellingStateData;
             return new InfoPaneConfiguration()
             {
                 plottables = new List<PlotPaneConfig>() {
@@ -49,13 +49,13 @@ namespace Assets.Scripts.Gatherer
 
         public void OnMeDeselected()
         {
-            this.meshRenderer.material = this.baseMaterial;
+            meshRenderer.material = baseMaterial;
             Debug.Log($"{gameObject.name} deselected");
         }
 
         public void OnMeSelected()
         {
-            this.meshRenderer.material = this.selectedMaterial;
+            meshRenderer.material = selectedMaterial;
             Debug.Log($"{gameObject.name} selected");
         }
     }

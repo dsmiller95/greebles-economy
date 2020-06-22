@@ -2,6 +2,7 @@
 using Assets.Scripts.Trader;
 using Assets.UI.InfoPane;
 using Assets.UI.PathPlotter;
+using Assets.UI.SelectionManager;
 using Assets.UI.TraderConfigPanel;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +10,7 @@ using UnityEngine;
 
 namespace Assets.Scripts.Gatherer
 {
-    public class SelectableTrader : MonoBehaviour, ISelectable
+    public class SelectableTrader : MonoBehaviour, IFocusable
     {
         public ResourceTimeSeriesAdapter ResourcePlotter;
         public TraderBehavior trader;

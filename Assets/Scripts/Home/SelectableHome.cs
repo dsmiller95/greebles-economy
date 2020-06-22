@@ -1,11 +1,12 @@
 ﻿using Assets.Scripts.Resources.UI;
 using Assets.UI.InfoPane;
+using Assets.UI.SelectionManager;
 using System.Collections.Generic;
 using UnityEngine;
 
 namespace Assets.Scripts.Home
 {
-    public class SelectableHome : MonoBehaviour, ISelectable
+    public class SelectableHome : MonoBehaviour, IFocusable
     {
         public ResourceTimeSeriesAdapter ResourcePlotter;
         public MeshRenderer meshRenderer;
@@ -39,13 +40,13 @@ namespace Assets.Scripts.Home
         }
         public void OnMeDeselected()
         {
-            this.meshRenderer.material = this.baseMaterial;
+            meshRenderer.material = baseMaterial;
             Debug.Log($"{gameObject.name} deselected");
         }
 
         public void OnMeSelected()
         {
-            this.meshRenderer.material = this.selectedMaterial;
+            meshRenderer.material = selectedMaterial;
             Debug.Log($"{gameObject.name} selected");
         }
     }

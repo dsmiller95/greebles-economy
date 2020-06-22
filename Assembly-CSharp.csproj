@@ -114,11 +114,13 @@
     <Compile Include="Assets\UI\Plotter\Series Plotter\IPlottableSeries.cs" />
     <Compile Include="Assets\UI\Plotter\Series Plotter\PlottableFunctionToSeriesAdapter.cs" />
     <Compile Include="Assets\UI\Plotter\Series Plotter\PlottableTimeSeries.cs" />
-    <Compile Include="Assets\UI\SelectionInfoPane\ISelectable.cs" />
     <Compile Include="Assets\UI\SelectionInfoPane\InfoPaneBuilder.cs" />
     <Compile Include="Assets\UI\SelectionInfoPane\InfoPaneConfiguration.cs" />
-    <Compile Include="Assets\UI\SelectionInfoPane\SelectionTracker.cs" />
     <Compile Include="Assets\UI\SelectionInfoPane\UIElementSeriesBuilder.cs" />
+    <Compile Include="Assets\UI\SelectionMananger\FocusableSelectionInput.cs" />
+    <Compile Include="Assets\UI\SelectionMananger\IFocusable.cs" />
+    <Compile Include="Assets\UI\SelectionMananger\ISelectionInput.cs" />
+    <Compile Include="Assets\UI\SelectionMananger\SelectionTracker.cs" />
     <Compile Include="Assets\UI\TraderConfigPanel\MaterialListDragZone.cs" />
     <Compile Include="Assets\UI\TraderConfigPanel\ResourceTradePanel.cs" />
     <Compile Include="Assets\UI\TraderConfigPanel\TradeNodeList.cs" />
