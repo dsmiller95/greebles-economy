@@ -388,7 +388,7 @@ namespace UnitTests.Economics
         {
             // Wood is cheap and plentiful
             // Food is expensive and rare
-            // Selling one wood will net two food purchased
+            // Selling two wood will net one food purchased
             selfInventory = new TestInventoryModel(new[] {
                 ("wood", 10f),
                 ("food", 0f)
@@ -454,6 +454,118 @@ namespace UnitTests.Economics
                     1f - (1/10f + 1/9f),
                     1/2f - (1/8f + 1/7f),
                 }));
+        }
+
+        [TestMethod]
+        public void ShouldLeaveSomeMoneyWhenDecimalPointPrices()
+        {
+            // Wood is plentiful
+            // Food is rare
+            // Selling one wood will net one food purchased, plus a little extra gold
+            selfInventory = new TestInventoryModel(new[] {
+                ("wood", 10f),
+                ("food", 0f)
+            },
+            0);
+            marketInventory = new TestInventoryModel(new[] {
+                ("wood", 10f),
+                ("food", 10f)
+            },
+            0);
+            exchangeModel = new TestExchangeModel()
+            {
+                utilityFunctions = new Dictionary<string, IIncrementalFunction>
+                {
+                    { "wood", new InverseWeightedUtility(new WeightedRegion[] {
+                            new WeightedRegion(0, 1),
+                        }) },
+                    { "food", new InverseWeightedUtility(new WeightedRegion[] {
+                            new WeightedRegion(0, 1),
+                        }) }
+                },
+                purchasePrices = new Dictionary<string, float>
+                {
+                    { "wood", 3 },
+                    { "food", 2 },
+                },
+                sellPrices = new Dictionary<string, float>
+                {
+                    { "wood", 2.1f },
+                    { "food", 1.1f },
+                }
+            };
+
+            var optimizer = new PurchaseOptimizer<string, TestInventoryModel, TestInventoryModel>(
+                selfInventory,
+                marketInventory,
+                new[] { "wood", "food" },
+                exchangeModel, exchangeModel, exchangeModel);
+
+            var transactionLedger = optimizer.Optimize();
+
+            // should exchange wood for food until maximum utility is reached
+            // discrete evaluation should result with closest fit of 4 wood, 3 food
+            Assert.AreEqual(5, selfInventory.Get("wood"));
+            Assert.AreEqual(15, marketInventory.Get("wood"));
+            Assert.AreEqual(0.5f, selfInventory.bank, 1E-5);
+            Assert.AreEqual(5, selfInventory.Get("food"));
+            Assert.AreEqual(5, marketInventory.Get("food"));
+        }
+
+        [TestMethod]
+        public void ShouldUseExtraMoneyMoneyWhenDecimalPointPrices()
+        {
+            // Wood is plentiful
+            // Food is rare
+            // Selling one wood will net one food purchased, plus a little extra gold
+            selfInventory = new TestInventoryModel(new[] {
+                ("wood", 10f),
+                ("food", 0f)
+            },
+            0);
+            marketInventory = new TestInventoryModel(new[] {
+                ("wood", 10f),
+                ("food", 10f)
+            },
+            0);
+            exchangeModel = new TestExchangeModel()
+            {
+                utilityFunctions = new Dictionary<string, IIncrementalFunction>
+                {
+                    { "wood", new InverseWeightedUtility(new WeightedRegion[] {
+                            new WeightedRegion(0, 1),
+                        }) },
+                    { "food", new InverseWeightedUtility(new WeightedRegion[] {
+                            new WeightedRegion(0, 1),
+                        }) }
+                },
+                purchasePrices = new Dictionary<string, float>
+                {
+                    { "wood", 3 },
+                    { "food", 2 },
+                },
+                sellPrices = new Dictionary<string, float>
+                {
+                    { "wood", 2.4f },
+                    { "food", 1.4f },
+                }
+            };
+
+            var optimizer = new PurchaseOptimizer<string, TestInventoryModel, TestInventoryModel>(
+                selfInventory,
+                marketInventory,
+                new[] { "wood", "food" },
+                exchangeModel, exchangeModel, exchangeModel);
+
+            var transactionLedger = optimizer.Optimize();
+
+            // should exchange wood for food until maximum utility is reached
+            // discrete evaluation should result with closest fit of 4 wood, 3 food
+            Assert.AreEqual(5, selfInventory.Get("wood"));
+            Assert.AreEqual(15, marketInventory.Get("wood"));
+            Assert.AreEqual(0f, selfInventory.bank, 1E-5);
+            Assert.AreEqual(6, selfInventory.Get("food"));
+            Assert.AreEqual(4, marketInventory.Get("food"));
         }
 
     }
