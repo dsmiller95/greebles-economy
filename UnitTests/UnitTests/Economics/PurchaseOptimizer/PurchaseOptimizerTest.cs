@@ -376,11 +376,88 @@ namespace UnitTests.Economics
             Assert.IsTrue(transactionLedger.Select(trans => trans.Item2.utilityGained)
                 .SequenceEqual(new float[] {
                     1/3f + 1/4f,
+                    1/5f + 1/6f - 1/10f,
+                    1/7f + 1/8f - 1/9f,
+                    1/9f + 1/10f - 1/8f,
+                    1/11f + 1/12f - 1/7f
+                }));
+        }
+        
+        [TestMethod]
+        public void ShouldExchangeCheapForExpensiveWhenGreaterUtilityinExpensive()
+        {
+            // Wood is cheap and plentiful
+            // Food is expensive and rare
+            // Selling one wood will net two food purchased
+            selfInventory = new TestInventoryModel(new[] {
+                ("wood", 10f),
+                ("food", 0f)
+            },
+            0);
+            marketInventory = new TestInventoryModel(new[] {
+                ("wood", 10f),
+                ("food", 10f)
+            },
+            0);
+            exchangeModel = new TestExchangeModel()
+            {
+                utilityFunctions = new Dictionary<string, IIncrementalFunction>
+                {
+                    { "wood", new InverseWeightedUtility(new WeightedRegion[] {
+                            new WeightedRegion(0, 1),
+                        }) },
+                    { "food", new InverseWeightedUtility(new WeightedRegion[] {
+                            new WeightedRegion(0, 1),
+                        }) }
+                },
+                purchasePrices = new Dictionary<string, float>
+                {
+                    { "wood", 3 },
+                    { "food", 4 },
+                },
+                sellPrices = new Dictionary<string, float>
+                {
+                    { "wood", 2 },
+                    { "food", 3 },
+                }
+            };
+
+            var optimizer = new PurchaseOptimizer<string, TestInventoryModel, TestInventoryModel>(
+                selfInventory,
+                marketInventory,
+                new[] { "wood", "food" },
+                exchangeModel, exchangeModel, exchangeModel);
+
+            var transactionLedger = optimizer.Optimize();
+
+            // should exchange wood for food until maximum utility is reached
+            // discrete evaluation should result with closest fit of 4 wood, 3 food
+            Assert.AreEqual(4, selfInventory.Get("wood"));
+            Assert.AreEqual(16, marketInventory.Get("wood"));
+            Assert.AreEqual(0, selfInventory.bank);
+            Assert.AreEqual(3, selfInventory.Get("food"));
+            Assert.AreEqual(7, marketInventory.Get("food"));
+
+
+            Assert.IsTrue(transactionLedger.All(transaction =>
+                transaction.Item1.HasValue
+                && transaction.Item1.Value.amount == 2
+                && transaction.Item1.Value.cost == 4
+                && transaction.Item1.Value.type == "wood"
+                && transaction.Item2.exchages.Count == 1
+                && transaction.Item2.exchages.First().type == "food"
+                && transaction.Item2.exchages.First().amount == 1
+                && transaction.Item2.exchages.First().cost == 4
+            ));
+            Assert.IsTrue(transactionLedger.Select(trans => trans.Item2.utilityGained)
+                .SequenceEqual(new float[] {
+                    1/3f + 1/4f,
                     1/5f + 1/6f,
                     1/7f + 1/8f,
                     1/9f + 1/10f,
                     1/11f + 1/12f
                 }));
         }
+
     }
 }

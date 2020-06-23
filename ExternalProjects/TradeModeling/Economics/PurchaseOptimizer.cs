@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace TradeModeling.Economics
 {
 
-    public struct PurchaseOperationResult<Resource>
+    public class PurchaseOperationResult<Resource>
     {
         public IList<ExchangeResult<Resource>> exchages;
         public float utilityGained;
@@ -60,19 +60,20 @@ namespace TradeModeling.Economics
             {
                 var simSelfInventory = CloneSelfInventory();
                 var simOtherInventory = CloneOtherInventory();
-                // Execute all operations on a simulated inventory to make sure all prices, utilities, and any constraints on size are respected
 
+                // Execute all operations on a simulated inventory to make sure all prices, utilities,
+                //  and any constraints on size are respected
                 var sellOption = seller.Sell(minUtility, increment, simSelfInventory, simOtherInventory);
                 sellOption.Execute();
 
                 var purchaseOption = PurchaseResult.Purchase(this, simSelfInventory, simOtherInventory);
-                executesPurchase = (purchaseOption.ledger.utilityGained
-                    + utilityFunction.GetIncrementalUtility(
+                purchaseOption.ledger.utilityGained += utilityFunction.GetIncrementalUtility(
                         minUtility,
                         selfInventory,
                         -increment
-                      ))
-                      > 0;
+                      );
+
+                executesPurchase = purchaseOption.ledger.utilityGained > 0;
                 if (executesPurchase)
                 {
                     // Must sell first to get the money; then purchase
@@ -84,6 +85,53 @@ namespace TradeModeling.Economics
 
             return transactionLedger;
         }
+
+        //private (ExchangeResult<Resource>?, PurchaseOperationResult<Resource>)? SellUntilPurchaseCanHappen(Resource minUtility)
+        //{
+        //    PurchaseResult purchaseOption = null;
+        //    while(purchaseOption?.ledger.exchages.Count() <= 0)
+        //    {
+        //        var simSelfInventory = CloneSelfInventory();
+        //        var simOtherInventory = CloneOtherInventory();
+
+        //        // Execute all operations on a simulated inventory to make sure all prices, utilities,
+        //        //  and any constraints on size are respected
+        //        var sellOption = seller.Sell(minUtility, increment, simSelfInventory, simOtherInventory);
+        //        sellOption.Execute();
+
+        //        purchaseOption = PurchaseResult.Purchase(this, simSelfInventory, simOtherInventory);
+        //    }
+
+        //    //var simSelfInventory = CloneSelfInventory();
+        //    //var simOtherInventory = CloneOtherInventory();
+
+        //    // Execute all operations on a simulated inventory to make sure all prices, utilities,
+        //    //  and any constraints on size are respected
+        //    //var sellOption = seller.Sell(minUtility, increment, simSelfInventory, simOtherInventory);
+        //    //sellOption.Execute();
+
+        //    //var purchaseOption = PurchaseResult.Purchase(this, simSelfInventory, simOtherInventory);
+        //    //if (purchaseOption.ledger.exchages.Count == 0)
+        //    //{
+
+        //    //}
+
+        //    var executesPurchase = (purchaseOption.ledger.utilityGained
+        //        + utilityFunction.GetIncrementalUtility(
+        //            minUtility,
+        //            selfInventory,
+        //            -increment
+        //          ))
+        //          > 0;
+        //    if (executesPurchase)
+        //    {
+        //        // Must sell first to get the money; then purchase
+        //        seller.Sell(minUtility, increment, selfInventory, otherInventory).Execute();
+        //        purchaseOption.ReExecutePurchases(selfInventory, otherInventory);
+        //        return (sellOption.info, purchaseOption.ledger);
+        //    }
+        //    return null;
+        //}
 
         private Self CloneSelfInventory()
         {
@@ -107,10 +155,7 @@ namespace TradeModeling.Economics
         class PurchaseResult
         {
             private IList<Resource> purchases;
-            public PurchaseOperationResult<Resource> ledger {
-                get;
-                private set;
-            }
+            public PurchaseOperationResult<Resource> ledger;
             private PurchaseOptimizer<Resource, Self, Other> optimizer;
             private PurchaseResult(PurchaseOptimizer<Resource, Self, Other> optimizer, Self simSelf, Other simOther)
             {
