@@ -850,7 +850,7 @@ Light:
   m_BounceIntensity: 1
   m_ColorTemperature: 6570
   m_UseColorTemperature: 0
-  m_BoundingSphereOverride: {x: 0, y: 2.1535e-41, z: 0, w: NaN}
+  m_BoundingSphereOverride: {x: 0, y: 2.0515e-41, z: 0, w: 9.625}
   m_UseBoundingSphereOverride: 0
   m_ShadowRadius: 0
   m_ShadowAngle: 0
@@ -1935,6 +1935,41 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4861457521204343738, guid: 736b9a328dd791b478180f339c3b6cbc,
+        type: 3}
+      propertyPath: exchangeRates.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 4861457521204343738, guid: 736b9a328dd791b478180f339c3b6cbc,
+        type: 3}
+      propertyPath: exchangeRates.Array.data[0].type
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4861457521204343738, guid: 736b9a328dd791b478180f339c3b6cbc,
+        type: 3}
+      propertyPath: exchangeRates.Array.data[0].sellPrice
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 4861457521204343738, guid: 736b9a328dd791b478180f339c3b6cbc,
+        type: 3}
+      propertyPath: exchangeRates.Array.data[0].buyPrice
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4861457521204343738, guid: 736b9a328dd791b478180f339c3b6cbc,
+        type: 3}
+      propertyPath: exchangeRates.Array.data[1].type
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 4861457521204343738, guid: 736b9a328dd791b478180f339c3b6cbc,
+        type: 3}
+      propertyPath: exchangeRates.Array.data[1].sellPrice
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 4861457521204343738, guid: 736b9a328dd791b478180f339c3b6cbc,
+        type: 3}
+      propertyPath: exchangeRates.Array.data[1].buyPrice
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4861457521204343749, guid: 736b9a328dd791b478180f339c3b6cbc,
         type: 3}

@@ -9,7 +9,6 @@ using TradeModeling.Economics;
 using TradeModeling.Inventories;
 using UnityEngine;
 
-
 namespace Assets.Scripts.Gatherer.StateHandlers
 {
     /// <summary>
@@ -22,24 +21,24 @@ namespace Assets.Scripts.Gatherer.StateHandlers
         public void InstantiateOnObject(GathererBehavior obj)
         {
             var weightsChart = obj.gameObject.AddComponent<ResourceDictionaryTimeSeries>();
-            obj.stateData[this.stateHandle] = new SellingStateData
+            obj.stateData[stateHandle] = new SellingStateData
             {
                 weightsChart = weightsChart
             };
             weightsChart.values = obj.gatheringWeights;
             weightsChart.resourcePlotConfig = new[]
             {
-            new ResourceGraphConfiguration
-            {
-                type = ResourceType.Food,
-                yScale = 1f
-            },
-            new ResourceGraphConfiguration
-            {
-                type = ResourceType.Wood,
-                yScale = 1f
-            }
-        };
+                new ResourceGraphConfiguration
+                {
+                    type = ResourceType.Food,
+                    yScale = 1f
+                },
+                new ResourceGraphConfiguration
+                {
+                    type = ResourceType.Wood,
+                    yScale = 1f
+                }
+            };
             weightsChart.timeRange = 360f;
             weightsChart.totalSteps = 180f;
         }
@@ -52,7 +51,7 @@ namespace Assets.Scripts.Gatherer.StateHandlers
         public GathererState stateHandle => GathererState.Selling;
         public Task<GathererState> HandleState(GathererBehavior data)
         {
-            var sellingStateDate = data.stateData[this.stateHandle] as SellingStateData;
+            var sellingStateDate = data.stateData[stateHandle] as SellingStateData;
             data.attemptToEnsureTarget(UserLayerMasks.Market,
                 (gameObject, distance) =>
                 {

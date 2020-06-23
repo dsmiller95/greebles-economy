@@ -12,17 +12,24 @@ namespace TradeModeling.Exchanges
     ISeller<T, SpaceFillingInventory<T>, SpaceFillingInventory<T>>,
     IPurchaser<T, SpaceFillingInventory<T>, SpaceFillingInventory<T>>
     {
-        private IDictionary<T, float> exchangeRates;
+        private IDictionary<T, float> marketSellRates;
+        private IDictionary<T, float> marketBuyRates;
         private T moneyType;
-        public MarketExchangeAdapter(IDictionary<T, float> exchangeRates, T moneyType)
+
+        public MarketExchangeAdapter(IDictionary<T, float> sellPrices, IDictionary<T, float> buyPrices, T moneyType)
         {
-            this.exchangeRates = exchangeRates;
+            this.marketBuyRates = buyPrices;
+            this.marketSellRates = sellPrices;
             this.moneyType = moneyType;
+        }
+        public MarketExchangeAdapter(IDictionary<T, float> exchangeRates, T moneyType): this(exchangeRates, exchangeRates, moneyType)
+        {
         }
 
         public ActionOption<ExchangeResult<T>> Purchase(T type, float amount, SpaceFillingInventory<T> selfInventory, SpaceFillingInventory<T> marketInventory)
         {
-            var exchangeRate = exchangeRates[type];
+            // using the buying rate because this is a purchase from the "other". I.E. a sell from the market
+            var exchangeRate = marketSellRates[type];
             var maxPurchase = selfInventory.GetCurrentFunds() / exchangeRate;
             var amountToPurchase = Math.Min(amount, maxPurchase);
             return marketInventory
@@ -47,7 +54,8 @@ namespace TradeModeling.Exchanges
 
         public ActionOption<ExchangeResult<T>> Sell(T type, float amount, SpaceFillingInventory<T> selfInventory, SpaceFillingInventory<T> marketInventory)
         {
-            var exchangeRate = exchangeRates[type];
+            // using the buying rate because this is a sell from the "other". I.E. a purchase from the market
+            var exchangeRate = marketBuyRates[type];
             return selfInventory
                 .transferResourceInto(type, marketInventory, amount)
                 .Then(totalDeposited => new ExchangeResult<T>

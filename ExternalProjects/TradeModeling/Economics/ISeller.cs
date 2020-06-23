@@ -12,6 +12,7 @@ namespace TradeModeling.Economics
     {
         /// <summary>
         /// Sell of a certain amount of the resource. Should -only- change the state of <paramref name="inventory"/>
+        ///     selfInventory is always the inventory to be sold into -- this is a sell from the perspective of the self
         /// </summary>
         /// <param name="amount">the amount to sell</param>
         /// <param name="execute">Whether or not to actually execute the sell</param>

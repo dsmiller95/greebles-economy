@@ -26,6 +26,7 @@ namespace TradeModeling.Economics
         // TODO: Ensure that when the option is executed it checks to be sure that the inventories have not been modified
         /// <summary>
         /// Purchase given amount. Should -only- change the state of <paramref name="inventory"/>
+        ///     selfInventory is always the inventory to be purchased into -- this is a purchase from the perspective of the self
         /// </summary>
         /// <param name="amount">the amount to purchase</param>
         /// <param name="execute">Whether or not to execute the purchase</param>

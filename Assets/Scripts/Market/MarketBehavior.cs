@@ -13,27 +13,30 @@ namespace Assets.Scripts.Market
     public struct SellPrice
     {
         public ResourceType type;
-        public float price;
+        public float sellPrice;
+        public float buyPrice;
     }
 
     public class MarketBehavior : MonoBehaviour
     {
-        public SellPrice[] sellPrices;
+        public SellPrice[] exchangeRates;
 
 
-        private Dictionary<ResourceType, float> exchangeRates;
+        private Dictionary<ResourceType, float> sellPriceDictionary;
+        private Dictionary<ResourceType, float> purchasePriceDictionary;
         public ResourceInventory inventory;
         public SpaceFillingInventory<ResourceType> _inventory;
 
         private void Awake()
         {
-            exchangeRates = sellPrices.ToDictionary(x => x.type, x => x.price);
-            this._inventory = inventory.backingInventory;
+            sellPriceDictionary = exchangeRates.ToDictionary(x => x.type, x => x.sellPrice);
+            purchasePriceDictionary = exchangeRates.ToDictionary(x => x.type, x => x.buyPrice);
+            _inventory = inventory.backingInventory;
         }
 
         public MarketExchangeAdapter<ResourceType> GetExchangeAdapter()
         {
-            return new MarketExchangeAdapter<ResourceType>(exchangeRates, ResourceType.Gold);
+            return new MarketExchangeAdapter<ResourceType>(sellPriceDictionary, purchasePriceDictionary, ResourceType.Gold);
         }
 
         // Start is called before the first frame update
@@ -48,9 +51,10 @@ namespace Assets.Scripts.Market
 
         }
 
+        [Obsolete("Use the MarketExchangeAdapter provided by GetExchangeAdapter()", true)]
         public Dictionary<ResourceType, ResourceSellResult> sellAllGoodsInInventory(SpaceFillingInventory<ResourceType> inventory)
         {
-            return SellAllGoods(inventory, _inventory, ResourceConfiguration.spaceFillingItems, this.exchangeRates);
+            return SellAllGoods(inventory, _inventory, ResourceConfiguration.spaceFillingItems, sellPriceDictionary);
         }
 
         private static Dictionary<ResourceType, ResourceSellResult> SellAllGoods(SpaceFillingInventory<ResourceType> seller, SpaceFillingInventory<ResourceType> consumer, ResourceType[] types, Dictionary<ResourceType, float> prices)

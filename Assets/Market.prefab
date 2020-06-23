@@ -216,11 +216,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 22051b71cfd0c764c94d1c448c4258bd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  sellPrices:
+  exchangeRates:
   - type: 1
-    price: 1
+    sellPrice: 2
+    buyPrice: 1
   - type: 2
-    price: 1
+    sellPrice: 2
+    buyPrice: 1
   inventory: {fileID: 2938998355160009592}
 --- !u!114 &2938998355160009592
 MonoBehaviour:

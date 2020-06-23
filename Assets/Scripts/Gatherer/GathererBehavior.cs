@@ -45,8 +45,8 @@ namespace Assets.Scripts.Gatherer
 
         private void Awake()
         {
-            this.stateData = new Dictionary<GathererState, dynamic>();
-            this.utilityFunction = new UtilityEvaluatorFunctionMapper<ResourceType>(new Dictionary<ResourceType, IIncrementalFunction>()
+            stateData = new Dictionary<GathererState, dynamic>();
+            utilityFunction = new UtilityEvaluatorFunctionMapper<ResourceType>(new Dictionary<ResourceType, IIncrementalFunction>()
                 {
                     {
                         ResourceType.Food,
@@ -68,13 +68,13 @@ namespace Assets.Scripts.Gatherer
         // Start is called before the first frame update
         void Start()
         {
-            this.inventory = this.GetComponent<ResourceInventory>().backingInventory;
+            inventory = GetComponent<ResourceInventory>().backingInventory;
 
-            this.timeTracker = this.GetComponent<ITimeTracker>();
-            this.optimizer = new GatherBehaviorOptimizer();
-            this.gatheringWeights = optimizer.generateInitialWeights();
+            timeTracker = GetComponent<ITimeTracker>();
+            optimizer = new GatherBehaviorOptimizer();
+            gatheringWeights = optimizer.generateInitialWeights();
 
-            this.stateMachine = new AsyncStateMachine<GathererState, GathererBehavior>(GathererState.Gathering);
+            stateMachine = new AsyncStateMachine<GathererState, GathererBehavior>(GathererState.Gathering);
 
             stateMachine.registerStateTransitionHandler(GathererState.All, GathererState.All, (x) =>
             {
@@ -95,7 +95,19 @@ namespace Assets.Scripts.Gatherer
         // Update is called once per frame
         void Update()
         {
-            this.stateMachine.update(this);
+            myUpdate();
+        }
+
+        async void myUpdate()
+        {
+            try
+            {
+                await stateMachine.update(this);
+            }
+            catch
+            {
+                throw;
+            }
         }
 
         internal void attachBackpack()
@@ -123,7 +135,7 @@ namespace Assets.Scripts.Gatherer
                 (lastTargetCheckTime + waitTimeBetweenSearches) < Time.time)
             {
                 lastTargetCheckTime = Time.time;
-                currentTarget = this.getClosestObjectSatisfyingCondition(
+                currentTarget = getClosestObjectSatisfyingCondition(
                     layerMask,
                     weightFunction);
                 if (currentTarget != null)
@@ -140,21 +152,21 @@ namespace Assets.Scripts.Gatherer
             {
                 return false;
             }
-            this.moveTowardsPosition(this.currentTarget.transform.position);
+            moveTowardsPosition(currentTarget.transform.position);
             return isTouchingCurrentTarget();
         }
 
         public void ClearCurrentTarget()
         {
-            this.currentTarget = null;
-            this.lastTargetCheckTime = 0;
+            currentTarget = null;
+            lastTargetCheckTime = 0;
         }
 
         private void moveTowardsPosition(Vector3 targetPostion)
         {
-            var difference = targetPostion - this.transform.position;
+            var difference = targetPostion - transform.position;
             var direction = new Vector3(difference.x, 0, difference.z).normalized;
-            this.transform.position += direction * Time.deltaTime * this.speed;
+            transform.position += direction * Time.deltaTime * speed;
         }
 
         internal bool isTouchingCurrentTarget()
@@ -175,12 +187,12 @@ namespace Assets.Scripts.Gatherer
         internal async Task<bool> eatResource(GameObject resource)
         {
             var resourceType = resource.GetComponent<IResource>();
-            return await resourceType.Eat(this.inventory);
+            return await resourceType.Eat(inventory);
         }
 
         private GameObject getClosestObjectSatisfyingCondition(UserLayerMasks layerMask, Func<GameObject, float, float> weightFunction)
         {
-            Collider[] resourcesInRadius = Physics.OverlapSphere(this.transform.position, searchRadius, (int)layerMask);
+            Collider[] resourcesInRadius = Physics.OverlapSphere(transform.position, searchRadius, (int)layerMask);
             if (resourcesInRadius.Length <= 0)
             {
                 return null;
@@ -189,7 +201,7 @@ namespace Assets.Scripts.Gatherer
             Collider highestWeightCollider = null;
             foreach (Collider resource in resourcesInRadius)
             {
-                float distance = (this.transform.position - resource.transform.position).magnitude;
+                float distance = (transform.position - resource.transform.position).magnitude;
                 float weight = weightFunction(resource.gameObject, distance);
                 if (weight > maxWeight)
                 {
