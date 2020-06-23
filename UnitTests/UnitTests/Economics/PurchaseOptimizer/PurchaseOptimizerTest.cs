@@ -432,13 +432,13 @@ namespace UnitTests.Economics
 
             // should exchange wood for food until maximum utility is reached
             // discrete evaluation should result with closest fit of 4 wood, 3 food
-            Assert.AreEqual(4, selfInventory.Get("wood"));
-            Assert.AreEqual(16, marketInventory.Get("wood"));
+            Assert.AreEqual(6, selfInventory.Get("wood"));
+            Assert.AreEqual(14, marketInventory.Get("wood"));
             Assert.AreEqual(0, selfInventory.bank);
-            Assert.AreEqual(3, selfInventory.Get("food"));
-            Assert.AreEqual(7, marketInventory.Get("food"));
+            Assert.AreEqual(2, selfInventory.Get("food"));
+            Assert.AreEqual(8, marketInventory.Get("food"));
 
-            Assert.AreEqual(3, transactionLedger.Count);
+            Assert.AreEqual(2, transactionLedger.Count);
             Assert.IsTrue(transactionLedger.All(transaction =>
                 transaction.Item1.HasValue
                 && transaction.Item1.Value.amount == 2
@@ -453,7 +453,6 @@ namespace UnitTests.Economics
                 .SequenceEqual(new float[] {
                     1f - (1/10f + 1/9f),
                     1/2f - (1/8f + 1/7f),
-                    1/3f - (1/6f + 1/5f),
                 }));
         }
 

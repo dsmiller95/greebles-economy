@@ -52,7 +52,10 @@ namespace TradeModeling.Economics
         {
             var transactionLedger = new List<(ExchangeResult<Resource>?, PurchaseOperationResult<Resource>)>();
             var purchase = PurchaseResult.Purchase(this, selfInventory, otherInventory);
-            transactionLedger.Add((null, purchase.ledger));
+            if (purchase?.ledger.exchages.Count > 0)
+            {
+                transactionLedger.Add((null, purchase.ledger));
+            }
 
             var executesPurchase = true;
             for (var minUtility = GetHighestSellableValuePerUtility(increment, selfInventory, otherInventory);
