@@ -59,7 +59,7 @@ namespace UnitTests.Economics
                 new[] { "wood", "food" },
                 exchangeModel, exchangeModel, exchangeModel);
 
-            optimizer.Optimize();
+            var _ledger = optimizer.Optimize();
 
             // should buy up all of the first item, to match the amount in the second inventory
             Assert.AreEqual(10, selfInventory.Get("wood"));

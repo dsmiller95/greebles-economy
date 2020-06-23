@@ -31,6 +31,7 @@ namespace TradeModeling.Economics
 
         /// <summary>
         /// Calculate the utility of getting one more thing
+        /// // TODO: convert to using a continuous, integratable function
         /// </summary>
         /// <param name="currentInventory">the current amount of the Item</param>
         /// <returns>The additional utility from gaining one more item</returns>
@@ -40,12 +41,17 @@ namespace TradeModeling.Economics
             {
                 return -GetIncrementalValue(currentInventory + increment, -increment);
             }
-            if(Math.Abs(increment - 1) > 0.0001)
+            if((increment % 1) > 0.0001)
             {
                 throw new NotImplementedException($"Cannot calculate incremental utility in increments other than 1. attempted {increment}");
             }
             var currentRegion = RegionAt(currentInventory);
-            return currentRegion.RegionWeight * BaseUtility(currentInventory);
+            var onePlusIncrement = currentRegion.RegionWeight * BaseUtility(currentInventory);
+            if (increment > 1)
+            {
+                onePlusIncrement += GetIncrementalValue(currentInventory + 1, increment - 1);
+            }
+            return onePlusIncrement;
         }
 
         public float GetNetValue(float startPoint)

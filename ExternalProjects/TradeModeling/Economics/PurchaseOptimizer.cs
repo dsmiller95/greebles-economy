@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices.ComTypes;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -58,80 +59,70 @@ namespace TradeModeling.Economics
                 !EqualityComparer<Resource>.Default.Equals(minUtility, default) && executesPurchase;
                 minUtility = GetHighestSellableValuePerUtility(increment, selfInventory, otherInventory))
             {
-                var simSelfInventory = CloneSelfInventory();
-                var simOtherInventory = CloneOtherInventory();
+                var nextTransaction = this.SellUntilPurchaseCanHappen(minUtility);
 
-                // Execute all operations on a simulated inventory to make sure all prices, utilities,
-                //  and any constraints on size are respected
-                var sellOption = seller.Sell(minUtility, increment, simSelfInventory, simOtherInventory);
-                sellOption.Execute();
-
-                var purchaseOption = PurchaseResult.Purchase(this, simSelfInventory, simOtherInventory);
-                purchaseOption.ledger.utilityGained += utilityFunction.GetIncrementalUtility(
-                        minUtility,
-                        selfInventory,
-                        -increment
-                      );
-
-                executesPurchase = purchaseOption.ledger.utilityGained > 0;
-                if (executesPurchase)
+                if (!nextTransaction.HasValue)
                 {
-                    // Must sell first to get the money; then purchase
-                    seller.Sell(minUtility, increment, selfInventory, otherInventory).Execute();
-                    purchaseOption.ReExecutePurchases(selfInventory, otherInventory);
-                    transactionLedger.Add((sellOption.info, purchaseOption.ledger));
+                    break;
                 }
+                transactionLedger.Add(nextTransaction.Value);
             }
 
             return transactionLedger;
         }
 
-        //private (ExchangeResult<Resource>?, PurchaseOperationResult<Resource>)? SellUntilPurchaseCanHappen(Resource minUtility)
-        //{
-        //    PurchaseResult purchaseOption = null;
-        //    while(purchaseOption?.ledger.exchages.Count() <= 0)
-        //    {
-        //        var simSelfInventory = CloneSelfInventory();
-        //        var simOtherInventory = CloneOtherInventory();
+        private (ExchangeResult<Resource>?, PurchaseOperationResult<Resource>)? SellUntilPurchaseCanHappen(Resource minUtility)
+        {
+            var firstOption = GetFirstPossiblePurchase(minUtility);
+            if(!firstOption.HasValue)
+            {
+                return null;
+            }
+            var (sellOption, purchaseOption) = firstOption.Value;
 
-        //        // Execute all operations on a simulated inventory to make sure all prices, utilities,
-        //        //  and any constraints on size are respected
-        //        var sellOption = seller.Sell(minUtility, increment, simSelfInventory, simOtherInventory);
-        //        sellOption.Execute();
+            var utilityLostFromSell = utilityFunction.GetIncrementalUtility(
+                    minUtility,
+                    selfInventory,
+                    -sellOption.amount
+                  );
+            purchaseOption.ledger.utilityGained += utilityLostFromSell;
+            var executesPurchase = purchaseOption.ledger.utilityGained > 0;
 
-        //        purchaseOption = PurchaseResult.Purchase(this, simSelfInventory, simOtherInventory);
-        //    }
+            if (executesPurchase)
+            {
+                // Must sell first to get the money; then purchase
+                var actualSellResult = seller.Sell(minUtility, sellOption.amount, selfInventory, otherInventory);
+                actualSellResult.Execute();
+                purchaseOption.ReExecutePurchases(selfInventory, otherInventory);
+                return (actualSellResult.info, purchaseOption.ledger);
+            }
+            return null;
+        }
 
-        //    //var simSelfInventory = CloneSelfInventory();
-        //    //var simOtherInventory = CloneOtherInventory();
+        private (ExchangeResult<Resource>, PurchaseResult)? GetFirstPossiblePurchase(Resource minUtility)
+        {
+            PurchaseResult purchaseOption = null;
+            ActionOption<ExchangeResult<Resource>> sellOption = null;
+            float purchaseAmount = 0;
+            while (purchaseOption == null || purchaseOption.ledger.exchages.Count() <= 0)
+            {
+                var simSelfInventory = CloneSelfInventory();
+                var simOtherInventory = CloneOtherInventory();
+                purchaseAmount += increment;
 
-        //    // Execute all operations on a simulated inventory to make sure all prices, utilities,
-        //    //  and any constraints on size are respected
-        //    //var sellOption = seller.Sell(minUtility, increment, simSelfInventory, simOtherInventory);
-        //    //sellOption.Execute();
+                // Execute all operations on a simulated inventory to make sure all prices, utilities,
+                //  and any constraints on size are respected
+                sellOption = seller.Sell(minUtility, purchaseAmount, simSelfInventory, simOtherInventory);
+                if (sellOption.info.amount <= 1E-5)
+                {
+                    return null;
+                }
+                sellOption.Execute();
 
-        //    //var purchaseOption = PurchaseResult.Purchase(this, simSelfInventory, simOtherInventory);
-        //    //if (purchaseOption.ledger.exchages.Count == 0)
-        //    //{
-
-        //    //}
-
-        //    var executesPurchase = (purchaseOption.ledger.utilityGained
-        //        + utilityFunction.GetIncrementalUtility(
-        //            minUtility,
-        //            selfInventory,
-        //            -increment
-        //          ))
-        //          > 0;
-        //    if (executesPurchase)
-        //    {
-        //        // Must sell first to get the money; then purchase
-        //        seller.Sell(minUtility, increment, selfInventory, otherInventory).Execute();
-        //        purchaseOption.ReExecutePurchases(selfInventory, otherInventory);
-        //        return (sellOption.info, purchaseOption.ledger);
-        //    }
-        //    return null;
-        //}
+                purchaseOption = PurchaseResult.Purchase(this, simSelfInventory, simOtherInventory);
+            }
+            return (sellOption.info, purchaseOption);
+        }
 
         private Self CloneSelfInventory()
         {
