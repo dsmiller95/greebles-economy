@@ -438,7 +438,7 @@ namespace UnitTests.Economics
             Assert.AreEqual(3, selfInventory.Get("food"));
             Assert.AreEqual(7, marketInventory.Get("food"));
 
-
+            Assert.AreEqual(3, transactionLedger.Count);
             Assert.IsTrue(transactionLedger.All(transaction =>
                 transaction.Item1.HasValue
                 && transaction.Item1.Value.amount == 2
@@ -451,11 +451,9 @@ namespace UnitTests.Economics
             ));
             Assert.IsTrue(transactionLedger.Select(trans => trans.Item2.utilityGained)
                 .SequenceEqual(new float[] {
-                    1/3f + 1/4f,
-                    1/5f + 1/6f,
-                    1/7f + 1/8f,
-                    1/9f + 1/10f,
-                    1/11f + 1/12f
+                    1f - (1/10f + 1/9f),
+                    1/2f - (1/8f + 1/7f),
+                    1/3f - (1/6f + 1/5f),
                 }));
         }
 
