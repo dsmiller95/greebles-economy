@@ -52,7 +52,7 @@ namespace Assets.Scripts.Gatherer
                         tradeNodeList.tradeRouteUpdated = (tradeRoute) =>
                         {
                             trader.SetNewTradeRoute(tradeRoute);
-                            mulitPathPlotter.SetPath(trader.tradeRoute.Select(x => x.targetMarket.transform.position));
+                            mulitPathPlotter.SetPath(trader.tradeRoute.Select(x => x.target.gameObject.transform.position));
                         };
                     }
                 } }
@@ -80,7 +80,7 @@ namespace Assets.Scripts.Gatherer
         {
             var plotter = Instantiate(multiPathPlotterPrefab);
             mulitPathPlotter = plotter.GetComponent<MultiPathPlotter>();
-            mulitPathPlotter.SetPath(trader.tradeRoute.Select(x => x.targetMarket.transform.position));
+            mulitPathPlotter.SetPath(trader.tradeRoute.Select(x => x.target.gameObject.transform.position));
         }
     }
 }

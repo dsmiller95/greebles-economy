@@ -1,8 +1,8 @@
-﻿using Assets.Scripts.Market;
-using Assets.Scripts.Trader;
+﻿using Assets.Scripts.Trader;
 using Assets.UI.SelectionManager;
 using Assets.UI.SelectionManager.GetObjectSelector;
 using System;
+using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -28,7 +28,7 @@ namespace Assets.UI.TraderConfigPanel
         // Start is called before the first frame update
         void Start()
         {
-            description.text = $"Target: {tradeNode.targetMarket.name}";
+            description.text = $"Target: {tradeNode.target.gameObject.name}";
 
             materialItemList.tradeNode = tradeNode;
             materialItemList.maxTradeAmount = maxTradeAmount;
@@ -40,7 +40,7 @@ namespace Assets.UI.TraderConfigPanel
 
         private void SwitchMarketClicked()
         {
-            SelectionTracker.globalTracker.PushSelectionInput(new SingleObjectHighlightSelector<MarketBehavior>(
+            SelectionTracker.globalTracker.PushSelectionInput(new SingleObjectHighlightSelector<TradeStop>(
                 market => true,
                 market =>
                 {
@@ -48,11 +48,26 @@ namespace Assets.UI.TraderConfigPanel
                 }));
         }
 
-        private void MarketChanged(MarketBehavior market)
+        //TODO: switch out callback method for task one
+        private async Task SwitchMarketClickAsync()
         {
-            Debug.Log($"Market Picked: {market.name}");
-            tradeNode.targetMarket = market;
-            description.text = $"Target: {tradeNode.targetMarket.name}";
+            try
+            {
+                var selection = await SelectionTracker.globalTracker.GetInputAsync<TradeStop>(target => true);
+
+                Debug.Log($"Market Picked: {selection.gameObject.name}");
+                tradeNode.target = selection;
+                description.text = $"Target: {tradeNode.target.gameObject.name}";
+                marketChanged?.Invoke();
+            }
+            catch (ObjectSelectionCancelledException) { }
+        }
+
+        private void MarketChanged(TradeStop market)
+        {
+            Debug.Log($"Market Picked: {market.gameObject.name}");
+            tradeNode.target = market;
+            description.text = $"Target: {tradeNode.target.gameObject.name}";
             marketChanged?.Invoke();
         }
 

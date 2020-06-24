@@ -1,5 +1,6 @@
 ﻿using Assets.Scripts.Resources;
 using Assets.Scripts.Resources.Inventory;
+using Assets.Scripts.Trader;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,7 +18,7 @@ namespace Assets.Scripts.Market
         public float buyPrice;
     }
 
-    public class MarketBehavior : MonoBehaviour
+    public class MarketBehavior : TradeStop
     {
         public SellPrice[] exchangeRates;
 
@@ -26,6 +27,9 @@ namespace Assets.Scripts.Market
         private Dictionary<ResourceType, float> purchasePriceDictionary;
         public ResourceInventory inventory;
         public SpaceFillingInventory<ResourceType> _inventory;
+
+
+        public override SpaceFillingInventory<ResourceType> tradeInventory => this._inventory;
 
         private void Awake()
         {

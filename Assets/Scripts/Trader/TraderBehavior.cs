@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using TradeModeling.Inventories;
+using UnityEditor;
 using UnityEngine;
 
 namespace Assets.Scripts.Trader
@@ -29,7 +30,7 @@ namespace Assets.Scripts.Trader
     [Serializable]
     public class TradeNode
     {
-        public MarketBehavior targetMarket;
+        public TradeStop target;
         /// <summary>
         /// A list of resource exchanges to attempt at this market
         /// </summary>
@@ -92,11 +93,11 @@ namespace Assets.Scripts.Trader
         }
         public void SetNewTradeRoute(TradeNode[] tradeRoute)
         {
-            var previousTarget = currentTradeNodeTarget.targetMarket;
+            var previousTarget = currentTradeNodeTarget.target;
             this.tradeRoute = tradeRoute;
             this.currentTradeTargetIndex = tradeRoute
-                .Select((trade, index) => new { trade.targetMarket, index })
-                .Where(x => x.targetMarket == previousTarget)
+                .Select((trade, index) => new { trade.target, index })
+                .Where(x => x.target == previousTarget)
                 .First().index;
         }
 

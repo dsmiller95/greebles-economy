@@ -97,6 +97,7 @@
     <Compile Include="Assets\Scripts\Trader\StateHandlers\InitalStateHandler.cs" />
     <Compile Include="Assets\Scripts\Trader\StateHandlers\TradeExecuteStateHandler.cs" />
     <Compile Include="Assets\Scripts\Trader\StateHandlers\TradeTransitStateHandler.cs" />
+    <Compile Include="Assets\Scripts\Trader\TradeStop.cs" />
     <Compile Include="Assets\Scripts\Trader\TraderBehavior.cs" />
     <Compile Include="Assets\Scripts\Trader\TraderState.cs" />
     <Compile Include="Assets\Scripts\resource spawner\SpawnController.cs" />

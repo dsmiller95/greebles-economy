@@ -1,5 +1,6 @@
 ﻿using Assets.Scripts.Resources;
 using Assets.Scripts.Resources.Inventory;
+using Assets.Scripts.Trader;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,10 +9,12 @@ using UnityEngine;
 
 namespace Assets.Scripts.Home
 {
-    public class HomeBehavior : MonoBehaviour
+    public class HomeBehavior : TradeStop
     {
         public ResourceInventory inventory;
         private SpaceFillingInventory<ResourceType> _inventory;
+
+        public override SpaceFillingInventory<ResourceType> tradeInventory => _inventory;
 
         private void Awake()
         {

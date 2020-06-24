@@ -36,8 +36,8 @@ namespace Assets.Scripts.Trader.StateHandlers
                 myState.lastExchangeTime = Time.time;
                 
                 var trade = myState.remainingTrades[0];
-                var marketInventory = data.currentTradeNodeTarget.targetMarket._inventory;
-                var option = data.inventory.transferResourceInto(trade.type, marketInventory, Mathf.Sign(trade.amount));
+                var targetInventory = data.currentTradeNodeTarget.target.tradeInventory;
+                var option = data.inventory.transferResourceInto(trade.type, targetInventory, Mathf.Sign(trade.amount));
                 var remainingToTrade = trade.amount - option.info;
                 option.Execute();
                 

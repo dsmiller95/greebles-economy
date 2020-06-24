@@ -68,7 +68,7 @@ namespace Assets.UI.TraderConfigPanel
             TradeNode node,
             float maxTradeAmount)
         {
-            Debug.Log($"Creating single node with {node.targetMarket.name}");
+            Debug.Log($"Creating single node with {node.target.gameObject.name}");
             var newTradeNode = GameObject.Instantiate(selfPrefab, container.transform);
             var selfScript = newTradeNode.GetComponent<TradeNodePanel>();
             selfScript.tradeNode = node;

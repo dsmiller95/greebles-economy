@@ -1,11 +1,9 @@
-﻿using Assets.Scripts.Market;
-using Assets.Scripts.Resources;
+﻿using Assets.Scripts.Resources;
 using Assets.Scripts.Trader;
 using Assets.UI.Draggable;
 using Assets.UI.SelectionManager;
 using Assets.UI.SelectionManager.GetObjectSelector;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -31,7 +29,7 @@ namespace Assets.UI.TraderConfigPanel
         void Start()
         {
             Debug.Log($"Node list opened with {linkedTrader?.name}");
-            this.RecreateAllPanels();
+            RecreateAllPanels();
             GetComponent<DragZone>().orderingChanged += SetOrder;
 
             addNewTradeNodeButton.onClick.AddListener(AddNewTradeNodeButtonClicked);
@@ -54,18 +52,18 @@ namespace Assets.UI.TraderConfigPanel
 
         private void AddNewTradeNodeButtonClicked()
         {
-            _ = this.AttemptToAddNewTradeNode();
+            _ = AttemptToAddNewTradeNode();
         }
 
         private async Task AttemptToAddNewTradeNode()
         {
             try
             {
-                var selection = await SelectionTracker.globalTracker.GetInputAsync<MarketBehavior>(market => true);
-                Debug.Log($"got market {selection.name}");
+                var selection = await SelectionTracker.globalTracker.GetInputAsync<TradeStop>(market => true);
+                Debug.Log($"got market {selection.gameObject.name}");
                 NewTradeRoute(linkedTrader.tradeRoute.Append(new TradeNode
                 {
-                    targetMarket = selection,
+                    target = selection,
                     trades = new ResourceTrade[]
                     {
                         new ResourceTrade
@@ -80,9 +78,10 @@ namespace Assets.UI.TraderConfigPanel
                         }
                     }
                 }));
-                
-                this.RecreateAllPanels();
-            } catch (ObjectSelectionCancelledException) {}
+
+                RecreateAllPanels();
+            }
+            catch (ObjectSelectionCancelledException) { }
         }
 
         private void SetOrder()
