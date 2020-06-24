@@ -64,6 +64,7 @@ namespace UnitTests.Economics
 
             Assert.AreEqual(24, market.Get(TestItemType.Cactus));
             Assert.AreEqual(10, market.Get(TestItemType.Corn));
+            Assert.AreEqual(7, market.Get(TestItemType.Pesos));
         }
 
         [TestMethod]
@@ -115,6 +116,7 @@ namespace UnitTests.Economics
 
             Assert.AreEqual(13, market.Get(TestItemType.Cactus));
             Assert.AreEqual(17, market.Get(TestItemType.Corn));
+            Assert.AreEqual(15, market.Get(TestItemType.Pesos));
         }
 
         [TestMethod]
@@ -166,6 +168,7 @@ namespace UnitTests.Economics
 
             Assert.AreEqual(13, market.Get(TestItemType.Cactus));
             Assert.AreEqual(27, market.Get(TestItemType.Corn));
+            Assert.AreEqual(5, market.Get(TestItemType.Pesos));
         }
         [TestMethod]
         public void ShouldOptimizeForUtilityWithVeryLargeInventoryAndGenerateSourceUtilityWeights()
@@ -216,6 +219,7 @@ namespace UnitTests.Economics
 
             Assert.AreEqual(24, market.Get(TestItemType.Cactus));
             Assert.AreEqual(10, market.Get(TestItemType.Corn));
+            Assert.AreEqual(7, market.Get(TestItemType.Pesos));
 
             var utilityAnalyzer = new UtilityAnalyzer<TestItemType>();
             var sourceUtilities = utilityAnalyzer.GetUtilityPerInitialResource(

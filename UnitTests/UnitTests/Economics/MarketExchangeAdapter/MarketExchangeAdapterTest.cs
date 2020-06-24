@@ -39,6 +39,7 @@ namespace UnitTests.Economics
             Assert.AreEqual(1, market.Get(TestItemType.Corn));
             Assert.AreEqual(3, self.Get(TestItemType.Corn));
 
+            Assert.AreEqual(7, market.Get(TestItemType.Pesos));
             Assert.AreEqual(3, self.Get(TestItemType.Pesos));
         }
 
@@ -69,6 +70,7 @@ namespace UnitTests.Economics
             Assert.AreEqual(2, market.Get(TestItemType.Corn));
             Assert.AreEqual(2, self.Get(TestItemType.Corn));
 
+            Assert.AreEqual(5, market.Get(TestItemType.Pesos));
             Assert.AreEqual(5, self.Get(TestItemType.Pesos));
         }
 
@@ -100,6 +102,7 @@ namespace UnitTests.Economics
             Assert.AreEqual(0, market.Get(TestItemType.Corn));
             Assert.AreEqual(2, self.Get(TestItemType.Corn));
 
+            Assert.AreEqual(5, market.Get(TestItemType.Pesos));
             Assert.AreEqual(5, self.Get(TestItemType.Pesos));
         }
 
@@ -131,6 +134,7 @@ namespace UnitTests.Economics
             Assert.AreEqual(2, market.Get(TestItemType.Corn));
             Assert.AreEqual(2, self.Get(TestItemType.Corn));
 
+            Assert.AreEqual(5, market.Get(TestItemType.Pesos));
             Assert.AreEqual(5, self.Get(TestItemType.Pesos));
         }
 
@@ -162,38 +166,10 @@ namespace UnitTests.Economics
             Assert.AreEqual(2, market.Get(TestItemType.Corn));
             Assert.AreEqual(2, self.Get(TestItemType.Corn));
 
+            Assert.AreEqual(5, market.Get(TestItemType.Pesos));
             Assert.AreEqual(0, self.Get(TestItemType.Pesos));
         }
 
-        [TestMethod]
-        public void ShouldSimulateExecutionOfSimpleSell()
-        {
-            var market = EconomicsTestUtilities.CreateInventory(new[]
-            {
-                (TestItemType.Cactus,   2f),
-                (TestItemType.Corn,     2f),
-                (TestItemType.Pesos,    5f)
-            });
-            var self = EconomicsTestUtilities.CreateInventory(new[]
-            {
-                (TestItemType.Cactus,   2f),
-                (TestItemType.Corn,     2f),
-                (TestItemType.Pesos,    5f)
-            });
-
-            var adapter = new MarketExchangeAdapter<TestItemType>(new Dictionary<TestItemType, float> { { TestItemType.Corn, 2 } }, TestItemType.Pesos);
-
-            Assert.IsTrue(adapter.CanSell(TestItemType.Corn, self, market));
-            var sellResult = adapter.Sell(TestItemType.Corn, 1, self, market);
-
-            Assert.AreEqual(1, sellResult.info.amount);
-            Assert.AreEqual(2, sellResult.info.cost);
-
-            Assert.AreEqual(2, market.Get(TestItemType.Corn));
-            Assert.AreEqual(2, self.Get(TestItemType.Corn));
-
-            Assert.AreEqual(5, self.Get(TestItemType.Pesos));
-        }
 
         [TestMethod]
         public void ShouldExecuteSimpleSell()
@@ -224,6 +200,38 @@ namespace UnitTests.Economics
             Assert.AreEqual(1, self.Get(TestItemType.Corn));
 
             Assert.AreEqual(7, self.Get(TestItemType.Pesos));
+            Assert.AreEqual(3, market.Get(TestItemType.Pesos));
+        }
+
+        [TestMethod]
+        public void ShouldSimulateExecutionOfSimpleSell()
+        {
+            var market = EconomicsTestUtilities.CreateInventory(new[]
+            {
+                (TestItemType.Cactus,   2f),
+                (TestItemType.Corn,     2f),
+                (TestItemType.Pesos,    5f)
+            });
+            var self = EconomicsTestUtilities.CreateInventory(new[]
+            {
+                (TestItemType.Cactus,   2f),
+                (TestItemType.Corn,     2f),
+                (TestItemType.Pesos,    5f)
+            });
+
+            var adapter = new MarketExchangeAdapter<TestItemType>(new Dictionary<TestItemType, float> { { TestItemType.Corn, 2 } }, TestItemType.Pesos);
+
+            Assert.IsTrue(adapter.CanSell(TestItemType.Corn, self, market));
+            var sellResult = adapter.Sell(TestItemType.Corn, 1, self, market);
+
+            Assert.AreEqual(1, sellResult.info.amount);
+            Assert.AreEqual(2, sellResult.info.cost);
+
+            Assert.AreEqual(2, market.Get(TestItemType.Corn));
+            Assert.AreEqual(2, self.Get(TestItemType.Corn));
+
+            Assert.AreEqual(5, market.Get(TestItemType.Pesos));
+            Assert.AreEqual(5, self.Get(TestItemType.Pesos));
         }
 
         [TestMethod]
@@ -253,6 +261,7 @@ namespace UnitTests.Economics
             Assert.AreEqual(2, market.Get(TestItemType.Corn));
             Assert.AreEqual(0, self.Get(TestItemType.Corn));
 
+            Assert.AreEqual(5, market.Get(TestItemType.Pesos));
             Assert.AreEqual(5, self.Get(TestItemType.Pesos));
         }
 
@@ -283,7 +292,41 @@ namespace UnitTests.Economics
             Assert.AreEqual(2, market.Get(TestItemType.Corn));
             Assert.AreEqual(2, self.Get(TestItemType.Corn));
 
+            Assert.AreEqual(5, market.Get(TestItemType.Pesos));
             Assert.AreEqual(5, self.Get(TestItemType.Pesos));
         }
+
+
+        [TestMethod]
+        public void WhenMarketIsBrokeShouldNotSell()
+        {
+            var market = EconomicsTestUtilities.CreateInventory(new[]
+            {
+                (TestItemType.Cactus,   2f),
+                (TestItemType.Corn,     2f),
+                (TestItemType.Pesos,    0f)
+            });
+            var self = EconomicsTestUtilities.CreateInventory(new[]
+            {
+                (TestItemType.Cactus,   2f),
+                (TestItemType.Corn,     2f),
+                (TestItemType.Pesos,    5f)
+            });
+
+            var adapter = new MarketExchangeAdapter<TestItemType>(new Dictionary<TestItemType, float> { { TestItemType.Corn, 2 } }, TestItemType.Pesos);
+
+            Assert.IsFalse(adapter.CanSell(TestItemType.Corn, self, market));
+            var sellResult = adapter.Sell(TestItemType.Corn, 1, self, market);
+            Assert.AreEqual(0, sellResult.info.amount);
+            Assert.AreEqual(0, sellResult.info.cost);
+
+            sellResult.Execute();
+            Assert.AreEqual(2, market.Get(TestItemType.Corn));
+            Assert.AreEqual(2, self.Get(TestItemType.Corn));
+
+            Assert.AreEqual(0, market.Get(TestItemType.Pesos));
+            Assert.AreEqual(5, self.Get(TestItemType.Pesos));
+        }
+
     }
 }

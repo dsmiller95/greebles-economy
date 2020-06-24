@@ -242,6 +242,8 @@ MonoBehaviour:
     amount: 20
   - type: 2
     amount: 20
+  - type: 4
+    amount: 50
 --- !u!114 &1838689708058528886
 MonoBehaviour:
   m_ObjectHideFlags: 0

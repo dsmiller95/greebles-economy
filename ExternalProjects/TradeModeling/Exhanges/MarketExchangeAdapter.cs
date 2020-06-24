@@ -41,7 +41,7 @@ namespace TradeModeling.Exchanges
                     type = type
                 }, exchangeResult =>
                 {
-                    selfInventory.Consume(moneyType, exchangeResult.cost);
+                    selfInventory.transferResourceInto(moneyType, marketInventory, exchangeResult.cost).Execute();
                 });
         }
 
@@ -56,8 +56,10 @@ namespace TradeModeling.Exchanges
         {
             // using the buying rate because this is a sell from the "other". I.E. a purchase from the market
             var exchangeRate = marketBuyRates[type];
+            var maxSell = marketInventory.GetCurrentFunds() / exchangeRate;
+            var amountToSell = Math.Min(amount, maxSell);
             return selfInventory
-                .transferResourceInto(type, marketInventory, amount)
+                .transferResourceInto(type, marketInventory, amountToSell)
                 .Then(totalDeposited => new ExchangeResult<T>
                 {
                     amount = totalDeposited,
@@ -65,14 +67,14 @@ namespace TradeModeling.Exchanges
                     type = type
                 }, exchangeResult =>
                 {
-                    var value = exchangeResult.cost;
-                    selfInventory.Add(moneyType, value).Execute();
+                    marketInventory.transferResourceInto(moneyType, selfInventory, exchangeResult.cost).Execute();
                 });
         }
 
         public bool CanSell(T type, SpaceFillingInventory<T> selfInventory, SpaceFillingInventory<T> marketInventory)
         {
             return selfInventory.Get(type) > 0
+                && marketInventory.Get(moneyType) > 0
                 && marketInventory.CanFitMoreOf(type);
         }
     }
