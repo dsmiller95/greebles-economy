@@ -131,7 +131,6 @@
     <Compile Include="Assets\UserLayerMasks.cs" />
     <Compile Include="Assets\Utilities\AsyncStateMachine.cs" />
     <Compile Include="Assets\Utilities\GenericStateHandler.cs" />
-    <Compile Include="Assets\Utilities\LinqExtensions.cs" />
     <None Include="Assets\External\RTS_Camera\Demo\Projectors\Shaders\ProjectorLight.shader" />
     <None Include="Assets\External\RTS_Camera\Demo\Projectors\Shaders\ProjectorMultiply.shader" />
     <None Include="Assets\External\RTS_Camera\Demo\Projectors\Guidelines.txt" />

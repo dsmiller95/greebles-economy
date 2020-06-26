@@ -15,6 +15,11 @@
         /// <returns>The gain/loss from moving across the function by increment</returns>
         float GetNetValue(float startPoint);
 
+
+        float GetPointFromNetValue(float value);
+
+        float GetPointFromNetExtraValueFromPoint(float extraValue, float startPoint);
+
         /// <summary>
         /// Gets the instantaneous rate of change at the given point
         /// </summary>

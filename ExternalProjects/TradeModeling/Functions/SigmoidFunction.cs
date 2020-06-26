@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
 
 namespace TradeModeling.Functions
@@ -52,6 +53,18 @@ namespace TradeModeling.Functions
         {
             return SigmoidIntegral(startPoint, realOffset, scale, integralOffset);
         }
+
+        public float GetPointFromNetValue(float value)
+        {
+            return InverseSigmoidIntegral(value, realOffset, scale, integralOffset);
+        }
+
+        public float GetPointFromNetExtraValueFromPoint(float extraValue, float startPoint)
+        {
+            var startValue = GetNetValue(startPoint);
+            return this.GetPointFromNetValue(startValue + extraValue);
+        }
+
         public static float Sigmoid(double value, float offset, float scale)
         {
             return (float)(1.0 / (1.0 + Math.Pow(Math.E, -(offset - value) * scale)));
@@ -67,6 +80,13 @@ namespace TradeModeling.Functions
                         (value - offset) * scale)
                     )) / scale)
                 );
+        }
+        public static float InverseSigmoidIntegral(double value, float offset, float scale, float integralOffset)
+        {
+            return -(float)Math.Log(
+                        Math.Pow(Math.E, scale * (integralOffset - value))
+                        - Math.Pow(Math.E, -offset * scale)
+                    ) / scale;
         }
     }
 }

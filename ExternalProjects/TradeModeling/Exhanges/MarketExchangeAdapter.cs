@@ -29,7 +29,7 @@ namespace TradeModeling.Exchanges
 
         public ActionOption<ExchangeResult<T>> Purchase(T type, float amount, SpaceFillingInventory<T> selfInventory, SpaceFillingInventory<T> marketInventory)
         {
-            // using the buying rate because this is a purchase from the "other". I.E. a sell from the market
+            // using the buying rate because this is a purchase from the "other". I.E. a sell from the perspective of the market
             var exchangeRate = marketSellRates[type];
             var maxPurchase = selfInventory.GetCurrentFunds() / exchangeRate;
             var amountToPurchase = Math.Min(amount, maxPurchase);

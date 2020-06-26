@@ -63,5 +63,87 @@ namespace UnitTests.Economics.Functions
                 Assert.AreEqual(expectedPair.Value, myFunction.GetNetValue(expectedPair.Key), 1e-5);
             }
         }
+
+
+        [TestMethod]
+        public void ShouldHaveCorrectNetValuesInverse()
+        {
+            var myFunction = new SigmoidFunction(new SigmoidFunctionConfig
+            {
+                offset = 0f,
+                range = 10f
+            });
+
+            var expectedValueTable = new Dictionary<float, float>
+            {
+                {0f, 0f },
+                {1f, 0.988565420571308328f },
+                {2f, 1.958127996915376009f },
+                {6f, 4.693453660970895236f },
+                {7f, 4.879787337446145572f },
+                {10f, 5f },
+            };
+
+            foreach (var expectedPair in expectedValueTable)
+            {
+                Assert.AreEqual(expectedPair.Key, myFunction.GetPointFromNetValue(expectedPair.Value), 1e-5);
+            }
+        }
+
+
+        [TestMethod]
+        public void ShouldHaveCorrectNetValuesInverseWithOffset()
+        {
+            var myFunction = new SigmoidFunction(new SigmoidFunctionConfig
+            {
+                offset = 0f,
+                range = 10f
+            });
+
+            var offsettedValue = 0.988565420571308328;
+
+            var expectedValueTable = new Dictionary<float, float>
+            {
+                {0f, (float)(0 - offsettedValue) },
+                {1f, (float)(0.988565420571308328 - offsettedValue) },
+                {2f, (float)(1.958127996915376009 - offsettedValue) },
+                {6f, (float)(4.693453660970895236 - offsettedValue) },
+                {7f, (float)(4.879787337446145572 - offsettedValue) },
+                {10f, (float)(5f - offsettedValue) },
+            };
+
+            foreach (var expectedPair in expectedValueTable)
+            {
+                Assert.AreEqual(expectedPair.Key, myFunction.GetPointFromNetExtraValueFromPoint(expectedPair.Value, 1), 1e-5);
+            }
+        }
+
+
+        [TestMethod]
+        public void ShouldHaveCorrectNetValuesInverseWithOffsetPast0()
+        {
+            var myFunction = new SigmoidFunction(new SigmoidFunctionConfig
+            {
+                offset = 0f,
+                range = 10f
+            });
+
+            var offsettedValue = 0.988565420571308328;
+
+            var expectedValueTable = new Dictionary<float, float>
+            {
+                {0f, (float)(0 - offsettedValue) },
+                {-1f, (float)(-0.99576033664861238091444299431088089366184175169765377856 - offsettedValue) },
+                {-2f, (float)(-1.99419611796465617607528580607077258667289101133381732908 - offsettedValue) },
+                {-6f, (float)(-5.99330135307220032534204550450772727429328160638888197171 - offsettedValue) },
+                {-7f, (float)(-6.99329079570435966418901789133356611158827908472468216254 - offsettedValue) },
+                {-10f, (float)(-9.99328495741315564510406920928653520521498975323882941468 - offsettedValue) },
+            };
+
+            foreach (var expectedPair in expectedValueTable)
+            {
+                Assert.AreEqual(expectedPair.Key, myFunction.GetPointFromNetExtraValueFromPoint(expectedPair.Value, 1), 1e-5);
+            }
+        }
     }
 }

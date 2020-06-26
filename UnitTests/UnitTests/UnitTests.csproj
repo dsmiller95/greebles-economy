@@ -51,6 +51,7 @@
   <ItemGroup>
     <Compile Include="Economics\EconomicsTestUtilities.cs" />
     <Compile Include="Economics\Functions\SigmoidFunctionTest.cs" />
+    <Compile Include="Economics\MarketExchangeAdapter\SigmoidMarketExchangeAdapterTest.cs" />
     <Compile Include="Economics\MarketExchangeAdapter\MarketExchangeAdapterTest.cs" />
     <Compile Include="Economics\PurchaseOptimizer\PurchaseOptimizerTest.cs" />
     <Compile Include="Economics\PurchaseOptimizer\TestExchangeModel.cs" />

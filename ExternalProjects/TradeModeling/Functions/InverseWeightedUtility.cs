@@ -62,6 +62,16 @@ namespace TradeModeling.Functions
             return totalUtility;
         }
 
+        public float GetPointFromNetExtraValueFromPoint(float extraValue, float startPoint)
+        {
+            throw new NotImplementedException();
+        }
+
+        public float GetPointFromNetValue(float value)
+        {
+            throw new NotImplementedException();
+        }
+
         private float BaseUtility(float inventory)
         {
             return 1f / (inventory + offset);
