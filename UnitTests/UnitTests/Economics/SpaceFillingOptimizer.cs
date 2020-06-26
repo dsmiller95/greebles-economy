@@ -1,10 +1,8 @@
-﻿using System;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
-using System.Linq;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TradeModeling.Economics;
+using TradeModeling.Functions;
 using TradeModeling.Inventories;
-using static TradeModeling.Economics.PurchaseOptimizer<UnitTests.Economics.TestItemType, TradeModeling.Inventories.SpaceFillingInventory<UnitTests.Economics.TestItemType>, TradeModeling.Inventories.SpaceFillingInventory<UnitTests.Economics.TestItemType>>;
 
 namespace UnitTests.Economics
 {

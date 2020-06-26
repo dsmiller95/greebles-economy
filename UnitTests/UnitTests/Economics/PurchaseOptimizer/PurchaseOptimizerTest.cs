@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using TradeModeling.Economics;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-// using static TradeModeling.Economics.PurchaseOptimizer<UnitTests.Economics.TestInventoryModel, UnitTests.Economics.TestInventoryModel>;
+using TradeModeling.Functions;
 
 namespace UnitTests.Economics
 {

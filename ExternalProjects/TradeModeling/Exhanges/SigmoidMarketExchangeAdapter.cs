@@ -8,22 +8,21 @@ using TradeModeling.Inventories;
 
 namespace TradeModeling.Exchanges
 {
-    public class MarketExchangeAdapter<T> :
+    public class SigmoidMarketExchangeAdapter<T> :
     ISeller<T, SpaceFillingInventory<T>, SpaceFillingInventory<T>>,
     IPurchaser<T, SpaceFillingInventory<T>, SpaceFillingInventory<T>>
     {
         private IDictionary<T, float> marketSellRates;
         private IDictionary<T, float> marketBuyRates;
-
         private T moneyType;
 
-        public MarketExchangeAdapter(IDictionary<T, float> sellPrices, IDictionary<T, float> buyPrices, T moneyType)
+        public SigmoidMarketExchangeAdapter(IDictionary<T, float> sellPrices, IDictionary<T, float> buyPrices, T moneyType)
         {
             this.marketBuyRates = buyPrices;
             this.marketSellRates = sellPrices;
             this.moneyType = moneyType;
         }
-        public MarketExchangeAdapter(IDictionary<T, float> exchangeRates, T moneyType): this(exchangeRates, exchangeRates, moneyType)
+        public SigmoidMarketExchangeAdapter(IDictionary<T, float> exchangeRates, T moneyType): this(exchangeRates, exchangeRates, moneyType)
         {
         }
 

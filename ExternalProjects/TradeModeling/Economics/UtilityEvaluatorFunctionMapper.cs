@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using TradeModeling.Functions;
 using TradeModeling.Inventories;
 
 namespace TradeModeling.Economics
@@ -17,12 +14,12 @@ namespace TradeModeling.Economics
 
         public float GetIncrementalUtility(T type, SpaceFillingInventory<T> selfInventory, float increment)
         {
-            return this.utilityFunctions[type].GetIncrementalValue(selfInventory.Get(type), increment);
+            return utilityFunctions[type].GetIncrementalValue(selfInventory.Get(type), increment);
         }
 
         public float GetTotalUtility(T type, SpaceFillingInventory<T> inventory)
         {
-            return this.utilityFunctions[type].GetNetValue(inventory.Get(type));
+            return utilityFunctions[type].GetNetValue(inventory.Get(type));
         }
     }
 }

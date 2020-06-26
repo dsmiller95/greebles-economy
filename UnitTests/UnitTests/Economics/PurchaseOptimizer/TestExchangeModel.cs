@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TradeModeling.Economics;
+using TradeModeling.Functions;
 
 namespace UnitTests.Economics
 {
@@ -38,7 +36,8 @@ namespace UnitTests.Economics
                 cost = price,
                 amount = actualPurchase,
                 type = resourceType
-            }, () => {
+            }, () =>
+            {
                 self.Add(resourceType, actualPurchase);
                 if (price > self.bank)
                 {
@@ -66,7 +65,8 @@ namespace UnitTests.Economics
                 cost = price,
                 amount = actualSell,
                 type = resourceType
-            }, () => {
+            }, () =>
+            {
                 self.Add(resourceType, -actualSell);
                 self.bank += price;
 

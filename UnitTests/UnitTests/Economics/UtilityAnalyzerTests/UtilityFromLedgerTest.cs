@@ -1,8 +1,8 @@
-﻿using System;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TradeModeling.Economics;
+using TradeModeling.Functions;
 
 namespace UnitTests.Economics.UtilityAnalyzerTests
 {
@@ -210,7 +210,7 @@ namespace UnitTests.Economics.UtilityAnalyzerTests
                 * (8f / 12f);
             var expectedTotalCactusUtility = utilityEvaluator.GetTotalUtility(TestItemType.Cactus, endingInventory) + transferredCornUtility;
             var expectedTotalCornUtility = utilityEvaluator.GetTotalUtility(TestItemType.Corn, endingInventory) - transferredCornUtility;
-            
+
             var expetedUtility = new Dictionary<TestItemType, float>() {
                 { TestItemType.Cactus, expectedTotalCactusUtility },
                 { TestItemType.Corn, expectedTotalCornUtility }
@@ -257,7 +257,7 @@ namespace UnitTests.Economics.UtilityAnalyzerTests
                     $"Utility not equal for {Enum.GetName(typeof(TestItemType), respource)}.");
             }
         }
-        
+
         [TestMethod]
         public void ShouldCreateTransactionMapFromSellAllForCorn()
         {

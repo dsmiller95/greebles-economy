@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using TradeModeling.Economics;
+﻿using TradeModeling.Functions;
 using UnityEngine;
 
 namespace Assets.UI.Plotter.Function
@@ -14,11 +12,11 @@ namespace Assets.UI.Plotter.Function
 
         void Awake()
         {
-            this.utilityFunction = new InverseWeightedUtility(weightedRegions, offset);
+            utilityFunction = new InverseWeightedUtility(weightedRegions, offset);
         }
         public float PlotAt(float x)
         {
-            return this.utilityFunction.GetIncrementalValue(x, this.increment);
+            return utilityFunction.GetIncrementalValue(x, increment);
         }
     }
 }

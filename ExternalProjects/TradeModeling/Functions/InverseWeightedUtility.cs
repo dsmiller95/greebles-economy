@@ -1,18 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace TradeModeling.Economics
+namespace TradeModeling.Functions
 {
     [Serializable]
     public struct WeightedRegion
     {
         public WeightedRegion(int beginning, float weight)
         {
-            this.RegionBeginning = beginning;
-            this.RegionWeight = weight;
+            RegionBeginning = beginning;
+            RegionWeight = weight;
         }
         public int RegionBeginning;
         public float RegionWeight;
@@ -37,11 +34,11 @@ namespace TradeModeling.Economics
         /// <returns>The additional utility from gaining one more item</returns>
         public float GetIncrementalValue(float currentInventory, float increment)
         {
-            if(increment < 0)
+            if (increment < 0)
             {
                 return -GetIncrementalValue(currentInventory + increment, -increment);
             }
-            if((increment % 1) > 0.0001)
+            if ((increment % 1) > 0.0001)
             {
                 throw new NotImplementedException($"Cannot calculate incremental utility in increments other than 1. attempted {increment}");
             }
@@ -60,7 +57,7 @@ namespace TradeModeling.Economics
             float totalUtility = 0;
             for (int i = realStartPoint - 1; i >= 0; i--)
             {
-                totalUtility += this.GetIncrementalValue(i, 1);
+                totalUtility += GetIncrementalValue(i, 1);
             }
             return totalUtility;
         }
@@ -74,10 +71,11 @@ namespace TradeModeling.Economics
         {
             try
             {
-                return this.regions
+                return regions
                     .Where(region => region.RegionBeginning <= inventory)
                     .Last();
-            } catch
+            }
+            catch
             {
                 throw new Exception($"no defined region at {inventory}");
             }
