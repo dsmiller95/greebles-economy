@@ -77,5 +77,7 @@ namespace UnitTests.Economics
             Assert.AreEqual(7 - 0.1f, market.Get(TestItemType.Pesos), 0.1f);
         }
 
+        // TODO: make sure everything works when starting with non-int money amounts
+
     }
 }
