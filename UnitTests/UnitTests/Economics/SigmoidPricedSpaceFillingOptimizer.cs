@@ -68,13 +68,13 @@ namespace UnitTests.Economics
 
             optimizer.Optimize();
             
-            Assert.AreEqual(0.4f, self.Get(TestItemType.Pesos), 0.4f);
+            Assert.AreEqual(0.1f, self.Get(TestItemType.Pesos), 0.1f);
             Assert.AreEqual(12, self.Get(TestItemType.Cactus));
             Assert.AreEqual(7, self.Get(TestItemType.Corn));
 
             Assert.AreEqual(18, market.Get(TestItemType.Cactus));
             Assert.AreEqual(15, market.Get(TestItemType.Corn));
-            Assert.AreEqual(7, market.Get(TestItemType.Pesos), 0.5f);
+            Assert.AreEqual(7 - 0.1f, market.Get(TestItemType.Pesos), 0.1f);
         }
 
     }
