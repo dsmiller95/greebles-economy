@@ -27,7 +27,7 @@ namespace UnitTests.Economics
                 (TestItemType.Pesos,    5f)
             });
 
-            var functionConfig = new SigmoidFunctionConfig { range = 10, offset = 0 };
+            var functionConfig = new SigmoidFunctionConfig { range = 10, offset = 0, yRange = 1 };
             var function = new SigmoidFunction(functionConfig);
             var adapter = new SigmoidMarketExchangeAdapter<TestItemType>(
                 new Dictionary<TestItemType, SigmoidFunctionConfig> {
@@ -65,7 +65,7 @@ namespace UnitTests.Economics
                 (TestItemType.Pesos,    1f)
             });
 
-            var functionConfig = new SigmoidFunctionConfig { range = 10, offset = 0 };
+            var functionConfig = new SigmoidFunctionConfig { range = 10, offset = 0, yRange = 1 };
             var function = new SigmoidFunction(functionConfig);
             var adapter = new SigmoidMarketExchangeAdapter<TestItemType>(
                 new Dictionary<TestItemType, SigmoidFunctionConfig> {
@@ -107,7 +107,7 @@ namespace UnitTests.Economics
                 (TestItemType.Pesos,    5f)
             });
 
-            var functionConfig = new SigmoidFunctionConfig { range = 10, offset = 0 };
+            var functionConfig = new SigmoidFunctionConfig { range = 10, offset = 0, yRange = 1 };
             var priceFunction = new SigmoidFunction(functionConfig);
             var adapter = new SigmoidMarketExchangeAdapter<TestItemType>(
                 new Dictionary<TestItemType, SigmoidFunctionConfig> {
@@ -146,7 +146,7 @@ namespace UnitTests.Economics
                 (TestItemType.Pesos,    2f)
             });
 
-            var functionConfig = new SigmoidFunctionConfig { range = 10, offset = 0 };
+            var functionConfig = new SigmoidFunctionConfig { range = 10, offset = 0, yRange = 1 };
             var function = new SigmoidFunction(functionConfig);
             var adapter = new SigmoidMarketExchangeAdapter<TestItemType>(
                 new Dictionary<TestItemType, SigmoidFunctionConfig> {

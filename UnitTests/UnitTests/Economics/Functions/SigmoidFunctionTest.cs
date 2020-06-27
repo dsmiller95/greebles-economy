@@ -14,7 +14,8 @@ namespace UnitTests.Economics.Functions
             var myFunction = new SigmoidFunction(new SigmoidFunctionConfig
             {
                 offset = 1f,
-                range = 10f
+                range = 10f,
+                yRange = 1f
             });
 
             var expectedValueTable = new Dictionary<float, float>
@@ -37,6 +38,36 @@ namespace UnitTests.Economics.Functions
                 Assert.AreEqual(expectedPair.Value, myFunction.GetValueAtPoint(expectedPair.Key), 1e-5);
             }
         }
+        [TestMethod]
+        public void ShouldScaleAndOffsetCorrectlyWithYRange()
+        {
+            var myFunction = new SigmoidFunction(new SigmoidFunctionConfig
+            {
+                offset = 1f,
+                range = 10f,
+                yRange = 3f
+            });
+
+            var expectedValueTable = new Dictionary<float, float>
+            {
+                {0f, 0.997527376843365225f * 3 },
+
+                {2f, 0.982013790037908442f * 3 },
+
+                {4f, 0.880797077977882444f * 3 },
+
+                {6f, 0.5f * 3 },
+                {7f, 0.268941421369995120f * 3 },
+
+
+                {10f, 0.01798620996209156f * 3 },
+            };
+
+            foreach (var expectedPair in expectedValueTable)
+            {
+                Assert.AreEqual(expectedPair.Value, myFunction.GetValueAtPoint(expectedPair.Key), 1e-5);
+            }
+        }
 
 
         [TestMethod]
@@ -45,7 +76,8 @@ namespace UnitTests.Economics.Functions
             var myFunction = new SigmoidFunction(new SigmoidFunctionConfig
             {
                 offset = 0f,
-                range = 10f
+                range = 10f,
+                yRange = 1f
             });
 
             var expectedValueTable = new Dictionary<float, float>
@@ -71,7 +103,8 @@ namespace UnitTests.Economics.Functions
             var myFunction = new SigmoidFunction(new SigmoidFunctionConfig
             {
                 offset = 0f,
-                range = 10f
+                range = 10f,
+                yRange = 1f
             });
 
             var expectedValueTable = new Dictionary<float, float>
@@ -97,7 +130,8 @@ namespace UnitTests.Economics.Functions
             var myFunction = new SigmoidFunction(new SigmoidFunctionConfig
             {
                 offset = 0f,
-                range = 10f
+                range = 10f,
+                yRange = 1f
             });
 
             var offsettedValue = 0.988565420571308328;
@@ -125,7 +159,8 @@ namespace UnitTests.Economics.Functions
             var myFunction = new SigmoidFunction(new SigmoidFunctionConfig
             {
                 offset = 0f,
-                range = 10f
+                range = 10f,
+                yRange = 1f
             });
 
             var offsettedValue = 0.988565420571308328;
@@ -146,6 +181,32 @@ namespace UnitTests.Economics.Functions
             }
         }
 
+        [TestMethod]
+        public void ShouldHaveCorrectNetValuesInverseWithYRange()
+        {
+            var myFunction = new SigmoidFunction(new SigmoidFunctionConfig
+            {
+                offset = 0f,
+                range = 10f,
+                yRange = 4f
+            });
+
+            var expectedValueTable = new Dictionary<float, float>
+            {
+                {0f, 0f * 4 },
+                {1f, 0.988565420571308328f * 4 },
+                {2f, 1.958127996915376009f * 4 },
+                {6f, 4.693453660970895236f * 4 },
+                {7f, 4.879787337446145572f * 4 },
+                {10f, 5f * 4 },
+            };
+
+            foreach (var expectedPair in expectedValueTable)
+            {
+                Assert.AreEqual(expectedPair.Key, myFunction.GetPointFromNetValue(expectedPair.Value), 1e-5);
+            }
+        }
+
 
         [TestMethod]
         public void ShouldHaveCorrectNetValuesInverseWhenPastLimitOfIntegral()
@@ -153,7 +214,8 @@ namespace UnitTests.Economics.Functions
             var myFunction = new SigmoidFunction(new SigmoidFunctionConfig
             {
                 offset = 0f,
-                range = 10f
+                range = 10f,
+                yRange = 1f
             });
 
             var expectedValueTable = new Dictionary<float, float>

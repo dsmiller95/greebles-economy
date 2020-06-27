@@ -17,6 +17,8 @@ namespace TradeModeling.Functions
         /// The offset from the center of the range where the sigmoid function should cross 0.5
         /// </summary>
         public float offset;
+
+        public float yRange;
     }
 
     public class SigmoidFunction : ISingleFunction, IIncrementalFunction
@@ -30,7 +32,8 @@ namespace TradeModeling.Functions
         /// </summary>
         private float integralLimit => realOffset + integralOffset;
         private float realOffset;
-        private float scale;
+        private float xScale;
+        private float yScale;
 
         private float integralOffset;
 
@@ -40,14 +43,15 @@ namespace TradeModeling.Functions
             var offset = config.offset;
 
             realOffset = offset + (range / 2);
-            scale = 10 / range;
+            xScale = 10 / range;
+            yScale = config.yRange;
 
-            integralOffset = (float)Math.Log(Math.Pow(Math.E, -scale * realOffset) + 1f) / scale;
+            integralOffset = (float)Math.Log(Math.Pow(Math.E, -xScale * realOffset) + 1f) / xScale;
         }
 
         public float GetValueAtPoint(float point)
         {
-            return Sigmoid(point, realOffset, scale);
+            return Sigmoid(point, realOffset, xScale, yScale);
 
         }
         public float GetIncrementalValue(float startPoint, float increment)
@@ -57,12 +61,12 @@ namespace TradeModeling.Functions
 
         public float GetNetValue(float startPoint)
         {
-            return SigmoidIntegral(startPoint, realOffset, scale, integralOffset);
+            return SigmoidIntegral(startPoint, realOffset, xScale, yScale, integralOffset);
         }
 
         public float GetPointFromNetValue(float value)
         {
-            return InverseSigmoidIntegral(value, realOffset, scale, integralOffset);
+            return InverseSigmoidIntegral(value, realOffset, xScale, yScale, integralOffset);
         }
 
         public float GetPointFromNetExtraValueFromPoint(float extraValue, float startPoint)
@@ -74,11 +78,11 @@ namespace TradeModeling.Functions
             return this.GetPointFromNetValue(startValue + extraValue);
         }
 
-        public static float Sigmoid(double value, float offset, float scale)
+        public static float Sigmoid(double value, float offset, float xScale, float yScale)
         {
-            return (float)(1.0 / (1.0 + Math.Pow(Math.E, -(offset - value) * scale)));
+            return (float)(1.0 / (1.0 + Math.Pow(Math.E, -(offset - value) * xScale))) * yScale;
         }
-        public static float SigmoidIntegral(double value, float offset, float scale, float integralOffset)
+        public static float SigmoidIntegral(double value, float offset, float xScale, float yScale, float integralOffset)
         {
             return (float)(
                 value
@@ -86,17 +90,18 @@ namespace TradeModeling.Functions
                     1 +
                     Math.Pow(
                         Math.E,
-                        (value - offset) * scale)
-                    ) / scale)
+                        (value - offset) * xScale)
+                    ) / xScale)
                 + integralOffset
-                );
+                ) * yScale;
         }
-        public static float InverseSigmoidIntegral(double value, float offset, float scale, float integralOffset)
+        public static float InverseSigmoidIntegral(double value, float offset, float xScale, float yScale, float integralOffset)
         {
+            var scaledValue = value / yScale;
             return -(float)Math.Log(
-                        Math.Pow(Math.E, scale * (integralOffset - value))
-                        - Math.Pow(Math.E, -offset * scale)
-                    ) / scale;
+                        Math.Pow(Math.E, xScale * (integralOffset - scaledValue))
+                        - Math.Pow(Math.E, -offset * xScale)
+                    ) / xScale;
         }
     }
 }

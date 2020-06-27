@@ -56,6 +56,7 @@
     <Compile Include="Economics\PurchaseOptimizer\PurchaseOptimizerTest.cs" />
     <Compile Include="Economics\PurchaseOptimizer\TestExchangeModel.cs" />
     <Compile Include="Economics\PurchaseOptimizer\TestInventoryModel.cs" />
+    <Compile Include="Economics\SigmoidPricedSpaceFillingOptimizer.cs" />
     <Compile Include="Economics\SpaceFillingOptimizer.cs" />
     <Compile Include="Economics\CombinedTransactionModelTest.cs" />
     <Compile Include="Economics\UtilityAnalyzerTests\InverseWeightedUtilityTest.cs" />
