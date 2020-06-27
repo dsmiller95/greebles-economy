@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using TradeModeling.Economics;
 using TradeModeling.Exchanges;
 using TradeModeling.Inventories;
+using TradeModeling;
+using TradeModeling.Functions;
 
 namespace UnitTests.Economics
 {
@@ -38,6 +40,15 @@ namespace UnitTests.Economics
             TestItemType moneyType = TestItemType.Pesos)
         {
             return new MarketExchangeAdapter<TestItemType>(exchangeRates.ToDictionary(x => x.Item1, x => x.Item2), moneyType);
+        }
+
+        public static SigmoidMarketExchangeAdapter<TestItemType> CreateSigmoidExchangeAdapter(
+            (TestItemType, SigmoidFunctionConfig)[] exchangeRates,
+            TestItemType moneyType = TestItemType.Pesos)
+        {
+            return new SigmoidMarketExchangeAdapter<TestItemType>(exchangeRates
+                .ToDictionary(x => x.Item1, x => x.Item2)
+                , moneyType);
         }
     }
 }
