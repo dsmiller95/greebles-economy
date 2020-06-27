@@ -24,6 +24,11 @@ namespace TradeModeling.Functions
         //public float range = 1;
         //public float offset = 0;
 
+        /// <summary>
+        /// A feature of the sigmoid function is that the limit of its integral function
+        ///     is equal to the offset from 0
+        /// </summary>
+        private float integralLimit => realOffset + integralOffset;
         private float realOffset;
         private float scale;
 
@@ -36,6 +41,7 @@ namespace TradeModeling.Functions
 
             realOffset = offset + (range / 2);
             scale = 10 / range;
+
             integralOffset = (float)Math.Log(Math.Pow(Math.E, -scale * realOffset) + 1f) / scale;
         }
 
@@ -62,6 +68,9 @@ namespace TradeModeling.Functions
         public float GetPointFromNetExtraValueFromPoint(float extraValue, float startPoint)
         {
             var startValue = GetNetValue(startPoint);
+            if (startValue + extraValue >= integralLimit) {
+                return float.MaxValue;
+            }
             return this.GetPointFromNetValue(startValue + extraValue);
         }
 
@@ -71,14 +80,15 @@ namespace TradeModeling.Functions
         }
         public static float SigmoidIntegral(double value, float offset, float scale, float integralOffset)
         {
-            return (float)(value
-                + integralOffset
-                - ((Math.Log(
+            return (float)(
+                value
+                - (Math.Log(
                     1 +
                     Math.Pow(
                         Math.E,
                         (value - offset) * scale)
-                    )) / scale)
+                    ) / scale)
+                + integralOffset
                 );
         }
         public static float InverseSigmoidIntegral(double value, float offset, float scale, float integralOffset)

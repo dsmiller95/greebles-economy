@@ -32,14 +32,16 @@ namespace TradeModeling.Exchanges
             //throw new NotImplementedException();
             // using the buying rate because this is a purchase from the "other". I.E. a sell from the perspective of the market
             var exchangeRateFunction = marketSellRates[type];
-            var maxPurchase = exchangeRateFunction.GetPointFromNetExtraValueFromPoint(selfInventory.GetCurrentFunds(), marketInventory.Get(type));
+            var amountLeftAfterMarketsSell = exchangeRateFunction.GetPointFromNetExtraValueFromPoint(-selfInventory.GetCurrentFunds(), marketInventory.Get(type));
+            var maxPurchase = marketInventory.Get(type) - amountLeftAfterMarketsSell;
+
             var amountToPurchase = Math.Min(amount, maxPurchase);
             return marketInventory
                 .transferResourceInto(type, selfInventory, amountToPurchase)
                 .Then(withdrawn => new ExchangeResult<T>
                 {
                     amount = withdrawn,
-                    cost = exchangeRateFunction.GetIncrementalValue(marketInventory.Get(type), withdrawn),
+                    cost = -exchangeRateFunction.GetIncrementalValue(marketInventory.Get(type), -withdrawn),
                     type = type
                 }, exchangeResult =>
                 {
@@ -59,8 +61,8 @@ namespace TradeModeling.Exchanges
             //throw new NotImplementedException();
             // using the buying rate because this is a sell from the "other". I.E. a purchase from the market
             var exchangeRateFunction = marketBuyRates[type];
-            var remainingAfterSell = exchangeRateFunction.GetPointFromNetExtraValueFromPoint(-marketInventory.GetCurrentFunds(), marketInventory.Get(type));// marketInventory.GetCurrentFunds() / exchangeRate;
-            var maxSell = marketInventory.Get(type) - remainingAfterSell;
+            var amountLeftAfterMarketsBuy = exchangeRateFunction.GetPointFromNetExtraValueFromPoint(marketInventory.GetCurrentFunds(), marketInventory.Get(type));// marketInventory.GetCurrentFunds() / exchangeRate;
+            var maxSell = amountLeftAfterMarketsBuy - marketInventory.Get(type);
            
             var amountToSell = Math.Min(amount, maxSell);
             return selfInventory
@@ -68,7 +70,7 @@ namespace TradeModeling.Exchanges
                 .Then(totalDeposited => new ExchangeResult<T>
                 {
                     amount = totalDeposited,
-                    cost = -exchangeRateFunction.GetIncrementalValue(marketInventory.Get(type), -totalDeposited),
+                    cost = exchangeRateFunction.GetIncrementalValue(marketInventory.Get(type), totalDeposited),
                     type = type
                 }, exchangeResult =>
                 {

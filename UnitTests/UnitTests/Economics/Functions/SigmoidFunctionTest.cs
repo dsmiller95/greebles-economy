@@ -145,5 +145,26 @@ namespace UnitTests.Economics.Functions
                 Assert.AreEqual(expectedPair.Key, myFunction.GetPointFromNetExtraValueFromPoint(expectedPair.Value, 1), 1e-5);
             }
         }
+
+
+        [TestMethod]
+        public void ShouldHaveCorrectNetValuesInverseWhenPastLimitOfIntegral()
+        {
+            var myFunction = new SigmoidFunction(new SigmoidFunctionConfig
+            {
+                offset = 0f,
+                range = 10f
+            });
+
+            var expectedValueTable = new Dictionary<float, float>
+            {
+                {float.MaxValue, (float)(100f) },
+            };
+
+            foreach (var expectedPair in expectedValueTable)
+            {
+                Assert.AreEqual(expectedPair.Key, myFunction.GetPointFromNetExtraValueFromPoint(expectedPair.Value, 1), 1e-5);
+            }
+        }
     }
 }
