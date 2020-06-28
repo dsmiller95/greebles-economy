@@ -3,8 +3,8 @@ using Assets.Scripts.Resources;
 using Assets.UI.Plotter;
 using Assets.UI.Plotter.Function;
 using System;
-using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using TradeModeling.Functions;
 using UnityEngine;
 
@@ -15,39 +15,47 @@ public class MarketPricePlotter : PlottableFunctionsToSeriesAdapter
 
     new public void Start()
     {
-        
-        this.adapters = new List<PlottableFunctionToSeriesAdapter>();
+        adapters = new List<PlottableFunctionToSeriesAdapter>();
         var plotFunctionConfig = new PlottableFunctionConfig
         {
             start = 0,
             end = market._inventory.inventoryCapacity,
             steps = market._inventory.inventoryCapacity
         };
-        foreach (var sellPrice in market.GetSellPriceFunctions())
+        var allPriceFunctions = market.GetSellPriceFunctions().ToList();
+        var maxYScale = allPriceFunctions.Max(x => x.Value.yRange);
+        adapters = allPriceFunctions
+            .Select(kvp =>
         {
-            var resource = sellPrice.Key;
-            Debug.Log($"adding new function adapter for {Enum.GetName(typeof(ResourceType), resource)}");
-            var functionConfiguration = sellPrice.Value;
+            var resource = kvp.Key;
             var color = ResourceConfiguration.resourceColoring[resource];
             var plotConfig = new PlottableConfig
             {
                 dotColor = default,
                 lineColor = color,
-                yScale = functionConfiguration.yRange
+                yScale = maxYScale
             };
-            var newFunctionInstance = new SigmoidFunction(functionConfiguration);
+            var newFunctionInstance = new SigmoidFunction(kvp.Value);
             var adapter = new PlottableFunctionToSeriesAdapter(
-                x => newFunctionInstance.GetValueAtPoint(x),
+                x =>
+                {
+                    if(Mathf.Abs(x - market._inventory.Get(resource)) < 0.1)
+                    {
+                        // hackey way to force the graph to show an indication of where the current inventory lies on the price function graph
+                        return 0;
+                    }
+                    return newFunctionInstance.GetValueAtPoint(x);
+                },
                 plotFunctionConfig,
                 plotConfig);
-            adapters.Add(adapter);
-        }
+            return adapter;
+        }).ToList();
 
         base.Start();
     }
 
     protected override IList<PlottableFunctionToSeriesAdapter> GetFunctions()
     {
-        return this.adapters;
+        return adapters;
     }
 }

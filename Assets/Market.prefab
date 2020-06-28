@@ -237,7 +237,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1ba35100e75b85540b7597d32a655b98, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  inventoryCapacitySetForUI: 500
+  inventoryCapacitySetForUI: 100
   startingInventoryAmounts:
   - type: 1
     amount: 20
@@ -293,7 +293,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8bf64ef60e658b6468b931eeec4b2f85, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  updateFrequency: 5
+  updateFrequency: 2
   market: {fileID: 4861457521204343738}
 --- !u!1 &7219099098458843105
 GameObject:
