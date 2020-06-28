@@ -67,12 +67,12 @@ namespace Assets.Scripts.Gatherer.StateHandlers
 
                 var market = data.currentTarget.GetComponent<MarketBehavior>();
 
-                var exchangeAdapters = market.GetExchangeAdapter();
+                var exchangeAdapter = market.GetExchangeAdapter();
                 var optimizer = new PurchaseOptimizer<ResourceType, SpaceFillingInventory<ResourceType>, SpaceFillingInventory<ResourceType>>(
                     data.inventory,
                     market._inventory,
                     ResourceConfiguration.spaceFillingItems,
-                    exchangeAdapters, exchangeAdapters,
+                    exchangeAdapter, exchangeAdapter,
                     data.utilityFunction
                     );
 

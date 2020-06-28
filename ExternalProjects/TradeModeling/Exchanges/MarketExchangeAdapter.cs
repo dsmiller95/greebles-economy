@@ -4,44 +4,39 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TradeModeling.Economics;
-using TradeModeling.Functions;
 using TradeModeling.Inventories;
 
 namespace TradeModeling.Exchanges
 {
-    public class SigmoidMarketExchangeAdapter<T> :
-    ISeller<T, SpaceFillingInventory<T>, SpaceFillingInventory<T>>,
-    IPurchaser<T, SpaceFillingInventory<T>, SpaceFillingInventory<T>>
+    public class MarketExchangeAdapter<T> : IMarketExchangeAdapter<T>
     {
-        private IDictionary<T, SigmoidFunction> marketSellRates;
-        private IDictionary<T, SigmoidFunction> marketBuyRates;
+        private IDictionary<T, float> marketSellRates;
+        private IDictionary<T, float> marketBuyRates;
+
         private T moneyType;
 
-        public SigmoidMarketExchangeAdapter(IDictionary<T, SigmoidFunctionConfig> sellPrices, IDictionary<T, SigmoidFunctionConfig> buyPrices, T moneyType)
+        public MarketExchangeAdapter(IDictionary<T, float> sellPrices, IDictionary<T, float> buyPrices, T moneyType)
         {
-            this.marketBuyRates = buyPrices.SelectDictionary(config => new SigmoidFunction(config));
-            this.marketSellRates = sellPrices.SelectDictionary(config => new SigmoidFunction(config));
+            this.marketBuyRates = buyPrices;
+            this.marketSellRates = sellPrices;
             this.moneyType = moneyType;
         }
-        public SigmoidMarketExchangeAdapter(IDictionary<T, SigmoidFunctionConfig> exchangeRates, T moneyType): this(exchangeRates, exchangeRates, moneyType)
+        public MarketExchangeAdapter(IDictionary<T, float> exchangeRates, T moneyType): this(exchangeRates, exchangeRates, moneyType)
         {
         }
 
         public ActionOption<ExchangeResult<T>> Purchase(T type, float amount, SpaceFillingInventory<T> selfInventory, SpaceFillingInventory<T> marketInventory)
         {
-            //throw new NotImplementedException();
             // using the buying rate because this is a purchase from the "other". I.E. a sell from the perspective of the market
-            var exchangeRateFunction = marketSellRates[type];
-            var amountLeftAfterMarketsSell = exchangeRateFunction.GetPointFromNetExtraValueFromPoint(-selfInventory.GetCurrentFunds(), marketInventory.Get(type));
-            var maxPurchase = marketInventory.Get(type) - amountLeftAfterMarketsSell;
-
+            var exchangeRate = marketSellRates[type];
+            var maxPurchase = selfInventory.GetCurrentFunds() / exchangeRate;
             var amountToPurchase = Math.Min(amount, maxPurchase);
             return marketInventory
                 .transferResourceInto(type, selfInventory, amountToPurchase)
                 .Then(withdrawn => new ExchangeResult<T>
                 {
                     amount = withdrawn,
-                    cost = -exchangeRateFunction.GetIncrementalValue(marketInventory.Get(type), -withdrawn),
+                    cost = withdrawn * exchangeRate,
                     type = type
                 }, exchangeResult =>
                 {
@@ -58,19 +53,16 @@ namespace TradeModeling.Exchanges
 
         public ActionOption<ExchangeResult<T>> Sell(T type, float amount, SpaceFillingInventory<T> selfInventory, SpaceFillingInventory<T> marketInventory)
         {
-            //throw new NotImplementedException();
             // using the buying rate because this is a sell from the "other". I.E. a purchase from the market
-            var exchangeRateFunction = marketBuyRates[type];
-            var amountLeftAfterMarketsBuy = exchangeRateFunction.GetPointFromNetExtraValueFromPoint(marketInventory.GetCurrentFunds(), marketInventory.Get(type));// marketInventory.GetCurrentFunds() / exchangeRate;
-            var maxSell = amountLeftAfterMarketsBuy - marketInventory.Get(type);
-           
+            var exchangeRate = marketBuyRates[type];
+            var maxSell = marketInventory.GetCurrentFunds() / exchangeRate;
             var amountToSell = Math.Min(amount, maxSell);
             return selfInventory
                 .transferResourceInto(type, marketInventory, amountToSell)
                 .Then(totalDeposited => new ExchangeResult<T>
                 {
                     amount = totalDeposited,
-                    cost = exchangeRateFunction.GetIncrementalValue(marketInventory.Get(type), totalDeposited),
+                    cost = totalDeposited * exchangeRate,
                     type = type
                 }, exchangeResult =>
                 {

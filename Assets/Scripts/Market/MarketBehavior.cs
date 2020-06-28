@@ -22,7 +22,6 @@ namespace Assets.Scripts.Market
     {
         public SellPrice[] exchangeRates;
 
-
         private Dictionary<ResourceType, float> sellPriceDictionary;
         private Dictionary<ResourceType, float> purchasePriceDictionary;
         public ResourceInventory inventory;
@@ -38,7 +37,7 @@ namespace Assets.Scripts.Market
             _inventory = inventory.backingInventory;
         }
 
-        public MarketExchangeAdapter<ResourceType> GetExchangeAdapter()
+        public IMarketExchangeAdapter<ResourceType> GetExchangeAdapter()
         {
             return new MarketExchangeAdapter<ResourceType>(sellPriceDictionary, purchasePriceDictionary, ResourceType.Gold);
         }
