@@ -108,6 +108,18 @@ namespace TradeModeling.Economics
             return null;
         }
 
+        /// <summary>
+        /// Searches thought the inventories for the first possible purchase to execute, attempting to sell more of the resource of minimum utility
+        ///     bit by bit until a purchase is possible
+        ///     
+        /// There is a fundamental problem with this in terms of optimization: This only looks for the -first- purchase that can happen: not the -best-
+        ///     purchase. finding the best purchase option would require evaluating all possible selling amounts, or 
+        ///     using a completely different search strategy
+        /// To make this work well enough for resource sets with just a couple possible options, this function will never
+        ///     return an exchange in which it purchases the same items as it has sold
+        /// </summary>
+        /// <param name="minUtility"></param>
+        /// <returns></returns>
         private (ExchangeResult<Resource>, PurchaseResult)? GetFirstPossiblePurchase(Resource minUtility)
         {
             PurchaseResult purchaseOption = null;
@@ -131,7 +143,7 @@ namespace TradeModeling.Economics
                 }
                 sellOption.Execute();
 
-                purchaseOption = PurchaseResult.Purchase(this, simSelfInventory, simOtherInventory);
+                purchaseOption = PurchaseResult.Purchase(this, simSelfInventory, simOtherInventory, new[] { minUtility});
 
                 iterations++;
                 if (iterations > 1000)
@@ -166,7 +178,7 @@ namespace TradeModeling.Economics
             private IList<Resource> purchases;
             public PurchaseOperationResult<Resource> ledger;
             private PurchaseOptimizer<Resource, Self, Other> optimizer;
-            private PurchaseResult(PurchaseOptimizer<Resource, Self, Other> optimizer, Self simSelf, Other simOther)
+            private PurchaseResult(PurchaseOptimizer<Resource, Self, Other> optimizer, Self simSelf, Other simOther, Resource[] bannedPurchases)
             {
                 this.optimizer = optimizer;
                 purchases = new List<Resource>();
@@ -178,9 +190,9 @@ namespace TradeModeling.Economics
                 
                 //drain the bank
                 for (
-                    var resource = optimizer.GetHighestPurchaseableUtilityPerCost(simSelf, simOther);
+                    var resource = optimizer.GetHighestPurchaseableUtilityPerCost(simSelf, simOther, bannedPurchases);
                     !EqualityComparer<Resource>.Default.Equals(resource, default);
-                    resource = optimizer.GetHighestPurchaseableUtilityPerCost(simSelf, simOther))
+                    resource = optimizer.GetHighestPurchaseableUtilityPerCost(simSelf, simOther, bannedPurchases))
                 {
                     var purchaseResult = optimizer.purchaser.Purchase(resource, optimizer.increment, simSelf, simOther);
                     ledger.utilityGained += optimizer.utilityFunction.GetIncrementalUtility(
@@ -206,9 +218,13 @@ namespace TradeModeling.Economics
             /// </summary>
             /// <param name="bank">the amount of money which can be spent</param>
             /// <returns>the amount of utility gained during purchase</returns>
-            public static PurchaseResult Purchase(PurchaseOptimizer<Resource, Self, Other> optimizer, Self simSelf, Other simOther)
+            public static PurchaseResult Purchase(PurchaseOptimizer<Resource, Self, Other> optimizer, Self simSelf, Other simOther, Resource[] bannedPurchases = null)
             {
-                return new PurchaseResult(optimizer, simSelf, simOther);
+                if(bannedPurchases == null)
+                {
+                    bannedPurchases = new Resource[0];
+                }
+                return new PurchaseResult(optimizer, simSelf, simOther, bannedPurchases);
             }
 
             public void ReExecutePurchases(Self simSelf, Other simOther)
@@ -246,9 +262,10 @@ namespace TradeModeling.Economics
             return resourceObject.resource;
         }
 
-        private Resource GetHighestPurchaseableUtilityPerCost(Self simSelf, Other simOther)
+        private Resource GetHighestPurchaseableUtilityPerCost(Self simSelf, Other simOther, Resource[] bannedResources)
         {
             var resourceObject = tradeableResources
+                .Where(resource => !bannedResources.Contains(resource))
                 .Where(resource => purchaser.CanPurchase(resource, simSelf, simOther))
                 .Select(resource => new {
                     resource,

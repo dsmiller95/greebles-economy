@@ -132,13 +132,13 @@ namespace UnitTests.Economics
 
             optimizer.Optimize();
 
-            Assert.AreEqual(0.5f, self.Get(TestItemType.Pesos), 0.1f);
-            Assert.AreEqual(12, self.Get(TestItemType.Cactus));
-            Assert.AreEqual(6, self.Get(TestItemType.Corn));
+            Assert.AreEqual(0.25f, self.Get(TestItemType.Pesos), 0.1f);
+            Assert.AreEqual(11, self.Get(TestItemType.Cactus));
+            Assert.AreEqual(7, self.Get(TestItemType.Corn));
 
-            Assert.AreEqual(18, market.Get(TestItemType.Cactus));
-            Assert.AreEqual(16, market.Get(TestItemType.Corn));
-            Assert.AreEqual(6.5f, market.Get(TestItemType.Pesos), 0.1f);
+            Assert.AreEqual(19, market.Get(TestItemType.Cactus));
+            Assert.AreEqual(15, market.Get(TestItemType.Corn));
+            Assert.AreEqual(6.75f, market.Get(TestItemType.Pesos), 0.1f);
         }
 
 
@@ -198,15 +198,16 @@ namespace UnitTests.Economics
 
             Assert.AreEqual(0.05f, self.Get(TestItemType.Pesos), 0.05f);
 
-            // Should exchange at least a little bit
+            // Should exchange at least a little bit. Turns out to exchange 4 cactus just for one corn
+            // past that point it's no longer beneficial to conduct trade
             Assert.IsTrue(self.Get(TestItemType.Cactus) < 10);
             Assert.IsTrue(self.Get(TestItemType.Corn) > 0);
-            //Assert.AreEqual(12, self.Get(TestItemType.Cactus));
-            //Assert.AreEqual(6, self.Get(TestItemType.Corn));
+            Assert.AreEqual(6, self.Get(TestItemType.Cactus));
+            Assert.AreEqual(1, self.Get(TestItemType.Corn));
 
-            //Assert.AreEqual(18, market.Get(TestItemType.Cactus));
-            //Assert.AreEqual(16, market.Get(TestItemType.Corn));
-            //Assert.AreEqual(6.5f, market.Get(TestItemType.Pesos), 0.1f);
+            Assert.AreEqual(34, market.Get(TestItemType.Cactus));
+            Assert.AreEqual(19, market.Get(TestItemType.Corn));
+            Assert.AreEqual(50f, market.Get(TestItemType.Pesos), 0.1f);
         }
     }
 }
