@@ -637,7 +637,7 @@ Transform:
   m_GameObject: {fileID: 1084882394}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 20, y: 1, z: 20}
+  m_LocalScale: {x: 50, y: 1, z: 50}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 6
@@ -890,27 +890,35 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 11455738, guid: 407bd5cbe8c43334bb1b25c0f3826974, type: 3}
       propertyPath: lastTab
-      value: 2
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 11455738, guid: 407bd5cbe8c43334bb1b25c0f3826974, type: 3}
       propertyPath: maxHeight
-      value: 50
+      value: 60
       objectReference: {fileID: 0}
     - target: {fileID: 11455738, guid: 407bd5cbe8c43334bb1b25c0f3826974, type: 3}
       propertyPath: limitX
-      value: 200
+      value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 11455738, guid: 407bd5cbe8c43334bb1b25c0f3826974, type: 3}
       propertyPath: limitY
-      value: 200
+      value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 11455738, guid: 407bd5cbe8c43334bb1b25c0f3826974, type: 3}
       propertyPath: keyboardMovementSpeed
-      value: 15
+      value: 50
       objectReference: {fileID: 0}
     - target: {fileID: 11455738, guid: 407bd5cbe8c43334bb1b25c0f3826974, type: 3}
       propertyPath: screenEdgeMovementSpeed
-      value: 15
+      value: 70
+      objectReference: {fileID: 0}
+    - target: {fileID: 11455738, guid: 407bd5cbe8c43334bb1b25c0f3826974, type: 3}
+      propertyPath: scrollWheelZoomingSensitivity
+      value: -10
+      objectReference: {fileID: 0}
+    - target: {fileID: 11455738, guid: 407bd5cbe8c43334bb1b25c0f3826974, type: 3}
+      propertyPath: panningSpeed
+      value: 50
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 407bd5cbe8c43334bb1b25c0f3826974, type: 3}
