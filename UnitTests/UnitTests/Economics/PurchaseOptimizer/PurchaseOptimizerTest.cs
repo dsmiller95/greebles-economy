@@ -457,6 +457,67 @@ namespace UnitTests.Economics
         }
 
         [TestMethod]
+        public void ShouldAvoidExchangeCheapForExpensiveWhenGreaterUtilityinExpensiveButTooExpensive()
+        {
+            // Wood is cheap and plentiful
+            // Food is extremely expensive and rare
+            // Wood purchase prices are also quite high -- making it such that the optimizer will not
+            //      be able to purchase back any wood after comitting to or simulating a sell of wood
+            // Selling 10 wood will net one food purchased
+            selfInventory = new TestInventoryModel(new[] {
+                ("wood", 5f),
+                ("food", 0f)
+            },
+            0);
+            marketInventory = new TestInventoryModel(new[] {
+                ("wood", 10f),
+                ("food", 10f)
+            },
+            0);
+            exchangeModel = new TestExchangeModel()
+            {
+                utilityFunctions = new Dictionary<string, IIncrementalFunction>
+                {
+                    { "wood", new InverseWeightedUtility(new WeightedRegion[] {
+                            new WeightedRegion(0, 1),
+                        }) },
+                    { "food", new InverseWeightedUtility(new WeightedRegion[] {
+                            new WeightedRegion(0, 1),
+                        }) }
+                },
+                purchasePrices = new Dictionary<string, float>
+                {
+                    { "wood", 15 },
+                    { "food", 20 },
+                },
+                sellPrices = new Dictionary<string, float>
+                {
+                    { "wood", 2 },
+                    { "food", 19 },
+                }
+            };
+
+            var optimizer = new PurchaseOptimizer<string, TestInventoryModel, TestInventoryModel>(
+                selfInventory,
+                marketInventory,
+                new[] { "wood", "food" },
+                exchangeModel, exchangeModel, exchangeModel);
+
+            var transactionLedger = optimizer.Optimize();
+
+            // should not make any exchanges
+            //  the optimizer should attempt to sell a bunch of wood, but stop when it realizes that there is
+            //  not enough wood to buy one food
+            Assert.AreEqual(5, selfInventory.Get("wood"));
+            Assert.AreEqual(10, marketInventory.Get("wood"));
+            Assert.AreEqual(0, selfInventory.bank);
+            Assert.AreEqual(0, selfInventory.Get("food"));
+            Assert.AreEqual(10, marketInventory.Get("food"));
+
+            Assert.AreEqual(0, transactionLedger.Count);
+        }
+
+        [TestMethod]
         public void ShouldLeaveSomeMoneyWhenDecimalPointPrices()
         {
             // Wood is plentiful

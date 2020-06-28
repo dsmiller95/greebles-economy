@@ -57,6 +57,7 @@ namespace TradeModeling.Economics
                 transactionLedger.Add((null, purchase.ledger));
             }
 
+            var iterations = 0;
             var executesPurchase = true;
             for (var minUtility = GetHighestSellableValuePerUtility(increment, selfInventory, otherInventory);
                 !EqualityComparer<Resource>.Default.Equals(minUtility, default) && executesPurchase;
@@ -69,6 +70,11 @@ namespace TradeModeling.Economics
                     break;
                 }
                 transactionLedger.Add(nextTransaction.Value);
+                iterations++;
+                if(iterations > 1000)
+                {
+                    throw new Exception("Attempted to optimize over too many iterations, broke to safegaurd against infinite loop");
+                }
             }
 
             return transactionLedger;
@@ -107,6 +113,7 @@ namespace TradeModeling.Economics
             PurchaseResult purchaseOption = null;
             ActionOption<ExchangeResult<Resource>> sellOption = null;
             float purchaseAmount = 0;
+            int iterations = 0;
             while (purchaseOption == null || purchaseOption.ledger.exchages.Count() <= 0)
             {
                 var simSelfInventory = CloneSelfInventory();
@@ -123,6 +130,12 @@ namespace TradeModeling.Economics
                 sellOption.Execute();
 
                 purchaseOption = PurchaseResult.Purchase(this, simSelfInventory, simOtherInventory);
+
+                iterations++;
+                if (iterations > 1000)
+                {
+                    throw new Exception("Attempted to find purchase option over too many iterations, broke to safegaurd against infinite loop");
+                }
             }
             return (sellOption.info, purchaseOption);
         }
@@ -158,6 +171,8 @@ namespace TradeModeling.Economics
                 var ledger = new PurchaseOperationResult<Resource>();
                 ledger.utilityGained = 0;
                 ledger.exchages = new List<ExchangeResult<Resource>>();
+
+                int iterations = 0;
                 
                 //drain the bank
                 for (
@@ -173,6 +188,12 @@ namespace TradeModeling.Economics
                     purchaseResult.Execute();
                     ledger.exchages.Add(purchaseResult.info);
                     purchases.Add(resource);
+
+                    iterations++;
+                    if (iterations > 1000)
+                    {
+                        throw new Exception("Attempted to purchase over too many iterations, broke to safegaurd against infinite loop");
+                    }
                 }
 
                 this.ledger = ledger;
