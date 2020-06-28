@@ -231,6 +231,7 @@ MonoBehaviour:
   touchDistance: 1
   backpackSize: 10
   pocketSize: 1
+  StuffIEat: 0100000002000000
 --- !u!114 &9183838253323556353
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -293,9 +294,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ResourcePlotter: {fileID: 2520451541431826768}
   gatherer: {fileID: 4498409171599806407}
-  meshRenderer: {fileID: 2205066498059021884}
-  baseMaterial: {fileID: 2100000, guid: 1a1299152cdc7a445ae272a808d55557, type: 2}
-  selectedMaterial: {fileID: 2100000, guid: d4d215fcc7017e94eb8defeee9bfecaa, type: 2}
 --- !u!114 &5190111888768820412
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -308,9 +306,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 17a1329ecfd54714e8086ab67edda2bd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  meshRenderer: {fileID: 2205066498059021884}
   baseMaterial: {fileID: 2100000, guid: 1a1299152cdc7a445ae272a808d55557, type: 2}
   selectedMaterial: {fileID: 2100000, guid: d4d215fcc7017e94eb8defeee9bfecaa, type: 2}
+  outlineMaterial: {fileID: 0}
 --- !u!1 &5848019200659954162
 GameObject:
   m_ObjectHideFlags: 0

@@ -27,6 +27,8 @@ namespace Assets.Scripts.Gatherer
         public int backpackSize = 10;
         public int pocketSize = 1;
 
+        public ResourceType[] StuffIEat;
+
         internal GameObject currentTarget;
         internal float lastTargetCheckTime = 0;
 

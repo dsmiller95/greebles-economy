@@ -30,8 +30,7 @@ namespace Assets.Scripts.Gatherer.StateHandlers
             if ((myState.lastConsumedTime + timeDelay) < Time.time)
             {
                 data.stateData[GathererState.Consuming] = new ConsumingStateData { lastConsumedTime = Time.time };
-                var firstAvailableResource = Enum.GetValues(typeof(ResourceType))
-                    .Cast<ResourceType>()
+                var firstAvailableResource = data.StuffIEat
                     .Where(type => data.inventory.Get(type) > 0)
                     .FirstOrDefault();
 
