@@ -1881,6 +1881,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1757468945}
     m_Modifications:
+    - target: {fileID: 1849793054115757672, guid: 736b9a328dd791b478180f339c3b6cbc,
+        type: 3}
+      propertyPath: updateFrequency
+      value: 5
+      objectReference: {fileID: 0}
     - target: {fileID: 4861457521204343737, guid: 736b9a328dd791b478180f339c3b6cbc,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -1939,17 +1944,22 @@ PrefabInstance:
     - target: {fileID: 4861457521204343738, guid: 736b9a328dd791b478180f339c3b6cbc,
         type: 3}
       propertyPath: exchangeRates.Array.data[0].sellPrice
-      value: 1.4
+      value: 20
       objectReference: {fileID: 0}
     - target: {fileID: 4861457521204343738, guid: 736b9a328dd791b478180f339c3b6cbc,
         type: 3}
       propertyPath: exchangeRates.Array.data[1].sellPrice
-      value: 1.2
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 4861457521204343738, guid: 736b9a328dd791b478180f339c3b6cbc,
         type: 3}
       propertyPath: exchangeRates.Array.data[0].buyPrice
-      value: 1.1
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4861457521204343738, guid: 736b9a328dd791b478180f339c3b6cbc,
+        type: 3}
+      propertyPath: exchangeRates.Array.data[1].buyPrice
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 4861457521204343749, guid: 736b9a328dd791b478180f339c3b6cbc,
         type: 3}
