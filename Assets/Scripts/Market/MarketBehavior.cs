@@ -4,9 +4,10 @@ using Assets.Scripts.Trader;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using TradeModeling;
 using TradeModeling.Exchanges;
+using TradeModeling.Functions;
 using TradeModeling.Inventories;
-using UnityEngine;
 
 namespace Assets.Scripts.Market
 {
@@ -28,7 +29,7 @@ namespace Assets.Scripts.Market
         public SpaceFillingInventory<ResourceType> _inventory;
 
 
-        public override SpaceFillingInventory<ResourceType> tradeInventory => this._inventory;
+        public override SpaceFillingInventory<ResourceType> tradeInventory => _inventory;
 
         private void Awake()
         {
@@ -39,7 +40,28 @@ namespace Assets.Scripts.Market
 
         public IMarketExchangeAdapter<ResourceType> GetExchangeAdapter()
         {
-            return new MarketExchangeAdapter<ResourceType>(sellPriceDictionary, purchasePriceDictionary, ResourceType.Gold);
+            return new SigmoidMarketExchangeAdapter<ResourceType>(
+                GetSellPriceFunctions(),
+                GetPurchasePriceFunctions(),
+                ResourceType.Gold);
+        }
+
+        public IDictionary<ResourceType, SigmoidFunctionConfig> GetSellPriceFunctions()
+        {
+            return MapPricesToConfigs(sellPriceDictionary);
+        }
+        public IDictionary<ResourceType, SigmoidFunctionConfig> GetPurchasePriceFunctions()
+        {
+            return MapPricesToConfigs(purchasePriceDictionary);
+        }
+
+        private IDictionary<ResourceType, SigmoidFunctionConfig> MapPricesToConfigs(IDictionary<ResourceType, float> prices)
+        {
+            return prices.SelectDictionary(x => new SigmoidFunctionConfig
+            {
+                range = tradeInventory.inventoryCapacity,
+                yRange = x
+            });
         }
 
         // Start is called before the first frame update

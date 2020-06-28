@@ -1,5 +1,6 @@
 ﻿using Assets.UI.Plotter;
 using Assets.UI.SelectionManager;
+using System.Linq;
 using UnityEngine;
 
 namespace Assets.UI.InfoPane
@@ -23,7 +24,8 @@ namespace Assets.UI.InfoPane
                 var newPlottable = Instantiate(plottablePrefab, transform);
 
                 var plotter = newPlottable.GetComponentInChildren<GraphPlotter>();
-                plotter.SetPlottablesPreStart(plottableConfig.plot.GetPlottableSeries());
+                var series = plottableConfig.plot.GetPlottableSeries();
+                plotter.SetPlottablesPreStart(series);
                 panelBuilder.AddNextPanel(newPlottable);
             }
             if (paneConfiguration.uiObjects != default)

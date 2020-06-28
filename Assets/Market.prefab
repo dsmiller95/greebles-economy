@@ -168,6 +168,7 @@ GameObject:
   - component: {fileID: 2938998355160009592}
   - component: {fileID: 1838689708058528886}
   - component: {fileID: 7186735388572575617}
+  - component: {fileID: 1849793054115757672}
   m_Layer: 10
   m_Name: Market
   m_TagString: Untagged
@@ -257,6 +258,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ResourcePlotter: {fileID: 7186735388572575617}
+  PricePlotter: {fileID: 1849793054115757672}
 --- !u!114 &7186735388572575617
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -279,6 +281,20 @@ MonoBehaviour:
   - type: 4
     yScale: 100
   inventory: {fileID: 2938998355160009592}
+--- !u!114 &1849793054115757672
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4861457521204343749}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8bf64ef60e658b6468b931eeec4b2f85, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  updateFrequency: 5
+  market: {fileID: 4861457521204343738}
 --- !u!1 &7219099098458843105
 GameObject:
   m_ObjectHideFlags: 0

@@ -79,6 +79,7 @@
     <Compile Include="Assets\Scripts\Home\HomeBehavior.cs" />
     <Compile Include="Assets\Scripts\Home\SelectableHome.cs" />
     <Compile Include="Assets\Scripts\Market\MarketBehavior.cs" />
+    <Compile Include="Assets\Scripts\Market\MarketPricePlotter.cs" />
     <Compile Include="Assets\Scripts\Market\ResourceSellResult.cs" />
     <Compile Include="Assets\Scripts\Market\SelectableMarket.cs" />
     <Compile Include="Assets\Scripts\Resources\IResource.cs" />
@@ -108,12 +109,14 @@
     <Compile Include="Assets\UI\PathPlotter\SinglePathPlotter.cs" />
     <Compile Include="Assets\UI\Plotter\Function Plotter\IPlottableFunction.cs" />
     <Compile Include="Assets\UI\Plotter\Function Plotter\InverseUtilityPlottableAdapter.cs" />
+    <Compile Include="Assets\UI\Plotter\Function Plotter\PlottableFunctionToSeriesAdapter.cs" />
+    <Compile Include="Assets\UI\Plotter\Function Plotter\PlottableFunctionToSeriesAdapterBehavior.cs" />
     <Compile Include="Assets\UI\Plotter\GraphPlotter.cs" />
     <Compile Include="Assets\UI\Plotter\PlotContainer.cs" />
+    <Compile Include="Assets\UI\Plotter\PlottableConfig.cs" />
     <Compile Include="Assets\UI\Plotter\Series Plotter\GenericTimeSeries.cs" />
     <Compile Include="Assets\UI\Plotter\Series Plotter\IMultiPlottableSeries.cs" />
     <Compile Include="Assets\UI\Plotter\Series Plotter\IPlottableSeries.cs" />
-    <Compile Include="Assets\UI\Plotter\Series Plotter\PlottableFunctionToSeriesAdapter.cs" />
     <Compile Include="Assets\UI\Plotter\Series Plotter\PlottableTimeSeries.cs" />
     <Compile Include="Assets\UI\SelectionInfoPane\InfoPaneBuilder.cs" />
     <Compile Include="Assets\UI\SelectionInfoPane\InfoPaneConfiguration.cs" />

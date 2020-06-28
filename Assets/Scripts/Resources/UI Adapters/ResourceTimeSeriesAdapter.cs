@@ -13,7 +13,7 @@ namespace Assets.Scripts.Resources.UI
         public ResourceType type;
         public float yScale;
     }
-    public abstract class ResourceTimeSeriesAdapter : GenericTimeSeries<ResourceType>, IMultiPlottableSeries
+    public abstract class ResourceTimeSeriesAdapter : GenericTimeSeries<ResourceType>
     {
         public ResourceGraphConfiguration[] resourcePlotConfig;
 

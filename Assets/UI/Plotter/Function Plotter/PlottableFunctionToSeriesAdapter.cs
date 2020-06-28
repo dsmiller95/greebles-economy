@@ -1,4 +1,5 @@
 ﻿using Assets.UI.Plotter.Function;
+using Assets.UI.Plotter.Series;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,34 +7,23 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 
-namespace Assets.UI.Plotter.Series
+namespace Assets.UI.Plotter.Function
 {
-    class PlottableFunctionToSeriesAdapter : MonoBehaviour, IPlottableSeries
+    public class PlottableFunctionToSeriesAdapter : IPlottableSeries
     {
-        public GameObject plottableFunctionObject;
-        public PlottableFunctionConfig functionConfig;
-        public PlottableConfig plotConfig;
+        public PlottableFunctionToSeriesAdapter(Func<float, float> function, PlottableFunctionConfig functionConfig, PlottableConfig plotConfig)
+        {
+            this.function = function;
+            this.functionConfig = functionConfig;
+            this.plotConfig = plotConfig;
+        }
+
+        private Func<float, float> function;
+        private PlottableFunctionConfig functionConfig;
+        private PlottableConfig plotConfig;
         private IList<Vector2> plotSeries;
 
-
-        private IPlottableFunction function;
-
-        private void Awake()
-        {
-            this.function = plottableFunctionObject.GetComponent<IPlottableFunction>();
-        }
-
-        private float lastPlot = 0;
-        public void Update()
-        {
-            if (Time.time - lastPlot > functionConfig.updateFrequency)
-            {
-                lastPlot = Time.time;
-                this.PlotFunction();
-            }
-        }
-
-        private void PlotFunction()
+        public void PlotFunction()
         {
             this.plotSeries = this.GeneratePlotVectors().ToArray();
             this.SeriesUpdated?.Invoke(this);
@@ -44,7 +34,7 @@ namespace Assets.UI.Plotter.Series
             for (int i = 0; i < functionConfig.steps; i++)
             {
                 var xPos = i * xStep;
-                var value = function.PlotAt(xPos);
+                var value = function(xPos);
                 var dotPos = new Vector2(xPos, value);
                 yield return dotPos;
             }

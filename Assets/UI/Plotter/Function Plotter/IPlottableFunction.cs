@@ -26,9 +26,5 @@ namespace Assets.UI.Plotter.Function
         /// The number of individual points to be drawn
         /// </summary>
         public int steps;
-        /// <summary>
-        /// The number of seconds between re-plotting the function
-        /// </summary>
-        public float updateFrequency;
     }
 }

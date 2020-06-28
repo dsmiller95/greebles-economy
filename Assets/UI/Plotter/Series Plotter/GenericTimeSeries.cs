@@ -14,6 +14,11 @@ namespace Assets.UI.Plotter.Series
         public Color color;
     }
 
+    /// <summary>
+    /// An abstract class used to represent a graph which has multiple time series inside of it
+    ///     it will manage polling data out of a getting function at specific intervals
+    /// </summary>
+    /// <typeparam name="TSeriesKey"></typeparam>
     public abstract class GenericTimeSeries<TSeriesKey> : MonoBehaviour, IMultiPlottableSeries
     {
 

@@ -9,6 +9,7 @@ namespace Assets.Scripts.Market
     public class SelectableMarket : MonoBehaviour, IFocusable
     {
         public ResourceTimeSeriesAdapter ResourcePlotter;
+        public MarketPricePlotter PricePlotter;
 
         // Start is called before the first frame update
         void Start()
@@ -30,6 +31,10 @@ namespace Assets.Scripts.Market
                 new PlotPaneConfig {
                     plot = ResourcePlotter,
                     header = "Inventory"
+                },
+                new PlotPaneConfig {
+                    plot = PricePlotter,
+                    header = "Prices"
                 }
             }
             };
