@@ -455,6 +455,63 @@ namespace UnitTests.Economics
                     1/2f - (1/8f + 1/7f),
                 }));
         }
+        [TestMethod]
+        public void ShouldExchangeCheapForVeryExpensiveWhenGreaterUtilityinExpensive()
+        {
+            // Wood is cheap and plentiful
+            // Food is very expensive and rare
+            // Selling four wood will net one food purchased
+            selfInventory = new TestInventoryModel(new[] {
+                ("wood", 6f),
+                ("food", 0f)
+            },
+            0);
+            marketInventory = new TestInventoryModel(new[] {
+                ("wood", 10f),
+                ("food", 10f)
+            },
+            0);
+            exchangeModel = new TestExchangeModel()
+            {
+                utilityFunctions = new Dictionary<string, IIncrementalFunction>
+                {
+                    { "wood", new InverseWeightedUtility(new WeightedRegion[] {
+                            new WeightedRegion(0, 1),
+                        }) },
+                    { "food", new InverseWeightedUtility(new WeightedRegion[] {
+                            new WeightedRegion(0, 1),
+                        }) }
+                },
+                purchasePrices = new Dictionary<string, float>
+                {
+                    { "wood", 3 },
+                    { "food", 8 },
+                },
+                sellPrices = new Dictionary<string, float>
+                {
+                    { "wood", 2 },
+                    { "food", 7 },
+                }
+            };
+
+            var optimizer = new PurchaseOptimizer<string, TestInventoryModel, TestInventoryModel>(
+                selfInventory,
+                marketInventory,
+                new[] { "wood", "food" },
+                exchangeModel, exchangeModel, exchangeModel);
+
+            var transactionLedger = optimizer.Optimize();
+
+            // should make one exchange of 4 wood for one food. [2-6] should have a total utility of 0.95
+            //  but [0-1] should have a total utility of 1, giving the exchange a slight gain in utility
+            Assert.AreEqual(2, selfInventory.Get("wood"));
+            Assert.AreEqual(14, marketInventory.Get("wood"));
+            Assert.AreEqual(0, selfInventory.bank);
+            Assert.AreEqual(1, selfInventory.Get("food"));
+            Assert.AreEqual(9, marketInventory.Get("food"));
+
+            Assert.AreEqual(1, transactionLedger.Count);
+        }
 
         [TestMethod]
         public void ShouldAvoidExchangeCheapForExpensiveWhenGreaterUtilityinExpensiveButTooExpensive()

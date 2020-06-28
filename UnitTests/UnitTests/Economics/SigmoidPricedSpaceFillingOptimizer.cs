@@ -140,5 +140,73 @@ namespace UnitTests.Economics
             Assert.AreEqual(16, market.Get(TestItemType.Corn));
             Assert.AreEqual(6.5f, market.Get(TestItemType.Pesos), 0.1f);
         }
+
+
+        [TestMethod]
+        public void ShouldOptimizeForUtilityWhenCheapPlentifulExpensiveRare()
+        {
+            var self = EconomicsTestUtilities.CreateInventory(new[]
+            {
+                (TestItemType.Cactus,   10f),
+                (TestItemType.Corn,     0f),
+                (TestItemType.Pesos,    0f)
+            }, 100);
+            var market = EconomicsTestUtilities.CreateInventory(new[]
+            {
+                (TestItemType.Cactus,   30f),
+                (TestItemType.Corn,     20f),
+                (TestItemType.Pesos,    50f)
+            }, 500);
+
+            var exchangeAdapter = EconomicsTestUtilities.CreateSigmoidExchangeAdapter(
+                new[] {
+                    (TestItemType.Cactus,
+                    new SigmoidFunctionConfig{
+                        range = 50f,
+                        offset = 0f,
+                        yRange = 1f
+                    }),
+                    (TestItemType.Corn,
+                    new SigmoidFunctionConfig{
+                        range = 50f,
+                        offset = 0f,
+                        yRange = 1f
+                    }) }
+                );
+
+            var utilityFunctions = new UtilityEvaluatorFunctionMapper<TestItemType>(new Dictionary<TestItemType, IIncrementalFunction>
+            {
+                { TestItemType.Cactus, new InverseWeightedUtility(new []
+                {
+                    new WeightedRegion(0, 1)
+                }) },
+                { TestItemType.Corn, new InverseWeightedUtility(new []
+                {
+                    new WeightedRegion(0, 1)
+                }) }
+            });
+
+            var optimizer = new PurchaseOptimizer<TestItemType, SpaceFillingInventory<TestItemType>, SpaceFillingInventory<TestItemType>>(
+                self,
+                market,
+                new[] { TestItemType.Cactus, TestItemType.Corn },
+                exchangeAdapter,
+                exchangeAdapter,
+                utilityFunctions);
+
+            optimizer.Optimize();
+
+            Assert.AreEqual(0.05f, self.Get(TestItemType.Pesos), 0.05f);
+
+            // Should exchange at least a little bit
+            Assert.IsTrue(self.Get(TestItemType.Cactus) < 10);
+            Assert.IsTrue(self.Get(TestItemType.Corn) > 0);
+            //Assert.AreEqual(12, self.Get(TestItemType.Cactus));
+            //Assert.AreEqual(6, self.Get(TestItemType.Corn));
+
+            //Assert.AreEqual(18, market.Get(TestItemType.Cactus));
+            //Assert.AreEqual(16, market.Get(TestItemType.Corn));
+            //Assert.AreEqual(6.5f, market.Get(TestItemType.Pesos), 0.1f);
+        }
     }
 }
