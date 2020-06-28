@@ -513,6 +513,85 @@ namespace UnitTests.Economics
             Assert.AreEqual(1, transactionLedger.Count);
         }
 
+        [Ignore] // TODO
+                 // This test fails because the optimizer will always look for the first available purchase
+                 //  when attempting to sell an amount of a resource to buy something.
+                 //  This causes the optimizer to always end up buying wood/water when attempting to sell water/wood;
+                 //  and abort the sell attempt because it does not search other options
+        [TestMethod]
+        public void ShouldExchangeCheapForVeryExpensiveWhenGreaterUtilityinExpensiveWith3Resources()
+        {
+            // Wood is cheap and plentiful
+            // Water is also cheap and plentiful
+            // Food is very expensive and rare
+            // Selling four wood or water will net one food purchased
+            // wood and water can be exchanged for each other one-for-one without loss
+            selfInventory = new TestInventoryModel(new[] {
+                ("wood", 6f),
+                ("water", 6f),
+                ("food", 0f)
+            },
+            0);
+            marketInventory = new TestInventoryModel(new[] {
+                ("wood", 10f),
+                ("water", 10f),
+                ("food", 10f)
+            },
+            0);
+            exchangeModel = new TestExchangeModel()
+            {
+                utilityFunctions = new Dictionary<string, IIncrementalFunction>
+                {
+                    { "wood", new InverseWeightedUtility(new WeightedRegion[] {
+                            new WeightedRegion(0, 1),
+                        }) },
+                    { "water", new InverseWeightedUtility(new WeightedRegion[] {
+                            new WeightedRegion(0, 1),
+                        }) },
+                    { "food", new InverseWeightedUtility(new WeightedRegion[] {
+                            new WeightedRegion(0, 1),
+                        }) }
+                },
+                purchasePrices = new Dictionary<string, float>
+                {
+                    { "wood", 2 },
+                    { "water", 2 },
+                    { "food", 8 },
+                },
+                sellPrices = new Dictionary<string, float>
+                {
+                    { "wood", 2 },
+                    { "water", 2 },
+                    { "food", 7 },
+                }
+            };
+
+            var optimizer = new PurchaseOptimizer<string, TestInventoryModel, TestInventoryModel>(
+                selfInventory,
+                marketInventory,
+                new[] { "wood", "water", "food" },
+                exchangeModel, exchangeModel, exchangeModel);
+
+            var transactionLedger = optimizer.Optimize();
+
+            // should make one exchange of 4 wood for one food. [2-6] should have a total utility of 0.95
+            //  but [0-1] should have a total utility of 1, giving the exchange a slight gain in utility
+            // should also exchange water for wood or vise-versa to roughly equalize the exchange,
+            //  since they can be exchanged one-for-one it should fully equalize
+            Assert.AreEqual(3, transactionLedger.Count);
+
+            Assert.AreEqual(4, selfInventory.Get("wood"));
+            Assert.AreEqual(4, selfInventory.Get("water"));
+            Assert.AreEqual(1, selfInventory.Get("food"));
+            
+            Assert.AreEqual(0, selfInventory.bank);
+
+            Assert.AreEqual(12, marketInventory.Get("wood"));
+            Assert.AreEqual(12, marketInventory.Get("water"));
+            Assert.AreEqual(9, marketInventory.Get("food"));
+
+        }
+
         [TestMethod]
         public void ShouldAvoidExchangeCheapForExpensiveWhenGreaterUtilityinExpensiveButTooExpensive()
         {
