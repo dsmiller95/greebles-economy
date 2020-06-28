@@ -65,7 +65,7 @@ namespace Assets.Scripts.Trader.StateHandlers
             data.stateData[stateHandle] = new TradeExecuteStateData
             {
                 lastExchangeTime = Time.time,
-                remainingTrades = data.currentTradeNodeTarget.trades.ToList()
+                remainingTrades = data.currentTradeNodeTarget.trades.Where(trade => Math.Abs(trade.amount) > 1E-5).ToList()
             };
         }
 

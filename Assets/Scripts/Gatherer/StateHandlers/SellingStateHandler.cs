@@ -77,7 +77,7 @@ namespace Assets.Scripts.Gatherer.StateHandlers
                     );
 
                 var ledger = optimizer.Optimize();
-                var sourceUtilities = (new UtilityAnalyzer<ResourceType>()).GetUtilityPerInitialResource(
+                var sourceUtilities = (new UtilityAnalyzer<ResourceType>()).GetTotalUtilityByInitialResource(
                     ResourceConfiguration.spaceFillingItems,
                     data.inventory,
                     ledger,

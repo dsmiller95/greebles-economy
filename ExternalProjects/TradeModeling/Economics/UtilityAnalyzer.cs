@@ -17,7 +17,7 @@ namespace TradeModeling.Economics
     /// <typeparam name="Resource"></typeparam>
     public class UtilityAnalyzer<Resource> where Resource : IComparable
     {
-        public Dictionary<Resource, float> GetUtilityPerInitialResource(
+        public Dictionary<Resource, float> GetTotalUtilityByInitialResource(
             IList<Resource> tradeableResources,
             SpaceFillingInventory<Resource> endingInventory,
             IList<(ExchangeResult<Resource>?, PurchaseOperationResult<Resource>)> transactionLedger,

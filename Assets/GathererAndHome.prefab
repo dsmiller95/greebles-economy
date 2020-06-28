@@ -9,8 +9,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1140293900322245277}
-  m_Layer: 9
-  m_Name: Gatherer
+  m_Layer: 0
+  m_Name: GathererAndHome
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -39,6 +39,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1140293900322245277}
     m_Modifications:
+    - target: {fileID: 5932025948300384605, guid: 7e956704557df5f439b06599241112a7,
+        type: 3}
+      propertyPath: m_Layer
+      value: 10
+      objectReference: {fileID: 0}
     - target: {fileID: 8082357802481383815, guid: 7e956704557df5f439b06599241112a7,
         type: 3}
       propertyPath: m_Name
@@ -52,7 +57,7 @@ PrefabInstance:
     - target: {fileID: 8082357802481383931, guid: 7e956704557df5f439b06599241112a7,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.5
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 8082357802481383931, guid: 7e956704557df5f439b06599241112a7,
         type: 3}
@@ -144,7 +149,7 @@ PrefabInstance:
     - target: {fileID: 7680267254166313388, guid: 87bb67f98533fe94aab4cc0c6e830f1f,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: 1.1
       objectReference: {fileID: 0}
     - target: {fileID: 7680267254166313388, guid: 87bb67f98533fe94aab4cc0c6e830f1f,
         type: 3}

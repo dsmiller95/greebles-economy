@@ -8,7 +8,7 @@ public class SpawnController : MonoBehaviour
 {
     public int maximumConcurrentSpawned = 10;
     public float spawnProbability = 0.5f;
-
+    public int initialSpawnNumber = 1;
 
     [Header("Boost Settings")]
     [Tooltip("Amount of extra probability to add on top of the base spawn probability when there are no spawned items")]
@@ -27,6 +27,10 @@ public class SpawnController : MonoBehaviour
     void Start()
     {
         this.boostCurveMultiplier = this.boostCurveOffset * this.boostProbabilityAt0;
+        for(var i = 0; i < initialSpawnNumber; i++)
+        {
+            this.SpawnItem();
+        }
     }
 
     // Update is called once per frame
@@ -38,9 +42,14 @@ public class SpawnController : MonoBehaviour
             var probability = spawnProbability + (this.boostCurveMultiplier / (childrenNumber + this.boostCurveOffset));
             if(Random.value < probability * Time.deltaTime)
             {
-                Instantiate(spawnPrefab, getRandomPosInBounds() + this.transform.position, Quaternion.identity, this.transform);
+                this.SpawnItem();
             }
         }
+    }
+
+    private void SpawnItem()
+    {
+        Instantiate(spawnPrefab, getRandomPosInBounds() + this.transform.position, Quaternion.identity, this.transform);
     }
 
     private Vector3 getRandomPosInBounds()

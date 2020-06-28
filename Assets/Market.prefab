@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 537369277130951665}
   - component: {fileID: 5543452305180392319}
-  m_Layer: 9
+  m_Layer: 0
   m_Name: ResourceDisplay
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -58,7 +58,7 @@ MonoBehaviour:
   - type: 4
     icon: {fileID: 21300000, guid: e071dac40184f5844957d183405ceb8f, type: 3}
   offset: {x: 0, y: 25}
-  inventoryToTrack: {fileID: 2938998355160009592}
+  inventoryToTrack: {fileID: 85593738975168156}
 --- !u!1 &3169942836858566490
 GameObject:
   m_ObjectHideFlags: 0
@@ -71,7 +71,7 @@ GameObject:
   - component: {fileID: 3586142484307637096}
   - component: {fileID: 1095838950829030741}
   - component: {fileID: 6330969664403749602}
-  m_Layer: 10
+  m_Layer: 0
   m_Name: MarketRenderer
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -85,11 +85,11 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3169942836858566490}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 4861457521204343737}
+  m_Father: {fileID: 1708851371872354346}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &3586142484307637096
@@ -154,7 +154,7 @@ MonoBehaviour:
   baseMaterial: {fileID: 2100000, guid: 7127dc5c79065644d998cb90db8d70a6, type: 2}
   selectedMaterial: {fileID: 2100000, guid: 26706517f297d074ea6f30ffb185cd9a, type: 2}
   outlineMaterial: {fileID: 2100000, guid: 0336d35aa50f4424e98c196f3e331cf2, type: 2}
---- !u!1 &4861457521204343749
+--- !u!1 &3779428038416350670
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -162,13 +162,13 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 4861457521204343737}
-  - component: {fileID: 4861457521204343750}
-  - component: {fileID: 4861457521204343738}
-  - component: {fileID: 2938998355160009592}
-  - component: {fileID: 1838689708058528886}
-  - component: {fileID: 7186735388572575617}
-  - component: {fileID: 1849793054115757672}
+  - component: {fileID: 1708851371872354346}
+  - component: {fileID: 2451489453788812032}
+  - component: {fileID: 7086212739382045326}
+  - component: {fileID: 85593738975168156}
+  - component: {fileID: 2428442771590661238}
+  - component: {fileID: 7119504726125291882}
+  - component: {fileID: 3149401644907002803}
   m_Layer: 10
   m_Name: Market
   m_TagString: Untagged
@@ -176,42 +176,42 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &4861457521204343737
+--- !u!4 &1708851371872354346
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4861457521204343749}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -1.910922, y: 1.36, z: -5.87}
+  m_GameObject: {fileID: 3779428038416350670}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0.6, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1034166960988540472}
   - {fileID: 5791915509492558664}
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 4861457521204343737}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!65 &4861457521204343750
+--- !u!65 &2451489453788812032
 BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4861457521204343749}
+  m_GameObject: {fileID: 3779428038416350670}
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &4861457521204343738
+--- !u!114 &7086212739382045326
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4861457521204343749}
+  m_GameObject: {fileID: 3779428038416350670}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 22051b71cfd0c764c94d1c448c4258bd, type: 3}
@@ -224,14 +224,14 @@ MonoBehaviour:
   - type: 2
     sellPrice: 1
     buyPrice: 1
-  inventory: {fileID: 2938998355160009592}
---- !u!114 &2938998355160009592
+  inventory: {fileID: 85593738975168156}
+--- !u!114 &85593738975168156
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4861457521204343749}
+  m_GameObject: {fileID: 3779428038416350670}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 1ba35100e75b85540b7597d32a655b98, type: 3}
@@ -245,27 +245,27 @@ MonoBehaviour:
     amount: 20
   - type: 4
     amount: 50
---- !u!114 &1838689708058528886
+--- !u!114 &2428442771590661238
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4861457521204343749}
+  m_GameObject: {fileID: 3779428038416350670}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c0d97d42d8962e640b623fe2f5d19077, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ResourcePlotter: {fileID: 7186735388572575617}
-  PricePlotter: {fileID: 1849793054115757672}
---- !u!114 &7186735388572575617
+  ResourcePlotter: {fileID: 7119504726125291882}
+  PricePlotter: {fileID: 3149401644907002803}
+--- !u!114 &7119504726125291882
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4861457521204343749}
+  m_GameObject: {fileID: 3779428038416350670}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 1f634cf9c5a23a84da5b09649786bd51, type: 3}
@@ -280,21 +280,52 @@ MonoBehaviour:
     yScale: 100
   - type: 4
     yScale: 100
-  inventory: {fileID: 2938998355160009592}
---- !u!114 &1849793054115757672
+  inventory: {fileID: 85593738975168156}
+--- !u!114 &3149401644907002803
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4861457521204343749}
+  m_GameObject: {fileID: 3779428038416350670}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8bf64ef60e658b6468b931eeec4b2f85, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   updateFrequency: 2
-  market: {fileID: 4861457521204343738}
+  market: {fileID: 7086212739382045326}
+--- !u!1 &4861457521204343749
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4861457521204343737}
+  m_Layer: 0
+  m_Name: Market
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4861457521204343737
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4861457521204343749}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children:
+  - {fileID: 1708851371872354346}
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &7219099098458843105
 GameObject:
   m_ObjectHideFlags: 0
@@ -308,7 +339,7 @@ GameObject:
   - component: {fileID: 4451360928610664117}
   - component: {fileID: 4125723187281820235}
   - component: {fileID: 3821281246425868943}
-  m_Layer: 9
+  m_Layer: 0
   m_Name: Canvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -327,12 +358,12 @@ RectTransform:
   m_LocalScale: {x: 0.02, y: 0.02, z: 0.02}
   m_Children:
   - {fileID: 537369277130951665}
-  m_Father: {fileID: 4861457521204343737}
+  m_Father: {fileID: 1708851371872354346}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: -1.47, y: 0.49}
+  m_AnchoredPosition: {x: -1.595, y: 0.59}
   m_SizeDelta: {x: 154.5297, y: 100}
   m_Pivot: {x: 0, y: 0}
 --- !u!223 &1149061436662412089

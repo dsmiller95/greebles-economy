@@ -144,8 +144,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4063966645591292537}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 1.1, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4700633638058856316}
@@ -226,7 +226,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   tradeRoute: []
-  speed: 1
+  speed: 10
   touchDistance: 1
 --- !u!114 &9183838253323556353
 MonoBehaviour:
@@ -258,11 +258,11 @@ MonoBehaviour:
   totalSteps: 120
   resourcePlotConfig:
   - type: 1
-    yScale: 20
+    yScale: 100
   - type: 2
-    yScale: 20
+    yScale: 100
   - type: 4
-    yScale: 20
+    yScale: 100
   inventory: {fileID: 9183838253323556353}
 --- !u!114 &5944186108184103656
 MonoBehaviour:
@@ -278,12 +278,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ResourcePlotter: {fileID: 2520451541431826768}
   trader: {fileID: -9082106501863833953}
-  meshRenderer: {fileID: 2205066498059021884}
   tradePanelPrefab: {fileID: 2986112439536874786, guid: c601b3dada949924c99ee05c45c8a394,
     type: 3}
-  multiPathPlotterPrefab: {fileID: 0}
-  baseMaterial: {fileID: 2100000, guid: ccd6a5bb280b04b45982965190fe62f9, type: 2}
-  selectedMaterial: {fileID: 2100000, guid: efc4040f501c69346ab6960a4b4974f6, type: 2}
+  multiPathPlotterPrefab: {fileID: 7996700932571281009, guid: 1cb7051a04ed8c44597383b05c3bbf61,
+    type: 3}
 --- !u!114 &1728048297551398397
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -298,6 +296,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   baseMaterial: {fileID: 2100000, guid: ccd6a5bb280b04b45982965190fe62f9, type: 2}
   selectedMaterial: {fileID: 2100000, guid: efc4040f501c69346ab6960a4b4974f6, type: 2}
+  outlineMaterial: {fileID: 0}
 --- !u!1 &5848019200659954162
 GameObject:
   m_ObjectHideFlags: 0

@@ -69,7 +69,7 @@ namespace UnitTests.Economics.UtilityAnalyzerTests
             var utilityEvaluator = GetGenericUtilityFunction();
             var utilityAnalyzer = new UtilityAnalyzer<TestItemType>();
 
-            var utility = utilityAnalyzer.GetUtilityPerInitialResource(
+            var utility = utilityAnalyzer.GetTotalUtilityByInitialResource(
                 new[] { TestItemType.Cactus, TestItemType.Corn },
                 endingInventory,
                 ledger,
@@ -100,7 +100,7 @@ namespace UnitTests.Economics.UtilityAnalyzerTests
             var utilityEvaluator = GetGenericUtilityFunction(3, 1);
             var utilityAnalyzer = new UtilityAnalyzer<TestItemType>();
 
-            var utility = utilityAnalyzer.GetUtilityPerInitialResource(
+            var utility = utilityAnalyzer.GetTotalUtilityByInitialResource(
                 new[] { TestItemType.Cactus, TestItemType.Corn },
                 endingInventory,
                 ledger,
@@ -131,7 +131,7 @@ namespace UnitTests.Economics.UtilityAnalyzerTests
             var utilityEvaluator = GetGenericUtilityFunction(1, 1);
             var utilityAnalyzer = new UtilityAnalyzer<TestItemType>();
 
-            var utility = utilityAnalyzer.GetUtilityPerInitialResource(
+            var utility = utilityAnalyzer.GetTotalUtilityByInitialResource(
                 new[] { TestItemType.Cactus, TestItemType.Corn },
                 endingInventory,
                 ledger,
@@ -162,7 +162,7 @@ namespace UnitTests.Economics.UtilityAnalyzerTests
             var utilityEvaluator = GetGenericUtilityFunction(1, 1);
             var utilityAnalyzer = new UtilityAnalyzer<TestItemType>();
 
-            var utility = utilityAnalyzer.GetUtilityPerInitialResource(
+            var utility = utilityAnalyzer.GetTotalUtilityByInitialResource(
                 new[] { TestItemType.Cactus, TestItemType.Corn },
                 endingInventory,
                 ledger,
@@ -201,7 +201,7 @@ namespace UnitTests.Economics.UtilityAnalyzerTests
             var utilityEvaluator = GetGenericUtilityFunction(1, 1);
             var utilityAnalyzer = new UtilityAnalyzer<TestItemType>();
 
-            var utility = utilityAnalyzer.GetUtilityPerInitialResource(
+            var utility = utilityAnalyzer.GetTotalUtilityByInitialResource(
                 new[] { TestItemType.Cactus, TestItemType.Corn },
                 endingInventory,
                 ledger,
@@ -239,7 +239,7 @@ namespace UnitTests.Economics.UtilityAnalyzerTests
             var utilityEvaluator = GetGenericUtilityFunction(3, 1, 1);
             var utilityAnalyzer = new UtilityAnalyzer<TestItemType>();
 
-            var utility = utilityAnalyzer.GetUtilityPerInitialResource(
+            var utility = utilityAnalyzer.GetTotalUtilityByInitialResource(
                 new[] { TestItemType.Cactus, TestItemType.Corn, TestItemType.Chilis },
                 endingInventory,
                 ledger,

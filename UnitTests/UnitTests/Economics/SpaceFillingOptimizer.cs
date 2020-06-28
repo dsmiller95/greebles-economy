@@ -220,7 +220,7 @@ namespace UnitTests.Economics
             Assert.AreEqual(7, market.Get(TestItemType.Pesos));
 
             var utilityAnalyzer = new UtilityAnalyzer<TestItemType>();
-            var sourceUtilities = utilityAnalyzer.GetUtilityPerInitialResource(
+            var sourceUtilities = utilityAnalyzer.GetTotalUtilityByInitialResource(
                 tradeableResources,
                 self,
                 ledger,

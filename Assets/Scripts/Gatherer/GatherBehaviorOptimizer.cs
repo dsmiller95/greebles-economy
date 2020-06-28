@@ -13,7 +13,7 @@ namespace Assets.Scripts.Gatherer
         public const float weightChangeFactor = 0.6f;
 
         private Queue<IDictionary<ResourceType, float>> pastWeights;
-        private Queue<IDictionary<ResourceType, float>> pastUtilities;
+        private Queue<IDictionary<ResourceType, float>> pastUtilityTotals;
         private Queue<IDictionary<ResourceType, float>> pastTimeCosts;
 
         public int rollingAverageWindow = 6;
@@ -23,19 +23,19 @@ namespace Assets.Scripts.Gatherer
             this.pastWeights = new Queue<IDictionary<ResourceType, float>>();
             this.pastWeights.Enqueue(this.generateInitialWeights());
 
-            this.pastUtilities = new Queue<IDictionary<ResourceType, float>>();
+            this.pastUtilityTotals = new Queue<IDictionary<ResourceType, float>>();
             this.pastTimeCosts = new Queue<IDictionary<ResourceType, float>>();
         }
 
         public IDictionary<ResourceType, float> nextWeights(
             IDictionary<ResourceType, float> timeSpentTotal,
-            IDictionary<ResourceType, float> totalUtilityPerResource)
+            IDictionary<ResourceType, float> totalUtilityByResource)
         {
-            this.AddInRollingWindow(this.pastUtilities, new Dictionary<ResourceType, float>(totalUtilityPerResource));
+            this.AddInRollingWindow(this.pastUtilityTotals, new Dictionary<ResourceType, float>(totalUtilityByResource));
             this.AddInRollingWindow(this.pastTimeCosts, new Dictionary<ResourceType, float>(timeSpentTotal));
 
             var summedTimeSpend = pastTimeCosts.SumTogether();
-            var summedUtilities = pastUtilities.SumTogether();
+            var summedUtilities = pastUtilityTotals.SumTogether();
 
             //Debug.Log("Summation info");
             //Debug.Log(TradeModeling.MyUtilities.SerializeEnumDictionary(summedUtilities));
@@ -46,26 +46,26 @@ namespace Assets.Scripts.Gatherer
 
         private IDictionary<ResourceType, float> GetWeightsFromTimeSpentAndUtilityGained(
             IDictionary<ResourceType, float> timeSpent,
-            IDictionary<ResourceType, float> utilityPerResource)
+            IDictionary<ResourceType, float> utilitiesByResource)
         {
-            var utilityGainedPerTime = utilityPerResource.Keys
+            var utilityGainedPerTimeByResource = utilitiesByResource.Keys
                 .Where(type => 
-                    !float.IsNaN(utilityPerResource[type]) && utilityPerResource[type] > 0f
+                    !float.IsNaN(utilitiesByResource[type]) && utilitiesByResource[type] > 0f
                     && timeSpent.ContainsKey(type) && timeSpent[type] > 0f)
                 .ToDictionary(type => type, type => {
-                    var gainedUtility = utilityPerResource[type];
+                    var gainedUtility = utilitiesByResource[type];
                     var time = timeSpent[type];
                     return gainedUtility / time;
                 });
 
-            var totalUtilityPerResourcePerTime = utilityGainedPerTime.Select(x => x.Value).Sum();
+            var totalUtilityPerResourcePerTime = utilityGainedPerTimeByResource.Select(x => x.Value).Sum();
             // In some cases we may not have gathered any of some types of resources
             //  We will take the average value of all entries in the dictionary and pad
             //  the resources we haven't gathered with that average
-            var averageUtilityPResourcePTime = totalUtilityPerResourcePerTime / utilityGainedPerTime.Count();
+            var averageUtilityPResourcePTime = totalUtilityPerResourcePerTime / utilityGainedPerTimeByResource.Count();
             var paddedUtilityPerTime = ResourceConfiguration.spaceFillingItems.ToDictionary(
                 resource => resource,
-                resource => utilityGainedPerTime.ContainsKey(resource) ? utilityGainedPerTime[resource] : averageUtilityPResourcePTime);
+                resource => utilityGainedPerTimeByResource.ContainsKey(resource) ? utilityGainedPerTimeByResource[resource] : averageUtilityPResourcePTime);
 
             var newWeightsGenerated = paddedUtilityPerTime.Normalize();
 

@@ -28,7 +28,6 @@ namespace Assets.UI.TraderConfigPanel
         // Start is called before the first frame update
         void Start()
         {
-            Debug.Log($"Node list opened with {linkedTrader?.name}");
             RecreateAllPanels();
             GetComponent<DragZone>().orderingChanged += SetOrder;
 
@@ -82,6 +81,11 @@ namespace Assets.UI.TraderConfigPanel
                 RecreateAllPanels();
             }
             catch (ObjectSelectionCancelledException) { }
+            catch (Exception e)
+            {
+                Debug.LogError($"Error when using the asynchronous selection requester");
+                Debug.LogException(e);
+                throw; }
         }
 
         private void SetOrder()

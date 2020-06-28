@@ -1,5 +1,4 @@
-﻿using Assets.Scripts.Market;
-using Assets.Scripts.Resources;
+﻿using Assets.Scripts.Resources;
 using Assets.Scripts.Resources.Inventory;
 using Assets.Scripts.Trader.StateHandlers;
 using Assets.Utilities;
@@ -7,7 +6,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using TradeModeling.Inventories;
-using UnityEditor;
 using UnityEngine;
 
 namespace Assets.Scripts.Trader
@@ -49,13 +47,13 @@ namespace Assets.Scripts.Trader
 
         private void Awake()
         {
-            this.stateData = new Dictionary<TraderState, dynamic>();
+            stateData = new Dictionary<TraderState, dynamic>();
         }
         // Start is called before the first frame update
         void Start()
         {
-            this.inventory = this.GetComponent<ResourceInventory>().backingInventory;
-            this.stateMachine = new AsyncStateMachine<TraderState, TraderBehavior>(TraderState.Initial);
+            inventory = GetComponent<ResourceInventory>().backingInventory;
+            stateMachine = new AsyncStateMachine<TraderState, TraderBehavior>(TraderState.Initial);
 
             stateMachine.registerStateTransitionHandler(TraderState.All, TraderState.All, (x) =>
             {
@@ -71,21 +69,23 @@ namespace Assets.Scripts.Trader
         // Update is called once per frame
         void Update()
         {
-            this.myUpdate();
+            myUpdate();
         }
 
         async void myUpdate()
         {
             try
             {
-                await this.stateMachine.update(this);
-            } catch
+                await stateMachine.update(this);
+            }
+            catch
             {
                 throw;
             }
         }
 
         private int currentTradeTargetIndex = 0;
+        public bool hasTradeNodeTarget => tradeRoute.Length > 0 && currentTradeTargetIndex >= 0;
         public TradeNode currentTradeNodeTarget => tradeRoute[currentTradeTargetIndex];
         public void NextTradeRoute()
         {
@@ -93,12 +93,19 @@ namespace Assets.Scripts.Trader
         }
         public void SetNewTradeRoute(TradeNode[] tradeRoute)
         {
-            var previousTarget = currentTradeNodeTarget.target;
+            var previousTarget = hasTradeNodeTarget ? currentTradeNodeTarget.target : null;
             this.tradeRoute = tradeRoute;
-            this.currentTradeTargetIndex = tradeRoute
-                .Select((trade, index) => new { trade.target, index })
-                .Where(x => x.target == previousTarget)
-                .First().index;
+            if (previousTarget != null)
+            {
+                currentTradeTargetIndex = tradeRoute
+                    .Select((trade, index) => new { trade.target, index })
+                    .Where(x => x.target == previousTarget)
+                    .First().index;
+            }
+            else
+            {
+                currentTradeTargetIndex = 0;
+            }
         }
 
 

@@ -13,7 +13,11 @@ namespace Assets.Scripts.Trader.StateHandlers
 
         public Task<TraderState> HandleState(TraderBehavior data)
         {
-            return Task.FromResult(TraderState.TradeTransit);
+            if (data.hasTradeNodeTarget)
+            {
+                return Task.FromResult(TraderState.TradeTransit);
+            }
+            return Task.FromResult(TraderState.Initial);
         }
 
         public TraderState validPreviousStates => TraderState.None;
