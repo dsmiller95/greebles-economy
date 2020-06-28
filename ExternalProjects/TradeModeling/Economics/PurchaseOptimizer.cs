@@ -123,7 +123,9 @@ namespace TradeModeling.Economics
                 // Execute all operations on a simulated inventory to make sure all prices, utilities,
                 //  and any constraints on size are respected
                 sellOption = seller.Sell(minUtility, purchaseAmount, simSelfInventory, simOtherInventory);
-                if (sellOption.info.amount <= 1E-5)
+                // If the sold amount is less than the requested amount by more than increment
+                //  this means that we aren't going to gain anything at all
+                if (sellOption.info.amount <= (purchaseAmount - increment))
                 {
                     return null;
                 }

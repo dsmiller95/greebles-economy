@@ -487,7 +487,7 @@ namespace UnitTests.Economics
                 },
                 purchasePrices = new Dictionary<string, float>
                 {
-                    { "wood", 15 },
+                    { "wood", 11 },
                     { "food", 20 },
                 },
                 sellPrices = new Dictionary<string, float>
