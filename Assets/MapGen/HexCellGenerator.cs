@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Assets.MapGen.TileManagement;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -22,11 +23,12 @@ namespace Assets.MapGen
 
         }
 
-        public void CreateTileAtPosition(Vector3 position, Vector2 scaleAgnosticHexCoords)
+        public void CreateTileAtPosition(Vector2Int position, HexTileMapManager tilemapManager)
         {
             Debug.Log(position);
             var newTile = Instantiate(hexTile, transform, false);
-            newTile.transform.localPosition = position;
+            var tilemapMember = newTile.GetComponent<ITileMapMember>();
+            tilemapManager.RegisterNewMapMember(tilemapMember, position);
         }
 
     }
