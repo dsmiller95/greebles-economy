@@ -26,12 +26,12 @@ namespace Assets.Scripts.Gatherer.StateHandlers
                     return float.MinValue;
                 }))
             {
-                data.timeTracker.startTrackingResource(data.currentTarget.GetComponent<IResource>()._type);
+                data.timeTracker.startTrackingResource(data.objectSeeker.CurrentTarget.GetComponent<IResource>()._type);
             };
-            if (data.seekTargetToTouch())
+            if (data.objectSeeker.seekTargetToTouch())
             {
-                await data.eatResource(data.currentTarget);
-                data.ClearCurrentTarget();
+                await data.eatResource(data.objectSeeker.CurrentTarget);
+                data.objectSeeker.ClearCurrentTarget();
             }
 
             if (data.inventory.getFullRatio() >= 1)

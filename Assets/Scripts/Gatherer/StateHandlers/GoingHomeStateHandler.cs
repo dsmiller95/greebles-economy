@@ -13,7 +13,7 @@ namespace Assets.Scripts.Gatherer.StateHandlers
         public GathererState stateHandle => GathererState.GoingHome;
         public Task<GathererState> HandleState(GathererBehavior data)
         {
-            if (data.seekTargetToTouch())
+            if (data.objectSeeker.seekTargetToTouch())
             {
                 if (data.home.depositAllGoods(data.inventory))
                 {
@@ -30,7 +30,7 @@ namespace Assets.Scripts.Gatherer.StateHandlers
         public GathererState validPreviousStates => GathererState.Gathering;
         public void TransitionIntoState(GathererBehavior data)
         {
-            data.currentTarget = data.home.gameObject;
+            data.objectSeeker.CurrentTarget = data.home.gameObject;
         }
 
         public GathererState validNextStates => GathererState.Gathering | GathererState.Selling;

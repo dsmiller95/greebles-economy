@@ -1,5 +1,6 @@
 ﻿using Assets.Scripts.Gatherer.StateHandlers;
 using Assets.Scripts.Home;
+using Assets.Scripts.MovementExtensions;
 using Assets.Scripts.Resources;
 using Assets.Scripts.Resources.Inventory;
 using Assets.Utilities;
@@ -13,6 +14,7 @@ using UnityEngine;
 
 namespace Assets.Scripts.Gatherer
 {
+    [RequireComponent(typeof(FreeFormObjectSeeker))]
     [RequireComponent(typeof(ResourceInventory))]
     [RequireComponent(typeof(TimeTracker))]
     public class GathererBehavior : MonoBehaviour
@@ -22,14 +24,11 @@ namespace Assets.Scripts.Gatherer
 
         public HomeBehavior home;
 
-        public float speed = 1;
-        public float touchDistance = 1f;
         public int backpackSize = 10;
         public int pocketSize = 1;
 
         public ResourceType[] StuffIEat;
 
-        internal GameObject currentTarget;
         internal float lastTargetCheckTime = 0;
 
         internal NotifyingInventory<ResourceType> inventory;
@@ -46,8 +45,11 @@ namespace Assets.Scripts.Gatherer
             private set;
         }
 
+        public IObjectSeeker objectSeeker;
+
         private void Awake()
         {
+            objectSeeker = GetComponent<IObjectSeeker>();
             stateData = new Dictionary<GathererState, dynamic>();
             utilityFunction = new UtilityEvaluatorFunctionMapper<ResourceType>(new Dictionary<ResourceType, IIncrementalFunction>()
                 {
@@ -81,7 +83,7 @@ namespace Assets.Scripts.Gatherer
 
             stateMachine.registerStateTransitionHandler(GathererState.All, GathererState.All, (x) =>
             {
-                currentTarget = null;
+                objectSeeker.ClearCurrentTarget();
                 lastTargetCheckTime = 0;
             }, StateChangeExecutionOrder.StateExit);
 
@@ -133,64 +135,20 @@ namespace Assets.Scripts.Gatherer
         /// <returns>true on the frame when a target is found or changed</returns>
         public bool attemptToEnsureTarget(UserLayerMasks layerMask, Func<GameObject, float, float> weightFunction)
         {
-            if (currentTarget == null &&
+            if (objectSeeker.CurrentTarget == null &&
                 // only check once per second if nothing found
                 (lastTargetCheckTime + waitTimeBetweenSearches) < Time.time)
             {
                 lastTargetCheckTime = Time.time;
-                currentTarget = getClosestObjectSatisfyingCondition(
+                objectSeeker.CurrentTarget = getClosestObjectSatisfyingCondition(
                     layerMask,
                     weightFunction);
-                if (currentTarget != null)
+                if (objectSeeker.CurrentTarget != null)
                 {
                     return true;
                 }
             }
             return false;
-        }
-
-        internal bool seekTargetToTouch()
-        {
-            if (!currentTarget)
-            {
-                return false;
-            }
-            moveTowardsPosition(currentTarget.transform.position);
-            return isTouchingCurrentTarget();
-        }
-
-        public void ClearCurrentTarget()
-        {
-            currentTarget = null;
-            lastTargetCheckTime = 0;
-        }
-
-        private void moveTowardsPosition(Vector3 targetPostion)
-        {
-            var difference = targetPostion - transform.position;
-            var direction = new Vector3(difference.x, 0, difference.z).normalized;
-            transform.position += direction * Time.deltaTime * speed;
-        }
-
-        internal bool isTouchingCurrentTarget()
-        {
-            return distanceToCurrentTarget() <= touchDistance;
-        }
-
-        private float distanceToCurrentTarget()
-        {
-            if (!currentTarget)
-            {
-                return float.MaxValue;
-            }
-            var difference = transform.position - currentTarget.transform.position;
-            return new Vector3(difference.x, difference.y, difference.z).magnitude;
-        }
-
-        internal async Task<bool> eatResource(GameObject resource)
-        {
-            var resourceType = resource.GetComponent<IResource>();
-            return await resourceType.Eat(inventory);
         }
 
         private GameObject getClosestObjectSatisfyingCondition(UserLayerMasks layerMask, Func<GameObject, float, float> weightFunction)
@@ -213,6 +171,11 @@ namespace Assets.Scripts.Gatherer
                 }
             }
             return highestWeightCollider?.gameObject;
+        }
+        internal async Task<bool> eatResource(GameObject resource)
+        {
+            var resourceType = resource.GetComponent<IResource>();
+            return await resourceType.Eat(inventory);
         }
     }
 }

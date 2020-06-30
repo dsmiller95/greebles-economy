@@ -61,7 +61,7 @@ namespace Assets.Scripts.Trader.StateHandlers
         public TraderState validPreviousStates => TraderState.TradeTransit;
         public void TransitionIntoState(TraderBehavior data)
         {
-            data.currentTarget = null;
+            data.objectSeeker.ClearCurrentTarget();
             data.stateData[stateHandle] = new TradeExecuteStateData
             {
                 lastExchangeTime = Time.time,

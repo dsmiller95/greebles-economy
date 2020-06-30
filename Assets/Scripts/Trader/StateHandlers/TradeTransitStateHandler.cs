@@ -14,7 +14,7 @@ namespace Assets.Scripts.Trader.StateHandlers
 
         public Task<TraderState> HandleState(TraderBehavior data)
         {
-            if (data.seekTargetToTouch())
+            if (data.objectSeeker.seekTargetToTouch())
             {
                 return Task.FromResult(TraderState.TradeExecute);
             }
@@ -24,7 +24,7 @@ namespace Assets.Scripts.Trader.StateHandlers
         public TraderState validPreviousStates => ~TraderState.TradeTransit;
         public void TransitionIntoState(TraderBehavior data)
         {
-            data.currentTarget = data.currentTradeNodeTarget.target.gameObject;
+            data.objectSeeker.CurrentTarget = data.currentTradeNodeTarget.target.gameObject;
         }
 
         public TraderState validNextStates => TraderState.TradeExecute;

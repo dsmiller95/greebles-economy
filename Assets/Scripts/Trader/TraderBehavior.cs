@@ -1,4 +1,5 @@
-﻿using Assets.Scripts.Resources;
+﻿using Assets.Scripts.MovementExtensions;
+using Assets.Scripts.Resources;
 using Assets.Scripts.Resources.Inventory;
 using Assets.Scripts.Trader.StateHandlers;
 using Assets.Utilities;
@@ -36,6 +37,7 @@ namespace Assets.Scripts.Trader
     }
 
     [RequireComponent(typeof(ResourceInventory))]
+    [RequireComponent(typeof(FreeFormObjectSeeker))]
     public class TraderBehavior : MonoBehaviour
     {
         private AsyncStateMachine<TraderState, TraderBehavior> stateMachine;
@@ -45,9 +47,11 @@ namespace Assets.Scripts.Trader
 
         internal NotifyingInventory<ResourceType> inventory;
 
+        public IObjectSeeker objectSeeker;
         private void Awake()
         {
             stateData = new Dictionary<TraderState, dynamic>();
+            objectSeeker = GetComponent<IObjectSeeker>();
         }
         // Start is called before the first frame update
         void Start()
@@ -57,7 +61,7 @@ namespace Assets.Scripts.Trader
 
             stateMachine.registerStateTransitionHandler(TraderState.All, TraderState.All, (x) =>
             {
-                currentTarget = null;
+                objectSeeker.ClearCurrentTarget();
             }, StateChangeExecutionOrder.StateExit);
 
             stateMachine.registerGenericHandler(new InitalStateHandler());
@@ -106,51 +110,6 @@ namespace Assets.Scripts.Trader
             {
                 currentTradeTargetIndex = 0;
             }
-        }
-
-
-        /********************************************
-         * code governing moving towards a target
-         * TODO: put the movement code into a shared component. something which can seek a target and remember what it's seeking over time?
-         */
-        public float speed = 1;
-        public float touchDistance = 1f;
-        internal GameObject currentTarget;
-
-        internal bool seekTargetToTouch()
-        {
-            if (!currentTarget)
-            {
-                return false;
-            }
-            moveTowardsPosition(currentTarget.transform.position);
-            return isTouchingCurrentTarget();
-        }
-
-        public void ClearCurrentTarget()
-        {
-            currentTarget = null;
-        }
-
-        private void moveTowardsPosition(Vector3 targetPostion)
-        {
-            var difference = targetPostion - transform.position;
-            var direction = new Vector3(difference.x, 0, difference.z).normalized;
-            transform.position += direction * Time.deltaTime * speed;
-        }
-
-        internal bool isTouchingCurrentTarget()
-        {
-            return distanceToCurrentTarget() <= touchDistance;
-        }
-        private float distanceToCurrentTarget()
-        {
-            if (!currentTarget)
-            {
-                return float.MaxValue;
-            }
-            var difference = transform.position - currentTarget.transform.position;
-            return new Vector3(difference.x, difference.y, difference.z).magnitude;
         }
     }
 }

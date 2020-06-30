@@ -25,7 +25,6 @@ namespace Assets.MapGen
 
         public void CreateTileAtPosition(Vector2Int position, HexTileMapManager tilemapManager)
         {
-            Debug.Log(position);
             var newTile = Instantiate(hexTile, transform, false);
             var tilemapMember = newTile.GetComponent<ITileMapMember>();
             tilemapManager.RegisterNewMapMember(tilemapMember, position);

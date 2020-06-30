@@ -88,6 +88,8 @@
     <Compile Include="Assets\Scripts\Market\MarketPricePlotter.cs" />
     <Compile Include="Assets\Scripts\Market\ResourceSellResult.cs" />
     <Compile Include="Assets\Scripts\Market\SelectableMarket.cs" />
+    <Compile Include="Assets\Scripts\MovementExtensions\FreeFormObjectSeeker.cs" />
+    <Compile Include="Assets\Scripts\MovementExtensions\IObjectSeeker.cs" />
     <Compile Include="Assets\Scripts\Resources\IResource.cs" />
     <Compile Include="Assets\Scripts\Resources\Inventory\ResourceInventory.cs" />
     <Compile Include="Assets\Scripts\Resources\Resource.cs" />
