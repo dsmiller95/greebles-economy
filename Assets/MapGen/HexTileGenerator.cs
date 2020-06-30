@@ -6,7 +6,7 @@ namespace Assets.MapGen
 
     [RequireComponent(typeof(HexTileMapManager))]
     [RequireComponent(typeof(HexCellGenerator))]
-    public class HexLayout : MonoBehaviour
+    public class HexTileGenerator : MonoBehaviour
     {
 
         public void Awake()

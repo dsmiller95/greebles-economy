@@ -9,7 +9,7 @@ using static Assets.MapGen.TileManagement.HexTileMapManager;
 
 namespace Assets.MapGen.TileManagement
 {
-    public interface ITileMapMember
+    public interface ITilemapMember
     {
         void SetMapItem(TileMapItem item);
         void UpdateWorldSpace();

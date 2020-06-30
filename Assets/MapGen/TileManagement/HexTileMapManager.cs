@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace Assets.MapGen.TileManagement
@@ -41,7 +42,6 @@ namespace Assets.MapGen.TileManagement
         // Update is called once per frame
         void Update()
         {
-
         }
 
         public Vector2 TileMapPositionToAgnosticCoords(Vector2Int tileMapPosition)
@@ -69,7 +69,35 @@ namespace Assets.MapGen.TileManagement
             }
         }
 
-        public TileMapItem RegisterNewMapMember(ITileMapMember member, Vector2Int position)
+        public TileRoute GetRouteBetweenMembers(TileMapItem origin, TileMapItem destination)
+        {
+            var result = new TileRoute();
+
+            var originPoint = origin.positionInTileMap;
+            var destinationPoint = destination.positionInTileMap;
+
+            var xSign = (int)Mathf.Sign(destinationPoint.x - originPoint.x);
+            for (var x = originPoint.x; x != destinationPoint.x; x += xSign)
+            {
+                result.AddLastWaypoint(new Vector2Int(x, originPoint.y));
+            }
+
+            var ySign = (int)Mathf.Sign(destinationPoint.y - originPoint.y);
+            for (var y = originPoint.y; y != destinationPoint.y; y += ySign)
+            {
+                result.AddLastWaypoint(new Vector2Int(destinationPoint.x, y));
+            }
+
+            return result;
+        }
+
+        public IEnumerable<T> GetItemsAtLocation<T>(Vector2Int position)
+        {
+            var positionList = tileGrid[position.y][position.x];
+            return positionList.Select(item => item.member).OfType<T>();
+        }
+
+        public TileMapItem RegisterNewMapMember(ITilemapMember member, Vector2Int position)
         {
             return new TileMapItem(position, this, member);
         }
@@ -97,9 +125,9 @@ namespace Assets.MapGen.TileManagement
         {
             public Vector2Int positionInTileMap;
             private HexTileMapManager tileMapManager;
-            public ITileMapMember member;
+            public ITilemapMember member;
 
-            internal TileMapItem(Vector2Int position, HexTileMapManager mapManager, ITileMapMember member)
+            internal TileMapItem(Vector2Int position, HexTileMapManager mapManager, ITilemapMember member)
             {
                 this.member = member;
                 positionInTileMap = position;
@@ -114,6 +142,7 @@ namespace Assets.MapGen.TileManagement
             }
 
             public Vector2 PositionInTilePlane => tileMapManager.TileMapPositionToPositionInPlane(positionInTileMap);
+            public HexTileMapManager MapManager => tileMapManager;
         }
     }
 
