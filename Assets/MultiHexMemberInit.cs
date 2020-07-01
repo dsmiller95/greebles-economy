@@ -14,7 +14,9 @@ public class MultiHexMemberInit : MonoBehaviour
         var tileManager = myMember.tilemapManager;
         foreach(var child in ChildMembers)
         {
-            tileManager.RegisterNewMapMember(child, myMember.Position + child.Position);
+            child.startingPosition = myMember.Position + child.Position;
+            child.tilemapManager = myMember.tilemapManager;
+            //tileManager.RegisterNewMapMember(child, myMember.Position + child.Position);
         }
         foreach(var child in ChildMembers)
         {

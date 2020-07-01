@@ -537,7 +537,7 @@ MonoBehaviour:
       type: 3}
     densityPerSurfaceSize: 0.0003
   tileManager: {fileID: 1140566651}
-  spawnBoxSize: {x: 3, y: 3}
+  spawnBoxSize: {x: 50, y: 50}
 --- !u!4 &665685628
 Transform:
   m_ObjectHideFlags: 0
@@ -640,7 +640,7 @@ Light:
   m_BounceIntensity: 1
   m_ColorTemperature: 6570
   m_UseColorTemperature: 0
-  m_BoundingSphereOverride: {x: 0, y: 5.1086e-41, z: 0, w: 9.403955e-38}
+  m_BoundingSphereOverride: {x: 0, y: 6.7363e-41, z: 0, w: 0}
   m_UseBoundingSphereOverride: 0
   m_ShadowRadius: 0
   m_ShadowAngle: 0

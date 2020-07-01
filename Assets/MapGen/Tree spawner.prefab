@@ -96,5 +96,5 @@ MonoBehaviour:
   boostCurveOffset: 5
   spawnPrefab: {fileID: 6201624005823754261, guid: 3419ec4628f325d4784815b1a5b2bc2f,
     type: 3}
-  spawnBoxSize: {x: 10, y: 1}
+  spawnBoxSize: {x: 5, y: 5}
   hexMember: {fileID: 2620585689652994612}

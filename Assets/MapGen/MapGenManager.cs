@@ -54,8 +54,12 @@ public class MapGenManager : MonoBehaviour
     private void SpawnItem(GameObject prefab)
     {
         var newItem = Instantiate(prefab, transform);
-        var hexItem = newItem.GetComponentInChildren<ITilemapMember>();
-        this.tileManager.RegisterNewMapMember(hexItem, getRandomPosInBounds());
+        var hexItem = newItem.GetComponentInChildren<HexMember>();
+        var newPosition = getRandomPosInBounds();
+        Debug.Log($"spawning map feature at {newPosition}");
+        hexItem.startingPosition = newPosition;
+        hexItem.tilemapManager = this.hexMember.tilemapManager;
+        //this.tileManager.RegisterNewMapMember(hexItem, newPosition);
     }
 
     private Vector2Int getRandomPosInBounds()

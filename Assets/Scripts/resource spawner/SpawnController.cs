@@ -60,8 +60,12 @@ public class SpawnController : MonoBehaviour
         //stantiate(spawnPrefab, getRandomPosInBounds() + this.transform.position, Quaternion.identity, this.transform);
 
         var newItem = Instantiate(spawnPrefab, transform);
-        var hexItem = newItem.GetComponentInChildren<ITilemapMember>();
-        this.hexMember.tilemapManager.RegisterNewMapMember(hexItem, getRandomPosInBounds());
+        var hexItem = newItem.GetComponentInChildren<HexMember>();
+        var newPosition = getRandomPosInBounds();
+        //Debug.Log($"spawning map feature at {newPosition}");
+        hexItem.startingPosition = newPosition;
+        hexItem.tilemapManager = this.hexMember.tilemapManager;
+        //this.hexMember.tilemapManager.RegisterNewMapMember(hexItem, getRandomPosInBounds());
     }
 
     private Vector2Int getRandomPosInBounds()

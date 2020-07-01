@@ -164,7 +164,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1708851371872354346}
   - component: {fileID: 2451489453788812032}
-  - component: {fileID: 7588755913421085432}
   - component: {fileID: 7086212739382045326}
   - component: {fileID: 85593738975168156}
   - component: {fileID: 2428442771590661238}
@@ -206,20 +205,6 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &7588755913421085432
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3779428038416350670}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f7c001995a0ddc24d8e98e0f46bdcef2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  tilemapManager: {fileID: 0}
-  startingPosition: {x: 0, y: 0}
 --- !u!114 &7086212739382045326
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -319,6 +304,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4861457521204343737}
+  - component: {fileID: 4153527948810571643}
   m_Layer: 0
   m_Name: Market
   m_TagString: Untagged
@@ -341,6 +327,20 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4153527948810571643
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4861457521204343749}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f7c001995a0ddc24d8e98e0f46bdcef2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tilemapManager: {fileID: 0}
+  startingPosition: {x: 0, y: 0}
 --- !u!1 &7219099098458843105
 GameObject:
   m_ObjectHideFlags: 0
