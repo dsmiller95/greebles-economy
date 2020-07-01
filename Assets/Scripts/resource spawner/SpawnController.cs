@@ -1,4 +1,6 @@
-﻿using System.Collections;
+﻿using Assets.MapGen.TileManagement;
+using Assets.Scripts.MovementExtensions;
+using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using UnityEditor;
@@ -21,7 +23,13 @@ public class SpawnController : MonoBehaviour
 
     public GameObject spawnPrefab;
 
-    public Vector3 spawnBoxSize = new Vector3(1, 1, 1);
+    public Vector2Int spawnBoxSize = new Vector2Int(1, 1);
+    public HexMember hexMember;
+
+    private void Awake()
+    {
+        this.hexMember = this.GetComponentInParent<HexMember>();
+    }
 
     // Start is called before the first frame update
     void Start()
@@ -49,20 +57,23 @@ public class SpawnController : MonoBehaviour
 
     private void SpawnItem()
     {
-        Instantiate(spawnPrefab, getRandomPosInBounds() + this.transform.position, Quaternion.identity, this.transform);
+        //stantiate(spawnPrefab, getRandomPosInBounds() + this.transform.position, Quaternion.identity, this.transform);
+
+        var newItem = Instantiate(spawnPrefab, transform);
+        var hexItem = newItem.GetComponentInChildren<ITilemapMember>();
+        this.hexMember.tilemapManager.RegisterNewMapMember(hexItem, getRandomPosInBounds());
     }
 
-    private Vector3 getRandomPosInBounds()
+    private Vector2Int getRandomPosInBounds()
     {
-        return new Vector3(
-            this.spawnBoxSize.x * (Random.value - 0.5f),
-            this.spawnBoxSize.y * (Random.value - 0.5f),
-            this.spawnBoxSize.z * (Random.value - 0.5f));
+        return new Vector2Int(
+            Random.Range(0, this.spawnBoxSize.x),
+            Random.Range(0, this.spawnBoxSize.y)) + this.hexMember.Position;
     }
 
     private void OnDrawGizmos()
     {
-        Gizmos.color = new Color(0.8f, 0.2f, 0.2f, 0.5f);
-        Gizmos.DrawCube(transform.position, spawnBoxSize);
+        //Gizmos.color = new Color(0.8f, 0.2f, 0.2f, 0.5f);
+        //Gizmos.DrawCube(transform.position, spawnBoxSize);
     }
 }

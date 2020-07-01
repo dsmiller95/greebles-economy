@@ -1,4 +1,5 @@
-﻿using Assets.Scripts.Resources;
+﻿using Assets.Scripts.MovementExtensions;
+using Assets.Scripts.Resources;
 using Assets.Scripts.Resources.Inventory;
 using Assets.Scripts.Trader;
 using System;
@@ -8,6 +9,7 @@ using TradeModeling;
 using TradeModeling.Exchanges;
 using TradeModeling.Functions;
 using TradeModeling.Inventories;
+using UnityEngine;
 
 namespace Assets.Scripts.Market
 {
@@ -19,6 +21,7 @@ namespace Assets.Scripts.Market
         public float buyPrice;
     }
 
+    [RequireComponent(typeof(HexMember))]
     public class MarketBehavior : TradeStop
     {
         public SellPrice[] exchangeRates;

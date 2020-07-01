@@ -37,7 +37,6 @@ namespace Assets.Scripts.Trader
     }
 
     [RequireComponent(typeof(ResourceInventory))]
-    [RequireComponent(typeof(FreeFormObjectSeeker))]
     public class TraderBehavior : MonoBehaviour
     {
         private AsyncStateMachine<TraderState, TraderBehavior> stateMachine;
@@ -45,13 +44,13 @@ namespace Assets.Scripts.Trader
 
         public TradeNode[] tradeRoute;
 
+        public HexMovementManager objectSeeker;
+
         internal NotifyingInventory<ResourceType> inventory;
 
-        public IObjectSeeker objectSeeker;
         private void Awake()
         {
             stateData = new Dictionary<TraderState, dynamic>();
-            objectSeeker = GetComponent<IObjectSeeker>();
         }
         // Start is called before the first frame update
         void Start()

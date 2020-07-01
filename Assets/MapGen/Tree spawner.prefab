@@ -9,6 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7482565879261911307}
+  - component: {fileID: 2620585689652994612}
   m_Layer: 0
   m_Name: Tree spawner
   m_TagString: Untagged
@@ -31,6 +32,20 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2620585689652994612
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7482565879261911309}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f7c001995a0ddc24d8e98e0f46bdcef2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tilemapManager: {fileID: 0}
+  startingPosition: {x: 0, y: 0}
 --- !u!1 &8854900548687692122
 GameObject:
   m_ObjectHideFlags: 0
@@ -81,4 +96,5 @@ MonoBehaviour:
   boostCurveOffset: 5
   spawnPrefab: {fileID: 6201624005823754261, guid: 3419ec4628f325d4784815b1a5b2bc2f,
     type: 3}
-  spawnBoxSize: {x: 10, y: 1, z: 10}
+  spawnBoxSize: {x: 10, y: 1}
+  hexMember: {fileID: 2620585689652994612}

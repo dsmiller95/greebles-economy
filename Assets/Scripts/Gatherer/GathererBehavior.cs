@@ -14,7 +14,7 @@ using UnityEngine;
 
 namespace Assets.Scripts.Gatherer
 {
-    [RequireComponent(typeof(FreeFormObjectSeeker))]
+    [RequireComponent(typeof(HexMovementManager))]
     [RequireComponent(typeof(ResourceInventory))]
     [RequireComponent(typeof(TimeTracker))]
     public class GathererBehavior : MonoBehaviour

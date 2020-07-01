@@ -11,6 +11,7 @@ namespace Assets.MapGen.TileManagement
 {
     public interface ITilemapMember
     {
+        TileMapItem GetMapItem();
         void SetMapItem(TileMapItem item);
         void UpdateWorldSpace();
     }

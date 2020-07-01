@@ -9,6 +9,10 @@ namespace Assets.Scripts.MovementExtensions
 {
     public interface IObjectSeeker
     {
+        /// <summary>
+        /// Returns true on the frame that the seeker touches the target
+        /// </summary>
+        /// <returns></returns>
         bool seekTargetToTouch();
         void ClearCurrentTarget();
         bool isTouchingCurrentTarget();

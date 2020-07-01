@@ -1,26 +1,18 @@
 ﻿using Assets.MapGen.TileManagement;
+using System.Linq;
 using UnityEngine;
-using static Assets.MapGen.TileManagement.HexTileMapManager;
 
 namespace Assets.Scripts.MovementExtensions
 {
-    public class HexMovementManager : MonoBehaviour, ITilemapMember, IObjectSeeker
+    public class HexMovementManager : HexMember, IObjectSeeker
     {
-        public HexTileMapManager tilemapManager;
 
-        // Start is called before the first frame update
-        void Start()
-        {
+        #region IObjectSeeker
+        /// <summary>
+        /// Seconds it takes to move to the next tile in the hex grid
+        /// </summary>
+        public float speed = 1;
 
-        }
-
-        // Update is called once per frame
-        void Update()
-        {
-
-        }
-
-        private TileMapItem hexGridItem;
         private ITilemapMember currentTargetMember;
         private GameObject currentTarget;
 
@@ -30,45 +22,47 @@ namespace Assets.Scripts.MovementExtensions
             set
             {
                 currentTarget = value;
-                currentTargetMember = currentTarget.GetComponent<ITilemapMember>();
+                currentTargetMember = currentTarget?.GetComponentInParent<ITilemapMember>();
             }
         }
 
-
-        #region IObjectSeeker
+        private TileRoute currentRoute;
+        private float lastTimeMoved;
         public bool seekTargetToTouch()
         {
-            throw new System.NotImplementedException();
-        }
+            if (lastTimeMoved + speed > Time.time || CurrentTarget == null)
+            {
+                return false;
+            }
+            lastTimeMoved = Time.time;
 
-        private void moveTowardsMember(ITilemapMember member)
-        {
-            throw new System.NotImplementedException();
+            if(currentRoute == null)
+            {
+                currentRoute = tilemapManager.GetRouteBetweenMembers(this.tileGridItem.member, this.currentTargetMember);
+            }
+
+            // if we're one away, we good
+            if (currentRoute.Count() == 1)
+            {
+                currentRoute = null;
+                return true;
+            }
+            var nextPosition = currentRoute.PopNextWaypoint();
+            tileGridItem.SetPositionInTileMap(nextPosition);
+            return false;
         }
 
         public void ClearCurrentTarget()
         {
-            throw new System.NotImplementedException();
+            CurrentTarget = null;
+            currentRoute = null;
         }
 
         public bool isTouchingCurrentTarget()
         {
-            throw new System.NotImplementedException();
+            return tilemapManager.IsWithinDistance(this.tileGridItem, currentTargetMember.GetMapItem(), 1);
         }
         #endregion
 
-        #region ITileMapMember
-        public void SetMapItem(TileMapItem item)
-        {
-            hexGridItem = item;
-        }
-
-        public void UpdateWorldSpace()
-        {
-            var placeSpace = hexGridItem.PositionInTilePlane;
-            var worldPlacement = new Vector3(placeSpace.x, 0, placeSpace.y);
-            transform.localPosition = worldPlacement;
-        }
-        #endregion
     }
 }

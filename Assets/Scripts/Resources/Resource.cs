@@ -6,9 +6,11 @@ using TradeModeling.Inventories;
 using System.Threading.Tasks;
 using TradeModeling.Economics;
 using System.Threading;
+using Assets.Scripts.MovementExtensions;
 
 namespace Assets.Scripts.Resources
 {
+    [RequireComponent(typeof(HexMember))]
     public class Resource : MonoBehaviour, IResource
     {
         public ResourceType _type => type;

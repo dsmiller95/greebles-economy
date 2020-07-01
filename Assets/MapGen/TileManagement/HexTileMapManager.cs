@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
@@ -44,7 +45,7 @@ namespace Assets.MapGen.TileManagement
         {
         }
 
-        public Vector2 TileMapPositionToAgnosticCoords(Vector2Int tileMapPosition)
+        public Vector2 TileMapToReal(Vector2Int tileMapPosition)
         {
             var agnosticCoords = Vector2.Scale(displacementRatio, new Vector2(tileMapPosition.x, tileMapPosition.y + ((tileMapPosition.x % 2) / 2f)));
             return agnosticCoords;
@@ -52,7 +53,7 @@ namespace Assets.MapGen.TileManagement
 
         public Vector2 TileMapPositionToPositionInPlane(Vector2Int tileMapPosition)
         {
-            return TileMapPositionToAgnosticCoords(tileMapPosition) * hexRadius;
+            return TileMapToReal(tileMapPosition) * hexRadius;
         }
 
         private void SetupGrid()
@@ -69,26 +70,78 @@ namespace Assets.MapGen.TileManagement
             }
         }
 
+        public bool IsWithinDistance(TileMapItem first, TileMapItem second, int distance)
+        {
+            return !GetRouteGenerator(first.positionInTileMap, second.positionInTileMap).Skip(distance).Any();
+        }
+        public int GetTileDistance(TileMapItem first, TileMapItem second)
+        {
+            return GetRouteGenerator(first.positionInTileMap, second.positionInTileMap).Count();
+        }
+
+        private IEnumerable<Vector2Int> GetRouteGenerator(Vector2Int origin, Vector2Int destination)
+        {
+            var originPoint = origin;
+            var destinationPoint = destination;
+
+            var currentTileMapPos = originPoint;
+            var iterations = 0;
+            while ((currentTileMapPos - destinationPoint).sqrMagnitude > 0)
+            {
+                var realWorldVectorToDest = TileMapToReal(destinationPoint)
+                    - TileMapToReal(currentTileMapPos);
+
+                var nextMoveVector = GetClosestMatchingValidMove(realWorldVectorToDest, !(currentTileMapPos.x % 2 == 0));
+
+                currentTileMapPos += nextMoveVector;
+
+                yield return currentTileMapPos;
+                iterations++;
+                if (iterations > 1000)
+                {
+                    throw new Exception("too many loop brooother");
+                }
+            }
+        }
+
         public TileRoute GetRouteBetweenMembers(TileMapItem origin, TileMapItem destination)
         {
-            var result = new TileRoute();
+            return new TileRoute(this.GetRouteGenerator(origin.positionInTileMap, destination.positionInTileMap).ToList());
+        }
 
-            var originPoint = origin.positionInTileMap;
-            var destinationPoint = destination.positionInTileMap;
+        public TileRoute GetRouteBetweenMembers(ITilemapMember origin, ITilemapMember destination)
+        {
+            return GetRouteBetweenMembers(origin.GetMapItem(), destination.GetMapItem());
+        }
 
-            var xSign = (int)Mathf.Sign(destinationPoint.x - originPoint.x);
-            for (var x = originPoint.x; x != destinationPoint.x; x += xSign)
+        public Vector2Int GetClosestMatchingValidMove(Vector2 worldSpaceDestinationVector, bool isInOffsetColumn)
+        {
+            var angle = Vector2.SignedAngle(Vector2.right, worldSpaceDestinationVector);
+            if (0 <= angle && angle < 60)
             {
-                result.AddLastWaypoint(new Vector2Int(x, originPoint.y));
+                return isInOffsetColumn ? new Vector2Int(1, 1) : Vector2Int.right;
             }
-
-            var ySign = (int)Mathf.Sign(destinationPoint.y - originPoint.y);
-            for (var y = originPoint.y; y != destinationPoint.y; y += ySign)
+            if (60 <= angle && angle < 120)
             {
-                result.AddLastWaypoint(new Vector2Int(destinationPoint.x, y));
+                return Vector2Int.up;
             }
-
-            return result;
+            if (120 <= angle && angle <= 180)
+            {
+                return isInOffsetColumn ? new Vector2Int(-1, 1) : new Vector2Int(-1, 0);
+            }
+            if (-180 <= angle && angle < -120)
+            {
+                return isInOffsetColumn ? new Vector2Int(-1, 0) : new Vector2Int(-1, -1);
+            }
+            if (-120 <= angle && angle < -60)
+            {
+                return Vector2Int.down;
+            }
+            if (-60 <= angle && angle < 0)
+            {
+                return isInOffsetColumn ? new Vector2Int(1, 0) : new Vector2Int(1, -1);
+            }
+            throw new Exception($"error in angle matching {angle}");
         }
 
         public IEnumerable<T> GetItemsAtLocation<T>(Vector2Int position)

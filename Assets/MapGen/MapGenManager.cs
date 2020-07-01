@@ -1,24 +1,35 @@
-﻿using System;
+﻿using Assets.MapGen.TileManagement;
+using Assets.Scripts.MovementExtensions;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[Serializable]
+[System.Serializable]
 public struct MapGenSpawnable
 {
     public GameObject prefab;
     public float densityPerSurfaceSize;
 }
 
+[RequireComponent(typeof(HexMember))]
 public class MapGenManager : MonoBehaviour
 {
     public MapGenSpawnable[] spawnableItems;
-    public Vector3 spawnBoxSize = new Vector3(1, 0, 1);
+    public HexTileMapManager tileManager;
+
+    public Vector2Int spawnBoxSize = new Vector2Int(3, 3);
+
+    private HexMember hexMember;
+
+    public void Awake()
+    {
+        hexMember = GetComponent<HexMember>();
+    }
 
     // Start is called before the first frame update
     void Start()
     {
-        var spawnArea = spawnBoxSize.x * spawnBoxSize.z;
+        var spawnArea = spawnBoxSize.x * spawnBoxSize.y;
         foreach(var spawnable in spawnableItems)
         {
             this.SpawnItemsForSpawnable(spawnable, spawnArea);
@@ -42,20 +53,21 @@ public class MapGenManager : MonoBehaviour
 
     private void SpawnItem(GameObject prefab)
     {
-        Instantiate(prefab, getRandomPosInBounds() + this.transform.position, Quaternion.identity, this.transform);
+        var newItem = Instantiate(prefab, transform);
+        var hexItem = newItem.GetComponentInChildren<ITilemapMember>();
+        this.tileManager.RegisterNewMapMember(hexItem, getRandomPosInBounds());
     }
 
-    private Vector3 getRandomPosInBounds()
+    private Vector2Int getRandomPosInBounds()
     {
-        return new Vector3(
-            this.spawnBoxSize.x * (UnityEngine.Random.value - 0.5f),
-            this.spawnBoxSize.y * (UnityEngine.Random.value - 0.5f),
-            this.spawnBoxSize.z * (UnityEngine.Random.value - 0.5f));
+        return new Vector2Int(
+            Random.Range(0, this.spawnBoxSize.x),
+            Random.Range(0, this.spawnBoxSize.y)) + this.hexMember.Position;
     }
 
     private void OnDrawGizmos()
     {
-        Gizmos.color = new Color(0.8f, 0.2f, 0.2f, 0.5f);
-        Gizmos.DrawCube(transform.position, spawnBoxSize);
+        //Gizmos.color = new Color(0.8f, 0.2f, 0.2f, 0.5f);
+        //Gizmos.DrawCube(transform.position, spawnBoxSize);
     }
 }

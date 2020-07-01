@@ -1,4 +1,5 @@
-﻿using Assets.Scripts.Resources;
+﻿using Assets.Scripts.MovementExtensions;
+using Assets.Scripts.Resources;
 using Assets.Scripts.Resources.Inventory;
 using Assets.Scripts.Trader;
 using System.Collections;

@@ -73,6 +73,7 @@
     <Compile Include="Assets\MapGen\TileManagement\HexTileMapManager.cs" />
     <Compile Include="Assets\MapGen\TileManagement\ITileMapMember.cs" />
     <Compile Include="Assets\MapGen\TileManagement\TileRoute.cs" />
+    <Compile Include="Assets\MultiHexMemberInit.cs" />
     <Compile Include="Assets\Scripts\Gatherer\GatherBehaviorOptimizer.cs" />
     <Compile Include="Assets\Scripts\Gatherer\GathererBehavior.cs" />
     <Compile Include="Assets\Scripts\Gatherer\GathererState.cs" />
@@ -90,6 +91,7 @@
     <Compile Include="Assets\Scripts\Market\ResourceSellResult.cs" />
     <Compile Include="Assets\Scripts\Market\SelectableMarket.cs" />
     <Compile Include="Assets\Scripts\MovementExtensions\FreeFormObjectSeeker.cs" />
+    <Compile Include="Assets\Scripts\MovementExtensions\HexMember.cs" />
     <Compile Include="Assets\Scripts\MovementExtensions\HexMovementManager.cs" />
     <Compile Include="Assets\Scripts\MovementExtensions\IObjectSeeker.cs" />
     <Compile Include="Assets\Scripts\Resources\IResource.cs" />

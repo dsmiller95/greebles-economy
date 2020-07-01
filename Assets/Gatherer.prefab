@@ -131,7 +131,7 @@ GameObject:
   - component: {fileID: 2520451541431826768}
   - component: {fileID: 9097611823120724489}
   - component: {fileID: 5190111888768820412}
-  - component: {fileID: 382371812376867371}
+  - component: {fileID: 5887815664985223524}
   m_Layer: 9
   m_Name: Gatherer
   m_TagString: Untagged
@@ -231,7 +231,6 @@ MonoBehaviour:
   backpackSize: 10
   pocketSize: 1
   StuffIEat: 0100000002000000
-  objectSeeker: {fileID: 0}
 --- !u!114 &9183838253323556353
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -309,7 +308,7 @@ MonoBehaviour:
   baseMaterial: {fileID: 2100000, guid: 1a1299152cdc7a445ae272a808d55557, type: 2}
   selectedMaterial: {fileID: 2100000, guid: d4d215fcc7017e94eb8defeee9bfecaa, type: 2}
   outlineMaterial: {fileID: 0}
---- !u!114 &382371812376867371
+--- !u!114 &5887815664985223524
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -318,11 +317,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 4063966645591292537}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6dca0454ccf0d8b42acbf714ae2a7bdb, type: 3}
+  m_Script: {fileID: 11500000, guid: 45fc74d5a5ff02042bcd64b4d75847c3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 5
-  touchDistance: 1
+  tilemapManager: {fileID: 0}
+  startingPosition: {x: 0, y: 0}
+  speed: 0.5
 --- !u!1 &5848019200659954162
 GameObject:
   m_ObjectHideFlags: 0

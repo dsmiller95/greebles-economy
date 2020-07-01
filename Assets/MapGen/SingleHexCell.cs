@@ -79,6 +79,10 @@ namespace Assets.MapGen
         {
             myItem = item;
         }
+        public TileMapItem GetMapItem()
+        {
+            return myItem;
+        }
 
         public void UpdateWorldSpace()
         {

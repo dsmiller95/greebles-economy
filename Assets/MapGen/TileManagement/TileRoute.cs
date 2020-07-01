@@ -24,18 +24,11 @@ namespace Assets.MapGen.TileManagement
             this.waypoints.Add(waypoint);
         }
 
-        public void RemoveFirstWaypoint()
+        public Vector2Int PopNextWaypoint()
         {
+            var nextWaypoint = this.waypoints.First();
             this.waypoints.RemoveAt(0);
-        }
-
-        public Vector2Int LastWaypoint()
-        {
-            return waypoints.Last();
-        }
-        public Vector2Int FirstWaypoint()
-        {
-            return waypoints.First();
+            return nextWaypoint;
         }
 
         public IEnumerator<Vector2Int> GetEnumerator()
