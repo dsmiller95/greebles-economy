@@ -43,8 +43,20 @@ namespace Assets.MapGen
             {
                 //DrawPathBasedOnHistory();
             }
-            var hexCells = hexMember.MapManager.GetItemsWithinJumpDistance<SingleHexCell>(hexMember.PositionInTileMap, 5);
-            ToggleCells(hexCells);
+            var myPosition = hexMember.PositionInTileMap;
+            var mapManager = hexMember.MapManager;
+
+            var cells = mapManager.GetPositionsWithinJumpDistance(myPosition, (int)5)
+                .Select(position => new { position, distance = mapManager.DistanceBetweenInJumps(myPosition, position)})
+                .Where(info => info.distance % 2 == 0)
+                .SelectMany(info =>
+                {
+                    return mapManager
+                        .GetMembersAtLocation<HexMember>(info.position, member => member.GetComponent<SingleHexCell>() != null)
+                        ?.Select(hexMember => hexMember.GetComponent<SingleHexCell>());
+
+                });
+            ToggleCells(cells);
         }
 
         private void DrawPathBasedOnHistory()

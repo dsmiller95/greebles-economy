@@ -131,7 +131,7 @@ namespace Assets.MapGen.TileManagement
         {
             var diff = destination - origin;
             var xOffset = Mathf.Abs(diff.x);
-            var isFromOffsetPoint = IsInOffsetColumn(origin);
+            var isFromOffsetPoint = !IsInOffsetColumn(origin);
 
             var shouldPadX = destination.y > 0 ^ isFromOffsetPoint;
             return Mathf.Max(
