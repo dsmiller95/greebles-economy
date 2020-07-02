@@ -13,7 +13,6 @@ GameObject:
   - component: {fileID: 1761797969437367336}
   - component: {fileID: 5990698669824577608}
   - component: {fileID: 4247416420297318673}
-  - component: {fileID: -6853645583858474221}
   - component: {fileID: 1781913961085442510}
   m_Layer: 8
   m_Name: Tree
@@ -112,22 +111,6 @@ MonoBehaviour:
   type: 1
   value: 5
   gatherTime: 0.5
---- !u!54 &-6853645583858474221
-Rigidbody:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6201624005823754261}
-  serializedVersion: 2
-  m_Mass: 10
-  m_Drag: 0.01
-  m_AngularDrag: 0.2
-  m_UseGravity: 1
-  m_IsKinematic: 0
-  m_Interpolate: 0
-  m_Constraints: 0
-  m_CollisionDetection: 0
 --- !u!114 &1781913961085442510
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -140,5 +123,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f7c001995a0ddc24d8e98e0f46bdcef2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tilemapManager: {fileID: 0}
-  startingPosition: {x: 0, y: 0}
+  localPosition: {x: 0, y: 0}
+  managerSetForInspector: {fileID: 0}
