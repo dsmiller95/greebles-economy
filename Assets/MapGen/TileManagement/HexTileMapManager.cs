@@ -61,16 +61,6 @@ namespace Assets.MapGen.TileManagement
             return TileMapToReal(tileMapPosition) * hexRadius;
         }
 
-        private IList<ITilemapMember> GetListFromCoord(Vector2Int coordinates)
-        {
-            var positionInGrid = coordinates - tileMapMin;
-            if(positionInGrid.x < 0 || positionInGrid.y < 0 || positionInGrid.y >= tileMapHeight || positionInGrid.x >= tileMapWidth)
-            {
-                return null;
-            }
-
-            return tileGrid[positionInGrid.y][positionInGrid.x];
-        }
 
         public bool IsWithinDistance(ITilemapMember first, ITilemapMember second, int distance)
         {
@@ -186,12 +176,29 @@ namespace Assets.MapGen.TileManagement
             throw new Exception($"error in angle matching {angle}");
         }
 
-        public IEnumerable<T> GetMembersAtLocationSatisfyingCondition<T>(Vector2Int position, Func<T, bool> filter) where T :ITilemapMember
+        private IList<ITilemapMember> GetListFromCoord(Vector2Int coordinates)
+        {
+            var positionInGrid = coordinates - tileMapMin;
+            if (positionInGrid.x < 0 || positionInGrid.y < 0 || positionInGrid.y >= tileMapHeight || positionInGrid.x >= tileMapWidth)
+            {
+                return null;
+            }
+
+            return tileGrid[positionInGrid.y][positionInGrid.x];
+        }
+
+        public IEnumerable<T> GetMembersAtLocation<T>(Vector2Int position, Func<T, bool> filter) where T :ITilemapMember
         {
             var positionList = GetListFromCoord(position);
             return positionList?
                 .OfType<T>()
                 .Where(member => filter(member));
+        }
+        public IEnumerable<T> GetMembersAtLocation<T>(Vector2Int position) where T : ITilemapMember
+        {
+            var positionList = GetListFromCoord(position);
+            return positionList?
+                .OfType<T>();
         }
 
         public IEnumerable<T> GetItemsAtLocation<T>(Vector2Int position)

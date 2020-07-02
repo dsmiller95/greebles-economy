@@ -73,7 +73,7 @@ namespace Assets.Scripts.MovementExtensions
                 {
                     var distance = MapManager.DistanceBetweenInJumps(myPosition, position);
                     return MapManager
-                        .GetMembersAtLocationSatisfyingCondition<HexMember>(position, member => filter(member.gameObject))
+                        .GetMembersAtLocation<HexMember>(position, member => filter(member.gameObject))
                         ?.Select(hexMember => (hexMember.gameObject, (float)distance)) ?? new (GameObject, float)[0];
 
                 });

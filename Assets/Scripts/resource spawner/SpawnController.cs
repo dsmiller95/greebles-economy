@@ -1,7 +1,9 @@
 ﻿using Assets.MapGen.TileManagement;
 using Assets.Scripts.MovementExtensions;
+using Assets.Scripts.Resources;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using UnityEditor;
 using UnityEngine;
@@ -26,9 +28,11 @@ public class SpawnController : MonoBehaviour
     public Vector2Int spawnBoxSize = new Vector2Int(1, 1);
     public HexMember hexMember;
 
+    private int myID;
     private void Awake()
     {
         this.hexMember = this.GetComponentInParent<HexMember>();
+        myID = Random.Range(0, int.MaxValue);
     }
 
     // Start is called before the first frame update
@@ -57,11 +61,29 @@ public class SpawnController : MonoBehaviour
 
     private void SpawnItem()
     {
-        //stantiate(spawnPrefab, getRandomPosInBounds() + this.transform.position, Quaternion.identity, this.transform);
+        var checks = 0;
+        Vector2Int newPosition;
+        bool hasExistingMember;
+        do
+        {
+            newPosition = getRandomPosInBounds();
+            var newRealPosition = newPosition + this.hexMember.PositionInTileMap;
+            hasExistingMember = hexMember.MapManager
+                .GetMembersAtLocation<HexMember>(newRealPosition)
+                .Where(x => x.GetComponent<SpawnMarker>()?.id == myID)
+                .Any();
+            checks++;
+        } while (hasExistingMember && checks < 10);
+
+        if (hasExistingMember)
+        {
+            return;
+        }
 
         var newItem = Instantiate(spawnPrefab, transform);
         var hexItem = newItem.GetComponentInChildren<HexMember>();
-        var newPosition = getRandomPosInBounds();
+        var marker = newItem.AddComponent<SpawnMarker>();
+        marker.id = this.myID;
         //Debug.Log($"spawning map feature at {newPosition}");
         hexItem.localPosition = newPosition;
         // the item will get the manager from the parent tree
