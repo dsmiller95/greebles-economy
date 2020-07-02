@@ -52,8 +52,8 @@ namespace Assets.Scripts.Gatherer.StateHandlers
         public Task<GathererState> HandleState(GathererBehavior data)
         {
             var sellingStateDate = data.stateData[stateHandle] as SellingStateData;
-            data.attemptToEnsureTarget(UserLayerMasks.Market,
-                (gameObject, distance) =>
+            data.AttemptToEnsureTarget(gameObject => gameObject.GetComponentInChildren<MarketBehavior>() != null,
+                (gameObject, distance) =>   
                 {
                     if (gameObject?.GetComponent<MarketBehavior>() != null)
                     {
@@ -65,7 +65,7 @@ namespace Assets.Scripts.Gatherer.StateHandlers
             {
                 var initialInventory = ResourceConfiguration.spaceFillingItems.ToDictionary(type => type, type => data.inventory.Get(type));
 
-                var market = data.objectSeeker.CurrentTarget.GetComponent<MarketBehavior>();
+                var market = data.objectSeeker.CurrentTarget.GetComponentInChildren<MarketBehavior>();
 
                 var exchangeAdapter = market.GetExchangeAdapter();
                 var optimizer = new PurchaseOptimizer<ResourceType, SpaceFillingInventory<ResourceType>, SpaceFillingInventory<ResourceType>>(

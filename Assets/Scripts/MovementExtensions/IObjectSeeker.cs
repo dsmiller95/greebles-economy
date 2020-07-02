@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Boo.Lang;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -17,5 +18,7 @@ namespace Assets.Scripts.MovementExtensions
         void ClearCurrentTarget();
         bool isTouchingCurrentTarget();
         GameObject CurrentTarget { get; set; }
+
+        IEnumerable<(GameObject, float)> GetObjectsWithinDistanceFromFilter(float distance, Func<GameObject, bool> filter);
     }
 }

@@ -1,4 +1,6 @@
 ﻿using Assets.MapGen.TileManagement;
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
@@ -6,8 +8,6 @@ namespace Assets.Scripts.MovementExtensions
 {
     public class HexMovementManager : HexMember, IObjectSeeker
     {
-
-        #region IObjectSeeker
         /// <summary>
         /// Seconds it takes to move to the next tile in the hex grid
         /// </summary>
@@ -36,20 +36,20 @@ namespace Assets.Scripts.MovementExtensions
             }
             lastTimeMoved = Time.time;
 
-            if(currentRoute == null)
+            if (currentRoute == null)
             {
-                currentRoute = MapManager.GetRouteBetweenMembers(this, this.currentTargetMember);
+                currentRoute = MapManager.GetRouteBetweenMembers(this, currentTargetMember);
             }
 
-            // if we're one away, we good
-            if (currentRoute.Count() == 1)
+            // if we're one or less away, we good
+            if (currentRoute.waypoints.Count <= 1)
             {
                 currentRoute = null;
                 return true;
             }
             var nextPosition = currentRoute.PopNextWaypoint();
 
-            this.PositionInTileMap = nextPosition;
+            PositionInTileMap = nextPosition;
             //tileGridItem.SetPositionInTileMap(nextPosition);
             return false;
         }
@@ -64,7 +64,20 @@ namespace Assets.Scripts.MovementExtensions
         {
             return MapManager.IsWithinDistance(this, currentTargetMember, 1);
         }
-        #endregion
+
+        public IEnumerable<(GameObject, float)> GetObjectsWithinDistanceFromFilter(float maxDistance, Func<GameObject, bool> filter)
+        {
+            var myPosition = PositionInTileMap;
+            return MapManager.GetPositionsWithinJumpDistance(myPosition, (int)maxDistance)
+                .SelectMany(position =>
+                {
+                    var distance = MapManager.DistanceBetweenInJumps(myPosition, position);
+                    return MapManager
+                        .GetMembersAtLocationSatisfyingCondition<HexMember>(position, member => filter(member.gameObject))
+                        ?.Select(hexMember => (hexMember.gameObject, (float)distance)) ?? new (GameObject, float)[0];
+
+                });
+        }
 
     }
 }

@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using System;
+using System.Collections.Generic;
+using UnityEngine;
 
 
 namespace Assets.Scripts.MovementExtensions
@@ -55,6 +57,20 @@ namespace Assets.Scripts.MovementExtensions
             }
             var difference = transform.position - currentTarget.transform.position;
             return new Vector3(difference.x, difference.y, difference.z).magnitude;
+        }
+
+        public IEnumerable<(GameObject, float)> GetObjectsWithinDistanceFromFilter(float distance, Func<GameObject, bool> filter)
+        {
+            Collider[] itemsInRadius = Physics.OverlapSphere(transform.position, distance);
+            foreach (Collider collider in itemsInRadius)
+            {
+                var gameObject = collider.gameObject;
+                if (filter(gameObject))
+                {
+                    float individualDistance = (transform.position - collider.transform.position).magnitude;
+                    yield return (collider.gameObject, individualDistance);
+                }
+            }
         }
 
         public GameObject CurrentTarget

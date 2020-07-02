@@ -52,10 +52,10 @@ namespace Assets.MapGen
             var manager = hexMember.MapManager;
             var newPath = manager.GetRouteBetweenMembers(lastSelected[0].hexMember, lastSelected[1].hexMember);
 
-            foreach (var coord in newPath)
+            foreach (var coord in newPath.waypoints)
             {
-                var hexCell = manager.GetItemsAtLocation<SingleHexCell>(coord).First();
-                hexCell.ToggleMaterial();
+                var hexCell = manager.GetItemsAtLocation<SingleHexCell>(coord)?.First();
+                hexCell?.ToggleMaterial();
             }
         }
 

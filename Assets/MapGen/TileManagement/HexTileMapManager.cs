@@ -13,8 +13,6 @@ namespace Assets.MapGen.TileManagement
         public int hexWidth;
         public int hexHeight;
 
-
-
         [HideInInspector()]
         public Vector2Int tileMapMax;
 
@@ -66,6 +64,11 @@ namespace Assets.MapGen.TileManagement
         private IList<ITilemapMember> GetListFromCoord(Vector2Int coordinates)
         {
             var positionInGrid = coordinates - tileMapMin;
+            if(positionInGrid.x < 0 || positionInGrid.y < 0 || positionInGrid.y >= tileMapHeight || positionInGrid.x >= tileMapWidth)
+            {
+                return null;
+            }
+
             return tileGrid[positionInGrid.y][positionInGrid.x];
         }
 
@@ -106,7 +109,9 @@ namespace Assets.MapGen.TileManagement
         public IEnumerable<T> GetItemsWithinJumpDistance<T>(Vector2Int origin, int jumpDistance)
         {
             return GetPositionsWithinJumpDistance(origin, jumpDistance)
-                .SelectMany(position => GetItemsAtLocation<T>(position))
+                .Select(position => GetItemsAtLocation<T>(position))
+                .Where(items => items != null)
+                .SelectMany(items => items)
                 .Where(x => x != null);
         }
 
@@ -130,6 +135,20 @@ namespace Assets.MapGen.TileManagement
                     yield return new Vector2Int(x, y + heightOffset) + origin;
                 }
             }
+        }
+
+        public int DistanceBetweenInJumps(Vector2Int origin, Vector2Int destination)
+        {
+            var diff = destination - origin;
+            var xOffset = Mathf.Abs(diff.x);
+            var isFromOffsetPoint = IsInOffsetColumn(origin);
+
+            var shouldPadX = destination.y > 0 ^ isFromOffsetPoint;
+            return Mathf.Max(
+                xOffset,
+                Mathf.Abs(diff.y) +
+                    Mathf.FloorToInt((xOffset + (shouldPadX ? 1 : 0)) / 2f)
+                );
         }
 
         public TileRoute GetRouteBetweenMembers(ITilemapMember origin, ITilemapMember destination)
@@ -167,10 +186,18 @@ namespace Assets.MapGen.TileManagement
             throw new Exception($"error in angle matching {angle}");
         }
 
+        public IEnumerable<T> GetMembersAtLocationSatisfyingCondition<T>(Vector2Int position, Func<T, bool> filter) where T :ITilemapMember
+        {
+            var positionList = GetListFromCoord(position);
+            return positionList?
+                .OfType<T>()
+                .Where(member => filter(member));
+        }
+
         public IEnumerable<T> GetItemsAtLocation<T>(Vector2Int position)
         {
             var positionList = GetListFromCoord(position);
-            return positionList
+            return positionList?
                 .Select(member => member.TryGetType<T>())
                 .Where(x => x != null);
         }
@@ -183,13 +210,13 @@ namespace Assets.MapGen.TileManagement
         public void RegisterInGrid(ITilemapMember item)
         {
             var position = item.PositionInTileMap;
-            GetListFromCoord(position).Add(item);
+            GetListFromCoord(position)?.Add(item);
             item.UpdateWorldSpace();
         }
         public void DeRegisterInGrid(ITilemapMember member)
         {
             var position = member.PositionInTileMap;
-            GetListFromCoord(position).Remove(member);
+            GetListFromCoord(position)?.Remove(member);
         }
     }
 

@@ -6,6 +6,7 @@ using Assets.Scripts.Resources.Inventory;
 using Assets.Utilities;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using TradeModeling.Economics;
 using TradeModeling.Functions;
@@ -19,7 +20,7 @@ namespace Assets.Scripts.Gatherer
     [RequireComponent(typeof(TimeTracker))]
     public class GathererBehavior : MonoBehaviour
     {
-        public const int searchRadius = 100;
+        public const int searchRadius = 30;
         public const float waitTimeBetweenSearches = 0.3f;
 
         public HomeBehavior home;
@@ -133,15 +134,15 @@ namespace Assets.Scripts.Gatherer
         /// <param name="layerMask"></param>
         /// <param name="weightFunction"></param>
         /// <returns>true on the frame when a target is found or changed</returns>
-        public bool attemptToEnsureTarget(UserLayerMasks layerMask, Func<GameObject, float, float> weightFunction)
+        public bool AttemptToEnsureTarget(Func<GameObject, bool> filter, Func<GameObject, float, float> weightFunction)
         {
             if (objectSeeker.CurrentTarget == null &&
                 // only check once per second if nothing found
                 (lastTargetCheckTime + waitTimeBetweenSearches) < Time.time)
             {
                 lastTargetCheckTime = Time.time;
-                objectSeeker.CurrentTarget = getClosestObjectSatisfyingCondition(
-                    layerMask,
+                objectSeeker.CurrentTarget = GetClosestObjectSatisfyingCondition(
+                    filter,
                     weightFunction);
                 if (objectSeeker.CurrentTarget != null)
                 {
@@ -151,26 +152,23 @@ namespace Assets.Scripts.Gatherer
             return false;
         }
 
-        private GameObject getClosestObjectSatisfyingCondition(UserLayerMasks layerMask, Func<GameObject, float, float> weightFunction)
+        private GameObject GetClosestObjectSatisfyingCondition(Func<GameObject, bool> filter, Func<GameObject, float, float> weightFunction)
         {
-            Collider[] resourcesInRadius = Physics.OverlapSphere(transform.position, searchRadius, (int)layerMask);
-            if (resourcesInRadius.Length <= 0)
+            var validObjects = objectSeeker.GetObjectsWithinDistanceFromFilter(searchRadius, filter).ToList();
+            if (validObjects.Count <= 0)
             {
                 return null;
             }
-            float maxWeight = float.MinValue;
-            Collider highestWeightCollider = null;
-            foreach (Collider resource in resourcesInRadius)
-            {
-                float distance = (transform.position - resource.transform.position).magnitude;
-                float weight = weightFunction(resource.gameObject, distance);
-                if (weight > maxWeight)
-                {
-                    maxWeight = weight;
-                    highestWeightCollider = resource;
-                }
-            }
-            return highestWeightCollider?.gameObject;
+
+            return validObjects
+                .Select(x =>
+                    new
+                    {
+                        obj = x.Item1,
+                        weight = weightFunction(x.Item1, x.Item2)
+                    })
+                .Aggregate((aggregate, current) => aggregate.weight >= current.weight ? aggregate : current)
+                .obj;
         }
         internal async Task<bool> eatResource(GameObject resource)
         {

@@ -22,9 +22,13 @@ namespace Assets.Scripts.MovementExtensions
         // Start is called before the first frame update
         void Start()
         {
-            //Debug.Log($"Registered {gameObject.name} at {localPosition}: {tilemapManager}");
             var manager = MapManager;
             manager.PlaceNewMapMember(this);
+        }
+
+        public void OnDestroy()
+        {
+            MapManager.DeRegisterInGrid(this);
         }
 
 

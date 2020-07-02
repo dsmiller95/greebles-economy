@@ -8,9 +8,9 @@ using UnityEngine;
 
 namespace Assets.MapGen.TileManagement
 {
-    public class TileRoute : IEnumerable<Vector2Int>
+    public class TileRoute
     {
-        private IList<Vector2Int> waypoints;
+        public IList<Vector2Int> waypoints;
         public TileRoute(IList<Vector2Int> waypoints)
         {
             this.waypoints = waypoints;
@@ -29,16 +29,6 @@ namespace Assets.MapGen.TileManagement
             var nextWaypoint = this.waypoints.First();
             this.waypoints.RemoveAt(0);
             return nextWaypoint;
-        }
-
-        public IEnumerator<Vector2Int> GetEnumerator()
-        {
-            return waypoints.GetEnumerator();
-        }
-
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return waypoints.GetEnumerator();
         }
     }
 }
