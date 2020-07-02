@@ -1,4 +1,6 @@
 ﻿using Assets.Scripts.MovementExtensions;
+using Assets.UI.InfoPane;
+using Assets.UI.SelectionManager;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -6,7 +8,7 @@ using UnityEngine;
 namespace Assets.MapGen
 {
     [RequireComponent(typeof(HexMember))]
-    public class SingleHexCell : MonoBehaviour
+    public class SingleHexCell : MonoBehaviour, IFocusable
     {
         public static IList<SingleHexCell> lastSelected = new List<SingleHexCell>();
 
@@ -16,37 +18,11 @@ namespace Assets.MapGen
 
         private int materialIndex;
 
-        private Camera cam;
         // Start is called before the first frame update
         void Start()
         {
             materialIndex = 0;// Random.Range(0, materialOptions.Length);
             renderer.material = materialOptions[materialIndex];
-
-            cam = GameObject.FindGameObjectsWithTag("MainCamera")
-                .Where(gameObject => gameObject.name == "Scene Camera").First()
-                .GetComponent<Camera>();
-        }
-
-        // Update is called once per frame
-        void Update()
-        {
-            if (Input.GetMouseButtonDown(0))
-            {
-                //Debug.Log("mousedown");
-                Ray ray = cam.ScreenPointToRay(Input.mousePosition);
-                RaycastHit hit;
-
-                if (Physics.Raycast(ray, out hit, 1000))
-                {
-                    var hitGameObject = hit.transform.gameObject;
-                    //Debug.Log($"found hit{hitGameObject.name}");
-                    if (hitGameObject.transform.parent.gameObject == gameObject)
-                    {
-                        MouseDown();
-                    }
-                }
-            }
         }
 
         private void ToggleMaterial()
@@ -89,6 +65,22 @@ namespace Assets.MapGen
             {
                 hexCell.ToggleMaterial();
             }
+        }
+
+
+        public InfoPaneConfiguration GetInfoPaneConfiguration()
+        {
+            return null;
+        }
+
+        public void OnMeDeselected()
+        {
+            Debug.Log($"{gameObject.name} deselected");
+        }
+
+        public void OnMeSelected()
+        {
+            MouseDown();
         }
     }
 }

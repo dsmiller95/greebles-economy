@@ -19,6 +19,10 @@ namespace Assets.UI.InfoPane
         private void SetNewPaneConfig(InfoPaneConfiguration paneConfiguration)
         {
             panelBuilder.ClearContainer();
+            if(paneConfiguration == null)
+            {
+                return;
+            }
             foreach (var plottableConfig in paneConfiguration.plottables)
             {
                 var newPlottable = Instantiate(plottablePrefab, transform);
@@ -44,18 +48,18 @@ namespace Assets.UI.InfoPane
 
         public bool IsValidSelection(GameObject o)
         {
-            return o.GetComponent<IFocusable>() != default;
+            return o.GetComponentInParent<IFocusable>() != default;
         }
 
         public bool SelectedObject(GameObject o)
         {
 
             currentlySelected?.GetComponentInChildren<IHighlightable>()?.SetHighlighted(HighlightState.None);
-            currentlySelected?.GetComponent<IFocusable>().OnMeDeselected();
+            currentlySelected?.GetComponentInParent<IFocusable>().OnMeDeselected();
 
             currentlySelected = o;
 
-            var currentFocusable = currentlySelected.GetComponent<IFocusable>();
+            var currentFocusable = currentlySelected.GetComponentInParent<IFocusable>();
             currentFocusable.OnMeSelected();
             currentlySelected.GetComponentInChildren<IHighlightable>()?.SetHighlighted(HighlightState.Selected);
 
