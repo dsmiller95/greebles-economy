@@ -26,7 +26,7 @@ namespace Assets.MapGen
             {
                 for (var horizontalIndex = 0; horizontalIndex < totalCells.x; horizontalIndex++)
                 {
-                    var tileLocation = new Vector2Int(horizontalIndex, verticalIndex);
+                    var tileLocation = new Vector2Int(horizontalIndex, verticalIndex) + tilemapManager.tileMapMin;
                     cellGenerator.CreateTileAtPosition(tileLocation, tilemapManager);
                 }
             }
