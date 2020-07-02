@@ -73,9 +73,13 @@ namespace Assets.MapGen
 
         private void ToggleCells(IEnumerable<SingleHexCell> cells)
         {
+            if(cells == null)
+            {
+                return;
+            }
             foreach (var hexCell in cells)
             {
-                hexCell.ToggleMaterial();
+                hexCell?.ToggleMaterial();
             }
         }
 

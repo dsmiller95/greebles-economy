@@ -15,7 +15,6 @@ using UnityEngine;
 
 namespace Assets.Scripts.Gatherer
 {
-    [RequireComponent(typeof(HexMovementManager))]
     [RequireComponent(typeof(ResourceInventory))]
     [RequireComponent(typeof(TimeTracker))]
     public class GathererBehavior : MonoBehaviour
@@ -50,7 +49,7 @@ namespace Assets.Scripts.Gatherer
 
         private void Awake()
         {
-            objectSeeker = GetComponent<IObjectSeeker>();
+            objectSeeker = GetComponentInParent<IObjectSeeker>();
             stateData = new Dictionary<GathererState, dynamic>();
             utilityFunction = new UtilityEvaluatorFunctionMapper<ResourceType>(new Dictionary<ResourceType, IIncrementalFunction>()
                 {
