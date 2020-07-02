@@ -9,6 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8142591455979364399}
+  - component: {fileID: 4415031600254191368}
   - component: {fileID: 3518018012449077222}
   m_Layer: 0
   m_Name: HexCell
@@ -32,6 +33,20 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4415031600254191368
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 77161717329258606}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f7c001995a0ddc24d8e98e0f46bdcef2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tilemapManager: {fileID: 0}
+  localPosition: {x: 0, y: 0}
 --- !u!114 &3518018012449077222
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -48,6 +63,7 @@ MonoBehaviour:
   materialOptions:
   - {fileID: 2100000, guid: 1a1299152cdc7a445ae272a808d55557, type: 2}
   - {fileID: 2100000, guid: d4811e1413b03b14590ddc862a637c8e, type: 2}
+  hexMember: {fileID: 4415031600254191368}
 --- !u!1001 &373278872991565549
 PrefabInstance:
   m_ObjectHideFlags: 0

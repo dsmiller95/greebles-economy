@@ -63,8 +63,9 @@ public class SpawnController : MonoBehaviour
         var hexItem = newItem.GetComponentInChildren<HexMember>();
         var newPosition = getRandomPosInBounds();
         //Debug.Log($"spawning map feature at {newPosition}");
-        hexItem.startingPosition = newPosition;
-        hexItem.tilemapManager = this.hexMember.tilemapManager;
+        hexItem.localPosition = newPosition;
+        // the item will get the manager from the parent tree
+        // hexItem.tilemapManager = this.hexMember.tilemapManager;
         //this.hexMember.tilemapManager.RegisterNewMapMember(hexItem, getRandomPosInBounds());
     }
 
@@ -72,7 +73,7 @@ public class SpawnController : MonoBehaviour
     {
         return new Vector2Int(
             Random.Range(0, this.spawnBoxSize.x),
-            Random.Range(0, this.spawnBoxSize.y)) + this.hexMember.Position;
+            Random.Range(0, this.spawnBoxSize.y));
     }
 
     private void OnDrawGizmos()

@@ -1,8 +1,10 @@
 ﻿using Assets.MapGen.TileManagement;
+using Assets.Scripts.MovementExtensions;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Tilemaps;
 
 namespace Assets.MapGen
 {
@@ -26,8 +28,9 @@ namespace Assets.MapGen
         public void CreateTileAtPosition(Vector2Int position, HexTileMapManager tilemapManager)
         {
             var newTile = Instantiate(hexTile, transform, false);
-            var tilemapMember = newTile.GetComponent<ITilemapMember>();
-            tilemapManager.RegisterNewMapMember(tilemapMember, position);
+            var tilemapMember = newTile.GetComponent<HexMember>();
+            tilemapMember.PositionInTileMap = position;
+            tilemapMember.MapManager = tilemapManager;
         }
 
     }

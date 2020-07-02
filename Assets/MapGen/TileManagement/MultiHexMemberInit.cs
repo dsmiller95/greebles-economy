@@ -1,6 +1,4 @@
 ﻿using Assets.Scripts.MovementExtensions;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(HexMember))]
@@ -11,14 +9,11 @@ public class MultiHexMemberInit : MonoBehaviour
     void Start()
     {
         var myMember = GetComponent<HexMember>();
-        var tileManager = myMember.tilemapManager;
-        foreach(var child in ChildMembers)
+        foreach (var child in ChildMembers)
         {
-            child.startingPosition = myMember.Position + child.Position;
-            child.tilemapManager = myMember.tilemapManager;
-            //tileManager.RegisterNewMapMember(child, myMember.Position + child.Position);
+            child.localPosition = myMember.LocalPosition + child.LocalPosition;
         }
-        foreach(var child in ChildMembers)
+        foreach (var child in ChildMembers)
         {
             child.gameObject.SetActive(true);
         }
@@ -27,6 +22,6 @@ public class MultiHexMemberInit : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+
     }
 }

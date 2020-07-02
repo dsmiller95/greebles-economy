@@ -143,6 +143,21 @@ PrefabInstance:
       propertyPath: startingPosition.y
       value: 15
       objectReference: {fileID: 0}
+    - target: {fileID: 1710578810728563663, guid: 7e956704557df5f439b06599241112a7,
+        type: 3}
+      propertyPath: managerSetForInspector
+      value: 
+      objectReference: {fileID: 1140566651}
+    - target: {fileID: 1710578810728563663, guid: 7e956704557df5f439b06599241112a7,
+        type: 3}
+      propertyPath: localPosition.x
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 1710578810728563663, guid: 7e956704557df5f439b06599241112a7,
+        type: 3}
+      propertyPath: localPosition.y
+      value: 10
+      objectReference: {fileID: 0}
     - target: {fileID: 7441600364289305773, guid: 7e956704557df5f439b06599241112a7,
         type: 3}
       propertyPath: inventoryCapacitySetForUI
@@ -401,6 +416,21 @@ PrefabInstance:
       propertyPath: startingPosition.y
       value: 10
       objectReference: {fileID: 0}
+    - target: {fileID: 1710578810728563663, guid: 7e956704557df5f439b06599241112a7,
+        type: 3}
+      propertyPath: managerSetForInspector
+      value: 
+      objectReference: {fileID: 1140566651}
+    - target: {fileID: 1710578810728563663, guid: 7e956704557df5f439b06599241112a7,
+        type: 3}
+      propertyPath: localPosition.x
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 1710578810728563663, guid: 7e956704557df5f439b06599241112a7,
+        type: 3}
+      propertyPath: localPosition.y
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 7441600364289305773, guid: 7e956704557df5f439b06599241112a7,
         type: 3}
       propertyPath: inventoryCapacitySetForUI
@@ -537,7 +567,7 @@ MonoBehaviour:
       type: 3}
     densityPerSurfaceSize: 0.0003
   tileManager: {fileID: 1140566651}
-  spawnBoxSize: {x: 50, y: 50}
+  spawnBoxSize: {x: 100, y: 100}
 --- !u!4 &665685628
 Transform:
   m_ObjectHideFlags: 0
@@ -564,8 +594,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f7c001995a0ddc24d8e98e0f46bdcef2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tilemapManager: {fileID: 1140566651}
-  startingPosition: {x: 10, y: 10}
+  localPosition: {x: 10, y: 10}
+  managerSetForInspector: {fileID: 1140566651}
 --- !u!1 &705507993
 GameObject:
   m_ObjectHideFlags: 0
@@ -944,7 +974,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1140566647}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -60, y: 0, z: -60}
+  m_LocalPosition: {x: -117, y: 0, z: -100}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 665685628}
@@ -968,8 +998,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hexRadius: 1
-  width: 120
-  height: 120
+  hexWidth: 165
+  hexHeight: 120
 --- !u!1 &1144329709 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 120296, guid: 407bd5cbe8c43334bb1b25c0f3826974,
@@ -1212,15 +1242,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 459968, guid: 407bd5cbe8c43334bb1b25c0f3826974, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 29.51
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 459968, guid: 407bd5cbe8c43334bb1b25c0f3826974, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 8.64
+      value: 50
       objectReference: {fileID: 0}
     - target: {fileID: 459968, guid: 407bd5cbe8c43334bb1b25c0f3826974, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0.62
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 459968, guid: 407bd5cbe8c43334bb1b25c0f3826974, type: 3}
       propertyPath: m_LocalRotation.x
@@ -1264,15 +1294,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 11455738, guid: 407bd5cbe8c43334bb1b25c0f3826974, type: 3}
       propertyPath: maxHeight
-      value: 60
+      value: 40
       objectReference: {fileID: 0}
     - target: {fileID: 11455738, guid: 407bd5cbe8c43334bb1b25c0f3826974, type: 3}
       propertyPath: limitX
-      value: 100
+      value: 50
       objectReference: {fileID: 0}
     - target: {fileID: 11455738, guid: 407bd5cbe8c43334bb1b25c0f3826974, type: 3}
       propertyPath: limitY
-      value: 100
+      value: 50
       objectReference: {fileID: 0}
     - target: {fileID: 11455738, guid: 407bd5cbe8c43334bb1b25c0f3826974, type: 3}
       propertyPath: keyboardMovementSpeed
@@ -1280,7 +1310,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 11455738, guid: 407bd5cbe8c43334bb1b25c0f3826974, type: 3}
       propertyPath: screenEdgeMovementSpeed
-      value: 70
+      value: 50
       objectReference: {fileID: 0}
     - target: {fileID: 11455738, guid: 407bd5cbe8c43334bb1b25c0f3826974, type: 3}
       propertyPath: scrollWheelZoomingSensitivity
@@ -1288,7 +1318,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 11455738, guid: 407bd5cbe8c43334bb1b25c0f3826974, type: 3}
       propertyPath: panningSpeed
-      value: 50
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 11455738, guid: 407bd5cbe8c43334bb1b25c0f3826974, type: 3}
+      propertyPath: limitMap
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 407bd5cbe8c43334bb1b25c0f3826974, type: 3}
@@ -1313,6 +1347,21 @@ PrefabInstance:
         type: 3}
       propertyPath: startingPosition.y
       value: 18
+      objectReference: {fileID: 0}
+    - target: {fileID: 1710578810728563663, guid: 7e956704557df5f439b06599241112a7,
+        type: 3}
+      propertyPath: managerSetForInspector
+      value: 
+      objectReference: {fileID: 1140566651}
+    - target: {fileID: 1710578810728563663, guid: 7e956704557df5f439b06599241112a7,
+        type: 3}
+      propertyPath: localPosition.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1710578810728563663, guid: 7e956704557df5f439b06599241112a7,
+        type: 3}
+      propertyPath: localPosition.y
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7441600364289305773, guid: 7e956704557df5f439b06599241112a7,
         type: 3}
@@ -1426,6 +1475,21 @@ PrefabInstance:
     - target: {fileID: -3910571299877369985, guid: 7a9a4f573a9ae1e48bc5a77fa1f10be5,
         type: 3}
       propertyPath: startingPosition.y
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: -3910571299877369985, guid: 7a9a4f573a9ae1e48bc5a77fa1f10be5,
+        type: 3}
+      propertyPath: managerSetForInspector
+      value: 
+      objectReference: {fileID: 1140566651}
+    - target: {fileID: -3910571299877369985, guid: 7a9a4f573a9ae1e48bc5a77fa1f10be5,
+        type: 3}
+      propertyPath: localPosition.x
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: -3910571299877369985, guid: 7a9a4f573a9ae1e48bc5a77fa1f10be5,
+        type: 3}
+      propertyPath: localPosition.y
       value: 20
       objectReference: {fileID: 0}
     - target: {fileID: 4063966645591292537, guid: 7a9a4f573a9ae1e48bc5a77fa1f10be5,

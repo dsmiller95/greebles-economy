@@ -47,7 +47,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   tilemapManager: {fileID: 0}
-  startingPosition: {x: 0, y: 0}
+  localPosition: {x: 0, y: 0}
 --- !u!114 &742776847559495995
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -55,7 +55,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1140293900322245272}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 996d5b6373cea10428795fcceaff7a57, type: 3}
   m_Name: 
@@ -70,6 +70,16 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1140293900322245277}
     m_Modifications:
+    - target: {fileID: 1710578810728563663, guid: 7e956704557df5f439b06599241112a7,
+        type: 3}
+      propertyPath: localPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1710578810728563663, guid: 7e956704557df5f439b06599241112a7,
+        type: 3}
+      propertyPath: localPosition.y
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5932025948300384605, guid: 7e956704557df5f439b06599241112a7,
         type: 3}
       propertyPath: m_Layer
@@ -83,7 +93,7 @@ PrefabInstance:
     - target: {fileID: 8082357802481383815, guid: 7e956704557df5f439b06599241112a7,
         type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8082357802481383931, guid: 7e956704557df5f439b06599241112a7,
         type: 3}
@@ -187,7 +197,7 @@ PrefabInstance:
     - target: {fileID: 4063966645591292537, guid: 87bb67f98533fe94aab4cc0c6e830f1f,
         type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4498409171599806407, guid: 87bb67f98533fe94aab4cc0c6e830f1f,
         type: 3}

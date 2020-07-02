@@ -8,29 +8,18 @@ namespace Assets.MapGen.TileManagement
     public class HexTileMapManager : MonoBehaviour
     {
         public float hexRadius;
-        public float width;
-        public float height;
+        public int hexWidth;
+        public int hexHeight;
 
         private readonly Vector2 displacementRatio = new Vector2(3f / 2f, Mathf.Sqrt(3));
 
-        private IList<TileMapItem>[][] tileGrid;
+        private IList<ITilemapMember>[][] tileGrid;
         public int tileMapHeight => tileGrid.Length;
         public int tileMapWidth => tileGrid[0].Length;
 
 
-        /// <summary>
-        /// distance between each cell and the row of vertical cells next to it
-        /// </summary>
-        private float horizontalDisplacement;
-        /// <summary>
-        /// distance between each cell and the cell directly beloy it
-        /// </summary>
-        private float verticalDisplacement;
-
         public void Awake()
         {
-            horizontalDisplacement = hexRadius * displacementRatio.x;
-            verticalDisplacement = hexRadius * displacementRatio.y;
             SetupGrid();
         }
 
@@ -58,25 +47,25 @@ namespace Assets.MapGen.TileManagement
 
         private void SetupGrid()
         {
-            var totalCells = new Vector2Int((int)(width / horizontalDisplacement), (int)(height / verticalDisplacement));
-            tileGrid = new IList<TileMapItem>[totalCells.y][];
+            var totalCells = new Vector2Int(hexWidth, hexHeight);
+            tileGrid = new IList<ITilemapMember>[totalCells.y][];
             for (var verticalIndex = 0; verticalIndex < totalCells.y; verticalIndex++)
             {
-                tileGrid[verticalIndex] = new IList<TileMapItem>[totalCells.x];
+                tileGrid[verticalIndex] = new IList<ITilemapMember>[totalCells.x];
                 for (var horizontalIndex = 0; horizontalIndex < totalCells.x; horizontalIndex++)
                 {
-                    tileGrid[verticalIndex][horizontalIndex] = new List<TileMapItem>();
+                    tileGrid[verticalIndex][horizontalIndex] = new List<ITilemapMember>();
                 }
             }
         }
 
-        public bool IsWithinDistance(TileMapItem first, TileMapItem second, int distance)
+        public bool IsWithinDistance(ITilemapMember first, ITilemapMember second, int distance)
         {
-            return !GetRouteGenerator(first.positionInTileMap, second.positionInTileMap).Skip(distance).Any();
+            return !GetRouteGenerator(first.PositionInTileMap, second.PositionInTileMap).Skip(distance).Any();
         }
-        public int GetTileDistance(TileMapItem first, TileMapItem second)
+        public int GetTileDistance(ITilemapMember first, ITilemapMember second)
         {
-            return GetRouteGenerator(first.positionInTileMap, second.positionInTileMap).Count();
+            return GetRouteGenerator(first.PositionInTileMap, second.PositionInTileMap).Count();
         }
 
         private IEnumerable<Vector2Int> GetRouteGenerator(Vector2Int origin, Vector2Int destination)
@@ -104,14 +93,9 @@ namespace Assets.MapGen.TileManagement
             }
         }
 
-        public TileRoute GetRouteBetweenMembers(TileMapItem origin, TileMapItem destination)
-        {
-            return new TileRoute(this.GetRouteGenerator(origin.positionInTileMap, destination.positionInTileMap).ToList());
-        }
-
         public TileRoute GetRouteBetweenMembers(ITilemapMember origin, ITilemapMember destination)
         {
-            return GetRouteBetweenMembers(origin.GetMapItem(), destination.GetMapItem());
+            return new TileRoute(this.GetRouteGenerator(origin.PositionInTileMap, destination.PositionInTileMap).ToList());
         }
 
         public Vector2Int GetClosestMatchingValidMove(Vector2 worldSpaceDestinationVector, bool isInOffsetColumn)
@@ -144,58 +128,27 @@ namespace Assets.MapGen.TileManagement
             throw new Exception($"error in angle matching {angle}");
         }
 
-        public IEnumerable<T> GetItemsAtLocation<T>(Vector2Int position)
+        public IEnumerable<T> GetItemsAtLocation<T>(Vector2Int position) 
         {
             var positionList = tileGrid[position.y][position.x];
-            return positionList.Select(item => item.member).OfType<T>();
+            return positionList.Select(member => member.TryGetType<T>()).Where(x => x != null);
         }
 
-        public TileMapItem RegisterNewMapMember(ITilemapMember member, Vector2Int position)
+        public void PlaceNewMapMember(ITilemapMember member)
         {
-            return new TileMapItem(position, this, member);
+            this.RegisterInGrid(member);
         }
 
-        private void RegisterInGrid(TileMapItem item)
+        public void RegisterInGrid(ITilemapMember item)
         {
-            var position = item.positionInTileMap;
+            var position = item.PositionInTileMap;
             tileGrid[position.y][position.x].Add(item);
-            item.member.UpdateWorldSpace();
+            item.UpdateWorldSpace();
         }
-        private void DeRegisterInGrid(TileMapItem member)
+        public void DeRegisterInGrid(ITilemapMember member)
         {
-            var position = member.positionInTileMap;
+            var position = member.PositionInTileMap;
             tileGrid[position.y][position.x].Remove(member);
-        }
-
-        private void MoveItem(TileMapItem member, Vector2Int newPosition)
-        {
-            DeRegisterInGrid(member);
-            member.positionInTileMap = newPosition;
-            RegisterInGrid(member);
-        }
-
-        public class TileMapItem
-        {
-            public Vector2Int positionInTileMap;
-            private HexTileMapManager tileMapManager;
-            public ITilemapMember member;
-
-            internal TileMapItem(Vector2Int position, HexTileMapManager mapManager, ITilemapMember member)
-            {
-                this.member = member;
-                positionInTileMap = position;
-                tileMapManager = mapManager;
-                member.SetMapItem(this);
-                mapManager.RegisterInGrid(this);
-            }
-
-            public void SetPositionInTileMap(Vector2Int position)
-            {
-                tileMapManager.MoveItem(this, position);
-            }
-
-            public Vector2 PositionInTilePlane => tileMapManager.TileMapPositionToPositionInPlane(positionInTileMap);
-            public HexTileMapManager MapManager => tileMapManager;
         }
     }
 

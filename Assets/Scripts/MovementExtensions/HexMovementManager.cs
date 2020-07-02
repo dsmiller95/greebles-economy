@@ -38,7 +38,7 @@ namespace Assets.Scripts.MovementExtensions
 
             if(currentRoute == null)
             {
-                currentRoute = tilemapManager.GetRouteBetweenMembers(this.tileGridItem.member, this.currentTargetMember);
+                currentRoute = MapManager.GetRouteBetweenMembers(this, this.currentTargetMember);
             }
 
             // if we're one away, we good
@@ -48,7 +48,9 @@ namespace Assets.Scripts.MovementExtensions
                 return true;
             }
             var nextPosition = currentRoute.PopNextWaypoint();
-            tileGridItem.SetPositionInTileMap(nextPosition);
+
+            this.PositionInTileMap = nextPosition;
+            //tileGridItem.SetPositionInTileMap(nextPosition);
             return false;
         }
 
@@ -60,7 +62,7 @@ namespace Assets.Scripts.MovementExtensions
 
         public bool isTouchingCurrentTarget()
         {
-            return tilemapManager.IsWithinDistance(this.tileGridItem, currentTargetMember.GetMapItem(), 1);
+            return MapManager.IsWithinDistance(this, currentTargetMember, 1);
         }
         #endregion
 

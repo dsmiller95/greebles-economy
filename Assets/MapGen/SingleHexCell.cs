@@ -1,4 +1,5 @@
 ﻿using Assets.MapGen.TileManagement;
+using Assets.Scripts.MovementExtensions;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -6,12 +7,15 @@ using static Assets.MapGen.TileManagement.HexTileMapManager;
 
 namespace Assets.MapGen
 {
-    public class SingleHexCell : MonoBehaviour, ITilemapMember
+    [RequireComponent(typeof(HexMember))]
+    public class SingleHexCell : MonoBehaviour
     {
         public static IList<SingleHexCell> lastSelected = new List<SingleHexCell>();
 
         public MeshRenderer renderer;
         public Material[] materialOptions;
+        public HexMember hexMember;
+
         private int materialIndex;
 
         private Camera cam;
@@ -63,8 +67,8 @@ namespace Assets.MapGen
             }
             if (lastSelected.Count == 2)
             {
-                var manager = myItem.MapManager;
-                var newPath = manager.GetRouteBetweenMembers(lastSelected[0].myItem, lastSelected[1].myItem);
+                var manager = hexMember.MapManager;
+                var newPath = manager.GetRouteBetweenMembers(lastSelected[0].hexMember, lastSelected[1].hexMember);
 
                 foreach (var coord in newPath)
                 {
@@ -72,23 +76,6 @@ namespace Assets.MapGen
                     hexCell.ToggleMaterial();
                 }
             }
-        }
-
-        private TileMapItem myItem;
-        public void SetMapItem(TileMapItem item)
-        {
-            myItem = item;
-        }
-        public TileMapItem GetMapItem()
-        {
-            return myItem;
-        }
-
-        public void UpdateWorldSpace()
-        {
-            var placeSpace = myItem.PositionInTilePlane;
-            var worldPlacement = new Vector3(placeSpace.x, 0, placeSpace.y);
-            transform.localPosition = worldPlacement;
         }
     }
 }

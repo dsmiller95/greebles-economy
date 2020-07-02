@@ -19,12 +19,6 @@ public class MapGenManager : MonoBehaviour
 
     public Vector2Int spawnBoxSize = new Vector2Int(3, 3);
 
-    private HexMember hexMember;
-
-    public void Awake()
-    {
-        hexMember = GetComponent<HexMember>();
-    }
 
     // Start is called before the first frame update
     void Start()
@@ -56,17 +50,14 @@ public class MapGenManager : MonoBehaviour
         var newItem = Instantiate(prefab, transform);
         var hexItem = newItem.GetComponentInChildren<HexMember>();
         var newPosition = getRandomPosInBounds();
-        Debug.Log($"spawning map feature at {newPosition}");
-        hexItem.startingPosition = newPosition;
-        hexItem.tilemapManager = this.hexMember.tilemapManager;
-        //this.tileManager.RegisterNewMapMember(hexItem, newPosition);
+        hexItem.localPosition = newPosition;
     }
 
     private Vector2Int getRandomPosInBounds()
     {
         return new Vector2Int(
             Random.Range(0, this.spawnBoxSize.x),
-            Random.Range(0, this.spawnBoxSize.y)) + this.hexMember.Position;
+            Random.Range(0, this.spawnBoxSize.y));
     }
 
     private void OnDrawGizmos()
