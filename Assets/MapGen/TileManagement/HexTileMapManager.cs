@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using UnityEngine.Tilemaps;
 
 namespace Assets.MapGen.TileManagement
 {
@@ -29,7 +28,7 @@ namespace Assets.MapGen.TileManagement
         public void Awake()
         {
             var totalCells = new Vector2Int(hexWidth, hexHeight);
-            tileMapMax = tileMapMin + totalCells;   
+            tileMapMax = tileMapMin + totalCells;
 
             tileGrid = new IList<ITilemapMember>[totalCells.y][];
             for (var verticalIndex = 0; verticalIndex < totalCells.y; verticalIndex++)
@@ -60,13 +59,13 @@ namespace Assets.MapGen.TileManagement
         }
 
         public Vector2 TileMapPositionToPositionInPlane(Vector2Int tileMapPosition)
-        {   
+        {
             return TileMapToReal(tileMapPosition) * hexRadius;
         }
 
         private IList<ITilemapMember> GetListFromCoord(Vector2Int coordinates)
         {
-            var positionInGrid = coordinates - tileMapMin;  
+            var positionInGrid = coordinates - tileMapMin;
             return tileGrid[positionInGrid.y][positionInGrid.x];
         }
 
@@ -104,9 +103,38 @@ namespace Assets.MapGen.TileManagement
             }
         }
 
+        public IEnumerable<T> GetItemsWithinJumpDistance<T>(Vector2Int origin, int jumpDistance)
+        {
+            return GetPositionsWithinJumpDistance(origin, jumpDistance)
+                .SelectMany(position => GetItemsAtLocation<T>(position))
+                .Where(x => x != null);
+        }
+
+        public IEnumerable<Vector2Int> GetPositionsWithinJumpDistance(Vector2Int origin, int jumpDistance)
+        {
+            var isOffset = IsInOffsetColumn(origin);
+            var topHalfWidth = isOffset ? 0 : 1;
+            var bottomHalfWidth = isOffset ? 1 : 0;
+            var maxWidth = jumpDistance;
+            var maxHeight = jumpDistance * 2;
+
+            var heightOffset = -jumpDistance;
+
+            for (var y = 0; y <= maxHeight; y++)
+            {
+                var topSlopeAmount = topHalfWidth + (maxHeight - y) * 2;
+                var bottomSlopeAmount = bottomHalfWidth + y * 2;
+                var currentHalfWidth = Mathf.Min(topSlopeAmount, bottomSlopeAmount, maxWidth);
+                for (var x = -currentHalfWidth; x <= currentHalfWidth; x++)
+                {
+                    yield return new Vector2Int(x, y + heightOffset) + origin;
+                }
+            }
+        }
+
         public TileRoute GetRouteBetweenMembers(ITilemapMember origin, ITilemapMember destination)
         {
-            return new TileRoute(this.GetRouteGenerator(origin.PositionInTileMap, destination.PositionInTileMap).ToList());
+            return new TileRoute(GetRouteGenerator(origin.PositionInTileMap, destination.PositionInTileMap).ToList());
         }
 
         public Vector2Int GetClosestMatchingValidMove(Vector2 worldSpaceDestinationVector, bool isInOffsetColumn)
@@ -139,15 +167,17 @@ namespace Assets.MapGen.TileManagement
             throw new Exception($"error in angle matching {angle}");
         }
 
-        public IEnumerable<T> GetItemsAtLocation<T>(Vector2Int position) 
+        public IEnumerable<T> GetItemsAtLocation<T>(Vector2Int position)
         {
             var positionList = GetListFromCoord(position);
-            return positionList.Select(member => member.TryGetType<T>()).Where(x => x != null);
+            return positionList
+                .Select(member => member.TryGetType<T>())
+                .Where(x => x != null);
         }
 
         public void PlaceNewMapMember(ITilemapMember member)
         {
-            this.RegisterInGrid(member);
+            RegisterInGrid(member);
         }
 
         public void RegisterInGrid(ITilemapMember item)

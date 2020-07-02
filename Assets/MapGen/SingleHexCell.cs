@@ -1,9 +1,7 @@
-﻿using Assets.MapGen.TileManagement;
-using Assets.Scripts.MovementExtensions;
+﻿using Assets.Scripts.MovementExtensions;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using static Assets.MapGen.TileManagement.HexTileMapManager;
 
 namespace Assets.MapGen
 {
@@ -67,14 +65,29 @@ namespace Assets.MapGen
             }
             if (lastSelected.Count == 2)
             {
-                var manager = hexMember.MapManager;
-                var newPath = manager.GetRouteBetweenMembers(lastSelected[0].hexMember, lastSelected[1].hexMember);
+                //DrawPathBasedOnHistory();
+            }
+            var hexCells = hexMember.MapManager.GetItemsWithinJumpDistance<SingleHexCell>(hexMember.PositionInTileMap, 5);
+            ToggleCells(hexCells);
+        }
 
-                foreach (var coord in newPath)
-                {
-                    var hexCell = manager.GetItemsAtLocation<SingleHexCell>(coord).First();
-                    hexCell.ToggleMaterial();
-                }
+        private void DrawPathBasedOnHistory()
+        {
+            var manager = hexMember.MapManager;
+            var newPath = manager.GetRouteBetweenMembers(lastSelected[0].hexMember, lastSelected[1].hexMember);
+
+            foreach (var coord in newPath)
+            {
+                var hexCell = manager.GetItemsAtLocation<SingleHexCell>(coord).First();
+                hexCell.ToggleMaterial();
+            }
+        }
+
+        private void ToggleCells(IEnumerable<SingleHexCell> cells)
+        {
+            foreach (var hexCell in cells)
+            {
+                hexCell.ToggleMaterial();
             }
         }
     }
