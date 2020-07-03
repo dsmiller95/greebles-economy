@@ -7,7 +7,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Assembly-CSharp-Editor", "A
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTests", "UnitTests\UnitTests\UnitTests.csproj", "{CB9B3F8A-9152-47A4-A455-AFC15376786C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TradeModeling", "ExternalProjects\TradeModeling\TradeModeling.csproj", "{32D5B7B3-A7A3-471D-AB8C-C61294F9991B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TradeModeling", "ExternalProjects\TradeModeling\TradeModeling.csproj", "{32D5B7B3-A7A3-471D-AB8C-C61294F9991B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

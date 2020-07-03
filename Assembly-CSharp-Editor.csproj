@@ -320,6 +320,12 @@
     <Reference Include="TradeModeling">
       <HintPath>C:/source/greebles-economy/Assets/External/netstandard2.0/TradeModeling.dll</HintPath>
     </Reference>
+    <Reference Include="UnityEngine.CoreModule">
+      <HintPath>C:/source/greebles-economy/Assets/External/netstandard2.0/UnityEngine.CoreModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.SharedInternalsModule">
+      <HintPath>C:/source/greebles-economy/Assets/External/netstandard2.0/UnityEngine.SharedInternalsModule.dll</HintPath>
+    </Reference>
     <Reference Include="ICSharpCode.NRefactory">
       <HintPath>C:/source/greebles-economy/Library/PackageCache/com.unity.render-pipelines.core@7.3.1/Editor/ShaderGenerator/ICSharpCode.NRefactory.dll</HintPath>
     </Reference>

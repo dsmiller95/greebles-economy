@@ -10,7 +10,13 @@ namespace Assets.MapGen.TileManagement
         public float hexRadius;
 
         public Vector2Int tileMapMin;
+        /// <summary>
+        /// how many hexes wide this map is
+        /// </summary>
         public int hexWidth;
+        /// <summary>
+        /// how many hexes tall this map is
+        /// </summary>
         public int hexHeight;
 
         [HideInInspector()]
