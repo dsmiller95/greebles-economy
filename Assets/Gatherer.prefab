@@ -312,7 +312,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   localPosition: {x: 0, y: 0}
   managerSetForInspector: {fileID: 0}
-  speed: 1
+  speed: 0.2
   animtator: {fileID: 800049337303605667}
 --- !u!1 &6719041711850858275
 GameObject:
