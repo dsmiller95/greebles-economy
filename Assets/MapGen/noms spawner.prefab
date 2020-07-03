@@ -44,8 +44,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f7c001995a0ddc24d8e98e0f46bdcef2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tilemapManager: {fileID: 0}
-  startingPosition: {x: 0, y: 0}
+  localPosition: {x: 0, y: 0}
+  managerSetForInspector: {fileID: 0}
 --- !u!1 &1538038064276675139
 GameObject:
   m_ObjectHideFlags: 0
@@ -94,7 +94,7 @@ MonoBehaviour:
   initialSpawnNumber: 1
   boostProbabilityAt0: 0
   boostCurveOffset: 1
-  spawnPrefab: {fileID: 3155566554545023561, guid: 66f771a5f8295964b8a5f7adc9704b52,
-    type: 3}
+  spawnPrefabs:
+  - {fileID: 3155566554545023561, guid: 66f771a5f8295964b8a5f7adc9704b52, type: 3}
   spawnBoxSize: {x: 5, y: 5}
   hexMember: {fileID: 4641554961956919640}

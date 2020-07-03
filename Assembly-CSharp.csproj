@@ -86,6 +86,7 @@
     <Compile Include="Assets\Scripts\Gatherer\TimeTracker.cs" />
     <Compile Include="Assets\Scripts\Home\HomeBehavior.cs" />
     <Compile Include="Assets\Scripts\Home\SelectableHome.cs" />
+    <Compile Include="Assets\Scripts\Layout\RandomLayout.cs" />
     <Compile Include="Assets\Scripts\Market\MarketBehavior.cs" />
     <Compile Include="Assets\Scripts\Market\MarketPricePlotter.cs" />
     <Compile Include="Assets\Scripts\Market\ResourceSellResult.cs" />

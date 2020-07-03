@@ -5,7 +5,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using UnityEditor;
 using UnityEngine;
 
 public class SpawnController : MonoBehaviour
@@ -23,7 +22,7 @@ public class SpawnController : MonoBehaviour
     public float boostCurveOffset = 1f;
     private float boostCurveMultiplier;
 
-    public GameObject spawnPrefab;
+    public GameObject[] spawnPrefabs;
 
     public Vector2Int spawnBoxSize = new Vector2Int(1, 1);
     public HexMember hexMember;
@@ -79,8 +78,9 @@ public class SpawnController : MonoBehaviour
         {
             return;
         }
+        var thisPrefab = spawnPrefabs[Random.Range(0, spawnPrefabs.Length)];
 
-        var newItem = Instantiate(spawnPrefab, transform);
+        var newItem = Instantiate(thisPrefab, transform);
         var hexItem = newItem.GetComponentInChildren<HexMember>();
         var marker = newItem.AddComponent<SpawnMarker>();
         marker.id = this.myID;
