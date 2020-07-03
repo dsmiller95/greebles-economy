@@ -29,10 +29,10 @@ namespace Assets.Scripts.Gatherer.StateHandlers
             {
                 data.timeTracker.startTrackingResource(data.objectSeeker.CurrentTarget.GetComponent<IResource>()._type);
             };
-            if (data.objectSeeker.seekTargetToTouch())
+            var touchedObject = data.objectSeeker.seekTargetToTouch();
+            if (touchedObject != null)
             {
-                await data.eatResource(data.objectSeeker.CurrentTarget);
-                data.objectSeeker.ClearCurrentTarget();
+                await data.eatResource(touchedObject);
             }
 
             if (data.inventory.getFullRatio() >= 1)

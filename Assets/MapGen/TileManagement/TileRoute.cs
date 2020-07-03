@@ -24,6 +24,11 @@ namespace Assets.MapGen.TileManagement
             this.waypoints.Add(waypoint);
         }
 
+        public Vector2Int PeekNext()
+        {
+            return this.waypoints.First();
+        }
+
         public Vector2Int PopNextWaypoint()
         {
             var nextWaypoint = this.waypoints.First();

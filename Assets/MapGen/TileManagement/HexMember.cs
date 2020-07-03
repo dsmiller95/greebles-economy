@@ -20,10 +20,11 @@ namespace Assets.Scripts.MovementExtensions
         }
 
         // Start is called before the first frame update
-        void Start()
+        public void Start()
         {
             var manager = MapManager;
             manager.PlaceNewMapMember(this);
+            this.UpdatePositionInWorldSpace();
         }
 
         public void OnDestroy()
@@ -42,6 +43,7 @@ namespace Assets.Scripts.MovementExtensions
                 MapManager?.DeRegisterInGrid(this);
                 localPosition = value - (parentMemberTransform?.PositionInTileMap ?? new Vector2Int(0, 0));
                 MapManager?.RegisterInGrid(this);
+                this.UpdatePositionInWorldSpace();
             }
         }
 
@@ -66,11 +68,16 @@ namespace Assets.Scripts.MovementExtensions
             set => cachedTileMapManager = value;
         }
 
-        public void UpdateWorldSpace()
+        public void UpdatePositionInWorldSpace()
+        {
+            transform.position = this.GetPositionInWorldSpace();
+        }
+
+        protected virtual Vector3 GetPositionInWorldSpace()
         {
             var placeSpace = PositionInTilePlane;
             var placementInsideTilemap = new Vector3(placeSpace.x, 0, placeSpace.y);
-            transform.position = MapManager.transform.TransformPoint(placementInsideTilemap);
+            return MapManager.transform.TransformPoint(placementInsideTilemap);
         }
 
         public T TryGetType<T>()

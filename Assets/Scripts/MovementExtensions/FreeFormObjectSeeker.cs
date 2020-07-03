@@ -23,14 +23,20 @@ namespace Assets.Scripts.MovementExtensions
         public float touchDistance = 1f;
         internal GameObject currentTarget;
 
-        public bool seekTargetToTouch()
+        public GameObject seekTargetToTouch()
         {
             if (!currentTarget)
             {
-                return false;
+                return null;
             }
             moveTowardsPosition(currentTarget.transform.position);
-            return isTouchingCurrentTarget();
+            if (isTouchingCurrentTarget())
+            {
+                var previousTarget = currentTarget;
+                this.ClearCurrentTarget();
+                return previousTarget;
+            }
+            return null;
         }
 
         public void ClearCurrentTarget()
@@ -71,6 +77,11 @@ namespace Assets.Scripts.MovementExtensions
                     yield return (collider.gameObject, individualDistance);
                 }
             }
+        }
+
+        public void BeginApproachingNewTarget(GameObject target)
+        {
+            this.CurrentTarget = target;
         }
 
         public GameObject CurrentTarget

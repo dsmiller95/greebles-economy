@@ -50,7 +50,7 @@ namespace Assets.Scripts.Gatherer.StateHandlers
             {
                 lastConsumedTime = Time.time
             };
-            data.objectSeeker.CurrentTarget = null;
+            data.objectSeeker.ClearCurrentTarget();
         }
 
         public GathererState validNextStates => GathererState.Gathering;

@@ -14,10 +14,12 @@ namespace Assets.Scripts.MovementExtensions
         /// Returns true on the frame that the seeker touches the target
         /// </summary>
         /// <returns></returns>
-        bool seekTargetToTouch();
+        GameObject seekTargetToTouch();
         void ClearCurrentTarget();
         bool isTouchingCurrentTarget();
-        GameObject CurrentTarget { get; set; }
+        GameObject CurrentTarget { get; }
+
+        void BeginApproachingNewTarget(GameObject target);
 
         IEnumerable<(GameObject, float)> GetObjectsWithinDistanceFromFilter(float distance, Func<GameObject, bool> filter);
     }

@@ -24,7 +24,7 @@ namespace Assets.Scripts.Trader.StateHandlers
         public TraderState validPreviousStates => ~TraderState.TradeTransit;
         public void TransitionIntoState(TraderBehavior data)
         {
-            data.objectSeeker.CurrentTarget = data.currentTradeNodeTarget.target.gameObject;
+            data.objectSeeker.BeginApproachingNewTarget(data.currentTradeNodeTarget.target.gameObject);
         }
 
         public TraderState validNextStates => TraderState.TradeExecute;

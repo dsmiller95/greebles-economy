@@ -61,11 +61,12 @@ namespace Assets.Scripts.Gatherer.StateHandlers
                     }
                     return float.MinValue;
                 });
-            if (data.objectSeeker.seekTargetToTouch())
+            var touchedTarget = data.objectSeeker.seekTargetToTouch();
+            if (touchedTarget != null)
             {
                 var initialInventory = ResourceConfiguration.spaceFillingItems.ToDictionary(type => type, type => data.inventory.Get(type));
 
-                var market = data.objectSeeker.CurrentTarget.GetComponentInChildren<MarketBehavior>();
+                var market = touchedTarget.GetComponentInChildren<MarketBehavior>();
 
                 var exchangeAdapter = market.GetExchangeAdapter();
                 var optimizer = new PurchaseOptimizer<ResourceType, SpaceFillingInventory<ResourceType>, SpaceFillingInventory<ResourceType>>(

@@ -224,7 +224,6 @@ namespace Assets.MapGen.TileManagement
         {
             var position = item.PositionInTileMap;
             GetListFromCoord(position)?.Add(item);
-            item.UpdateWorldSpace();
         }
         public void DeRegisterInGrid(ITilemapMember member)
         {

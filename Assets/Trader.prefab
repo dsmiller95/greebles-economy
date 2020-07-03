@@ -17,6 +17,7 @@ GameObject:
   - component: {fileID: 4203546649366712724}
   - component: {fileID: 7403030546922558151}
   - component: {fileID: 3428440283323000274}
+  - component: {fileID: 8210320453602554796}
   m_Layer: 9
   m_Name: TraderBehavior
   m_TagString: Untagged
@@ -184,6 +185,25 @@ MonoBehaviour:
   baseMaterial: {fileID: 2100000, guid: ccd6a5bb280b04b45982965190fe62f9, type: 2}
   selectedMaterial: {fileID: 2100000, guid: efc4040f501c69346ab6960a4b4974f6, type: 2}
   outlineMaterial: {fileID: 0}
+--- !u!95 &8210320453602554796
+Animator:
+  serializedVersion: 3
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 642355579462256672}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: ba05eb571949e2d49b46572e04d52a10, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0
 --- !u!1 &2931048773816088678
 GameObject:
   m_ObjectHideFlags: 0
@@ -258,9 +278,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 45fc74d5a5ff02042bcd64b4d75847c3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tilemapManager: {fileID: 0}
-  startingPosition: {x: 0, y: 0}
+  localPosition: {x: 0, y: 0}
+  managerSetForInspector: {fileID: 0}
   speed: 1
+  animtator: {fileID: 8210320453602554796}
 --- !u!1 &6088585913124546504
 GameObject:
   m_ObjectHideFlags: 0

@@ -140,13 +140,15 @@ namespace Assets.Scripts.Gatherer
                 (lastTargetCheckTime + waitTimeBetweenSearches) < Time.time)
             {
                 lastTargetCheckTime = Time.time;
-                objectSeeker.CurrentTarget = GetClosestObjectSatisfyingCondition(
+                var newTarget = GetClosestObjectSatisfyingCondition(
                     filter,
                     weightFunction);
-                if (objectSeeker.CurrentTarget != null)
+                if(newTarget != null)
                 {
+                    objectSeeker.BeginApproachingNewTarget(newTarget);
                     return true;
                 }
+                objectSeeker.ClearCurrentTarget();
             }
             return false;
         }
