@@ -10,6 +10,8 @@ public class RandomLayout : MonoBehaviour
     public GameObject[] spawnPrefabs;
 
     public Vector3 spawnBoxSize = new Vector3(1, 1, 1);
+    public float scaleMin = 1;
+    public float scaleMax = 1;
 
     // Start is called before the first frame update
     void Start()
@@ -37,6 +39,8 @@ public class RandomLayout : MonoBehaviour
 
         var newItem = Instantiate(thisPrefab, transform);
         newItem.transform.localPosition = newPosition;
+        var newScale = Random.Range(scaleMin, scaleMax);
+        newItem.transform.localScale = new Vector3(newScale, newScale, newScale);
     }
 
     private Vector3 getRandomPosInBounds()

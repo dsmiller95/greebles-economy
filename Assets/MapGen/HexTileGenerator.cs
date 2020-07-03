@@ -120,7 +120,7 @@ namespace Assets.MapGen
             //targetMesh.uv = newUVs;
             //targetMesh.triangles = newTriangles;
 
-            //targetMesh.RecalculateNormals();
+            targetMesh.RecalculateNormals();
         }
     }
 
