@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using UnityEngine;
 
 namespace Simulation.Tiling
@@ -12,8 +9,11 @@ namespace Simulation.Tiling
         public float hexRadius;
         private readonly Vector2 displacementRatio = new Vector2(3f / 2f, Mathf.Sqrt(3));
 
+        //private HexGrid backingGrid;
+
         public HexCoordinateSystem(float hexRadius)
         {
+            //backingGrid = new HexGrid(hexRadius);
             this.hexRadius = hexRadius;
         }
 
@@ -28,43 +28,40 @@ namespace Simulation.Tiling
         ///     on the size of the hexes. only use it for calculations that need to know about
         ///     relative positioning of hex members as opposed to real positioning
         /// </summary>
-        /// <param name="tileMapPosition"></param>
+        /// <param name="offsetCoordinates"></param>
         /// <returns></returns>
-        public Vector2 TileMapToRelative(Vector2Int tileMapPosition)
+        public Vector2 TileMapToRelative(Vector2Int offsetCoordinates)
         {
 #pragma warning disable CS0618 // Type or member is obsolete
-            var isInOffset = IsInOffsetColumn(tileMapPosition.x);
+            var isInOffset = IsInOffsetColumn(offsetCoordinates.x);
 #pragma warning restore CS0618 // Type or member is obsolete
 
             var agnosticCoords = Vector2.Scale(
                 displacementRatio,
                 new Vector2(
-                    tileMapPosition.x,
-                    tileMapPosition.y + (isInOffset ? 0.5f : 0)
+                    offsetCoordinates.x,
+                    offsetCoordinates.y + (isInOffset ? 0.5f : 0)
                 ));
             return agnosticCoords;
         }
-        public Vector2 TileMapToReal(Vector2Int tileMapPosition)
+        public Vector2 TileMapToReal(Vector2Int offsetCoordinates)
         {
-            return TileMapToRelative(tileMapPosition) * hexRadius;
+            return TileMapToRelative(offsetCoordinates) * hexRadius;
         }
 
         public Vector2Int RelativeToTileMap(Vector2 relativePosition)
         {
-            var whichColumn = Mathf.RoundToInt(relativePosition.x / displacementRatio.x);
-#pragma warning disable CS0618 // Type or member is obsolete
-            var isInOffset = IsInOffsetColumn(whichColumn);
-#pragma warning restore CS0618 // Type or member is obsolete
-            var yOffset = (isInOffset ? 0.5f : 0) * displacementRatio.y;
-            var whichRow = Mathf.RoundToInt((relativePosition.y - yOffset) / displacementRatio.y);
-
-            return new Vector2Int(whichColumn, whichRow);
+            var cubicFloating = ConvertSizeScaledPointToFloatingCubic(relativePosition - new Vector2(0, displacementRatio.y / 2f));
+            cubicFloating.z = -cubicFloating.x - cubicFloating.y;
+            var cubicRounded = RoundToNearestCube(cubicFloating);
+            var offsetCoords = ConvertCubeToOffset(cubicRounded);
+            return new Vector2Int(offsetCoords.x, -offsetCoords.y);
         }
 
         public Vector2Int RealToTileMap(Vector2 realPosition)
         {
             var relativePositioning = realPosition / hexRadius;
-            return this.RelativeToTileMap(relativePositioning);
+            return RelativeToTileMap(relativePositioning);
         }
 
         public int DistanceBetweenInJumps(Vector2Int origin, Vector2Int destination)
@@ -162,6 +159,60 @@ namespace Simulation.Tiling
                 return isInOffsetColumn ? new Vector2Int(1, 0) : new Vector2Int(1, -1);
             }
             throw new Exception($"error in angle matching {angle}");
+        }
+
+        private Vector3 ConvertSizeScaledPointToFloatingCubic(Vector2 point)
+        {
+            var q = 2f / 3f * point.x;
+            var r = -1f / 3f * point.x + Mathf.Sqrt(3) / 3f * point.y;
+            var cubicCoords = new Vector3(q, r, 0);
+            return cubicCoords;
+        }
+
+        private Vector3Int RoundToNearestCube(Vector3 floatCube)
+        {
+            var roundedCoord = new Vector3Int(
+                Mathf.RoundToInt(floatCube.x),
+                Mathf.RoundToInt(floatCube.y),
+                Mathf.RoundToInt(floatCube.z)
+                );
+
+            var xDiff = Mathf.Abs(roundedCoord.x - floatCube.x);
+            var yDiff = Mathf.Abs(roundedCoord.y - floatCube.y);
+            var zDiff = Mathf.Abs(roundedCoord.z - floatCube.z);
+
+            if(xDiff > yDiff && xDiff > zDiff)
+            {
+                roundedCoord.x = -roundedCoord.y - roundedCoord.z;
+            }else if (yDiff > zDiff)
+            {
+                roundedCoord.y = -roundedCoord.x - roundedCoord.z;
+            }else
+            {
+                roundedCoord.z = -roundedCoord.x - roundedCoord.y;
+            }
+
+            return roundedCoord;
+        }
+
+        private Vector3Int ConvertOffsetToCube(Vector2Int offset)
+        {
+#pragma warning disable CS0618 // Type or member is obsolete
+            var offsetShove = IsInOffsetColumn(offset.x) ? 0 : 1;
+#pragma warning restore CS0618 // Type or member is obsolete
+
+            var x = offset.x;
+            var z = offset.y - (offset.x - offsetShove) / 2;
+            var y = -x - z;
+
+            return new Vector3Int(x, y, z);
+        }
+
+        private Vector2Int ConvertCubeToOffset(Vector3Int cube)
+        {
+            var col = cube.x;
+            var row = cube.z + (cube.x - (cube.x & 1)) / 2;
+            return new Vector2Int(col, row);
         }
     }
 }

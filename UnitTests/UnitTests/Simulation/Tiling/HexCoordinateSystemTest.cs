@@ -119,6 +119,10 @@ namespace UnitTests.Simulation.Tiling
 
                 new Vector2(0.8f, rt3/2 + 0.1f),
                 new Vector2(0.6f, rt3/2 + 0.8f),
+
+                new Vector2(1.1f, rt3/2 + 1.8f),
+                new Vector2(2.1f, rt3/2 - 0.1f),
+                new Vector2(0.3f, rt3/2 - 0.9f),
             };
             var expectedCoords = new[]
             {
@@ -137,6 +141,10 @@ namespace UnitTests.Simulation.Tiling
 
                 new Vector2Int(0, 0),
                 new Vector2Int(1, 1),
+
+                new Vector2Int(1, 2),
+                new Vector2Int(2, 0),
+                new Vector2Int(0, -1),
             };
 
             var coordSystem = new HexCoordinateSystem(1);
