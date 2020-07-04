@@ -17,9 +17,12 @@ namespace Assets.Scripts.Gatherer.StateHandlers
             {
                 if (data.home.depositAllGoods(data.inventory))
                 {
-                    //Our home is full; time to go to market
-                    data.attachBackpack();
-                    data.home.withdrawAllGoods(data.inventory);
+                    //Our home is full. We have to wait till tonight before we can go to market
+                    return Task.FromResult(GathererState.WaitingForMarket);
+                }
+                if(TimeController.instance.GetTimezone() == Timezone.Evening)
+                {
+                    //Time to go to market! even if our house isn't full we nave to sell our goods before sleeping
                     return Task.FromResult(GathererState.Selling);
                 }
                 return Task.FromResult(GathererState.Gathering);
@@ -27,14 +30,13 @@ namespace Assets.Scripts.Gatherer.StateHandlers
             return Task.FromResult(GathererState.GoingHome);
         }
 
-        public GathererState validPreviousStates => GathererState.Gathering;
+        public GathererState validPreviousStates => GathererState.Gathering | GathererState.Sleeping;
         public void TransitionIntoState(GathererBehavior data)
         {
-
             data.objectSeeker.BeginApproachingNewTarget(data.home.gameObject);
         }
 
-        public GathererState validNextStates => GathererState.Gathering | GathererState.Selling;
+        public GathererState validNextStates => GathererState.Gathering | GathererState.Selling | GathererState.WaitingForMarket;
         public void TransitionOutOfState(GathererBehavior data)
         {
         }

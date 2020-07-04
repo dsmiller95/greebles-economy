@@ -1,19 +1,17 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Assets.Scripts.Gatherer
 {
     [Flags]
     public enum GathererState
     {
-        Gathering = 1,
-        GoingHome = 2,
-        Selling = 4,
-        GoingHomeToEat = 8,
-        Consuming = 16,
-        All = Gathering | GoingHome | Selling | GoingHomeToEat | Consuming
+        Gathering = 1 << 0,
+        GoingHome = 1 << 1,
+        Selling = 1 << 2,
+        GoingHomeToEat = 1 << 3,
+        Consuming = 1 << 4,
+        WaitingForMarket = 1 << 5,
+        Sleeping = 1 << 6,
+        All = Gathering | GoingHome | Selling | GoingHomeToEat | Consuming | WaitingForMarket | Sleeping
     }
 }

@@ -87,13 +87,17 @@ namespace Assets.Scripts.Gatherer
                 lastTargetCheckTime = 0;
             }, StateChangeExecutionOrder.StateExit);
 
-            stateMachine.registerGenericHandler(new GatheringStateHandler());
             var sellingStateHandler = new SellingStateHandler();
             sellingStateHandler.InstantiateOnObject(this);
-            stateMachine.registerGenericHandler(sellingStateHandler);
+
+            stateMachine.registerGenericHandler(new GatheringStateHandler());
             stateMachine.registerGenericHandler(new GoingHomeStateHandler());
+            stateMachine.registerGenericHandler(new WaitTillMarketStateHandler());
+            stateMachine.registerGenericHandler(sellingStateHandler);
             stateMachine.registerGenericHandler(new GoingToConsumeHandler());
             stateMachine.registerGenericHandler(new ConsumingStateHandler());
+            stateMachine.registerGenericHandler(new SleepStateHandler());
+
             stateMachine.LockStateHandlers();
         }
 

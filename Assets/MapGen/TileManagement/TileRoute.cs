@@ -19,6 +19,11 @@ namespace Assets.MapGen.TileManagement
         {
         }
 
+        public int TotalWaypoints()
+        {
+            return waypoints.Count;
+        }
+
         public void AddLastWaypoint(Vector2Int waypoint)
         {
             this.waypoints.Add(waypoint);
@@ -26,7 +31,7 @@ namespace Assets.MapGen.TileManagement
 
         public Vector2Int PeekNext()
         {
-            return this.waypoints.First();
+            return this.waypoints.FirstOrDefault();
         }
 
         public Vector2Int PopNextWaypoint()

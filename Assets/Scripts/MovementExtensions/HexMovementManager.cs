@@ -35,16 +35,18 @@ namespace Assets.Scripts.MovementExtensions
 
         private TileRoute currentRoute;
         private float timeOfLastAction;
-        public GameObject seekTargetToTouch()
+        public GameObject seekTargetToTouch(bool intersect = false)
         {
-            if (CurrentTarget != null)
-            {
-                UpdateAnimation();
-            }
-            else
+            if (CurrentTarget == null)
             {
                 return null;
             }
+            if (currentRoute.TotalWaypoints() <= (intersect ? 0 : 1))
+            {
+                //the movement action started with no motion required. we can return without doing anything
+                return TargetReached();
+            }
+            UpdateAnimation();
 
             if (timeOfLastAction + speed > Time.time)
             {
@@ -58,11 +60,9 @@ namespace Assets.Scripts.MovementExtensions
             PositionInTileMap = nextPosition;
 
             // if we're one or less away, we good
-            if (currentRoute.waypoints.Count <= 1)
+            if (currentRoute.TotalWaypoints() <= (intersect ? 0 : 1))
             {
-                var previousTarget = this.CurrentTarget;
-                this.TargetReached();
-                return previousTarget;
+                return TargetReached();
             }
             StartNewAnimation(currentRoute.PeekNext());
             //tileGridItem.SetPositionInTileMap(nextPosition);
@@ -102,10 +102,12 @@ namespace Assets.Scripts.MovementExtensions
             }
         }
 
-        private void TargetReached()
+        private GameObject TargetReached()
         {
-            this.ClearCurrentTarget();
-            this.CancelAnimation();
+            var targetCached = CurrentTarget;
+            ClearCurrentTarget();
+            CancelAnimation();
+            return targetCached;
         }
 
         public void ClearCurrentTarget()
@@ -116,13 +118,16 @@ namespace Assets.Scripts.MovementExtensions
 
         public void BeginApproachingNewTarget(GameObject target)
         {
-            CurrentTarget = target;
-            if (CurrentTarget != null)
+            if (target != null)
             {
-                currentTargetMember = currentTarget.GetComponentInParent<ITilemapMember>();
+                currentTargetMember = target.GetComponentInParent<ITilemapMember>();
                 currentRoute = MapManager.GetRouteBetweenMembers(this, currentTargetMember);
-                StartNewAnimation(currentRoute.PeekNext());
+                if (currentRoute.TotalWaypoints() > 0)
+                {
+                    StartNewAnimation(currentRoute.PeekNext());
+                }
                 timeOfLastAction = Time.time;
+                CurrentTarget = target;
             }
         }
 

@@ -36,7 +36,8 @@ namespace Assets.Scripts.Gatherer.StateHandlers
 
                 if (firstAvailableResource == default)
                 {
-                    return Task.FromResult(GathererState.Gathering);
+                    //time to slep
+                    return Task.FromResult(GathererState.Sleeping);
                 }
                 data.inventory.Consume(firstAvailableResource, 1);
             }
@@ -53,7 +54,7 @@ namespace Assets.Scripts.Gatherer.StateHandlers
             data.objectSeeker.ClearCurrentTarget();
         }
 
-        public GathererState validNextStates => GathererState.Gathering;
+        public GathererState validNextStates => GathererState.Sleeping;
         public void TransitionOutOfState(GathererBehavior data)
         {
             data.removeBackpack();

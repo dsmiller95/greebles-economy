@@ -84,6 +84,8 @@
     <Compile Include="Assets\Scripts\Gatherer\StateHandlers\GoingHomeStateHandler.cs" />
     <Compile Include="Assets\Scripts\Gatherer\StateHandlers\GoingToConsumeHandler.cs" />
     <Compile Include="Assets\Scripts\Gatherer\StateHandlers\SellingStateHandler.cs" />
+    <Compile Include="Assets\Scripts\Gatherer\StateHandlers\SleepStateHandler.cs" />
+    <Compile Include="Assets\Scripts\Gatherer\StateHandlers\WaitTillMarketStateHandler.cs" />
     <Compile Include="Assets\Scripts\Gatherer\TimeTracker.cs" />
     <Compile Include="Assets\Scripts\Home\HomeBehavior.cs" />
     <Compile Include="Assets\Scripts\Home\SelectableHome.cs" />

@@ -14,7 +14,7 @@ namespace Assets.Scripts.MovementExtensions
         /// Returns true on the frame that the seeker touches the target
         /// </summary>
         /// <returns></returns>
-        GameObject seekTargetToTouch();
+        GameObject seekTargetToTouch(bool intersect = false);
         void ClearCurrentTarget();
         bool isTouchingCurrentTarget();
         GameObject CurrentTarget { get; }

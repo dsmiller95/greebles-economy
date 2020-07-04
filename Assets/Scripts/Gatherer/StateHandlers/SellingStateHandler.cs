@@ -123,10 +123,11 @@ namespace Assets.Scripts.Gatherer.StateHandlers
             }
         }
 
-        public GathererState validPreviousStates => GathererState.GoingHome;
+        public GathererState validPreviousStates => GathererState.GoingHome | GathererState.WaitingForMarket;
         public void TransitionIntoState(GathererBehavior data)
         {
-
+            data.attachBackpack();
+            data.home.withdrawAllGoods(data.inventory);
         }
 
         public GathererState validNextStates => GathererState.GoingHomeToEat;

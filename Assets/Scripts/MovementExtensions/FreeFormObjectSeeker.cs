@@ -23,7 +23,7 @@ namespace Assets.Scripts.MovementExtensions
         public float touchDistance = 1f;
         internal GameObject currentTarget;
 
-        public GameObject seekTargetToTouch()
+        public GameObject seekTargetToTouch(bool intersect = false)
         {
             if (!currentTarget)
             {
