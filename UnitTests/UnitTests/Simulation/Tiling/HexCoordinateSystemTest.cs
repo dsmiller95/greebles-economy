@@ -36,7 +36,7 @@ namespace UnitTests.Simulation.Tiling
             var coordSystem = new HexCoordinateSystem(1);
 
 #pragma warning disable CS0618 // Type or member is obsolete
-            var actualOffset = coords.Select(x => coordSystem.IsInOffsetColumn(x));
+            var actualOffset = coords.Select(vector => coordSystem.IsInOffsetColumn(vector.x));
 #pragma warning restore CS0618 // Type or member is obsolete
 
             foreach (var pair in expectedOffset.Zip(actualOffset, (a, b) => new { expected = a, actual = b }))
@@ -96,6 +96,61 @@ namespace UnitTests.Simulation.Tiling
             foreach (var pair in expectedCoords.Zip(actualCoords, (a, b) => new { expected = a, actual = b }))
             {
                 Assert.AreEqual(pair.expected, pair.actual);
+            }
+        }
+        [TestMethod]
+        public void ShouldTranslateCoordinatesFromRelativeToTiling()
+        {
+            var rt3 = Mathf.Sqrt(3);
+            var realCoords = new[]
+            {
+                new Vector2(0, rt3/2),
+                new Vector2(1.5f, 0),
+                new Vector2(0, rt3 * 1.5f),
+                new Vector2(1.5f, rt3),
+
+                new Vector2(0f, rt3/2 + 0.7f),
+                new Vector2(0f, rt3/2 + 1.1f),
+                new Vector2(0.1f, rt3/2 + 0.1f),
+
+                new Vector2(0.7f, rt3/2),
+                new Vector2(0.6f, rt3/2 + 0.6f),
+                new Vector2(1f, rt3/2 + 0.1f),
+
+                new Vector2(0.8f, rt3/2 + 0.1f),
+                new Vector2(0.6f, rt3/2 + 0.8f),
+            };
+            var expectedCoords = new[]
+            {
+                new Vector2Int(0, 0),
+                new Vector2Int(1, 0),
+                new Vector2Int(0, 1),
+                new Vector2Int(1, 1),
+
+                new Vector2Int(0, 0),
+                new Vector2Int(0, 1),
+                new Vector2Int(0, 0),
+
+                new Vector2Int(0, 0),
+                new Vector2Int(0, 0),
+                new Vector2Int(1, 1),
+
+                new Vector2Int(0, 0),
+                new Vector2Int(1, 1),
+            };
+
+            var coordSystem = new HexCoordinateSystem(1);
+
+            var actualCoords = realCoords.Select(x => coordSystem.RelativeToTileMap(x)).ToList();
+
+            foreach (var pair in expectedCoords
+                .Select((x, index) => new { x, index })
+                .Zip(actualCoords, (a, b) => new { expected = a.x, actual = b, index = a.index }))
+            {
+                Assert.AreEqual(
+                    pair.expected,
+                    pair.actual, 
+                    $"Expected {realCoords[pair.index]} to translate to {pair.expected}, but instead got {pair.actual}");
             }
         }
 

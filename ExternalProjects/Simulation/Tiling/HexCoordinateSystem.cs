@@ -18,9 +18,9 @@ namespace Simulation.Tiling
         }
 
         [Obsolete("Should not be used by external classes, this is only public for unit testing purposes")]
-        public bool IsInOffsetColumn(Vector2Int tileMapPos)
+        public bool IsInOffsetColumn(int xPosition)
         {
-            return Math.Abs(tileMapPos.x) % 2 == 0;
+            return Math.Abs(xPosition) % 2 == 0;
         }
 
         /// <summary>
@@ -32,14 +32,15 @@ namespace Simulation.Tiling
         /// <returns></returns>
         public Vector2 TileMapToRelative(Vector2Int tileMapPosition)
         {
-            var positionInTileGrid = tileMapPosition;
+#pragma warning disable CS0618 // Type or member is obsolete
+            var isInOffset = IsInOffsetColumn(tileMapPosition.x);
+#pragma warning restore CS0618 // Type or member is obsolete
+
             var agnosticCoords = Vector2.Scale(
                 displacementRatio,
                 new Vector2(
-                    positionInTileGrid.x,
-#pragma warning disable CS0618 // Type or member is obsolete
-                    positionInTileGrid.y + (IsInOffsetColumn(positionInTileGrid) ? 0.5f : 0)
-#pragma warning restore CS0618 // Type or member is obsolete
+                    tileMapPosition.x,
+                    tileMapPosition.y + (isInOffset ? 0.5f : 0)
                 ));
             return agnosticCoords;
         }
@@ -48,12 +49,30 @@ namespace Simulation.Tiling
             return TileMapToRelative(tileMapPosition) * hexRadius;
         }
 
+        public Vector2Int RelativeToTileMap(Vector2 relativePosition)
+        {
+            var whichColumn = Mathf.RoundToInt(relativePosition.x / displacementRatio.x);
+#pragma warning disable CS0618 // Type or member is obsolete
+            var isInOffset = IsInOffsetColumn(whichColumn);
+#pragma warning restore CS0618 // Type or member is obsolete
+            var yOffset = (isInOffset ? 0.5f : 0) * displacementRatio.y;
+            var whichRow = Mathf.RoundToInt((relativePosition.y - yOffset) / displacementRatio.y);
+
+            return new Vector2Int(whichColumn, whichRow);
+        }
+
+        public Vector2Int RealToTileMap(Vector2 realPosition)
+        {
+            var relativePositioning = realPosition / hexRadius;
+            return this.RelativeToTileMap(relativePositioning);
+        }
+
         public int DistanceBetweenInJumps(Vector2Int origin, Vector2Int destination)
         {
             var diff = destination - origin;
             var xOffset = Mathf.Abs(diff.x);
 #pragma warning disable CS0618 // Type or member is obsolete
-            var isFromOffsetPoint = IsInOffsetColumn(origin);
+            var isFromOffsetPoint = IsInOffsetColumn(origin.x);
 #pragma warning restore CS0618 // Type or member is obsolete
 
             var shouldPadX = diff.y > 0 ^ isFromOffsetPoint;
@@ -67,7 +86,7 @@ namespace Simulation.Tiling
         public IEnumerable<Vector2Int> GetPositionsWithinJumpDistance(Vector2Int origin, int jumpDistance)
         {
 #pragma warning disable CS0618 // Type or member is obsolete
-            var isOffset = IsInOffsetColumn(origin);
+            var isOffset = IsInOffsetColumn(origin.x);
 #pragma warning restore CS0618 // Type or member is obsolete
             var topHalfWidth = isOffset ? 1 : 0;
             var bottomHalfWidth = isOffset ? 0 : 1;
@@ -101,7 +120,7 @@ namespace Simulation.Tiling
                     - TileMapToRelative(currentTileMapPos);
 
 #pragma warning disable CS0618 // Type or member is obsolete
-                var nextMoveVector = GetClosestMatchingValidMove(realWorldVectorToDest, IsInOffsetColumn(currentTileMapPos));
+                var nextMoveVector = GetClosestMatchingValidMove(realWorldVectorToDest, IsInOffsetColumn(currentTileMapPos.x));
 #pragma warning restore CS0618 // Type or member is obsolete
 
                 currentTileMapPos += nextMoveVector;
