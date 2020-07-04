@@ -2,13 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using UnityEngine;
-using UnityEngine.Rendering;
 
 namespace Assets.Utilities
 {
-
-
     public enum StateChangeExecutionOrder
     {
         StateExit = 0,
@@ -33,24 +29,15 @@ namespace Assets.Utilities
 
         private T state;
 
-        private Dictionary<T, Func<ParamType, Task<T>>> updateHandlers;
+        private Dictionary<T, GenericStateHandler<T, ParamType>> updateHandlers;
         private IEnumerable<StateChangeHandler> stateChangeHandlers;
 
 
         public AsyncStateMachine(T initalState)
         {
-            updateHandlers = new Dictionary<T, Func<ParamType, Task<T>>>();
+            updateHandlers = new Dictionary<T, GenericStateHandler<T, ParamType>>();
             state = initalState;
             stateChangeHandlers = new List<StateChangeHandler>();
-        }
-
-        public void registerStateHandler(T state, Func<ParamType, Task<T>> handler)
-        {
-            if (updateHandlers.ContainsKey(state))
-            {
-                Debug.LogWarning($"Warning: {Enum.GetName(typeof(T), state)} already has a declared state handler. overwriting");
-            }
-            updateHandlers[state] = handler;
         }
 
         /// <summary>
@@ -90,17 +77,13 @@ namespace Assets.Utilities
             {
                 throw new Exception("Error: not in state handler building mode");
             }
-            registerStateHandler(genericHandler.stateHandle, param => genericHandler.HandleState(param));
-            registerStateTransitionHandler(
-                genericHandler.validPreviousStates,
-                genericHandler.stateHandle,
-                param => genericHandler.TransitionIntoState(param), StateChangeExecutionOrder.StateEntry);
-            registerStateTransitionHandler(
-                genericHandler.stateHandle,
-                genericHandler.validNextStates,
-                param => genericHandler.TransitionOutOfState(param), StateChangeExecutionOrder.StateExit);
+            updateHandlers[genericHandler.stateHandle] = genericHandler;
         }
 
+        /// <summary>
+        /// boolean used to track if the state machine is currently in the middle of an asynchronous state handler
+        ///     all state update requests are discarded while this is true
+        /// </summary>
         private bool stateLocked = false;
 
         /// <summary>
@@ -125,15 +108,17 @@ namespace Assets.Utilities
                 stateLocked = true;
             }
 
-            Func<ParamType, Task<T>> updateAction;
-            if (!updateHandlers.TryGetValue(state, out updateAction))
-            {
-                throw new NotImplementedException($"no state handler found for state {Enum.GetName(typeof(T), state)}");
-            }
-            var newState = await updateAction(updateParam);
+            var updateAction = GetStateAction(state);
+            var newState = await updateAction.HandleState(updateParam);
 
             if (!newState.Equals(state))
             {
+                if (!updateAction.validNextStates.HasFlag(newState))
+                {
+                    throw new NotImplementedException($"Invalid next state: transitioning from {Enum.GetName(typeof(T), state)} to {Enum.GetName(typeof(T), newState)}");
+                }
+                updateAction.TransitionOutOfState(updateParam);
+
                 //Debug.Log($"Transitioning from {Enum.GetName(typeof(T), state)} into {Enum.GetName(typeof(T), newState)}");
                 foreach (var changeHandler in stateChangeHandlers)
                 {
@@ -142,6 +127,13 @@ namespace Assets.Utilities
                         changeHandler.handler(updateParam);
                     }
                 }
+
+                var nextAction = GetStateAction(newState);
+                if (!nextAction.validPreviousStates.HasFlag(state))
+                {
+                    throw new NotImplementedException($"Invalid previous state: transitioning from {Enum.GetName(typeof(T), state)} to {Enum.GetName(typeof(T), newState)}");
+                }
+                nextAction.TransitionIntoState(updateParam);
             }
 
             lock (this)
@@ -151,6 +143,16 @@ namespace Assets.Utilities
 
             state = newState;
             return true;
+        }
+
+        private GenericStateHandler<T, ParamType> GetStateAction(T state)
+        {
+            GenericStateHandler<T, ParamType> updateAction;
+            if (!updateHandlers.TryGetValue(state, out updateAction))
+            {
+                throw new NotImplementedException($"no state handler found for state {Enum.GetName(typeof(T), state)}");
+            }
+            return updateAction;
         }
     }
 }
