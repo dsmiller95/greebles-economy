@@ -51,7 +51,7 @@ namespace Assets.UI.InfoPane
             return o.GetComponentInParent<IFocusable>() != default;
         }
 
-        public bool SelectedObject(GameObject o)
+        public bool SelectedObject(GameObject o, RaycastHit hit)
         {
 
             currentlySelected?.GetComponentInChildren<IHighlightable>()?.SetHighlighted(HighlightState.None);
@@ -60,7 +60,7 @@ namespace Assets.UI.InfoPane
             currentlySelected = o;
 
             var currentFocusable = currentlySelected.GetComponentInParent<IFocusable>();
-            currentFocusable.OnMeSelected();
+            currentFocusable.OnMeSelected(hit.point);
             currentlySelected.GetComponentInChildren<IHighlightable>()?.SetHighlighted(HighlightState.Selected);
 
             SetNewPaneConfig(currentFocusable.GetInfoPaneConfiguration());

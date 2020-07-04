@@ -94,7 +94,7 @@ namespace Assets.MapGen
             Debug.Log($"{gameObject.name} deselected");
         }
 
-        public void OnMeSelected()
+        public void OnMeSelected(Vector3 pointHit)
         {
             MouseDown();
         }

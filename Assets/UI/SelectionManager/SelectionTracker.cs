@@ -48,7 +48,7 @@ namespace Assets.UI.SelectionManager
                     var hitGameObject = hit.transform.gameObject;
                     if (inputCommand.IsValidSelection(hitGameObject))
                     {
-                        if (inputCommand.SelectedObject(hitGameObject))
+                        if (inputCommand.SelectedObject(hitGameObject, hit))
                         {
                             PopSelectionInput();
                         }

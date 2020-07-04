@@ -48,7 +48,7 @@ namespace Assets.Scripts.Gatherer
             Debug.Log($"{gameObject.name} deselected");
         }
 
-        public void OnMeSelected()
+        public void OnMeSelected(Vector3 pointHit)
         {
             Debug.Log($"{gameObject.name} selected");
         }

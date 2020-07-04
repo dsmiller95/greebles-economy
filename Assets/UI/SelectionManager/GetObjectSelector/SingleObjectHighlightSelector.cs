@@ -75,7 +75,7 @@ namespace Assets.UI.SelectionManager.GetObjectSelector
             return obj != null && filter(obj);
         }
 
-        public bool SelectedObject(GameObject o)
+        public bool SelectedObject(GameObject o, RaycastHit rayHit)
         {
             itemSelected(o.GetComponent<T>());
             return true;

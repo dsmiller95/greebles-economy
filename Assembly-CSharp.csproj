@@ -73,6 +73,7 @@
     <Compile Include="Assets\MapGen\TileManagement\HexTileMapManager.cs" />
     <Compile Include="Assets\MapGen\TileManagement\ITileMapMember.cs" />
     <Compile Include="Assets\MapGen\TileManagement\MultiHexMemberInit.cs" />
+    <Compile Include="Assets\MapGen\TileManagement\SelectableHexCells.cs" />
     <Compile Include="Assets\MapGen\TileManagement\TileRoute.cs" />
     <Compile Include="Assets\Scripts\Gatherer\GatherBehaviorOptimizer.cs" />
     <Compile Include="Assets\Scripts\Gatherer\GathererBehavior.cs" />

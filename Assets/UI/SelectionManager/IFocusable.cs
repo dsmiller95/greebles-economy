@@ -1,4 +1,5 @@
 ﻿using Assets.UI.InfoPane;
+using UnityEngine;
 
 namespace Assets.UI.SelectionManager
 {
@@ -7,7 +8,7 @@ namespace Assets.UI.SelectionManager
     /// </summary>
     public interface IFocusable
     {
-        void OnMeSelected();
+        void OnMeSelected(Vector3 pointHit);
         void OnMeDeselected();
         InfoPaneConfiguration GetInfoPaneConfiguration();
     }

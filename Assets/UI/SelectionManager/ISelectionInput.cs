@@ -35,7 +35,7 @@ namespace Assets.UI.SelectionManager
         /// </summary>
         /// <param name="o"></param>
         /// <returns>true if this selection input should be removed from the stack, if it is completed</returns>
-        bool SelectedObject(GameObject o);
+        bool SelectedObject(GameObject o, RaycastHit rayHit);
 
     }
 }

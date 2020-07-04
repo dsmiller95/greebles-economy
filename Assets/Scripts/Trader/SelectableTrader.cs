@@ -65,7 +65,7 @@ namespace Assets.Scripts.Gatherer
             TeardownPathPlot();
         }
 
-        public void OnMeSelected()
+        public void OnMeSelected(Vector3 pointHit)
         {
             Debug.Log($"{gameObject.name} selected");
             SetupPathPlot();

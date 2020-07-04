@@ -56,6 +56,10 @@ namespace Assets.MapGen.TileManagement
         {
             return this.coordinateSystem.TileMapToReal(tileMapPosition);
         }
+        public Vector2Int PositionInPlaneToTilemapPosition(Vector2 positionInPlane)
+        {
+            return this.coordinateSystem.RealToTileMap(positionInPlane);
+        }
         public IEnumerable<Vector2Int> GetPositionsWithinJumpDistance(Vector2Int origin, int jumpDistance)
         {
             return coordinateSystem.GetPositionsWithinJumpDistance(origin, jumpDistance);
