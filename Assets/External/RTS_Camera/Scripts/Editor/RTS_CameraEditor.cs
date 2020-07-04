@@ -81,7 +81,9 @@ namespace RTS_Cam
             }
 
             GUILayout.Label("Follow target", EditorStyles.boldLabel);
+#pragma warning disable CS0618 // Type or member is obsolete. don't want to touch this since it is imported
             camera.targetFollow = EditorGUILayout.ObjectField("Target to follow: ", camera.targetFollow, typeof(Transform)) as Transform;
+#pragma warning restore CS0618 // Type or member is obsolete
             camera.targetOffset = EditorGUILayout.Vector3Field("Target offset: ", camera.targetOffset);
             camera.followingSpeed = EditorGUILayout.FloatField("Following speed: ", camera.followingSpeed);
         }
