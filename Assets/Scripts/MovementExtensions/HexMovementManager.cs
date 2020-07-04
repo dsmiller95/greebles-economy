@@ -12,7 +12,7 @@ namespace Assets.Scripts.MovementExtensions
         /// Seconds it takes to move to the next tile in the hex grid
         /// </summary>
         public float speed = 1;
-        public Animator animtator;
+        public Animator[] animtators;
 
         private ITilemapMember currentTargetMember;
         private GameObject currentTarget;
@@ -20,8 +20,11 @@ namespace Assets.Scripts.MovementExtensions
         public new void Start()
         {
             base.Start();
-            animtator.SetFloat("Hop_Amount", 0);
-            animtator.SetTrigger("Hop_Cancel");
+            foreach (var animator in animtators)
+            {
+                animator.SetFloat("Motion", 0);
+                animator.SetTrigger("Cancel");
+            }
         }
 
         public GameObject CurrentTarget
@@ -69,7 +72,10 @@ namespace Assets.Scripts.MovementExtensions
         private void UpdateAnimation()
         {
             var offsetFromLastMove = (Time.time - timeOfLastAction) / speed;
-            animtator.SetFloat("Hop_Amount", offsetFromLastMove);
+            foreach (var animator in animtators)
+            {
+                animator.SetFloat("Motion", offsetFromLastMove);
+            }
         }
 
         private void StartNewAnimation(Vector2Int nextWaypoint)
@@ -80,14 +86,20 @@ namespace Assets.Scripts.MovementExtensions
             var newRotation = Quaternion.LookRotation(new Vector3(diff.x, 0, diff.y), Vector3.up);
             transform.localRotation = newRotation;
 
-            animtator.SetTrigger("Hop_Start");
-            animtator.ResetTrigger("Hop_Cancel");
+            foreach (var animator in animtators)
+            {
+                animator.SetTrigger("Start");
+                animator.ResetTrigger("Cancel");
+            }
         }
 
         private void CancelAnimation()
         {
-            animtator.SetTrigger("Hop_Cancel");
-            animtator.ResetTrigger("Hop_Start");
+            foreach (var animator in animtators)
+            {
+                animator.SetTrigger("Cancel");
+                animator.ResetTrigger("Start");
+            }
         }
 
         private void TargetReached()
