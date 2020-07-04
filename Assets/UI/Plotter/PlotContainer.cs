@@ -1,12 +1,10 @@
-﻿using System;
+﻿using Assets.UI.Plotter.Series;
+using Extensions;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using TradeModeling;
 using UnityEngine;
 using UnityEngine.UI;
-using TradeModeling;
-using Assets.UI.Plotter.Series;
 
 namespace Assets.UI.Plotter
 {
@@ -24,34 +22,34 @@ namespace Assets.UI.Plotter
         public PlotContainer(IPlottableSeries plottable, GraphPlotter parent)
         {
             this.parent = parent;
-            this.config = plottable.GetPlottableConfig();
+            config = plottable.GetPlottableConfig();
             this.plottable = plottable;
-            this.hasDots = config.dotColor != default;
-            this.hasConnectors = config.lineColor != default;
+            hasDots = config.dotColor != default;
+            hasConnectors = config.lineColor != default;
             if (hasDots)
             {
-                this.dots = new List<GameObject>();
+                dots = new List<GameObject>();
             }
             if (hasConnectors)
             {
-                this.connections = new List<GameObject>();
+                connections = new List<GameObject>();
             }
         }
 
 
         public void Init()
         {
-            this.plottable.SeriesUpdated += Plottable_SeriesUpdated;
+            plottable.SeriesUpdated += Plottable_SeriesUpdated;
         }
 
         public void OnDestroy()
         {
-            this.plottable.SeriesUpdated -= Plottable_SeriesUpdated;
+            plottable.SeriesUpdated -= Plottable_SeriesUpdated;
         }
 
         private void Plottable_SeriesUpdated(object sender)
         {
-            this.UpdateGraph();
+            UpdateGraph();
         }
 
         private void UpdateGraph()
@@ -60,9 +58,9 @@ namespace Assets.UI.Plotter
 
             if (hasConnectors)
             {
-                this.connections = MyUtilities.EnsureAllObjectsCreated(
+                connections = MyUtilities.EnsureAllObjectsCreated(
                     positions.Count - 1,
-                    this.connections,
+                    connections,
                     () => CreateUnpositionedDotConnection(),
                     connection => GameObject.Destroy(connection));
                 foreach (var connection in positions.RollingWindow(2).Zip(connections, (pair, line) => new { pair, line }))
@@ -73,9 +71,9 @@ namespace Assets.UI.Plotter
 
             if (hasDots)
             {
-                this.dots = MyUtilities.EnsureAllObjectsCreated(
+                dots = MyUtilities.EnsureAllObjectsCreated(
                     positions.Count,
-                    this.dots,
+                    dots,
                     () => CreateUnpositionedDot(),
                     dot => GameObject.Destroy(dot));
                 foreach (var dot in positions.Zip(dots, (pos, dot) => new { pos, dot }))
@@ -108,8 +106,8 @@ namespace Assets.UI.Plotter
             var points = plottable.GetSeries();
             var plotConfig = plottable.GetPlottableConfig();
 
-            float graphHeight = this.parent.container.sizeDelta.y;
-            float graphWidth = this.parent.container.sizeDelta.x;
+            float graphHeight = parent.container.sizeDelta.y;
+            float graphWidth = parent.container.sizeDelta.x;
             float xUIScale = graphWidth / plottable.GetPointRange();
             var uiScale = new Vector2(xUIScale, graphHeight / plotConfig.yScale);
             return points.Select(point => new Vector2(point.x * uiScale.x, Mathf.Clamp(point.y * uiScale.y, 0, graphHeight)));
@@ -117,10 +115,10 @@ namespace Assets.UI.Plotter
         private GameObject CreateUnpositionedDot()
         {
             var newDot = new GameObject("circle", typeof(Image));
-            newDot.transform.SetParent(this.parent.container, false);
+            newDot.transform.SetParent(parent.container, false);
 
             var image = newDot.GetComponent<Image>();
-            image.sprite = this.parent.circleSprite;
+            image.sprite = parent.circleSprite;
             image.color = config.dotColor;
 
             var transform = newDot.GetComponent<RectTransform>();
@@ -132,7 +130,7 @@ namespace Assets.UI.Plotter
         private GameObject CreateUnpositionedDotConnection()
         {
             var connection = new GameObject("connector", typeof(Image));
-            connection.transform.SetParent(this.parent.container, false);
+            connection.transform.SetParent(parent.container, false);
             connection.GetComponent<Image>().color = config.lineColor;
             var transform = connection.GetComponent<RectTransform>();
             transform.anchorMin = new Vector2(0, 0);

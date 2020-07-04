@@ -69,7 +69,6 @@
     <Compile Include="Assets\MapGen\HexTileGenerator.cs" />
     <Compile Include="Assets\MapGen\MapGenManager.cs" />
     <Compile Include="Assets\MapGen\SingleHexCell.cs" />
-    <Compile Include="Assets\MapGen\TileManagement\HexCoordinateSystem.cs" />
     <Compile Include="Assets\MapGen\TileManagement\HexMember.cs" />
     <Compile Include="Assets\MapGen\TileManagement\HexTileMapManager.cs" />
     <Compile Include="Assets\MapGen\TileManagement\ITileMapMember.cs" />
@@ -394,6 +393,9 @@
     </Reference>
     <Reference Include="UnityEngine.SharedInternalsModule">
       <HintPath>C:/source/greebles-economy/Assets/External/netstandard2.0/UnityEngine.SharedInternalsModule.dll</HintPath>
+    </Reference>
+    <Reference Include="Simulation">
+      <HintPath>C:/source/greebles-economy/Assets/External/netstandard2.0/Simulation.dll</HintPath>
     </Reference>
     <Reference Include="mscorlib">
       <HintPath>C:/Program Files/Unity/Hub/Editor/2019.3.11f1/Editor/Data/MonoBleedingEdge/lib/mono/4.7.1-api/mscorlib.dll</HintPath>

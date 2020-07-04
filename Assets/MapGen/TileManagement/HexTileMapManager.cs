@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Simulation.Tiling;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -49,11 +50,11 @@ namespace Assets.MapGen.TileManagement
         #region hex coordinate system
         public Vector2 TileMapToReal(Vector2Int tileMapPosition)
         {
-            return this.coordinateSystem.TileMapToReal(tileMapPosition);
+            return this.coordinateSystem.TileMapToRelative(tileMapPosition);
         }
         public Vector2 TileMapPositionToPositionInPlane(Vector2Int tileMapPosition)
         {
-            return this.coordinateSystem.TileMapPositionToPositionInPlane(tileMapPosition);
+            return this.coordinateSystem.TileMapToReal(tileMapPosition);
         }
         public IEnumerable<Vector2Int> GetPositionsWithinJumpDistance(Vector2Int origin, int jumpDistance)
         {

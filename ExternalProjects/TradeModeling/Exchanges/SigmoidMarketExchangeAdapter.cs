@@ -1,8 +1,6 @@
-﻿using System;
+﻿using Extensions;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TradeModeling.Economics;
 using TradeModeling.Functions;
 using TradeModeling.Inventories;
@@ -17,11 +15,11 @@ namespace TradeModeling.Exchanges
 
         public SigmoidMarketExchangeAdapter(IDictionary<T, SigmoidFunctionConfig> sellPrices, IDictionary<T, SigmoidFunctionConfig> buyPrices, T moneyType)
         {
-            this.marketBuyRates = buyPrices.SelectDictionary(config => new SigmoidFunction(config));
-            this.marketSellRates = sellPrices.SelectDictionary(config => new SigmoidFunction(config));
+            marketBuyRates = buyPrices.SelectDictionary(config => new SigmoidFunction(config));
+            marketSellRates = sellPrices.SelectDictionary(config => new SigmoidFunction(config));
             this.moneyType = moneyType;
         }
-        public SigmoidMarketExchangeAdapter(IDictionary<T, SigmoidFunctionConfig> exchangeRates, T moneyType): this(exchangeRates, exchangeRates, moneyType)
+        public SigmoidMarketExchangeAdapter(IDictionary<T, SigmoidFunctionConfig> exchangeRates, T moneyType) : this(exchangeRates, exchangeRates, moneyType)
         {
         }
 
@@ -61,7 +59,7 @@ namespace TradeModeling.Exchanges
             var exchangeRateFunction = marketBuyRates[type];
             var amountLeftAfterMarketsBuy = exchangeRateFunction.GetPointFromNetExtraValueFromPoint(marketInventory.GetCurrentFunds(), marketInventory.Get(type));// marketInventory.GetCurrentFunds() / exchangeRate;
             var maxSell = amountLeftAfterMarketsBuy - marketInventory.Get(type);
-           
+
             var amountToSell = Math.Min(amount, maxSell);
             return selfInventory
                 .transferResourceInto(type, marketInventory, amountToSell)

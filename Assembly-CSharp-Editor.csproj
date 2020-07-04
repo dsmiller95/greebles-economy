@@ -329,6 +329,9 @@
     <Reference Include="ICSharpCode.NRefactory">
       <HintPath>C:/source/greebles-economy/Library/PackageCache/com.unity.render-pipelines.core@7.3.1/Editor/ShaderGenerator/ICSharpCode.NRefactory.dll</HintPath>
     </Reference>
+    <Reference Include="Simulation">
+      <HintPath>C:/source/greebles-economy/Assets/External/netstandard2.0/Simulation.dll</HintPath>
+    </Reference>
     <Reference Include="nunit.framework">
       <HintPath>C:/source/greebles-economy/Library/PackageCache/com.unity.ext.nunit@1.0.0/net35/unity-custom/nunit.framework.dll</HintPath>
     </Reference>

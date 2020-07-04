@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 
 
-namespace TradeModeling
+namespace Extensions
 {
     public static class LinqExtensions
     {

@@ -47,6 +47,9 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="UnityEngine.CoreModule">
+      <HintPath>..\..\Assets\External\netstandard2.0\UnityEngine.CoreModule.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Economics\EconomicsTestUtilities.cs" />
@@ -61,6 +64,7 @@
     <Compile Include="Economics\CombinedTransactionModelTest.cs" />
     <Compile Include="Economics\UtilityAnalyzerTests\InverseWeightedUtilityTest.cs" />
     <Compile Include="Economics\UtilityAnalyzerTests\UtilityFromLedgerTest.cs" />
+    <Compile Include="Simulation\Tiling\HexCoordinateSystemTest.cs" />
     <Compile Include="UtilitiesTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -68,6 +72,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\ExternalProjects\Simulation\Simulation.csproj">
+      <Project>{4DF27221-BEC1-48AF-BDCB-69971731009A}</Project>
+      <Name>Simulation</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\ExternalProjects\TradeModeling\TradeModeling.csproj">
       <Project>{32d5b7b3-a7a3-471d-ab8c-c61294f9991b}</Project>
       <Name>TradeModeling</Name>

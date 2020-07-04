@@ -2,10 +2,10 @@
 using Assets.Scripts.Resources;
 using Assets.Scripts.Resources.Inventory;
 using Assets.Scripts.Trader;
+using Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using TradeModeling;
 using TradeModeling.Exchanges;
 using TradeModeling.Functions;
 using TradeModeling.Inventories;
