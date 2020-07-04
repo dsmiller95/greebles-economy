@@ -25,12 +25,13 @@ namespace Assets.MapGen.TileManagement
         public int tileMapHeight => tileGrid.Length;
         public int tileMapWidth => tileGrid[0].Length;
 
-
-        private readonly Vector2 displacementRatio = new Vector2(3f / 2f, Mathf.Sqrt(3));
         private IList<ITilemapMember>[][] tileGrid;
+
+        private HexCoordinateSystem coordinateSystem;
 
         public void Awake()
         {
+            this.coordinateSystem = new HexCoordinateSystem(this.hexRadius);
             var totalCells = new Vector2Int(hexWidth, hexHeight);
             tileMapMax = tileMapMin + totalCells;
 
@@ -45,62 +46,33 @@ namespace Assets.MapGen.TileManagement
             }
         }
 
-        public bool IsInOffsetColumn(Vector2Int tileMapPos)
-        {
-            return Math.Abs(tileMapPos.x) % 2 == 0;
-        }
-
+        #region hex coordinate system
         public Vector2 TileMapToReal(Vector2Int tileMapPosition)
         {
-            var positionInTileGrid = tileMapPosition;
-            var agnosticCoords = Vector2.Scale(
-                displacementRatio,
-                new Vector2(
-                    positionInTileGrid.x,
-                    positionInTileGrid.y + (IsInOffsetColumn(positionInTileGrid) ? 0 : 0.5f)
-                ));
-            return agnosticCoords;
+            return this.coordinateSystem.TileMapToReal(tileMapPosition);
         }
-
         public Vector2 TileMapPositionToPositionInPlane(Vector2Int tileMapPosition)
         {
-            return TileMapToReal(tileMapPosition) * hexRadius;
+            return this.coordinateSystem.TileMapPositionToPositionInPlane(tileMapPosition);
         }
-
-
+        public IEnumerable<Vector2Int> GetPositionsWithinJumpDistance(Vector2Int origin, int jumpDistance)
+        {
+            return coordinateSystem.GetPositionsWithinJumpDistance(origin, jumpDistance);
+        }
         public bool IsWithinDistance(ITilemapMember first, ITilemapMember second, int distance)
         {
-            return !GetRouteGenerator(first.PositionInTileMap, second.PositionInTileMap).Skip(distance).Any();
+            //TODO: replace with distance function
+            return !coordinateSystem.GetRouteGenerator(first.PositionInTileMap, second.PositionInTileMap).Skip(distance).Any();
         }
-        public int GetTileDistance(ITilemapMember first, ITilemapMember second)
+        public int DistanceBetweenInJumps(Vector2Int origin, Vector2Int destination)
         {
-            return GetRouteGenerator(first.PositionInTileMap, second.PositionInTileMap).Count();
+            return coordinateSystem.DistanceBetweenInJumps(origin, destination);
         }
-
-        private IEnumerable<Vector2Int> GetRouteGenerator(Vector2Int origin, Vector2Int destination)
+        public TileRoute GetRouteBetweenMembers(ITilemapMember origin, ITilemapMember destination)
         {
-            var originPoint = origin;
-            var destinationPoint = destination;
-
-            var currentTileMapPos = originPoint;
-            var iterations = 0;
-            while ((currentTileMapPos - destinationPoint).sqrMagnitude > 0)
-            {
-                var realWorldVectorToDest = TileMapToReal(destinationPoint)
-                    - TileMapToReal(currentTileMapPos);
-
-                var nextMoveVector = GetClosestMatchingValidMove(realWorldVectorToDest, !IsInOffsetColumn(currentTileMapPos));
-
-                currentTileMapPos += nextMoveVector;
-
-                yield return currentTileMapPos;
-                iterations++;
-                if (iterations > 1000)
-                {
-                    throw new Exception("too many loop brooother");
-                }
-            }
+            return new TileRoute(coordinateSystem.GetRouteGenerator(origin.PositionInTileMap, destination.PositionInTileMap).ToList());
         }
+        #endregion
 
         public IEnumerable<T> GetItemsWithinJumpDistance<T>(Vector2Int origin, int jumpDistance)
         {
@@ -109,77 +81,6 @@ namespace Assets.MapGen.TileManagement
                 .Where(items => items != null)
                 .SelectMany(items => items)
                 .Where(x => x != null);
-        }
-
-        public IEnumerable<Vector2Int> GetPositionsWithinJumpDistance(Vector2Int origin, int jumpDistance)
-        {
-            var isOffset = IsInOffsetColumn(origin);
-            var topHalfWidth = isOffset ? 0 : 1;
-            var bottomHalfWidth = isOffset ? 1 : 0;
-            var maxWidth = jumpDistance;
-            var maxHeight = jumpDistance * 2;
-
-            var heightOffset = -jumpDistance;
-
-            for (var y = 0; y <= maxHeight; y++)
-            {
-                var topSlopeAmount = topHalfWidth + (maxHeight - y) * 2;
-                var bottomSlopeAmount = bottomHalfWidth + y * 2;
-                var currentHalfWidth = Mathf.Min(topSlopeAmount, bottomSlopeAmount, maxWidth);
-                for (var x = -currentHalfWidth; x <= currentHalfWidth; x++)
-                {
-                    yield return new Vector2Int(x, y + heightOffset) + origin;
-                }
-            }
-        }
-
-        public int DistanceBetweenInJumps(Vector2Int origin, Vector2Int destination)
-        {
-            var diff = destination - origin;
-            var xOffset = Mathf.Abs(diff.x);
-            var isFromOffsetPoint = !IsInOffsetColumn(origin);
-
-            var shouldPadX = diff.y > 0 ^ isFromOffsetPoint;
-            return Mathf.Max(
-                xOffset,
-                Mathf.Abs(diff.y) +
-                    Mathf.FloorToInt((xOffset + (shouldPadX ? 1 : 0)) / 2f)
-                );
-        }
-
-        public TileRoute GetRouteBetweenMembers(ITilemapMember origin, ITilemapMember destination)
-        {
-            return new TileRoute(GetRouteGenerator(origin.PositionInTileMap, destination.PositionInTileMap).ToList());
-        }
-
-        public Vector2Int GetClosestMatchingValidMove(Vector2 worldSpaceDestinationVector, bool isInOffsetColumn)
-        {
-            var angle = Vector2.SignedAngle(Vector2.right, worldSpaceDestinationVector);
-            if (0 <= angle && angle < 60)
-            {
-                return isInOffsetColumn ? new Vector2Int(1, 1) : Vector2Int.right;
-            }
-            if (60 <= angle && angle < 120)
-            {
-                return Vector2Int.up;
-            }
-            if (120 <= angle && angle <= 180)
-            {
-                return isInOffsetColumn ? new Vector2Int(-1, 1) : new Vector2Int(-1, 0);
-            }
-            if (-180 <= angle && angle < -120)
-            {
-                return isInOffsetColumn ? new Vector2Int(-1, 0) : new Vector2Int(-1, -1);
-            }
-            if (-120 <= angle && angle < -60)
-            {
-                return Vector2Int.down;
-            }
-            if (-60 <= angle && angle < 0)
-            {
-                return isInOffsetColumn ? new Vector2Int(1, 0) : new Vector2Int(1, -1);
-            }
-            throw new Exception($"error in angle matching {angle}");
         }
 
         private IList<ITilemapMember> GetListFromCoord(Vector2Int coordinates)

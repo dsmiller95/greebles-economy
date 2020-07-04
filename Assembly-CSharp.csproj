@@ -69,6 +69,7 @@
     <Compile Include="Assets\MapGen\HexTileGenerator.cs" />
     <Compile Include="Assets\MapGen\MapGenManager.cs" />
     <Compile Include="Assets\MapGen\SingleHexCell.cs" />
+    <Compile Include="Assets\MapGen\TileManagement\HexCoordinateSystem.cs" />
     <Compile Include="Assets\MapGen\TileManagement\HexMember.cs" />
     <Compile Include="Assets\MapGen\TileManagement\HexTileMapManager.cs" />
     <Compile Include="Assets\MapGen\TileManagement\ITileMapMember.cs" />
