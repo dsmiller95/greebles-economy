@@ -15,7 +15,7 @@ namespace Assets.Scripts.Gatherer.StateHandlers
         public async Task<GathererState> HandleState(GathererBehavior data)
         {
             if (data.AttemptToEnsureTarget(
-                gameObject => gameObject.GetComponentInChildren<IResource>() != null,
+                gameObject => gameObject.GetComponent<IResource>() != null,
                 (gameObject, distance) =>
                 {
                     var resource = gameObject?.GetComponent<IResource>();

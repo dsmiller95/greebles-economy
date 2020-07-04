@@ -55,7 +55,7 @@ namespace Assets.Scripts.Gatherer.StateHandlers
             data.AttemptToEnsureTarget(gameObject => gameObject.GetComponentInChildren<MarketBehavior>() != null,
                 (gameObject, distance) =>   
                 {
-                    if (gameObject?.GetComponent<MarketBehavior>() != null)
+                    if (gameObject?.GetComponentInChildren<MarketBehavior>() != null)
                     {
                         return -distance;
                     }
