@@ -81,6 +81,7 @@
     <Compile Include="Assets\Scripts\Gatherer\GathererState.cs" />
     <Compile Include="Assets\Scripts\Gatherer\SelectableGatherer.cs" />
     <Compile Include="Assets\Scripts\Gatherer\StateHandlers\ConsumingStateHandler.cs" />
+    <Compile Include="Assets\Scripts\Gatherer\StateHandlers\DieStateHandler.cs" />
     <Compile Include="Assets\Scripts\Gatherer\StateHandlers\GatheringStateHandler.cs" />
     <Compile Include="Assets\Scripts\Gatherer\StateHandlers\GoingHomeStateHandler.cs" />
     <Compile Include="Assets\Scripts\Gatherer\StateHandlers\GoingToConsumeHandler.cs" />

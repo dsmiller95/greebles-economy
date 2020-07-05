@@ -12,6 +12,8 @@ namespace Assets.Scripts.Gatherer
         Consuming = 1 << 4,
         WaitingForMarket = 1 << 5,
         Sleeping = 1 << 6,
-        All = Gathering | GoingHome | Selling | GoingHomeToEat | Consuming | WaitingForMarket | Sleeping
+        Dying = 1 << 7,
+        All = Gathering | GoingHome | Selling | GoingHomeToEat | Consuming | WaitingForMarket | Sleeping | Dying,
+        None = 0
     }
 }

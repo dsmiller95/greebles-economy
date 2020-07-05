@@ -53,9 +53,12 @@ namespace Assets.UI.InfoPane
 
         public bool SelectedObject(GameObject o, RaycastHit hit)
         {
-
-            currentlySelected?.GetComponentInChildren<IHighlightable>()?.SetHighlighted(HighlightState.None);
-            currentlySelected?.GetComponentInParent<IFocusable>().OnMeDeselected();
+            // GameObject overloads this. Will equate to null when it has been destroyed, even if it's not actually null
+            if(currentlySelected != null)
+            {
+                currentlySelected.GetComponentInChildren<IHighlightable>()?.SetHighlighted(HighlightState.None);
+                currentlySelected.GetComponentInParent<IFocusable>().OnMeDeselected();
+            }
 
             currentlySelected = o;
 

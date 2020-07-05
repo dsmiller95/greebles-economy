@@ -322,6 +322,7 @@ MonoBehaviour:
   backpackSize: 10
   pocketSize: 1
   StuffIEat: 0100000002000000
+  RealObjectRoot: {fileID: 4063966645591292537}
 --- !u!114 &920419245692495943
 MonoBehaviour:
   m_ObjectHideFlags: 0

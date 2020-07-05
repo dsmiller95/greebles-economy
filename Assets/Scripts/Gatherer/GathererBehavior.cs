@@ -28,6 +28,7 @@ namespace Assets.Scripts.Gatherer
         public int pocketSize = 1;
 
         public ResourceType[] StuffIEat;
+        public GameObject RealObjectRoot;
 
         internal float lastTargetCheckTime = 0;
 
@@ -96,6 +97,7 @@ namespace Assets.Scripts.Gatherer
             stateMachine.registerGenericHandler(sellingStateHandler);
             stateMachine.registerGenericHandler(new GoingToConsumeHandler());
             stateMachine.registerGenericHandler(new ConsumingStateHandler());
+            stateMachine.registerGenericHandler(new DieStateHandler());
             stateMachine.registerGenericHandler(new SleepStateHandler());
 
             stateMachine.LockStateHandlers();
@@ -179,6 +181,11 @@ namespace Assets.Scripts.Gatherer
         {
             var resourceType = resource.GetComponent<IResource>();
             return await resourceType.Eat(inventory);
+        }
+
+        public void Die()
+        {
+            Destroy(RealObjectRoot);
         }
     }
 }
