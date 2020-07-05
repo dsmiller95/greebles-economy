@@ -446,12 +446,12 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8263987320382808917}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 17a1329ecfd54714e8086ab67edda2bd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  baseMaterial: {fileID: 2100000, guid: 7127dc5c79065644d998cb90db8d70a6, type: 2}
+  baseMaterial: {fileID: 2100000, guid: ca51baf42f0249746a361a07bda286d7, type: 2}
   selectedMaterial: {fileID: 2100000, guid: 26706517f297d074ea6f30ffb185cd9a, type: 2}
   outlineMaterial: {fileID: 2100000, guid: 0336d35aa50f4424e98c196f3e331cf2, type: 2}
 --- !u!1001 &112160874557389404
