@@ -3,7 +3,7 @@
 
 namespace Assets.UI.SelectionManager
 {
-    [RequireComponent(typeof(MeshRenderer))]
+    [RequireComponent(typeof(Renderer))]
     public class MaterialHighlighter : MonoBehaviour, IHighlightable
     {
         public Material baseMaterial;
@@ -41,11 +41,11 @@ namespace Assets.UI.SelectionManager
             {
                 case HighlightState.None:
                     SetOutline(false);
-                    GetComponent<MeshRenderer>().material = baseMaterial;
+                    GetComponent<Renderer>().material = baseMaterial;
                     break;
                 case HighlightState.Selected:
                     SetOutline(false);
-                    GetComponent<MeshRenderer>().material = selectedMaterial;
+                    GetComponent<Renderer>().material = selectedMaterial;
                     break;
                 case HighlightState.CanBeSelected:
                     SetOutline(true);
