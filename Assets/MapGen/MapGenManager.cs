@@ -1,8 +1,10 @@
-﻿using Assets.MapGen.TileManagement;
+﻿using Assets.MapGen;
+using Assets.MapGen.TileManagement;
 using Assets.Scripts.MovementExtensions;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Rendering;
 
 [System.Serializable]
 public struct MapGenSpawnable
@@ -19,11 +21,14 @@ public class MapGenManager : MonoBehaviour
 
     public Vector2Int spawnBoxSize = new Vector2Int(3, 3);
 
-
+    private HaltonSequenceGenerator pointGenerator;
     // Start is called before the first frame update
     void Start()
     {
         var spawnArea = spawnBoxSize.x * spawnBoxSize.y;
+        var seed = Random.Range(100, 1000);
+        pointGenerator = new HaltonSequenceGenerator(2, 3, seed, spawnBoxSize + new Vector2Int(1, 1));
+
         foreach(var spawnable in spawnableItems)
         {
             this.SpawnItemsForSpawnable(spawnable, spawnArea);
@@ -55,9 +60,14 @@ public class MapGenManager : MonoBehaviour
 
     private Vector2Int getRandomPosInBounds()
     {
+        var nextPoint = pointGenerator.Sample();
+
         return new Vector2Int(
-            Random.Range(0, this.spawnBoxSize.x),
-            Random.Range(0, this.spawnBoxSize.y));
+            Mathf.FloorToInt(nextPoint.x),
+            Mathf.FloorToInt(nextPoint.y));
+
+            //Random.Range(0, this.spawnBoxSize.x),
+            //Random.Range(0, this.spawnBoxSize.y));
     }
 
     private void OnDrawGizmos()
