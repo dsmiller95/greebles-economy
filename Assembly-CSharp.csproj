@@ -156,7 +156,9 @@
     <None Include="Assets\External\netstandard2.0\UnityEngine.SharedInternalsModule.xml" />
     <None Include="Assets\External\RTS_Camera\Demo\Projectors\Shaders\ProjectorLight.shader" />
     <None Include="Assets\External\RTS_Camera\Demo\Projectors\Shaders\ProjectorMultiply.shader" />
+    <None Include="Assets\Materials\Toon\GetLighting.hlsl" />
     <None Include="Assets\External\RTS_Camera\Demo\Projectors\Guidelines.txt" />
+    <None Include="Assets\Materials\Toon\Toon.shader" />
     <None Include="Assets\Materials\outlineSource.shader" />
     <None Include="Assets\UI\Icons34x34byAilsEnglish2013\Readme.txt" />
     <None Include="Assets\External\netstandard2.0\UnityEngine.CoreModule.xml" />
@@ -391,6 +393,9 @@
     <Reference Include="UnityEngine.XRModule">
       <HintPath>C:/Program Files/Unity/Hub/Editor/2019.3.11f1/Editor/Data/Managed/UnityEngine/UnityEngine.XRModule.dll</HintPath>
     </Reference>
+    <Reference Include="Simulation">
+      <HintPath>C:/source/greebles-economy/Assets/External/netstandard2.0/Simulation.dll</HintPath>
+    </Reference>
     <Reference Include="TradeModeling">
       <HintPath>C:/source/greebles-economy/Assets/External/netstandard2.0/TradeModeling.dll</HintPath>
     </Reference>
@@ -399,9 +404,6 @@
     </Reference>
     <Reference Include="UnityEngine.SharedInternalsModule">
       <HintPath>C:/source/greebles-economy/Assets/External/netstandard2.0/UnityEngine.SharedInternalsModule.dll</HintPath>
-    </Reference>
-    <Reference Include="Simulation">
-      <HintPath>C:/source/greebles-economy/Assets/External/netstandard2.0/Simulation.dll</HintPath>
     </Reference>
     <Reference Include="mscorlib">
       <HintPath>C:/Program Files/Unity/Hub/Editor/2019.3.11f1/Editor/Data/MonoBleedingEdge/lib/mono/4.7.1-api/mscorlib.dll</HintPath>
