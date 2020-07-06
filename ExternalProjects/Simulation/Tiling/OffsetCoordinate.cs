@@ -18,6 +18,24 @@ namespace Simulation.Tiling
             this.row = row;
         }
 
+        [Obsolete("Should not be used by external classes, this is only public for unit testing purposes")]
+        public bool IsInOffsetColumn()
+        {
+            return Math.Abs(column) % 2 == 0;
+        }
+        private CubeCoordinate ToCube(OffsetCoordinate offset)
+        {
+#pragma warning disable CS0618 // Type or member is obsolete
+            var offsetShove = offset.IsInOffsetColumn() ? 0 : 1;
+#pragma warning restore CS0618 // Type or member is obsolete
+
+            var x = offset.column;
+            var z = offset.row - (offset.column - offsetShove) / 2;
+            var y = -x - z;
+
+            return new CubeCoordinate(x, y, z);
+        }
+
         public bool IsZero()
         {
             return row == 0 && column == 0;

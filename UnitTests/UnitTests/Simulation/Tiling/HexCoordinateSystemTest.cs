@@ -36,7 +36,7 @@ namespace UnitTests.Simulation.Tiling
             var coordSystem = new HexCoordinateSystem(1);
 
 #pragma warning disable CS0618 // Type or member is obsolete
-            var actualOffset = coords.Select(vector => coordSystem.IsInOffsetColumn(vector.column));
+            var actualOffset = coords.Select(vector => vector.IsInOffsetColumn());
 #pragma warning restore CS0618 // Type or member is obsolete
 
             foreach (var pair in expectedOffset.Zip(actualOffset, (a, b) => new { expected = a, actual = b }))

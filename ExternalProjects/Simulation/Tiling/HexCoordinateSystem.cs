@@ -17,11 +17,6 @@ namespace Simulation.Tiling
             this.hexRadius = hexRadius;
         }
 
-        [Obsolete("Should not be used by external classes, this is only public for unit testing purposes")]
-        public bool IsInOffsetColumn(int column)
-        {
-            return Math.Abs(column) % 2 == 0;
-        }
 
         /// <summary>
         /// Translate a tile map coordinate to a standard "real" position. this is not scaled based
@@ -33,7 +28,7 @@ namespace Simulation.Tiling
         public Vector2 TileMapToRelative(OffsetCoordinate offsetCoordinates)
         {
 #pragma warning disable CS0618 // Type or member is obsolete
-            var isInOffset = IsInOffsetColumn(offsetCoordinates.column);
+            var isInOffset = offsetCoordinates.IsInOffsetColumn();
 #pragma warning restore CS0618 // Type or member is obsolete
 
             var agnosticCoords = Vector2.Scale(
@@ -54,7 +49,7 @@ namespace Simulation.Tiling
             var cubicFloating = ConvertSizeScaledPointToFloatingCubic(relativePosition - new Vector2(0, displacementRatio.y / 2f));
             cubicFloating.z = -cubicFloating.x - cubicFloating.y;
             var cubicRounded = RoundToNearestCube(cubicFloating);
-            var offsetCoords = ConvertCubeToOffset(cubicRounded);
+            var offsetCoords = cubicRounded.ToOffset();
             return new OffsetCoordinate(offsetCoords.column, -offsetCoords.row);
         }
 
@@ -69,7 +64,7 @@ namespace Simulation.Tiling
             var diff = destination - origin;
             var xOffset = Mathf.Abs(diff.column);
 #pragma warning disable CS0618 // Type or member is obsolete
-            var isFromOffsetPoint = IsInOffsetColumn(origin.column);
+            var isFromOffsetPoint = origin.IsInOffsetColumn();
 #pragma warning restore CS0618 // Type or member is obsolete
 
             var shouldPadX = diff.row > 0 ^ isFromOffsetPoint;
@@ -83,7 +78,7 @@ namespace Simulation.Tiling
         public IEnumerable<OffsetCoordinate> GetPositionsWithinJumpDistance(OffsetCoordinate origin, int jumpDistance)
         {
 #pragma warning disable CS0618 // Type or member is obsolete
-            var isOffset = IsInOffsetColumn(origin.column);
+            var isOffset = origin.IsInOffsetColumn();
 #pragma warning restore CS0618 // Type or member is obsolete
             var topHalfWidth = isOffset ? 1 : 0;
             var bottomHalfWidth = isOffset ? 0 : 1;
@@ -122,7 +117,7 @@ namespace Simulation.Tiling
                     - TileMapToRelative(currentTileMapPos);
 
 #pragma warning disable CS0618 // Type or member is obsolete
-                var nextMoveVector = GetClosestMatchingValidMove(realWorldVectorToDest, IsInOffsetColumn(currentTileMapPos.column));
+                var nextMoveVector = GetClosestMatchingValidMove(realWorldVectorToDest, currentTileMapPos.IsInOffsetColumn());
 #pragma warning restore CS0618 // Type or member is obsolete
 
                 currentTileMapPos += nextMoveVector;
@@ -175,9 +170,9 @@ namespace Simulation.Tiling
             return cubicCoords;
         }
 
-        private Vector3Int RoundToNearestCube(Vector3 floatCube)
+        private CubeCoordinate RoundToNearestCube(Vector3 floatCube)
         {
-            var roundedCoord = new Vector3Int(
+            var roundedCoord = new CubeCoordinate(
                 Mathf.RoundToInt(floatCube.x),
                 Mathf.RoundToInt(floatCube.y),
                 Mathf.RoundToInt(floatCube.z)
@@ -201,24 +196,5 @@ namespace Simulation.Tiling
             return roundedCoord;
         }
 
-        private Vector3Int ConvertOffsetToCube(OffsetCoordinate offset)
-        {
-#pragma warning disable CS0618 // Type or member is obsolete
-            var offsetShove = IsInOffsetColumn(offset.column) ? 0 : 1;
-#pragma warning restore CS0618 // Type or member is obsolete
-
-            var x = offset.column;
-            var z = offset.row - (offset.column - offsetShove) / 2;
-            var y = -x - z;
-
-            return new Vector3Int(x, y, z);
-        }
-
-        private OffsetCoordinate ConvertCubeToOffset(Vector3Int cube)
-        {
-            var col = cube.x;
-            var row = cube.z + (cube.x - (cube.x & 1)) / 2;
-            return new OffsetCoordinate(col, row);
-        }
     }
 }
