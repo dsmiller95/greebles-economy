@@ -1,5 +1,5 @@
 ﻿using Assets.MapGen.TileManagement;
-using Assets.Scripts.MovementExtensions;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -14,8 +14,19 @@ namespace Assets.MapGen
     {
         public Mesh hexTile;
 
+        /// <summary>
+        /// list of floats from 0 to 1 in ascending order. must terminate with a 1
+        /// </summary>
+        public float[] extraTerrainRegions;
+
+        private Vector2 perlinOffset;
+
         void Awake()
         {
+            this.perlinOffset = new Vector2(
+                UnityEngine.Random.Range(-1e5f, 1e5f),
+                UnityEngine.Random.Range(-1e5f, 1e5f)
+                );
             // Get instantiated mesh
         }
 
@@ -34,18 +45,32 @@ namespace Assets.MapGen
         {
         }
 
+        private int GetSubmeshForTerrainAtPoint(Vector3 point)
+        {
+            var sample = Mathf.PerlinNoise(point.x, point.z);
+            for(var i = 0; i < extraTerrainRegions.Length; i++)
+            {
+                if(extraTerrainRegions[i] < sample)
+                {
+                    return i;
+                }
+            }
+            throw new System.Exception("full range of extra terrains not properly defined");
+        }
+
+
         private void SetupMesh(Mesh target, Mesh source, HexTileMapManager mapManager)
         {
-            IEnumerable<Vector3> offsets = new[] {
-                new Vector3(0, 0, 0),
-                new Vector3(1, 0, 0),
-                new Vector3(2, 0, 0),
-                new Vector3(0, 0, 2),
-                new Vector3(2, 0, 2),
-            };// GetTileOffsets(mapManager);
-            offsets = GetTileOffsets(mapManager);
+            var offsets = GetTileOffsets(mapManager);
 
-            CopyMeshIntoOtherMeshAtOffsets(target, source, offsets.ToArray());
+            var totalNumberOfCells = mapManager.hexWidth * mapManager.hexHeight;
+            var copier = new MeshCopier(
+                source, 2,
+                target, 2,
+                offsets, totalNumberOfCells);
+            copier.CopyIntoTarget();
+
+            //CopyMeshIntoOtherMeshAtOffsets(target, source, offsets, totalNumberOfCells);
         }
 
         private IEnumerable<Vector3> GetTileOffsets(HexTileMapManager tilemapManager)
@@ -60,67 +85,6 @@ namespace Assets.MapGen
                     yield return new Vector3(planeLocation.x, 0, planeLocation.y);
                 }
             }
-        }
-
-
-        static void CopyMeshIntoOtherMeshAtOffsets(Mesh targetMesh, Mesh sourceMesh, Vector3[] offsets)
-        {
-            targetMesh.Clear();
-
-            var duplicates = offsets.Length;
-            var sourceVertexes = sourceMesh.vertices;
-            var newVertexLength = sourceVertexes.Length * duplicates;
-            var newVertexes = new Vector3[newVertexLength];
-
-            List<Vector2> sourceUVs = new List<Vector2>();
-            sourceMesh.GetUVs(0, sourceUVs);
-            var newUVs = new Vector2[sourceUVs.Count * duplicates];
-            for (var offsetIndex = 0; offsetIndex < offsets.Length; offsetIndex++)
-            {
-                var displacement = offsets[offsetIndex];
-
-                var vertexIndexOffset = offsetIndex * sourceVertexes.Length;
-                for (var vert = 0; vert < sourceVertexes.Length; vert++)
-                {
-                    newVertexes[vert + vertexIndexOffset] = sourceVertexes[vert] + displacement;
-                }
-                var uvOffset = offsetIndex * sourceUVs.Count;
-                for (var uv = 0; uv < sourceUVs.Count; uv++)
-                {
-                    newUVs[uv + uvOffset] = sourceUVs[uv];
-                }
-            }
-
-            targetMesh.SetVertices(newVertexes);
-            targetMesh.SetUVs(0, newUVs);
-
-            var targetSubMeshCount = sourceMesh.subMeshCount;
-            targetMesh.subMeshCount = targetSubMeshCount;
-
-            for (int submesh = 0; submesh < targetMesh.subMeshCount; submesh++)
-            {
-                var sourceTriangles = sourceMesh.GetTriangles(submesh);
-                var newTriangles = new int[sourceTriangles.Length * duplicates];
-
-                for (var offsetIndex = 0; offsetIndex < duplicates; offsetIndex++)
-                {
-                    var vertexIndexOffset = offsetIndex * sourceVertexes.Length;
-
-                    var triangleOffset = offsetIndex * sourceTriangles.Length;
-                    for (var tri = 0; tri < sourceTriangles.Length; tri++)
-                    {
-                        newTriangles[tri + triangleOffset] = sourceTriangles[tri] + vertexIndexOffset;
-                    }
-                }
-                targetMesh.SetTriangles(newTriangles, submesh);
-            }
-
-
-            //targetMesh.vertices = newVertexes;
-            //targetMesh.uv = newUVs;
-            //targetMesh.triangles = newTriangles;
-
-            targetMesh.RecalculateNormals();
         }
     }
 
