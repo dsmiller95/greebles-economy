@@ -82,8 +82,8 @@ namespace Simulation.Tiling
 #pragma warning disable CS0618 // Type or member is obsolete
             var isOffset = origin.IsInOffsetColumn();
 #pragma warning restore CS0618 // Type or member is obsolete
-            var topHalfWidth = isOffset ? 1 : 0;
-            var bottomHalfWidth = isOffset ? 0 : 1;
+            var topHalfWidth = isOffset ? 0 : 1;
+            var bottomHalfWidth = isOffset ? 1 : 0;
             var maxWidth = jumpDistance;
             var maxHeight = jumpDistance * 2;
 

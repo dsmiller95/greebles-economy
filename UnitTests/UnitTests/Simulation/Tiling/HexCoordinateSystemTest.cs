@@ -214,24 +214,24 @@ namespace UnitTests.Simulation.Tiling
                 new OffsetCoordinate(3, 3),
 
                 new OffsetCoordinate(3, 4),
-                new OffsetCoordinate(2, 3),
-                new OffsetCoordinate(4, 3),
-                new OffsetCoordinate(2, 2),
-                new OffsetCoordinate(3, 2),
-                new OffsetCoordinate(4, 2),
-
-                new OffsetCoordinate(3, 5),
-                new OffsetCoordinate(1, 4),
                 new OffsetCoordinate(2, 4),
                 new OffsetCoordinate(4, 4),
+                new OffsetCoordinate(2, 3),
+                new OffsetCoordinate(4, 3),
+                new OffsetCoordinate(3, 2),
+
+                new OffsetCoordinate(3, 5),
+                new OffsetCoordinate(2, 5),
+                new OffsetCoordinate(4, 5),
+                new OffsetCoordinate(1, 4),
                 new OffsetCoordinate(5, 4),
                 new OffsetCoordinate(1, 3),
                 new OffsetCoordinate(5, 3),
                 new OffsetCoordinate(1, 2),
                 new OffsetCoordinate(5, 2),
-                new OffsetCoordinate(2, 1),
+                new OffsetCoordinate(2, 2),
+                new OffsetCoordinate(4, 2),
                 new OffsetCoordinate(3, 1),
-                new OffsetCoordinate(4, 1),
             }
                 .OrderBy(x => x.row)
                 .ThenBy(x => x.column)
@@ -264,26 +264,26 @@ namespace UnitTests.Simulation.Tiling
             var expectedCoordsInDistance = new[]
             {
                 new Vector2Int(3, 3),
-
-                new Vector2Int(3, 4),
-                new Vector2Int(2, 3),
-                new Vector2Int(4, 3),
-                new Vector2Int(2, 2),
-                new Vector2Int(3, 2),
-                new Vector2Int(4, 2),
                     
-                new Vector2Int(3, 5),
-                new Vector2Int(1, 4),
+                new Vector2Int(3, 4),
                 new Vector2Int(2, 4),
                 new Vector2Int(4, 4),
+                new Vector2Int(2, 3),
+                new Vector2Int(4, 3),
+                new Vector2Int(3, 2),
+                    
+                new Vector2Int(3, 5),
+                new Vector2Int(2, 5),
+                new Vector2Int(4, 5),
+                new Vector2Int(1, 4),
                 new Vector2Int(5, 4),
                 new Vector2Int(1, 3),
                 new Vector2Int(5, 3),
                 new Vector2Int(1, 2),
                 new Vector2Int(5, 2),
-                new Vector2Int(2, 1),
+                new Vector2Int(2, 2),
+                new Vector2Int(4, 2),
                 new Vector2Int(3, 1),
-                new Vector2Int(4, 1),
             }
                 .Select(x => x + offsetToCrossDomain)
                 .Select(x => new OffsetCoordinate(x.x, x.y))
