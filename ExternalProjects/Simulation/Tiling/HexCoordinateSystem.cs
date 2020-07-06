@@ -9,19 +9,20 @@ namespace Simulation.Tiling
     public class HexCoordinateSystem
     {
         public float hexRadius;
-        private readonly Vector2 displacementRatio = new Vector2(3f / 2f, -Mathf.Sqrt(3));
 
-        //private HexGrid backingGrid;
+        private readonly Vector2 qBasis = new Vector2(3f/2f, -Mathf.Sqrt(3)/2f);
+        private readonly Vector2 rBasis = new Vector2(0, -Mathf.Sqrt(3));
 
         public HexCoordinateSystem(float hexRadius)
         {
-            //backingGrid = new HexGrid(hexRadius);
             this.hexRadius = hexRadius;
         }
 
         public Vector2 TileMapToRelative(AxialCoordinate axial)
         {
-            return TileMapToRelative(axial.ToOffset());
+            var x = qBasis.x * axial.q;
+            var y = qBasis.y * axial.q + rBasis.y * axial.r;
+            return new Vector2(x, y);
         }
         /// <summary>
         /// Translate a tile map coordinate to a standard "real" position. this is not scaled based
@@ -32,17 +33,7 @@ namespace Simulation.Tiling
         /// <returns></returns>
         public Vector2 TileMapToRelative(OffsetCoordinate offsetCoordinates)
         {
-#pragma warning disable CS0618 // Type or member is obsolete
-            var isInOffset = offsetCoordinates.IsInOffsetColumn();
-#pragma warning restore CS0618 // Type or member is obsolete
-
-            var agnosticCoords = Vector2.Scale(
-                displacementRatio,
-                new Vector2(
-                    offsetCoordinates.column,
-                    offsetCoordinates.row + (isInOffset ? 0f : 0.5f)
-                ));
-            return agnosticCoords;
+            return TileMapToRelative(offsetCoordinates.ToAxial());
         }
         public Vector2 TileMapToReal(OffsetCoordinate offsetCoordinates)
         {
@@ -51,16 +42,16 @@ namespace Simulation.Tiling
 
         public CubeCoordinate RelativeToTileMap(Vector2 relativePosition)
         {
-            var cubicFloating = ConvertSizeScaledPointToFloatingCubic(relativePosition);// - new Vector2(0, displacementRatio.y / 2f));
+            var cubicFloating = ConvertSizeScaledPointToFloatingCubic(relativePosition);
             cubicFloating.z = -cubicFloating.x - cubicFloating.y;
             return RoundToNearestCube(cubicFloating);
         }
-
         public CubeCoordinate RealToTileMap(Vector2 realPosition)
         {
             var relativePositioning = realPosition / hexRadius;
             return RelativeToTileMap(relativePositioning);
         }
+
 
         public int DistanceBetweenInJumps(OffsetCoordinate origin, OffsetCoordinate destination)
         {
@@ -107,9 +98,8 @@ namespace Simulation.Tiling
             {
                 Debug.Log("trying to find route between preposterously distant points");
             }
-            //var destinationPoint = new Vector2Int(destination.column, destination.row);
 
-            var currentTileMapPos = new AxialCoordinate(origin.q, origin.r);// new Vector2Int(originPoint.column, origin.row);
+            var currentTileMapPos = new AxialCoordinate(origin.q, origin.r);
             var myDest = new AxialCoordinate(destination.q, destination.r);
             var iterations = 0;
             while (!currentTileMapPos.Equals(myDest))
@@ -117,9 +107,7 @@ namespace Simulation.Tiling
                 var realWorldVectorToDest = TileMapToRelative(myDest)
                     - TileMapToRelative(currentTileMapPos);
 
-#pragma warning disable CS0618 // Type or member is obsolete
                 var nextMoveVector = GetClosestMatchingValidMove(realWorldVectorToDest);
-#pragma warning restore CS0618 // Type or member is obsolete
 
                 var lastDistance = currentTileMapPos.DistanceTo(myDest);
                 currentTileMapPos = currentTileMapPos + nextMoveVector;
