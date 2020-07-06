@@ -61,7 +61,7 @@ namespace Assets.MapGen.TileManagement
         }
         public IEnumerable<AxialCoordinate> GetPositionsWithinJumpDistance(AxialCoordinate origin, int jumpDistance)
         {
-            return coordinateSystem.GetPositionsWithinJumpDistance(origin.ToOffset(), jumpDistance).Select(x => x.ToAxial());
+            return coordinateSystem.GetPositionsWithinJumpDistance(origin, jumpDistance);
         }
         public IEnumerable<Vector2Int> GetInfinitePositionsInJumpDistanceOrder(Vector2Int origin)
         {

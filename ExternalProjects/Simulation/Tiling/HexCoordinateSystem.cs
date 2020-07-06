@@ -77,39 +77,29 @@ namespace Simulation.Tiling
             return origin.DistanceTo(destination);
         }
 
-        public IEnumerable<OffsetCoordinate> GetPositionsWithinJumpDistance(OffsetCoordinate origin, int jumpDistance)
+        public IEnumerable<AxialCoordinate> GetPositionsWithinJumpDistance(AxialCoordinate origin, int jumpDistance)
         {
-#pragma warning disable CS0618 // Type or member is obsolete
-            var isOffset = origin.IsInOffsetColumn();
-#pragma warning restore CS0618 // Type or member is obsolete
-            var topHalfWidth = isOffset ? 0 : 1;
-            var bottomHalfWidth = isOffset ? 1 : 0;
-            var maxWidth = jumpDistance;
-            var maxHeight = jumpDistance * 2;
-
-            var heightOffset = -jumpDistance;
-
-            for (var y = 0; y <= maxHeight; y++)
+            for(var q = -jumpDistance; q <= jumpDistance; q++)
             {
-                var topSlopeAmount = topHalfWidth + (maxHeight - y) * 2;
-                var bottomSlopeAmount = bottomHalfWidth + y * 2;
-                var currentHalfWidth = Mathf.Min(topSlopeAmount, bottomSlopeAmount, maxWidth);
-                for (var x = -currentHalfWidth; x <= currentHalfWidth; x++)
+                var sliceStart = Mathf.Max(-jumpDistance, -q - jumpDistance);
+                var sliceEnd = Mathf.Min(jumpDistance, -q + jumpDistance);
+                for(var r = sliceStart; r <= sliceEnd; r++)
                 {
-                    yield return new OffsetCoordinate(x + origin.column, y + heightOffset + origin.row);
+                    yield return new AxialCoordinate(q, r) + origin;
                 }
             }
+        }
+
+        public IEnumerable<OffsetCoordinate> GetPositionsWithinJumpDistance(OffsetCoordinate origin, int jumpDistance)
+        {
+            return GetPositionsWithinJumpDistance(origin.ToAxial(), jumpDistance).Select(x => x.ToOffset());
+
         }
 
         public IEnumerable<Vector2Int> GetPositionsSpiralingAround(Vector2Int origin)
         {
             throw new NotImplementedException();
         }
-
-        //public IEnumerable<AxialCoordinate> GetRouteGenerator(AxialCoordinate origin, AxialCoordinate destination)
-        //{
-        //    return this.GetRouteGenerator(origin.ToOffset(), destination.ToOffset()).Select(x => x.ToAxial());
-        //}
 
         public IEnumerable<AxialCoordinate> GetRouteGenerator(AxialCoordinate origin, AxialCoordinate destination)
         {
