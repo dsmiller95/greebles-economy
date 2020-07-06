@@ -153,7 +153,10 @@ namespace UnitTests.Simulation.Tiling
 
             var coordSystem = new HexCoordinateSystem(1);
 
-            var actualCoords = realCoords.Select(x => coordSystem.RelativeToTileMap(x)).ToList();
+            var actualCoords = realCoords
+                .Select(x => coordSystem.RelativeToTileMap(x))
+                .Select(x => x.ToOffset())
+                .ToList();
 
             foreach (var pair in expectedCoords
                 .Select((x, index) => new { x, index })

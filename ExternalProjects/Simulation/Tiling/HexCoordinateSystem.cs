@@ -49,16 +49,14 @@ namespace Simulation.Tiling
             return TileMapToRelative(offsetCoordinates) * hexRadius;
         }
 
-        public OffsetCoordinate RelativeToTileMap(Vector2 relativePosition)
+        public CubeCoordinate RelativeToTileMap(Vector2 relativePosition)
         {
             var cubicFloating = ConvertSizeScaledPointToFloatingCubic(relativePosition);// - new Vector2(0, displacementRatio.y / 2f));
             cubicFloating.z = -cubicFloating.x - cubicFloating.y;
-            var cubicRounded = RoundToNearestCube(cubicFloating);
-            var offsetCoords = cubicRounded.ToOffset();
-            return new OffsetCoordinate(offsetCoords.column, offsetCoords.row);
+            return RoundToNearestCube(cubicFloating);
         }
 
-        public OffsetCoordinate RealToTileMap(Vector2 realPosition)
+        public CubeCoordinate RealToTileMap(Vector2 realPosition)
         {
             var relativePositioning = realPosition / hexRadius;
             return RelativeToTileMap(relativePositioning);
@@ -139,7 +137,6 @@ namespace Simulation.Tiling
                 if(newDistance >= lastDistance)
                 {
                     throw new Exception("we're goin the wrong way!!");
-                    yield break;
                 }
 
                 yield return currentTileMapPos;
