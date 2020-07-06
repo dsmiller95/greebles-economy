@@ -780,8 +780,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3ea0436c7f6cbed4a8e5c0f535951fa2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  hexTile: {fileID: -2124705421725058983, guid: b44b15beacf5a824eac9ffe188ef32b7,
-    type: 3}
+  hexTile: {fileID: 1500133397813646387, guid: b44b15beacf5a824eac9ffe188ef32b7, type: 3}
+  extraTerrainRegions: []
 --- !u!23 &1140566649
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -864,7 +864,7 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1140566647}
-  m_Mesh: {fileID: -2124705421725058983, guid: b44b15beacf5a824eac9ffe188ef32b7, type: 3}
+  m_Mesh: {fileID: 1500133397813646387, guid: b44b15beacf5a824eac9ffe188ef32b7, type: 3}
 --- !u!65 &1140566653
 BoxCollider:
   m_ObjectHideFlags: 0

@@ -7,18 +7,22 @@ using UnityEngine;
 
 namespace Assets.MapGen
 {
-    public class MeshCopier
+    /// <summary>
+    /// A utility class used to copy duplicates of one mesh into the target mesh
+    ///     currently set up to copy all the vertextes to a set of offsets
+    ///     and then selectively copy the triangles
+    /// </summary>
+    public class MeshCopier : IDisposable
     {
         private Mesh sourceMesh, targetMesh;
-        private int totalDuplicates;
 
         private int sourceSubmeshes;
         private int targetSubmeshes;
+        //private Vector3[] offsets;
 
         public MeshCopier(
             Mesh sourceMesh, int sourceSubmeshCount,
-            Mesh targetMesh, int targetSubmeshCount,
-            IEnumerable<Vector3> duplicateOffsets, int totalDuplicates)
+            Mesh targetMesh, int targetSubmeshCount)
         {
             this.sourceMesh = sourceMesh;
             this.sourceSubmeshes = sourceSubmeshCount;
@@ -26,84 +30,82 @@ namespace Assets.MapGen
             this.targetSubmeshes = targetSubmeshCount;
 
 
-            this.totalDuplicates = totalDuplicates;
+            this.targetTrianglesBySubmesh = new List<int>[targetSubmeshCount];
+            for (var i = 0; i < targetSubmeshCount; i++)
+            {
+                targetTrianglesBySubmesh[i] = new List<int>();
+            }
+            this.targetVertexes = new List<Vector3>();
+            this.targetUVs = new List<Vector2>();
+
+            var sourceVertexes = sourceMesh.vertices;
+            this.sourceVertexCount = sourceVertexes.Length;
+
+
             targetMesh.Clear();
-            this.CopyVertexesAndUVs(duplicateOffsets);
+            targetMesh.subMeshCount = targetSubmeshes;
         }
 
         private int sourceVertexCount;
+        private List<Vector3> targetVertexes;
+        private List<Vector2> targetUVs;
+        private List<int>[] targetTrianglesBySubmesh;
 
-        private void CopyVertexesAndUVs(IEnumerable<Vector3> offsets)
+        private void FinalizeCopy()
         {
-            var sourceVertexes = sourceMesh.vertices;
-            this.sourceVertexCount = sourceVertexes.Length;
-            var newVertexLength = sourceVertexes.Length * totalDuplicates;
-            var newVertexes = new Vector3[newVertexLength];
+            targetMesh.SetVertices(targetVertexes);
+            targetMesh.SetUVs(0, targetUVs);
 
-            List<Vector2> sourceUVs = new List<Vector2>();
-            sourceMesh.GetUVs(0, sourceUVs);
-            var newUVs = new Vector2[sourceUVs.Count * totalDuplicates];
-            var offsetIndex = 0;
-            foreach (var displacement in offsets)
+            for (var submesh = 0; submesh < targetSubmeshes; submesh++)
             {
-                var vertexIndexOffset = offsetIndex * sourceVertexes.Length;
-                for (var vert = 0; vert < sourceVertexes.Length; vert++)
-                {
-                    newVertexes[vert + vertexIndexOffset] = sourceVertexes[vert] + displacement;
-                }
-                var uvOffset = offsetIndex * sourceUVs.Count;
-                for (var uv = 0; uv < sourceUVs.Count; uv++)
-                {
-                    newUVs[uv + uvOffset] = sourceUVs[uv];
-                }
-                offsetIndex++;
+                var submeshTriangles = targetTrianglesBySubmesh[submesh];
+                targetMesh.SetTriangles(submeshTriangles, submesh);
             }
-
-            targetMesh.SetVertices(newVertexes);
-            targetMesh.SetUVs(0, newUVs);
-        }
-
-
-        public void CopyIntoTarget()
-        {
-            targetMesh.subMeshCount = targetSubmeshes;
-
-            CopyDuplicatesOfTrianglesFromSubmeshToSubmesh(0, 0);
-            CopyDuplicatesOfTrianglesFromSubmeshToSubmesh(1, 1);
-
             targetMesh.RecalculateNormals();
         }
 
-        private void CopyDuplicatesOfTrianglesFromSubmeshToSubmesh(
-            int targetSubmesh,
-            int sourceSubmesh)
+        private int currentDuplicateIndex = -1;
+        public void NextCopy(Vector3 offset)
         {
-            var sourceTriangles = sourceMesh.GetTriangles(sourceSubmesh);
-            var newTriangles = new int[sourceTriangles.Length * totalDuplicates];
+            this.CopyVertexesToOffset(offset);
+            this.CopyUVsToOffsetIndex();
 
-            for (var offsetIndex = 0; offsetIndex < totalDuplicates; offsetIndex++)
-            {
-                var vertexIndexOffset = offsetIndex * sourceVertexCount;
-
-                var triangleOffset = offsetIndex * sourceTriangles.Length;
-                for (var tri = 0; tri < sourceTriangles.Length; tri++)
-                {
-                    newTriangles[tri + triangleOffset] = sourceTriangles[tri] + vertexIndexOffset;
-                }
-            }
-
-            var completeNewTriangles = new List<int>(newTriangles);
-            completeNewTriangles.AddRange(targetMesh.GetTriangles(targetSubmesh));
-
-            targetMesh.SetTriangles(completeNewTriangles, targetSubmesh);
+            currentDuplicateIndex++;
         }
 
-        private static void CopyTrianglesFromSubmeshToSubmeshAtOffset(
-            Mesh targetMesh, int targetSubmesh,
-            Mesh sourceMesh, int sourceSubmesh, int sourceVertexCount,
-            int duplicates)
+        public void CopySubmeshTrianglesToOffsetIndex(int sourceSubmesh, int targetSubmesh)
         {
+            var sourceTriangles = sourceMesh.GetTriangles(sourceSubmesh);
+            var vertexIndexOffset = currentDuplicateIndex * sourceVertexCount;
 
+            var targetSubmeshTrianges = targetTrianglesBySubmesh[targetSubmesh];
+
+            for (var tri = 0; tri < sourceTriangles.Length; tri++)
+            {
+                targetSubmeshTrianges.Add(sourceTriangles[tri] + vertexIndexOffset);
+            }
+        }
+
+        private void CopyVertexesToOffset(Vector3 offset)
+        {
+            var sourceVertexes = sourceMesh.vertices;
+            for (var vert = 0; vert < sourceVertexes.Length; vert++)
+            {
+                targetVertexes.Add(sourceVertexes[vert] + offset);
+            }
+        }
+
+        private void CopyUVsToOffsetIndex()
+        {
+            var sourceUVs = new List<Vector2>();
+            sourceMesh.GetUVs(0, sourceUVs);
+            targetUVs.AddRange(sourceUVs);
+        }
+
+
+        public void Dispose()
+        {
+            this.FinalizeCopy();
         }
     }
 }

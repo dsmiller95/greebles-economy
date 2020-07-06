@@ -62,15 +62,19 @@ namespace Assets.MapGen
         private void SetupMesh(Mesh target, Mesh source, HexTileMapManager mapManager)
         {
             var offsets = GetTileOffsets(mapManager);
-
             var totalNumberOfCells = mapManager.hexWidth * mapManager.hexHeight;
-            var copier = new MeshCopier(
-                source, 2,
-                target, 2,
-                offsets, totalNumberOfCells);
-            copier.CopyIntoTarget();
 
-            //CopyMeshIntoOtherMeshAtOffsets(target, source, offsets, totalNumberOfCells);
+            using (var copier = new MeshCopier(
+                source, 2,
+                target, 2))
+            {
+                foreach (var offset in offsets)
+                {
+                    copier.NextCopy(offset);
+                    copier.CopySubmeshTrianglesToOffsetIndex(0, 0);
+                    copier.CopySubmeshTrianglesToOffsetIndex(1, 1);
+                }
+            }
         }
 
         private IEnumerable<Vector3> GetTileOffsets(HexTileMapManager tilemapManager)
