@@ -98,7 +98,7 @@ namespace Assets.MapGen
 
         private void SetupMesh(Mesh target, Mesh source, HexTileMapManager mapManager)
         {
-            var offsets = GetTileOffsets(mapManager);
+            var offsets = GetTilesInRectangle(mapManager);
             var targetSubmeshes = defaultSubmeshCopies.Length + extraTerrainRegions.Length;
 
             //offsets = new[]
@@ -115,7 +115,7 @@ namespace Assets.MapGen
 
             foreach (var offset in offsets)
             {
-                var planeLocation = mapManager.TileMapPositionToPositionInPlane(offset);
+                var planeLocation = mapManager.TileMapPositionToPositionInPlane(offset.ToAxial());
                 var realOffset = new Vector3(planeLocation.x, 0, planeLocation.y);
                 var vertexColor = GetColorForTerrainAtPoint(offset);
                 copier.NextCopy(realOffset, vertexColor);
@@ -134,14 +134,14 @@ namespace Assets.MapGen
             this.meshEditor = copier.FinalizeCopy();
         }
 
-        private IEnumerable<OffsetCoordinate> GetTileOffsets(HexTileMapManager tilemapManager)
+        private IEnumerable<OffsetCoordinate> GetTilesInRectangle(HexTileMapManager tilemapManager)
         {
             var totalCells = new Vector2Int(tilemapManager.hexWidth, tilemapManager.hexHeight);//new Vector2Int(10, 10);
             for (var verticalIndex = 0; verticalIndex < totalCells.y; verticalIndex++)
             {
                 for (var horizontalIndex = 0; horizontalIndex < totalCells.x; horizontalIndex++)
                 {
-                    yield return new OffsetCoordinate(horizontalIndex, verticalIndex) + tilemapManager.tileMapMin;
+                    yield return new OffsetCoordinate(horizontalIndex + tilemapManager.tileMapMin.column, verticalIndex + tilemapManager.tileMapMin.row);
                 }
             }
         }
@@ -156,12 +156,7 @@ namespace Assets.MapGen
             var mapManager = GetComponent<HexTileMapManager>();
             var colors = colorsAtPositions.ToList();
             var colorChange = colors
-                .Select(x =>
-                {
-                    var vectorInArray = x.Item1 - mapManager.tileMapMin;
-                    var copyIndex = vectorInArray.row * mapManager.hexWidth + vectorInArray.column;
-                    return (copyIndex, x.Item2);
-                });
+                .Select(x => (LocationToIndex(x.Item1), x.Item2) );
             meshEditor.SetColorsOnVertexesAtDuplicates(colorChange);
             return new HexTileColorChangeRecord
             {
@@ -195,8 +190,8 @@ namespace Assets.MapGen
 
         private int LocationToIndex(OffsetCoordinate locationInTileMap)
         {
-            var vectorInArray = locationInTileMap - mapManager.tileMapMin;
-            var copyIndex = vectorInArray.row * mapManager.hexWidth + vectorInArray.column;
+            var vectorInArray = new Vector2Int(locationInTileMap.column - mapManager.tileMapMin.column, locationInTileMap.row - mapManager.tileMapMin.row);
+            var copyIndex = vectorInArray.y * mapManager.hexWidth + vectorInArray.x;
             return copyIndex;
         }
     }

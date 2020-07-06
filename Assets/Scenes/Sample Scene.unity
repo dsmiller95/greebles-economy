@@ -530,8 +530,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   localPosition:
-    row: -50
-    column: -70
+    q: -70
+    r: -15
   managerSetForInspector: {fileID: 1140566651}
 --- !u!1 &705507993
 GameObject:
@@ -1329,8 +1329,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   localPosition:
-    row: 0
-    column: 0
+    q: 0
+    r: 0
   managerSetForInspector: {fileID: 1140566651}
 --- !u!4 &1302152326
 Transform:

@@ -7,7 +7,7 @@ namespace Assets.MapGen.TileManagement
     {
         Vector2 PositionInTilePlane { get; }
         HexTileMapManager MapManager { get; set; }
-        OffsetCoordinate PositionInTileMap { get; set; }
+        AxialCoordinate PositionInTileMap { get; set; }
         T TryGetType<T>();
     }
 }

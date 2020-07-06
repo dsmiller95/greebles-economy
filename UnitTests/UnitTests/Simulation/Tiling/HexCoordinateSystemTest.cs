@@ -56,10 +56,10 @@ namespace UnitTests.Simulation.Tiling
             };
             var expectedCoords = new[]
             {
-                new Vector2(0, Mathf.Sqrt(3)/2),
-                new Vector2(1.5f, 0),
-                new Vector2(0, Mathf.Sqrt(3) * 1.5f),
-                new Vector2(1.5f, Mathf.Sqrt(3)),
+                new Vector2(0, 0),
+                new Vector2(1.5f, -Mathf.Sqrt(3)/2),
+                new Vector2(0, -Mathf.Sqrt(3)),
+                new Vector2(1.5f, -Mathf.Sqrt(3) * 1.5f),
             };
 
             var coordSystem = new HexCoordinateSystem(1);
@@ -83,10 +83,10 @@ namespace UnitTests.Simulation.Tiling
             };
             var expectedCoords = new[]
             {
-                new Vector2(0, Mathf.Sqrt(3)/2),
-                new Vector2(1.5f, 0),
-                new Vector2(0, Mathf.Sqrt(3) * 1.5f),
-                new Vector2(1.5f, Mathf.Sqrt(3)),
+                new Vector2(0, 0),
+                new Vector2(1.5f, -Mathf.Sqrt(3)/2),
+                new Vector2(0, -Mathf.Sqrt(3)),
+                new Vector2(1.5f, -Mathf.Sqrt(3) * 1.5f),
             }.Select(x => x * 2f);
 
             var coordSystem = new HexCoordinateSystem(2);
@@ -123,7 +123,9 @@ namespace UnitTests.Simulation.Tiling
                 new Vector2(1.1f, rt3/2 + 1.8f),
                 new Vector2(2.1f, rt3/2 - 0.1f),
                 new Vector2(0.3f, rt3/2 - 0.9f),
-            };
+            }
+                .Select(x => (x - new Vector2(0, rt3/2)))
+                .ToArray();
             var expectedCoords = new[]
             {
                 new OffsetCoordinate(0, 0),
@@ -145,7 +147,9 @@ namespace UnitTests.Simulation.Tiling
                 new OffsetCoordinate(1, 2),
                 new OffsetCoordinate(2, 0),
                 new OffsetCoordinate(0, -1),
-            };
+            }
+            .Select(x => new OffsetCoordinate(x.column, -x.row))
+            .ToArray();
 
             var coordSystem = new HexCoordinateSystem(1);
 
@@ -178,7 +182,7 @@ namespace UnitTests.Simulation.Tiling
             };
             var expectedJumps = new[]
             {
-                1, 2, 1, 3, 2, 2, 4
+                1, 1, 1, 3, 1, 1, 4
             };
 
             var coordSystem = new HexCoordinateSystem(2);
@@ -251,40 +255,42 @@ namespace UnitTests.Simulation.Tiling
         [TestMethod]
         public void ShouldGetAllPositionsWithinDistanceWhenCrossDomain()
         {
-            var offsetToCrossDomain = new OffsetCoordinate(-4, -2);
-            var coord = new OffsetCoordinate(3, 3) + offsetToCrossDomain;
+            var offsetToCrossDomain = new Vector2Int(-4, -2);
+            var coord = new Vector2Int(3, 3) + offsetToCrossDomain;
+            var realOffsetCoord = new OffsetCoordinate(coord.x, coord.y);
             var expectedCoordsInDistance = new[]
             {
-                new OffsetCoordinate(3, 3),
+                new Vector2Int(3, 3),
 
-                new OffsetCoordinate(3, 4),
-                new OffsetCoordinate(2, 3),
-                new OffsetCoordinate(4, 3),
-                new OffsetCoordinate(2, 2),
-                new OffsetCoordinate(3, 2),
-                new OffsetCoordinate(4, 2),
+                new Vector2Int(3, 4),
+                new Vector2Int(2, 3),
+                new Vector2Int(4, 3),
+                new Vector2Int(2, 2),
+                new Vector2Int(3, 2),
+                new Vector2Int(4, 2),
                     
-                new OffsetCoordinate(3, 5),
-                new OffsetCoordinate(1, 4),
-                new OffsetCoordinate(2, 4),
-                new OffsetCoordinate(4, 4),
-                new OffsetCoordinate(5, 4),
-                new OffsetCoordinate(1, 3),
-                new OffsetCoordinate(5, 3),
-                new OffsetCoordinate(1, 2),
-                new OffsetCoordinate(5, 2),
-                new OffsetCoordinate(2, 1),
-                new OffsetCoordinate(3, 1),
-                new OffsetCoordinate(4, 1),
+                new Vector2Int(3, 5),
+                new Vector2Int(1, 4),
+                new Vector2Int(2, 4),
+                new Vector2Int(4, 4),
+                new Vector2Int(5, 4),
+                new Vector2Int(1, 3),
+                new Vector2Int(5, 3),
+                new Vector2Int(1, 2),
+                new Vector2Int(5, 2),
+                new Vector2Int(2, 1),
+                new Vector2Int(3, 1),
+                new Vector2Int(4, 1),
             }
                 .Select(x => x + offsetToCrossDomain)
+                .Select(x => new OffsetCoordinate(x.x, x.y))
                 .OrderBy(x => x.row)
                 .ThenBy(x => x.column)
                 .ToList();
 
             var coordSystem = new HexCoordinateSystem(2);
 
-            var actualJumps = coordSystem.GetPositionsWithinJumpDistance(coord, 2)
+            var actualJumps = coordSystem.GetPositionsWithinJumpDistance(realOffsetCoord, 2)
                 .OrderBy(x => x.row)
                 .ThenBy(x => x.column)
                 .ToList();
@@ -304,9 +310,32 @@ namespace UnitTests.Simulation.Tiling
         [TestMethod]
         public void ShouldGeneratePathBetweenPoints()
         {
-            var origin = new OffsetCoordinate(-1, 4);
-            var destination = new OffsetCoordinate(3, -1);
+            var origin = new OffsetCoordinate(-1, 4).ToAxial();
+            var destination = new OffsetCoordinate(3, -1).ToAxial();
             var expectedPathLength = 7;
+
+            var coordSystem = new HexCoordinateSystem(2);
+
+            var actualPath = coordSystem.GetRouteGenerator(origin, destination)
+                .ToList();
+
+            Assert.AreEqual(expectedPathLength, actualPath.Count);
+
+            foreach (var pair in actualPath.RollingWindow(2))
+            {
+                var distanceBetween = coordSystem.DistanceBetweenInJumps(pair[0], pair[1]);
+                Assert.AreEqual(
+                    1,
+                    distanceBetween,
+                    $"Jump between {pair[0]} and {pair[1]} should have been distance of 1 but was {distanceBetween}");
+            }
+        }
+        [TestMethod]
+        public void ShouldGeneratePathBetweenPoints2()
+        {
+            var origin = new AxialCoordinate(-2, 2);
+            var destination = new AxialCoordinate(0, 3);
+            var expectedPathLength = 3;
 
             var coordSystem = new HexCoordinateSystem(2);
 

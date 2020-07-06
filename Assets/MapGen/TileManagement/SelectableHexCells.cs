@@ -33,8 +33,10 @@ public class SelectableHexCells : MonoBehaviour, IFocusable
 
         Debug.Log($"Hex cell grid selected {hexCellCoordinate}");
         selectedMarker.PositionInTileMap = hexCellCoordinate;
-        tileGenerator.SetHexTileColor(hexCellCoordinate, Color.Lerp(Color.red, Color.cyan, Random.value));
 
-        this.lastSelectedTile = hexCellCoordinate;
+        var hexCellInOffset = hexCellCoordinate.ToOffset();
+        tileGenerator.SetHexTileColor(hexCellInOffset, Color.Lerp(Color.red, Color.cyan, Random.value));
+
+        this.lastSelectedTile = hexCellInOffset;
     }
 }

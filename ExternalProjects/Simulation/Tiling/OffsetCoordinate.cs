@@ -36,6 +36,11 @@ namespace Simulation.Tiling
             return new CubeCoordinate(x, y, z);
         }
 
+        public AxialCoordinate ToAxial()
+        {
+            return this.ToCube().ToAxial();
+        }
+
         public bool IsZero()
         {
             return row == 0 && column == 0;
@@ -43,15 +48,6 @@ namespace Simulation.Tiling
 
         public static explicit operator OffsetCoordinate(Vector2Int d) => new OffsetCoordinate(d.x, d.y);
 
-        public static OffsetCoordinate operator +(OffsetCoordinate a, OffsetCoordinate b)
-        {
-            return new OffsetCoordinate(a.column + b.column, a.row + b.row);
-        }
-
-        public static OffsetCoordinate operator -(OffsetCoordinate a, OffsetCoordinate b)
-        {
-            return new OffsetCoordinate(a.column - b.column, a.row - b.row);
-        }
 
         public override bool Equals(object obj)
         {

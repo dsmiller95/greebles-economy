@@ -7,12 +7,12 @@ namespace Assets.MapGen.TileManagement
 {
     public class TileRoute
     {
-        public IList<OffsetCoordinate> waypoints;
-        public TileRoute(IList<OffsetCoordinate> waypoints)
+        public IList<AxialCoordinate> waypoints;
+        public TileRoute(IList<AxialCoordinate> waypoints)
         {
             this.waypoints = waypoints;
         }
-        public TileRoute() : this(new List<OffsetCoordinate>())
+        public TileRoute() : this(new List<AxialCoordinate>())
         {
         }
 
@@ -21,17 +21,22 @@ namespace Assets.MapGen.TileManagement
             return waypoints.Count;
         }
 
-        public void AddLastWaypoint(OffsetCoordinate waypoint)
+        public void AddLastWaypoint(AxialCoordinate waypoint)
         {
+            var distance = PeekNext().ToCube().DistanceTo(waypoint.ToCube());
+            if (distance > 1)
+            {
+                throw new System.Exception($"Attempted to add {waypoint} to route ending in {PeekNext()}. distance between points is {distance}");
+            }
             waypoints.Add(waypoint);
         }
 
-        public OffsetCoordinate PeekNext()
+        public AxialCoordinate PeekNext()
         {
             return waypoints.FirstOrDefault();
         }
 
-        public OffsetCoordinate PopNextWaypoint()
+        public AxialCoordinate PopNextWaypoint()
         {
             var nextWaypoint = waypoints.First();
             waypoints.RemoveAt(0);

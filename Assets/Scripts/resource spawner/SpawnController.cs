@@ -1,11 +1,6 @@
-﻿using Assets.MapGen.TileManagement;
-using Assets.Scripts.MovementExtensions;
-using Assets.Scripts.Resources;
+﻿using Assets.Scripts.MovementExtensions;
 using Simulation.Tiling;
-using System.Collections;
-using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using UnityEngine;
 
 public class SpawnController : MonoBehaviour
@@ -31,17 +26,17 @@ public class SpawnController : MonoBehaviour
     private int myID;
     private void Awake()
     {
-        this.hexMember = this.GetComponentInParent<HexMember>();
+        hexMember = GetComponentInParent<HexMember>();
         myID = Random.Range(0, int.MaxValue);
     }
 
     // Start is called before the first frame update
     void Start()
     {
-        this.boostCurveMultiplier = this.boostCurveOffset * this.boostProbabilityAt0;
-        for(var i = 0; i < initialSpawnNumber; i++)
+        boostCurveMultiplier = boostCurveOffset * boostProbabilityAt0;
+        for (var i = 0; i < initialSpawnNumber; i++)
         {
-            this.SpawnItem();
+            SpawnItem();
         }
     }
 
@@ -51,10 +46,10 @@ public class SpawnController : MonoBehaviour
         var childrenNumber = transform.childCount;
         if (childrenNumber < maximumConcurrentSpawned)
         {
-            var probability = spawnProbability + (this.boostCurveMultiplier / (childrenNumber + this.boostCurveOffset));
-            if(Random.value < probability * Time.deltaTime)
+            var probability = spawnProbability + (boostCurveMultiplier / (childrenNumber + boostCurveOffset));
+            if (Random.value < probability * Time.deltaTime)
             {
-                this.SpawnItem();
+                SpawnItem();
             }
         }
     }
@@ -62,14 +57,20 @@ public class SpawnController : MonoBehaviour
     private void SpawnItem()
     {
         var checks = 0;
-        OffsetCoordinate newPosition;
+        AxialCoordinate newPosition;
         bool hasExistingMember;
         do
         {
             newPosition = getRandomPosInBounds();
-            var newRealPosition = newPosition + this.hexMember.PositionInTileMap;
-            hasExistingMember = hexMember.MapManager
-                .GetMembersAtLocation<HexMember>(newRealPosition)
+            var newRealPosition = newPosition + hexMember.PositionInTileMap;
+            var memberAtLocation = hexMember.MapManager
+                .GetMembersAtLocation<HexMember>(newRealPosition);
+            if (memberAtLocation == null)
+            {
+                Debug.LogError($"Attempted to spanw item at {newRealPosition} but was out of bounds");
+                Debug.LogError($"{newRealPosition.ToOffset()}");
+            }
+            hasExistingMember = memberAtLocation
                 .Where(x => x.GetComponent<SpawnMarker>()?.id == myID)
                 .Any();
             checks++;
@@ -84,7 +85,7 @@ public class SpawnController : MonoBehaviour
         var newItem = Instantiate(thisPrefab, transform);
         var hexItem = newItem.GetComponentInChildren<HexMember>();
         var marker = newItem.AddComponent<SpawnMarker>();
-        marker.id = this.myID;
+        marker.id = myID;
         //Debug.Log($"spawning map feature at {newPosition}");
         hexItem.localPosition = newPosition;
         // the item will get the manager from the parent tree
@@ -92,11 +93,11 @@ public class SpawnController : MonoBehaviour
         //this.hexMember.tilemapManager.RegisterNewMapMember(hexItem, getRandomPosInBounds());
     }
 
-    private OffsetCoordinate getRandomPosInBounds()
+    private AxialCoordinate getRandomPosInBounds()
     {
         return new OffsetCoordinate(
-            Random.Range(0, this.spawnBoxSize.x),
-            Random.Range(0, this.spawnBoxSize.y));
+            Random.Range(0, spawnBoxSize.x),
+            Random.Range(0, spawnBoxSize.y)).ToAxial();
     }
 
     private void OnDrawGizmos()

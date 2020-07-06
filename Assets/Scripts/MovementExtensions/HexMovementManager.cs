@@ -79,7 +79,7 @@ namespace Assets.Scripts.MovementExtensions
             }
         }
 
-        private void StartNewAnimation(OffsetCoordinate nextWaypoint)
+        private void StartNewAnimation(AxialCoordinate nextWaypoint)
         {
             var nextWaypointReal = MapManager.TileMapToReal(nextWaypoint);
             var currentReal = PositionInTilePlane;

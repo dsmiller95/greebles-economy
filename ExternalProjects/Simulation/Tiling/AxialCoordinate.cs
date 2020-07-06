@@ -26,6 +26,16 @@ namespace Simulation.Tiling
             return new CubeCoordinate(x, y, z);
         }
 
+        public OffsetCoordinate ToOffset()
+        {
+            return this.ToCube().ToOffset();
+        }
+
+        public int DistanceTo(AxialCoordinate other)
+        {
+            return ToCube().DistanceTo(other.ToCube());
+        }
+
         public static AxialCoordinate operator +(AxialCoordinate a, AxialCoordinate b)
         {
             return new AxialCoordinate(a.q + b.q, a.r + b.r);
@@ -33,7 +43,7 @@ namespace Simulation.Tiling
 
         public static AxialCoordinate operator -(AxialCoordinate a, AxialCoordinate b)
         {
-            return new AxialCoordinate(a.q * b.q, a.r - b.r);
+            return new AxialCoordinate(a.q - b.q, a.r - b.r);
         }
 
         public override bool Equals(object obj)

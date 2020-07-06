@@ -6,7 +6,7 @@ namespace Assets.Scripts.MovementExtensions
 {
     public class HexMember : MonoBehaviour, ITilemapMember
     {
-        public OffsetCoordinate localPosition;
+        public AxialCoordinate localPosition;
         public HexTileMapManager managerSetForInspector;
 
         private ITilemapMember parentMemberTransform;
@@ -34,15 +34,15 @@ namespace Assets.Scripts.MovementExtensions
         }
 
 
-        public OffsetCoordinate LocalPosition => localPosition;
+        public AxialCoordinate LocalPosition => localPosition;
 
-        public OffsetCoordinate PositionInTileMap
+        public AxialCoordinate PositionInTileMap
         {
-            get => LocalPosition + (parentMemberTransform?.PositionInTileMap ?? new OffsetCoordinate(0, 0));
+            get => LocalPosition + (parentMemberTransform?.PositionInTileMap ?? new AxialCoordinate(0, 0));
             set
             {
                 MapManager?.DeRegisterInGrid(this);
-                localPosition = value - (parentMemberTransform?.PositionInTileMap ?? new OffsetCoordinate(0, 0));
+                localPosition = value - (parentMemberTransform?.PositionInTileMap ?? new AxialCoordinate(0, 0));
                 MapManager?.RegisterInGrid(this);
                 this.UpdatePositionInWorldSpace();
             }

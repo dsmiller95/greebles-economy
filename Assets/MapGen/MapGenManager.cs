@@ -59,13 +59,13 @@ public class MapGenManager : MonoBehaviour
         hexItem.localPosition = newPosition;
     }
 
-    private OffsetCoordinate getRandomPosInBounds()
+    private AxialCoordinate getRandomPosInBounds()
     {
         var nextPoint = pointGenerator.Sample();
 
         return new OffsetCoordinate(
             Mathf.FloorToInt(nextPoint.x),
-            Mathf.FloorToInt(nextPoint.y));
+            Mathf.FloorToInt(nextPoint.y)).ToAxial();
     }
 
     private void OnDrawGizmos()

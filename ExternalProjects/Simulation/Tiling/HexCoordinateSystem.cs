@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Security.Cryptography;
 using UnityEngine;
 
 namespace Simulation.Tiling
@@ -7,7 +9,7 @@ namespace Simulation.Tiling
     public class HexCoordinateSystem
     {
         public float hexRadius;
-        private readonly Vector2 displacementRatio = new Vector2(3f / 2f, Mathf.Sqrt(3));
+        private readonly Vector2 displacementRatio = new Vector2(3f / 2f, -Mathf.Sqrt(3));
 
         //private HexGrid backingGrid;
 
@@ -17,7 +19,10 @@ namespace Simulation.Tiling
             this.hexRadius = hexRadius;
         }
 
-
+        public Vector2 TileMapToRelative(AxialCoordinate axial)
+        {
+            return TileMapToRelative(axial.ToOffset());
+        }
         /// <summary>
         /// Translate a tile map coordinate to a standard "real" position. this is not scaled based
         ///     on the size of the hexes. only use it for calculations that need to know about
@@ -35,7 +40,7 @@ namespace Simulation.Tiling
                 displacementRatio,
                 new Vector2(
                     offsetCoordinates.column,
-                    offsetCoordinates.row + (isInOffset ? 0.5f : 0)
+                    offsetCoordinates.row + (isInOffset ? 0f : 0.5f)
                 ));
             return agnosticCoords;
         }
@@ -46,11 +51,11 @@ namespace Simulation.Tiling
 
         public OffsetCoordinate RelativeToTileMap(Vector2 relativePosition)
         {
-            var cubicFloating = ConvertSizeScaledPointToFloatingCubic(relativePosition - new Vector2(0, displacementRatio.y / 2f));
+            var cubicFloating = ConvertSizeScaledPointToFloatingCubic(relativePosition);// - new Vector2(0, displacementRatio.y / 2f));
             cubicFloating.z = -cubicFloating.x - cubicFloating.y;
             var cubicRounded = RoundToNearestCube(cubicFloating);
             var offsetCoords = cubicRounded.ToOffset();
-            return new OffsetCoordinate(offsetCoords.column, -offsetCoords.row);
+            return new OffsetCoordinate(offsetCoords.column, offsetCoords.row);
         }
 
         public OffsetCoordinate RealToTileMap(Vector2 realPosition)
@@ -61,18 +66,17 @@ namespace Simulation.Tiling
 
         public int DistanceBetweenInJumps(OffsetCoordinate origin, OffsetCoordinate destination)
         {
-            var diff = destination - origin;
-            var xOffset = Mathf.Abs(diff.column);
-#pragma warning disable CS0618 // Type or member is obsolete
-            var isFromOffsetPoint = origin.IsInOffsetColumn();
-#pragma warning restore CS0618 // Type or member is obsolete
+            return this.DistanceBetweenInJumps(origin.ToCube(), destination.ToCube());
+        }
 
-            var shouldPadX = diff.row > 0 ^ isFromOffsetPoint;
-            return Mathf.Max(
-                xOffset,
-                Mathf.Abs(diff.row) +
-                    Mathf.FloorToInt((xOffset + (shouldPadX ? 1 : 0)) / 2f)
-                );
+        public int DistanceBetweenInJumps(AxialCoordinate origin, AxialCoordinate destination)
+        {
+            return this.DistanceBetweenInJumps(origin.ToCube(), destination.ToCube());
+        }
+
+        public int DistanceBetweenInJumps(CubeCoordinate origin, CubeCoordinate destination)
+        {
+            return origin.DistanceTo(destination);
         }
 
         public IEnumerable<OffsetCoordinate> GetPositionsWithinJumpDistance(OffsetCoordinate origin, int jumpDistance)
@@ -94,7 +98,7 @@ namespace Simulation.Tiling
                 var currentHalfWidth = Mathf.Min(topSlopeAmount, bottomSlopeAmount, maxWidth);
                 for (var x = -currentHalfWidth; x <= currentHalfWidth; x++)
                 {
-                    yield return new OffsetCoordinate(x, y + heightOffset) + origin;
+                    yield return new OffsetCoordinate(x + origin.column, y + heightOffset + origin.row);
                 }
             }
         }
@@ -104,23 +108,39 @@ namespace Simulation.Tiling
             throw new NotImplementedException();
         }
 
-        public IEnumerable<OffsetCoordinate> GetRouteGenerator(OffsetCoordinate origin, OffsetCoordinate destination)
-        {
-            var originPoint = origin;
-            var destinationPoint = destination;
+        //public IEnumerable<AxialCoordinate> GetRouteGenerator(AxialCoordinate origin, AxialCoordinate destination)
+        //{
+        //    return this.GetRouteGenerator(origin.ToOffset(), destination.ToOffset()).Select(x => x.ToAxial());
+        //}
 
-            var currentTileMapPos = originPoint;
-            var iterations = 0;
-            while (!(currentTileMapPos - destinationPoint).IsZero())
+        public IEnumerable<AxialCoordinate> GetRouteGenerator(AxialCoordinate origin, AxialCoordinate destination)
+        {
+            if(origin.DistanceTo(destination) > 1000)
             {
-                var realWorldVectorToDest = TileMapToRelative(destinationPoint)
+                Debug.Log("trying to find route between preposterously distant points");
+            }
+            //var destinationPoint = new Vector2Int(destination.column, destination.row);
+
+            var currentTileMapPos = new AxialCoordinate(origin.q, origin.r);// new Vector2Int(originPoint.column, origin.row);
+            var myDest = new AxialCoordinate(destination.q, destination.r);
+            var iterations = 0;
+            while (!currentTileMapPos.Equals(myDest))
+            {
+                var realWorldVectorToDest = TileMapToRelative(myDest)
                     - TileMapToRelative(currentTileMapPos);
 
 #pragma warning disable CS0618 // Type or member is obsolete
-                var nextMoveVector = GetClosestMatchingValidMove(realWorldVectorToDest, currentTileMapPos.IsInOffsetColumn());
+                var nextMoveVector = GetClosestMatchingValidMove(realWorldVectorToDest);
 #pragma warning restore CS0618 // Type or member is obsolete
 
-                currentTileMapPos += nextMoveVector;
+                var lastDistance = currentTileMapPos.DistanceTo(myDest);
+                currentTileMapPos = currentTileMapPos + nextMoveVector;
+                var newDistance = currentTileMapPos.DistanceTo(myDest);
+                if(newDistance >= lastDistance)
+                {
+                    throw new Exception("we're goin the wrong way!!");
+                    yield break;
+                }
 
                 yield return currentTileMapPos;
                 iterations++;
@@ -131,33 +151,33 @@ namespace Simulation.Tiling
             }
         }
 
-        private OffsetCoordinate GetClosestMatchingValidMove(Vector2 worldSpaceDestinationVector, bool isInOffsetColumn)
+        private AxialCoordinate GetClosestMatchingValidMove(Vector2 worldSpaceDestinationVector)
         {
             //TODO: use the offsetCoordinate to get the neighbors
             var angle = Vector2.SignedAngle(Vector2.right, worldSpaceDestinationVector);
             if (0 <= angle && angle < 60)
             {
-                return isInOffsetColumn ? new OffsetCoordinate(1, 1) : new OffsetCoordinate(1, 0);
+                return new AxialCoordinate(1, -1);;
             }
             if (60 <= angle && angle < 120)
             {
-                return new OffsetCoordinate(0, 1);
+                return new AxialCoordinate(0, -1);
             }
             if (120 <= angle && angle <= 180)
             {
-                return isInOffsetColumn ? new OffsetCoordinate(-1, 1) : new OffsetCoordinate(-1, 0);
+                return new AxialCoordinate(-1, 0);
             }
             if (-180 <= angle && angle < -120)
             {
-                return isInOffsetColumn ? new OffsetCoordinate(-1, 0) : new OffsetCoordinate(-1, -1);
+                return new AxialCoordinate(-1, 1);
             }
             if (-120 <= angle && angle < -60)
             {
-                return new OffsetCoordinate(0, -1);
+                return new AxialCoordinate(0, 1);
             }
             if (-60 <= angle && angle < 0)
             {
-                return isInOffsetColumn ? new OffsetCoordinate(1, 0) : new OffsetCoordinate(1, -1);
+                return new AxialCoordinate(1, 0);
             }
             throw new Exception($"error in angle matching {angle}");
         }

@@ -33,14 +33,13 @@ namespace Assets.MapGen.TileManagement
         public void Awake()
         {
             this.coordinateSystem = new HexCoordinateSystem(this.hexRadius);
-            var totalCells = new Vector2Int(hexWidth, hexHeight);
-            tileMapMax = tileMapMin + (OffsetCoordinate)totalCells;
+            tileMapMax = new OffsetCoordinate(tileMapMin.column + hexWidth, tileMapMin.row + hexHeight);
 
-            tileGrid = new IList<ITilemapMember>[totalCells.y][];
-            for (var verticalIndex = 0; verticalIndex < totalCells.y; verticalIndex++)
+            tileGrid = new IList<ITilemapMember>[hexHeight][];
+            for (var verticalIndex = 0; verticalIndex < hexHeight; verticalIndex++)
             {
-                tileGrid[verticalIndex] = new IList<ITilemapMember>[totalCells.x];
-                for (var horizontalIndex = 0; horizontalIndex < totalCells.x; horizontalIndex++)
+                tileGrid[verticalIndex] = new IList<ITilemapMember>[hexWidth];
+                for (var horizontalIndex = 0; horizontalIndex < hexWidth; horizontalIndex++)
                 {
                     tileGrid[verticalIndex][horizontalIndex] = new List<ITilemapMember>();
                 }
@@ -48,21 +47,21 @@ namespace Assets.MapGen.TileManagement
         }
 
         #region hex coordinate system
-        public Vector2 TileMapToReal(OffsetCoordinate tileMapPosition)
+        public Vector2 TileMapToReal(AxialCoordinate tileMapPosition)
         {
-            return this.coordinateSystem.TileMapToRelative(tileMapPosition);
+            return this.coordinateSystem.TileMapToRelative(tileMapPosition.ToOffset());
         }
-        public Vector2 TileMapPositionToPositionInPlane(OffsetCoordinate tileMapPosition)
+        public Vector2 TileMapPositionToPositionInPlane(AxialCoordinate tileMapPosition)
         {
-            return this.coordinateSystem.TileMapToReal(tileMapPosition);
+            return this.coordinateSystem.TileMapToReal(tileMapPosition.ToCube().ToOffset());
         }
-        public OffsetCoordinate PositionInPlaneToTilemapPosition(Vector2 positionInPlane)
+        public AxialCoordinate PositionInPlaneToTilemapPosition(Vector2 positionInPlane)
         {
-            return this.coordinateSystem.RealToTileMap(positionInPlane);
+            return this.coordinateSystem.RealToTileMap(positionInPlane).ToAxial();
         }
-        public IEnumerable<OffsetCoordinate> GetPositionsWithinJumpDistance(OffsetCoordinate origin, int jumpDistance)
+        public IEnumerable<AxialCoordinate> GetPositionsWithinJumpDistance(AxialCoordinate origin, int jumpDistance)
         {
-            return coordinateSystem.GetPositionsWithinJumpDistance(origin, jumpDistance);
+            return coordinateSystem.GetPositionsWithinJumpDistance(origin.ToOffset(), jumpDistance).Select(x => x.ToAxial());
         }
         public IEnumerable<Vector2Int> GetInfinitePositionsInJumpDistanceOrder(Vector2Int origin)
         {
@@ -73,9 +72,9 @@ namespace Assets.MapGen.TileManagement
             //TODO: replace with distance function
             return !coordinateSystem.GetRouteGenerator(first.PositionInTileMap, second.PositionInTileMap).Skip(distance).Any();
         }
-        public int DistanceBetweenInJumps(OffsetCoordinate origin, OffsetCoordinate destination)
+        public int DistanceBetweenInJumps(AxialCoordinate origin, AxialCoordinate destination)
         {
-            return coordinateSystem.DistanceBetweenInJumps(origin, destination);
+            return coordinateSystem.DistanceBetweenInJumps(origin.ToOffset(), destination.ToOffset());
         }
         public TileRoute GetRouteBetweenMembers(ITilemapMember origin, ITilemapMember destination)
         {
@@ -83,7 +82,7 @@ namespace Assets.MapGen.TileManagement
         }
         #endregion
 
-        public IEnumerable<T> GetItemsWithinJumpDistance<T>(OffsetCoordinate origin, int jumpDistance)
+        public IEnumerable<T> GetItemsWithinJumpDistance<T>(AxialCoordinate origin, int jumpDistance)
         {
             return GetPositionsWithinJumpDistance(origin, jumpDistance)
                 .Select(position => GetItemsAtLocation<T>(position))
@@ -92,32 +91,33 @@ namespace Assets.MapGen.TileManagement
                 .Where(x => x != null);
         }
 
-        private IList<ITilemapMember> GetListFromCoord(OffsetCoordinate coordinates)
+        private IList<ITilemapMember> GetListFromCoord(AxialCoordinate coordinates)
         {
-            var positionInGrid = coordinates - tileMapMin;
-            if (positionInGrid.column < 0 || positionInGrid.row < 0 || positionInGrid.row >= tileMapHeight || positionInGrid.column >= tileMapWidth)
+            var offsetCoordinates = coordinates.ToOffset();
+            var vectorInGrid = new Vector2Int(offsetCoordinates.column - tileMapMin.column, offsetCoordinates.row - tileMapMin.row);
+            if (vectorInGrid.x < 0 || vectorInGrid.y < 0 || vectorInGrid.y >= tileMapHeight || vectorInGrid.x >= tileMapWidth)
             {
                 return null;
             }
 
-            return tileGrid[positionInGrid.row][positionInGrid.column];
+            return tileGrid[vectorInGrid.y][vectorInGrid.x];
         }
 
-        public IEnumerable<T> GetMembersAtLocation<T>(OffsetCoordinate position, Func<T, bool> filter) where T :ITilemapMember
+        public IEnumerable<T> GetMembersAtLocation<T>(AxialCoordinate position, Func<T, bool> filter) where T :ITilemapMember
         {
             var positionList = GetListFromCoord(position);
             return positionList?
                 .OfType<T>()
                 .Where(member => filter(member));
         }
-        public IEnumerable<T> GetMembersAtLocation<T>(OffsetCoordinate position) where T : ITilemapMember
+        public IEnumerable<T> GetMembersAtLocation<T>(AxialCoordinate position) where T : ITilemapMember
         {
             var positionList = GetListFromCoord(position);
             return positionList?
                 .OfType<T>();
         }
 
-        public IEnumerable<T> GetItemsAtLocation<T>(OffsetCoordinate position)
+        public IEnumerable<T> GetItemsAtLocation<T>(AxialCoordinate position)
         {
             var positionList = GetListFromCoord(position);
             return positionList?

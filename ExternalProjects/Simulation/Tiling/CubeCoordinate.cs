@@ -33,6 +33,11 @@ namespace Simulation.Tiling
             return new AxialCoordinate(q, r);
         }
 
+        public int DistanceTo(CubeCoordinate other)
+        {
+            return Mathf.Max(Mathf.Abs(x - other.x), Mathf.Abs(y - other.y), Mathf.Abs(z - other.z));
+        }
+
         public static CubeCoordinate operator +(CubeCoordinate a, CubeCoordinate b)
         {
             return new CubeCoordinate(a.x + b.x, a.y + b.y, a.z + b.z);

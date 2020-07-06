@@ -65,6 +65,7 @@ namespace Assets.Scripts.Market
             var mapManager = myMember.MapManager;
             var colorChanges = mapManager
                 .GetPositionsWithinJumpDistance(myHexPosition, 2)
+                .Select(axial => axial.ToOffset())
                 .Select(position => (position, color));
 
             hexTilesChanged = tileGenerator.SetHexTileColors(colorChanges);
