@@ -18,9 +18,9 @@ namespace Simulation.Tiling
         }
 
         [Obsolete("Should not be used by external classes, this is only public for unit testing purposes")]
-        public bool IsInOffsetColumn(int xPosition)
+        public bool IsInOffsetColumn(int column)
         {
-            return Math.Abs(xPosition) % 2 == 0;
+            return Math.Abs(column) % 2 == 0;
         }
 
         /// <summary>
@@ -30,60 +30,60 @@ namespace Simulation.Tiling
         /// </summary>
         /// <param name="offsetCoordinates"></param>
         /// <returns></returns>
-        public Vector2 TileMapToRelative(Vector2Int offsetCoordinates)
+        public Vector2 TileMapToRelative(OffsetCoordinate offsetCoordinates)
         {
 #pragma warning disable CS0618 // Type or member is obsolete
-            var isInOffset = IsInOffsetColumn(offsetCoordinates.x);
+            var isInOffset = IsInOffsetColumn(offsetCoordinates.column);
 #pragma warning restore CS0618 // Type or member is obsolete
 
             var agnosticCoords = Vector2.Scale(
                 displacementRatio,
                 new Vector2(
-                    offsetCoordinates.x,
-                    offsetCoordinates.y + (isInOffset ? 0.5f : 0)
+                    offsetCoordinates.column,
+                    offsetCoordinates.row + (isInOffset ? 0.5f : 0)
                 ));
             return agnosticCoords;
         }
-        public Vector2 TileMapToReal(Vector2Int offsetCoordinates)
+        public Vector2 TileMapToReal(OffsetCoordinate offsetCoordinates)
         {
             return TileMapToRelative(offsetCoordinates) * hexRadius;
         }
 
-        public Vector2Int RelativeToTileMap(Vector2 relativePosition)
+        public OffsetCoordinate RelativeToTileMap(Vector2 relativePosition)
         {
             var cubicFloating = ConvertSizeScaledPointToFloatingCubic(relativePosition - new Vector2(0, displacementRatio.y / 2f));
             cubicFloating.z = -cubicFloating.x - cubicFloating.y;
             var cubicRounded = RoundToNearestCube(cubicFloating);
             var offsetCoords = ConvertCubeToOffset(cubicRounded);
-            return new Vector2Int(offsetCoords.x, -offsetCoords.y);
+            return new OffsetCoordinate(offsetCoords.column, -offsetCoords.row);
         }
 
-        public Vector2Int RealToTileMap(Vector2 realPosition)
+        public OffsetCoordinate RealToTileMap(Vector2 realPosition)
         {
             var relativePositioning = realPosition / hexRadius;
             return RelativeToTileMap(relativePositioning);
         }
 
-        public int DistanceBetweenInJumps(Vector2Int origin, Vector2Int destination)
+        public int DistanceBetweenInJumps(OffsetCoordinate origin, OffsetCoordinate destination)
         {
             var diff = destination - origin;
-            var xOffset = Mathf.Abs(diff.x);
+            var xOffset = Mathf.Abs(diff.column);
 #pragma warning disable CS0618 // Type or member is obsolete
-            var isFromOffsetPoint = IsInOffsetColumn(origin.x);
+            var isFromOffsetPoint = IsInOffsetColumn(origin.column);
 #pragma warning restore CS0618 // Type or member is obsolete
 
-            var shouldPadX = diff.y > 0 ^ isFromOffsetPoint;
+            var shouldPadX = diff.row > 0 ^ isFromOffsetPoint;
             return Mathf.Max(
                 xOffset,
-                Mathf.Abs(diff.y) +
+                Mathf.Abs(diff.row) +
                     Mathf.FloorToInt((xOffset + (shouldPadX ? 1 : 0)) / 2f)
                 );
         }
 
-        public IEnumerable<Vector2Int> GetPositionsWithinJumpDistance(Vector2Int origin, int jumpDistance)
+        public IEnumerable<OffsetCoordinate> GetPositionsWithinJumpDistance(OffsetCoordinate origin, int jumpDistance)
         {
 #pragma warning disable CS0618 // Type or member is obsolete
-            var isOffset = IsInOffsetColumn(origin.x);
+            var isOffset = IsInOffsetColumn(origin.column);
 #pragma warning restore CS0618 // Type or member is obsolete
             var topHalfWidth = isOffset ? 1 : 0;
             var bottomHalfWidth = isOffset ? 0 : 1;
@@ -99,25 +99,30 @@ namespace Simulation.Tiling
                 var currentHalfWidth = Mathf.Min(topSlopeAmount, bottomSlopeAmount, maxWidth);
                 for (var x = -currentHalfWidth; x <= currentHalfWidth; x++)
                 {
-                    yield return new Vector2Int(x, y + heightOffset) + origin;
+                    yield return new OffsetCoordinate(x, y + heightOffset) + origin;
                 }
             }
         }
 
-        public IEnumerable<Vector2Int> GetRouteGenerator(Vector2Int origin, Vector2Int destination)
+        public IEnumerable<Vector2Int> GetPositionsSpiralingAround(Vector2Int origin)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IEnumerable<OffsetCoordinate> GetRouteGenerator(OffsetCoordinate origin, OffsetCoordinate destination)
         {
             var originPoint = origin;
             var destinationPoint = destination;
 
             var currentTileMapPos = originPoint;
             var iterations = 0;
-            while ((currentTileMapPos - destinationPoint).sqrMagnitude > 0)
+            while (!(currentTileMapPos - destinationPoint).IsZero())
             {
                 var realWorldVectorToDest = TileMapToRelative(destinationPoint)
                     - TileMapToRelative(currentTileMapPos);
 
 #pragma warning disable CS0618 // Type or member is obsolete
-                var nextMoveVector = GetClosestMatchingValidMove(realWorldVectorToDest, IsInOffsetColumn(currentTileMapPos.x));
+                var nextMoveVector = GetClosestMatchingValidMove(realWorldVectorToDest, IsInOffsetColumn(currentTileMapPos.column));
 #pragma warning restore CS0618 // Type or member is obsolete
 
                 currentTileMapPos += nextMoveVector;
@@ -131,32 +136,33 @@ namespace Simulation.Tiling
             }
         }
 
-        private Vector2Int GetClosestMatchingValidMove(Vector2 worldSpaceDestinationVector, bool isInOffsetColumn)
+        private OffsetCoordinate GetClosestMatchingValidMove(Vector2 worldSpaceDestinationVector, bool isInOffsetColumn)
         {
+            //TODO: use the offsetCoordinate to get the neighbors
             var angle = Vector2.SignedAngle(Vector2.right, worldSpaceDestinationVector);
             if (0 <= angle && angle < 60)
             {
-                return isInOffsetColumn ? new Vector2Int(1, 1) : Vector2Int.right;
+                return isInOffsetColumn ? new OffsetCoordinate(1, 1) : new OffsetCoordinate(1, 0);
             }
             if (60 <= angle && angle < 120)
             {
-                return Vector2Int.up;
+                return new OffsetCoordinate(0, 1);
             }
             if (120 <= angle && angle <= 180)
             {
-                return isInOffsetColumn ? new Vector2Int(-1, 1) : new Vector2Int(-1, 0);
+                return isInOffsetColumn ? new OffsetCoordinate(-1, 1) : new OffsetCoordinate(-1, 0);
             }
             if (-180 <= angle && angle < -120)
             {
-                return isInOffsetColumn ? new Vector2Int(-1, 0) : new Vector2Int(-1, -1);
+                return isInOffsetColumn ? new OffsetCoordinate(-1, 0) : new OffsetCoordinate(-1, -1);
             }
             if (-120 <= angle && angle < -60)
             {
-                return Vector2Int.down;
+                return new OffsetCoordinate(0, -1);
             }
             if (-60 <= angle && angle < 0)
             {
-                return isInOffsetColumn ? new Vector2Int(1, 0) : new Vector2Int(1, -1);
+                return isInOffsetColumn ? new OffsetCoordinate(1, 0) : new OffsetCoordinate(1, -1);
             }
             throw new Exception($"error in angle matching {angle}");
         }
@@ -195,24 +201,24 @@ namespace Simulation.Tiling
             return roundedCoord;
         }
 
-        private Vector3Int ConvertOffsetToCube(Vector2Int offset)
+        private Vector3Int ConvertOffsetToCube(OffsetCoordinate offset)
         {
 #pragma warning disable CS0618 // Type or member is obsolete
-            var offsetShove = IsInOffsetColumn(offset.x) ? 0 : 1;
+            var offsetShove = IsInOffsetColumn(offset.column) ? 0 : 1;
 #pragma warning restore CS0618 // Type or member is obsolete
 
-            var x = offset.x;
-            var z = offset.y - (offset.x - offsetShove) / 2;
+            var x = offset.column;
+            var z = offset.row - (offset.column - offsetShove) / 2;
             var y = -x - z;
 
             return new Vector3Int(x, y, z);
         }
 
-        private Vector2Int ConvertCubeToOffset(Vector3Int cube)
+        private OffsetCoordinate ConvertCubeToOffset(Vector3Int cube)
         {
             var col = cube.x;
             var row = cube.z + (cube.x - (cube.x & 1)) / 2;
-            return new Vector2Int(col, row);
+            return new OffsetCoordinate(col, row);
         }
     }
 }

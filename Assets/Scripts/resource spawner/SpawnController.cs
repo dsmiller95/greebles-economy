@@ -1,6 +1,7 @@
 ﻿using Assets.MapGen.TileManagement;
 using Assets.Scripts.MovementExtensions;
 using Assets.Scripts.Resources;
+using Simulation.Tiling;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -61,7 +62,7 @@ public class SpawnController : MonoBehaviour
     private void SpawnItem()
     {
         var checks = 0;
-        Vector2Int newPosition;
+        OffsetCoordinate newPosition;
         bool hasExistingMember;
         do
         {
@@ -91,9 +92,9 @@ public class SpawnController : MonoBehaviour
         //this.hexMember.tilemapManager.RegisterNewMapMember(hexItem, getRandomPosInBounds());
     }
 
-    private Vector2Int getRandomPosInBounds()
+    private OffsetCoordinate getRandomPosInBounds()
     {
-        return new Vector2Int(
+        return new OffsetCoordinate(
             Random.Range(0, this.spawnBoxSize.x),
             Random.Range(0, this.spawnBoxSize.y));
     }

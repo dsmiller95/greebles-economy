@@ -45,7 +45,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f7c001995a0ddc24d8e98e0f46bdcef2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  localPosition: {x: 0, y: 0}
+  localPosition:
+    row: 0
+    column: 0
   managerSetForInspector: {fileID: 0}
 --- !u!1001 &62050884170840022
 PrefabInstance:
@@ -184,6 +186,16 @@ PrefabInstance:
     - target: {fileID: 5887815664985223524, guid: 87bb67f98533fe94aab4cc0c6e830f1f,
         type: 3}
       propertyPath: startingPosition.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5887815664985223524, guid: 87bb67f98533fe94aab4cc0c6e830f1f,
+        type: 3}
+      propertyPath: localPosition.row
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5887815664985223524, guid: 87bb67f98533fe94aab4cc0c6e830f1f,
+        type: 3}
+      propertyPath: localPosition.column
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7680267254166313388, guid: 87bb67f98533fe94aab4cc0c6e830f1f,

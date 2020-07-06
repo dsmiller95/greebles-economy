@@ -3,6 +3,7 @@ using Assets.MapGen.TileManagement;
 using Assets.Scripts.MovementExtensions;
 using Assets.UI.InfoPane;
 using Assets.UI.SelectionManager;
+using Simulation.Tiling;
 using UnityEngine;
 
 public class SelectableHexCells : MonoBehaviour, IFocusable
@@ -24,7 +25,7 @@ public class SelectableHexCells : MonoBehaviour, IFocusable
         }
     }
 
-    private Vector2Int lastSelectedTile;
+    private OffsetCoordinate lastSelectedTile;
     public void OnMeSelected(Vector3 pointHit)
     {
         var positionOnPlane = new Vector2(pointHit.x, pointHit.z);

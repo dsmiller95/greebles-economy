@@ -95,6 +95,7 @@
     <Compile Include="Assets\Scripts\Home\SelectableHome.cs" />
     <Compile Include="Assets\Scripts\Layout\RandomLayout.cs" />
     <Compile Include="Assets\Scripts\Market\MarketBehavior.cs" />
+    <Compile Include="Assets\Scripts\Market\MarketDataInitializer.cs" />
     <Compile Include="Assets\Scripts\Market\MarketPricePlotter.cs" />
     <Compile Include="Assets\Scripts\Market\ResourceSellResult.cs" />
     <Compile Include="Assets\Scripts\Market\SelectableMarket.cs" />

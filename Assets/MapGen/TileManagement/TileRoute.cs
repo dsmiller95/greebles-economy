@@ -1,21 +1,18 @@
-﻿using System;
-using System.Collections;
+﻿using Simulation.Tiling;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using UnityEngine;
 
 namespace Assets.MapGen.TileManagement
 {
     public class TileRoute
     {
-        public IList<Vector2Int> waypoints;
-        public TileRoute(IList<Vector2Int> waypoints)
+        public IList<OffsetCoordinate> waypoints;
+        public TileRoute(IList<OffsetCoordinate> waypoints)
         {
             this.waypoints = waypoints;
         }
-        public TileRoute() : this(new List<Vector2Int>())
+        public TileRoute() : this(new List<OffsetCoordinate>())
         {
         }
 
@@ -24,20 +21,20 @@ namespace Assets.MapGen.TileManagement
             return waypoints.Count;
         }
 
-        public void AddLastWaypoint(Vector2Int waypoint)
+        public void AddLastWaypoint(OffsetCoordinate waypoint)
         {
-            this.waypoints.Add(waypoint);
+            waypoints.Add(waypoint);
         }
 
-        public Vector2Int PeekNext()
+        public OffsetCoordinate PeekNext()
         {
-            return this.waypoints.FirstOrDefault();
+            return waypoints.FirstOrDefault();
         }
 
-        public Vector2Int PopNextWaypoint()
+        public OffsetCoordinate PopNextWaypoint()
         {
-            var nextWaypoint = this.waypoints.First();
-            this.waypoints.RemoveAt(0);
+            var nextWaypoint = waypoints.First();
+            waypoints.RemoveAt(0);
             return nextWaypoint;
         }
     }

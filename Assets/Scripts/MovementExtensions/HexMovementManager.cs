@@ -1,4 +1,5 @@
 ﻿using Assets.MapGen.TileManagement;
+using Simulation.Tiling;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -78,7 +79,7 @@ namespace Assets.Scripts.MovementExtensions
             }
         }
 
-        private void StartNewAnimation(Vector2Int nextWaypoint)
+        private void StartNewAnimation(OffsetCoordinate nextWaypoint)
         {
             var nextWaypointReal = MapManager.TileMapToReal(nextWaypoint);
             var currentReal = PositionInTilePlane;

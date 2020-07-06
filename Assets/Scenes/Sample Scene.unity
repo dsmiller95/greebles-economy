@@ -529,7 +529,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f7c001995a0ddc24d8e98e0f46bdcef2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  localPosition: {x: -70, y: -50}
+  localPosition:
+    row: -50
+    column: -70
   managerSetForInspector: {fileID: 1140566651}
 --- !u!1 &705507993
 GameObject:
@@ -885,10 +887,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hexRadius: 1
-  tileMapMin: {x: -83, y: -60}
+  tileMapMin:
+    row: -60
+    column: -83
   hexWidth: 165
   hexHeight: 125
-  tileMapMax: {x: 0, y: 0}
+  tileMapMax:
+    row: 0
+    column: 0
 --- !u!33 &1140566652
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -1322,7 +1328,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f7c001995a0ddc24d8e98e0f46bdcef2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  localPosition: {x: 0, y: 0}
+  localPosition:
+    row: 0
+    column: 0
   managerSetForInspector: {fileID: 1140566651}
 --- !u!4 &1302152326
 Transform:

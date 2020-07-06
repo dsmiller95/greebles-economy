@@ -10,7 +10,7 @@ namespace Assets.MapGen.TileManagement
     {
         public float hexRadius;
 
-        public Vector2Int tileMapMin;
+        public OffsetCoordinate tileMapMin;
         /// <summary>
         /// how many hexes wide this map is
         /// </summary>
@@ -21,7 +21,7 @@ namespace Assets.MapGen.TileManagement
         public int hexHeight;
 
         [HideInInspector()]
-        public Vector2Int tileMapMax;
+        public OffsetCoordinate tileMapMax;
 
         public int tileMapHeight => tileGrid.Length;
         public int tileMapWidth => tileGrid[0].Length;
@@ -34,7 +34,7 @@ namespace Assets.MapGen.TileManagement
         {
             this.coordinateSystem = new HexCoordinateSystem(this.hexRadius);
             var totalCells = new Vector2Int(hexWidth, hexHeight);
-            tileMapMax = tileMapMin + totalCells;
+            tileMapMax = tileMapMin + (OffsetCoordinate)totalCells;
 
             tileGrid = new IList<ITilemapMember>[totalCells.y][];
             for (var verticalIndex = 0; verticalIndex < totalCells.y; verticalIndex++)
@@ -48,28 +48,32 @@ namespace Assets.MapGen.TileManagement
         }
 
         #region hex coordinate system
-        public Vector2 TileMapToReal(Vector2Int tileMapPosition)
+        public Vector2 TileMapToReal(OffsetCoordinate tileMapPosition)
         {
             return this.coordinateSystem.TileMapToRelative(tileMapPosition);
         }
-        public Vector2 TileMapPositionToPositionInPlane(Vector2Int tileMapPosition)
+        public Vector2 TileMapPositionToPositionInPlane(OffsetCoordinate tileMapPosition)
         {
             return this.coordinateSystem.TileMapToReal(tileMapPosition);
         }
-        public Vector2Int PositionInPlaneToTilemapPosition(Vector2 positionInPlane)
+        public OffsetCoordinate PositionInPlaneToTilemapPosition(Vector2 positionInPlane)
         {
             return this.coordinateSystem.RealToTileMap(positionInPlane);
         }
-        public IEnumerable<Vector2Int> GetPositionsWithinJumpDistance(Vector2Int origin, int jumpDistance)
+        public IEnumerable<OffsetCoordinate> GetPositionsWithinJumpDistance(OffsetCoordinate origin, int jumpDistance)
         {
             return coordinateSystem.GetPositionsWithinJumpDistance(origin, jumpDistance);
+        }
+        public IEnumerable<Vector2Int> GetInfinitePositionsInJumpDistanceOrder(Vector2Int origin)
+        {
+            return coordinateSystem.GetPositionsSpiralingAround(origin);
         }
         public bool IsWithinDistance(ITilemapMember first, ITilemapMember second, int distance)
         {
             //TODO: replace with distance function
             return !coordinateSystem.GetRouteGenerator(first.PositionInTileMap, second.PositionInTileMap).Skip(distance).Any();
         }
-        public int DistanceBetweenInJumps(Vector2Int origin, Vector2Int destination)
+        public int DistanceBetweenInJumps(OffsetCoordinate origin, OffsetCoordinate destination)
         {
             return coordinateSystem.DistanceBetweenInJumps(origin, destination);
         }
@@ -79,7 +83,7 @@ namespace Assets.MapGen.TileManagement
         }
         #endregion
 
-        public IEnumerable<T> GetItemsWithinJumpDistance<T>(Vector2Int origin, int jumpDistance)
+        public IEnumerable<T> GetItemsWithinJumpDistance<T>(OffsetCoordinate origin, int jumpDistance)
         {
             return GetPositionsWithinJumpDistance(origin, jumpDistance)
                 .Select(position => GetItemsAtLocation<T>(position))
@@ -88,32 +92,32 @@ namespace Assets.MapGen.TileManagement
                 .Where(x => x != null);
         }
 
-        private IList<ITilemapMember> GetListFromCoord(Vector2Int coordinates)
+        private IList<ITilemapMember> GetListFromCoord(OffsetCoordinate coordinates)
         {
             var positionInGrid = coordinates - tileMapMin;
-            if (positionInGrid.x < 0 || positionInGrid.y < 0 || positionInGrid.y >= tileMapHeight || positionInGrid.x >= tileMapWidth)
+            if (positionInGrid.column < 0 || positionInGrid.row < 0 || positionInGrid.row >= tileMapHeight || positionInGrid.column >= tileMapWidth)
             {
                 return null;
             }
 
-            return tileGrid[positionInGrid.y][positionInGrid.x];
+            return tileGrid[positionInGrid.row][positionInGrid.column];
         }
 
-        public IEnumerable<T> GetMembersAtLocation<T>(Vector2Int position, Func<T, bool> filter) where T :ITilemapMember
+        public IEnumerable<T> GetMembersAtLocation<T>(OffsetCoordinate position, Func<T, bool> filter) where T :ITilemapMember
         {
             var positionList = GetListFromCoord(position);
             return positionList?
                 .OfType<T>()
                 .Where(member => filter(member));
         }
-        public IEnumerable<T> GetMembersAtLocation<T>(Vector2Int position) where T : ITilemapMember
+        public IEnumerable<T> GetMembersAtLocation<T>(OffsetCoordinate position) where T : ITilemapMember
         {
             var positionList = GetListFromCoord(position);
             return positionList?
                 .OfType<T>();
         }
 
-        public IEnumerable<T> GetItemsAtLocation<T>(Vector2Int position)
+        public IEnumerable<T> GetItemsAtLocation<T>(OffsetCoordinate position)
         {
             var positionList = GetListFromCoord(position);
             return positionList?

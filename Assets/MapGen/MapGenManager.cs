@@ -1,6 +1,7 @@
 ﻿using Assets.MapGen;
 using Assets.MapGen.TileManagement;
 using Assets.Scripts.MovementExtensions;
+using Simulation.Tiling;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -58,16 +59,13 @@ public class MapGenManager : MonoBehaviour
         hexItem.localPosition = newPosition;
     }
 
-    private Vector2Int getRandomPosInBounds()
+    private OffsetCoordinate getRandomPosInBounds()
     {
         var nextPoint = pointGenerator.Sample();
 
-        return new Vector2Int(
+        return new OffsetCoordinate(
             Mathf.FloorToInt(nextPoint.x),
             Mathf.FloorToInt(nextPoint.y));
-
-            //Random.Range(0, this.spawnBoxSize.x),
-            //Random.Range(0, this.spawnBoxSize.y));
     }
 
     private void OnDrawGizmos()

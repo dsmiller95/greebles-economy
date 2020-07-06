@@ -1,11 +1,12 @@
 ﻿using Assets.MapGen.TileManagement;
+using Simulation.Tiling;
 using UnityEngine;
 
 namespace Assets.Scripts.MovementExtensions
 {
     public class HexMember : MonoBehaviour, ITilemapMember
     {
-        public Vector2Int localPosition;
+        public OffsetCoordinate localPosition;
         public HexTileMapManager managerSetForInspector;
 
         private ITilemapMember parentMemberTransform;
@@ -33,15 +34,15 @@ namespace Assets.Scripts.MovementExtensions
         }
 
 
-        public Vector2Int LocalPosition => localPosition;
+        public OffsetCoordinate LocalPosition => localPosition;
 
-        public Vector2Int PositionInTileMap
+        public OffsetCoordinate PositionInTileMap
         {
-            get => LocalPosition + (parentMemberTransform?.PositionInTileMap ?? new Vector2Int(0, 0));
+            get => LocalPosition + (parentMemberTransform?.PositionInTileMap ?? new OffsetCoordinate(0, 0));
             set
             {
                 MapManager?.DeRegisterInGrid(this);
-                localPosition = value - (parentMemberTransform?.PositionInTileMap ?? new Vector2Int(0, 0));
+                localPosition = value - (parentMemberTransform?.PositionInTileMap ?? new OffsetCoordinate(0, 0));
                 MapManager?.RegisterInGrid(this);
                 this.UpdatePositionInWorldSpace();
             }
