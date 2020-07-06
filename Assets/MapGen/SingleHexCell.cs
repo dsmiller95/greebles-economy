@@ -47,7 +47,7 @@ namespace Assets.MapGen
             var mapManager = hexMember.MapManager;
 
             var cells = mapManager.GetPositionsWithinJumpDistance(myPosition, (int)5)
-                .Select(position => new { position, distance = mapManager.DistanceBetweenInJumps(myPosition, position)})
+                .Select(position => new { position, distance = myPosition.DistanceTo(position)})
                 .Where(info => info.distance % 2 == 0)
                 .SelectMany(info =>
                 {

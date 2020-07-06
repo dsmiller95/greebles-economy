@@ -61,9 +61,37 @@ namespace Simulation.Tiling
             }
         }
 
-        public IEnumerable<Vector2Int> GetPositionsSpiralingAround(Vector2Int origin)
+        public IEnumerable<AxialCoordinate> GetPositionsSpiralingAround(AxialCoordinate origin)
         {
-            throw new NotImplementedException();
+            return this.InternalSpiraling(origin).SelectMany(x => x);
+        }
+
+        private IEnumerable<IEnumerable<AxialCoordinate>> InternalSpiraling(AxialCoordinate origin)
+        {
+            var distance = 0;
+            while (true)
+            {
+                yield return GetRing(origin, distance);
+                distance++;
+            }
+        }
+
+        public IEnumerable<AxialCoordinate> GetRing(AxialCoordinate origin, int distance)
+        {
+            if(distance == 0)
+            {
+                yield return origin;
+            }
+
+            var currentPointInRing = origin + (AxialCoordinate.GetDirection(4) * distance);
+            for(var directionIndex = 0; directionIndex < 6; directionIndex++)
+            {
+                for(var i = 0; i < distance; i++)
+                {
+                    yield return currentPointInRing;
+                    currentPointInRing = currentPointInRing.GetNeighbor(directionIndex);
+                }
+            }
         }
 
         public IEnumerable<AxialCoordinate> GetRouteGenerator(AxialCoordinate origin, AxialCoordinate destination)

@@ -36,6 +36,41 @@ namespace Simulation.Tiling
             return ToCube().DistanceTo(other.ToCube());
         }
 
+
+        public AxialCoordinate GetNeighbor(int directionIndex)
+        {
+            return this + GetDirection(directionIndex);
+        }
+
+        public static AxialCoordinate GetDirection(int directionIndex)
+        {
+            switch (directionIndex)
+            {
+                case 0:
+                    return new AxialCoordinate(1, -1);
+                case 1:
+                    return new AxialCoordinate(0, -1);
+                case 2:
+                    return new AxialCoordinate(-1, 0);
+                case 3:
+                    return new AxialCoordinate(-1, 1);
+                case 4:
+                    return new AxialCoordinate(0, 1);
+                case 5:
+                    return new AxialCoordinate(1, 0);
+            }
+            throw new Exception($"neighbor index out of range: {directionIndex}");
+        }
+
+        public static AxialCoordinate operator *(AxialCoordinate a, int b)
+        {
+            return new AxialCoordinate(a.q * b, a.r * b);
+        }
+        public static AxialCoordinate operator *(int b, AxialCoordinate a)
+        {
+            return new AxialCoordinate(a.q * b, a.r * b);
+        }
+
         public static AxialCoordinate operator +(AxialCoordinate a, AxialCoordinate b)
         {
             return new AxialCoordinate(a.q + b.q, a.r + b.r);

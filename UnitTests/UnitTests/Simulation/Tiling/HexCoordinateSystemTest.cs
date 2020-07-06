@@ -355,5 +355,53 @@ namespace UnitTests.Simulation.Tiling
                     $"Jump between {pair[0]} and {pair[1]} should have been distance of 1 but was {distanceBetween}");
             }
         }
+
+        [TestMethod]
+        public void ShouldGenerateSpiralAroundPoint()
+        {
+            var origin = new AxialCoordinate(-2, 2);
+
+            var coordSystem = new HexCoordinateSystem(2);
+
+            var generator = coordSystem.GetPositionsSpiralingAround(origin);
+
+            var lastDistance = -1;
+            AxialCoordinate? lastPoint = null;
+            foreach(var coordinate in generator.Take(100))
+            {
+                if (lastPoint.HasValue)
+                {
+                    var distanceToLast = coordinate.DistanceTo(lastPoint.Value);
+                    Assert.IsTrue(0 < distanceToLast && distanceToLast <= 2);
+                }
+                var distanceToCenter = coordinate.DistanceTo(origin);
+                Assert.IsTrue(distanceToCenter == lastDistance || distanceToCenter == lastDistance + 1, "Distance must increase by only one at a time, and must never decrease");
+                lastDistance = distanceToCenter;
+            }
+        }
+
+        [TestMethod]
+        public void ShouldGenerateRingAtDistance()
+        {
+            var origin = new AxialCoordinate(-2, 2);
+
+            var coordSystem = new HexCoordinateSystem(2);
+
+            var ring = coordSystem.GetRing(origin, 3).ToList();
+
+            Assert.AreEqual(6 * 3, ring.Count);
+
+            AxialCoordinate? lastPoint = null;
+            foreach (var coordinate in ring)
+            {
+                if (lastPoint.HasValue)
+                {
+                    var distanceToLast = coordinate.DistanceTo(lastPoint.Value);
+                    Assert.IsTrue(distanceToLast == 1);
+                }
+                var distanceToCenter = coordinate.DistanceTo(origin);
+                Assert.AreEqual(3, distanceToCenter);
+            }
+        }
     }
 }

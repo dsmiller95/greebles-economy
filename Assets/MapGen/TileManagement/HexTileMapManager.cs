@@ -63,18 +63,10 @@ namespace Assets.MapGen.TileManagement
         {
             return coordinateSystem.GetPositionsWithinJumpDistance(origin, jumpDistance);
         }
-        public IEnumerable<Vector2Int> GetInfinitePositionsInJumpDistanceOrder(Vector2Int origin)
-        {
-            return coordinateSystem.GetPositionsSpiralingAround(origin);
-        }
         public bool IsWithinDistance(ITilemapMember first, ITilemapMember second, int distance)
         {
             //TODO: replace with distance function
             return !coordinateSystem.GetRouteGenerator(first.PositionInTileMap, second.PositionInTileMap).Skip(distance).Any();
-        }
-        public int DistanceBetweenInJumps(AxialCoordinate origin, AxialCoordinate destination)
-        {
-            return origin.DistanceTo(destination);
         }
         public TileRoute GetRouteBetweenMembers(ITilemapMember origin, ITilemapMember destination)
         {

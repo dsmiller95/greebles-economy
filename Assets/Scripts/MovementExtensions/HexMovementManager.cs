@@ -143,7 +143,7 @@ namespace Assets.Scripts.MovementExtensions
             return MapManager.GetPositionsWithinJumpDistance(myPosition, (int)maxDistance)
                 .SelectMany(position =>
                 {
-                    var distance = MapManager.DistanceBetweenInJumps(myPosition, position);
+                    var distance = myPosition.DistanceTo(position);
                     return MapManager
                         .GetMembersAtLocation<HexMember>(position, member => filter(member.gameObject))
                         ?.Select(hexMember => (hexMember.gameObject, (float)distance)) ?? new (GameObject, float)[0];
