@@ -27,16 +27,33 @@ namespace Assets.MapGen
         /// <param name="color"></param>
         public void SetColorOnVertexesAtDuplicate(int duplicateIndex, Color32 color)
         {
-            var sourceColorSize = sourceMeshVertexSize;
-            var beginningColorIndex = duplicateIndex * sourceColorSize;
-            var endingColorIndex = beginningColorIndex + sourceColorSize;
-
             var newColors = targetMesh.colors32;
+
+            SetColorOnColorArray(newColors, duplicateIndex, color);
+
+            targetMesh.colors32 = newColors;
+        }
+
+        public void SetColorsOnVertexesAtDuplicates(IEnumerable<(int, Color32)> duplicateColors)
+        {
+            var newColors = targetMesh.colors32;
+
+            foreach(var duplicate in duplicateColors)
+            {
+                SetColorOnColorArray(newColors, duplicate.Item1, duplicate.Item2);
+            }
+
+            targetMesh.colors32 = newColors;
+        }
+
+        private void SetColorOnColorArray(Color32[] colorArray, int duplicateIndex, Color32 color)
+        {
+            var beginningColorIndex = duplicateIndex * sourceMeshVertexSize;
+            var endingColorIndex = beginningColorIndex + sourceMeshVertexSize;
             for (var i = beginningColorIndex; i < endingColorIndex; i++)
             {
-                newColors[i] = color;
+                colorArray[i] = color;
             }
-            targetMesh.colors32 = newColors;
         }
     }
 }

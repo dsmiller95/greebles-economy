@@ -140,6 +140,19 @@ namespace Assets.MapGen
             }
         }
 
+        public void SetHexTileColors(IEnumerable<(Vector2Int, Color32)> colorsAtPositions)
+        {
+            var mapManager = GetComponent<HexTileMapManager>();
+            var colorsAtOffsets = colorsAtPositions
+                .Select(x =>
+                {
+                    var vectorInArray = x.Item1 - mapManager.tileMapMin;
+                    var copyIndex = vectorInArray.y * mapManager.hexWidth + vectorInArray.x;
+                    return (copyIndex, x.Item2);
+                });
+            meshEditor.SetColorsOnVertexesAtDuplicates(colorsAtOffsets);
+        }
+
         public void SetHexTileColor(Vector2Int locationInTileMap, Color vertexColor)
         {
             var mapManager = GetComponent<HexTileMapManager>();
