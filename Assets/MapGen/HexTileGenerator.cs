@@ -2,10 +2,19 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using TreeEditor;
 using UnityEngine;
 
 namespace Assets.MapGen
 {
+    [Serializable]
+    public struct MaterialRegion
+    {
+        public float regionPoint;
+        public int sourceSubmesh;
+        public int destinationSubmesh;
+    }
+
 
     [RequireComponent(typeof(HexTileMapManager))]
     [RequireComponent(typeof(MeshFilter))]
@@ -15,19 +24,22 @@ namespace Assets.MapGen
         public Mesh hexTile;
 
         /// <summary>
-        /// list of floats from 0 to 1 in ascending order. must terminate with a 1
+        /// list of floats from 0 to 1 in ascending order. must terminate with a 2, but all other values should be between 0 and 1
         /// </summary>
-        public float[] extraTerrainRegions;
+        public MaterialRegion[] extraTerrainRegions;
 
+        public int[] defaultSubmeshCopies;
+
+        public Vector2 perlinScale = new Vector2(1, 1);
         private Vector2 perlinOffset;
 
         void Awake()
         {
             this.perlinOffset = new Vector2(
-                UnityEngine.Random.Range(-1e5f, 1e5f),
-                UnityEngine.Random.Range(-1e5f, 1e5f)
+                UnityEngine.Random.Range(0, 5000),
+                UnityEngine.Random.Range(0, 5000)
                 );
-            // Get instantiated mesh
+
         }
 
         // Start is called before the first frame update
@@ -45,14 +57,22 @@ namespace Assets.MapGen
         {
         }
 
-        private int GetSubmeshForTerrainAtPoint(Vector3 point)
+        private float SampleNoise(Vector2 point)
         {
-            var sample = Mathf.PerlinNoise(point.x, point.z);
+            var samplePoint = Vector2.Scale(point, perlinScale) + perlinOffset;
+            var sample = Mathf.PerlinNoise(samplePoint.x, samplePoint.y);
+            //Debug.Log($"sampling {point} as {samplePoint}: {sample}");
+            return sample;
+        }
+
+        private MaterialRegion GetSubmeshForTerrainAtPoint(Vector3 point)
+        {
+            var sample = SampleNoise(new Vector2(point.x, point.z));
             for(var i = 0; i < extraTerrainRegions.Length; i++)
             {
-                if(extraTerrainRegions[i] < sample)
+                if(extraTerrainRegions[i].regionPoint > sample)
                 {
-                    return i;
+                    return extraTerrainRegions[i];
                 }
             }
             throw new System.Exception("full range of extra terrains not properly defined");
@@ -62,17 +82,29 @@ namespace Assets.MapGen
         private void SetupMesh(Mesh target, Mesh source, HexTileMapManager mapManager)
         {
             var offsets = GetTileOffsets(mapManager);
-            var totalNumberOfCells = mapManager.hexWidth * mapManager.hexHeight;
+            var targetSubmeshes = defaultSubmeshCopies.Length + extraTerrainRegions.Length;
+
+            //offsets = new[]
+            //{
+            //    new Vector3(2, 0, 2),
+            //    new Vector3(0, 0, 2),
+            //    new Vector3(2, 0, 0),
+            //    new Vector3(0, 0, 0),
+            //};
 
             using (var copier = new MeshCopier(
                 source, 2,
-                target, 2))
+                target, targetSubmeshes))
             {
                 foreach (var offset in offsets)
                 {
                     copier.NextCopy(offset);
-                    copier.CopySubmeshTrianglesToOffsetIndex(0, 0);
-                    copier.CopySubmeshTrianglesToOffsetIndex(1, 1);
+                    foreach (var submesh in defaultSubmeshCopies)
+                    {
+                        copier.CopySubmeshTrianglesToOffsetIndex(submesh, submesh);
+                    }
+                    var extraSubmeshMapping = GetSubmeshForTerrainAtPoint(offset);
+                    copier.CopySubmeshTrianglesToOffsetIndex(extraSubmeshMapping.sourceSubmesh, extraSubmeshMapping.destinationSubmesh);
                 }
             }
         }
