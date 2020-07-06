@@ -46,8 +46,12 @@ namespace Assets.Scripts.Market
             }
             };
         }
+
+        private HexTileGenerator.HexTileColorChangeRecord hexTilesChanged;
+
         public void OnMeDeselected()
         {
+            tileGenerator.ResetHexTileColors(hexTilesChanged);
             Debug.Log($"{gameObject.name} deselected");
         }
 
@@ -62,7 +66,7 @@ namespace Assets.Scripts.Market
                 .GetPositionsWithinJumpDistance(myHexPosition, 2)
                 .Select(position => (position, color));
 
-            tileGenerator.SetHexTileColors(colorChanges);
+            hexTilesChanged = tileGenerator.SetHexTileColors(colorChanges);
         }
     }
 }

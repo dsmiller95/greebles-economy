@@ -35,6 +35,8 @@ namespace Assets.MapGen
         public Vector2 perlinScale = new Vector2(1, 1);
         private Vector2 perlinOffset;
 
+
+        private HexTileMapManager mapManager;
         void Awake()
         {
             this.perlinOffset = new Vector2(
@@ -48,10 +50,14 @@ namespace Assets.MapGen
         void Start()
         {
             Mesh mesh = new Mesh();
+
+            this.mapManager = GetComponent<HexTileMapManager>();
+
             // this mesh can get pretty big, so we need the extra size
             mesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
-            SetupMesh(mesh, hexTile, GetComponent<HexTileMapManager>());
+            SetupMesh(mesh, hexTile, mapManager);
             GetComponent<MeshFilter>().mesh = mesh;
+
         }
 
         // Update is called once per frame
@@ -68,7 +74,7 @@ namespace Assets.MapGen
             return sample;
         }
 
-        private Color GetColorForTerrainAtPoint(Vector2Int point)
+        private Color32 GetColorForTerrainAtPoint(Vector2Int point)
         {
             var sample = SampleNoise(point);
             return colorRamp.Evaluate(sample);
@@ -140,30 +146,58 @@ namespace Assets.MapGen
             }
         }
 
-        public void SetHexTileColors(IEnumerable<(Vector2Int, Color32)> colorsAtPositions)
+        public struct HexTileColorChangeRecord
+        {
+            public IEnumerable<Vector2Int> changedIndexes;
+        }
+
+        public HexTileColorChangeRecord SetHexTileColors(IEnumerable<(Vector2Int, Color32)> colorsAtPositions)
         {
             var mapManager = GetComponent<HexTileMapManager>();
-            var colorsAtOffsets = colorsAtPositions
+            var colors = colorsAtPositions.ToList();
+            var colorChange = colors
                 .Select(x =>
                 {
                     var vectorInArray = x.Item1 - mapManager.tileMapMin;
                     var copyIndex = vectorInArray.y * mapManager.hexWidth + vectorInArray.x;
                     return (copyIndex, x.Item2);
                 });
-            meshEditor.SetColorsOnVertexesAtDuplicates(colorsAtOffsets);
+            meshEditor.SetColorsOnVertexesAtDuplicates(colorChange);
+            return new HexTileColorChangeRecord
+            {
+                changedIndexes = colors.Select(x => x.Item1)
+            };
+        }
+
+        public void ResetHexTileColors(HexTileColorChangeRecord changeRecord) {
+            if(changeRecord.changedIndexes == default)
+            {
+                return;
+            }
+            var colorChange = changeRecord.changedIndexes.Select(location =>
+            {
+                var color = this.GetColorForTerrainAtPoint(location);
+                return (LocationToIndex(location), color);
+            });
+            meshEditor.SetColorsOnVertexesAtDuplicates(colorChange);
         }
 
         public void SetHexTileColor(Vector2Int locationInTileMap, Color vertexColor)
         {
-            var mapManager = GetComponent<HexTileMapManager>();
-            var vectorInArray = locationInTileMap - mapManager.tileMapMin;
-            var copyIndex = vectorInArray.y * mapManager.hexWidth + vectorInArray.x;
+            var copyIndex = LocationToIndex(locationInTileMap);
             meshEditor.SetColorOnVertexesAtDuplicate(copyIndex, vertexColor);
         }
 
         public void ResetHexTilecolor(Vector2Int locationInTileMap)
         {
             this.SetHexTileColor(locationInTileMap, this.GetColorForTerrainAtPoint(locationInTileMap));
+        }
+
+        private int LocationToIndex(Vector2Int locationInTileMap)
+        {
+            var vectorInArray = locationInTileMap - mapManager.tileMapMin;
+            var copyIndex = vectorInArray.y * mapManager.hexWidth + vectorInArray.x;
+            return copyIndex;
         }
     }
 
