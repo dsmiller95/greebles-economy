@@ -23,14 +23,14 @@ namespace Simulation.Tiling
         {
             return Math.Abs(column) % 2 == 0;
         }
-        private CubeCoordinate ToCube(OffsetCoordinate offset)
+        public CubeCoordinate ToCube()
         {
 #pragma warning disable CS0618 // Type or member is obsolete
-            var offsetShove = offset.IsInOffsetColumn() ? 0 : 1;
+            var offsetShove = IsInOffsetColumn() ? 0 : 1;
 #pragma warning restore CS0618 // Type or member is obsolete
 
-            var x = offset.column;
-            var z = offset.row - (offset.column - offsetShove) / 2;
+            var x = column;
+            var z = row - (column - offsetShove) / 2;
             var y = -x - z;
 
             return new CubeCoordinate(x, y, z);

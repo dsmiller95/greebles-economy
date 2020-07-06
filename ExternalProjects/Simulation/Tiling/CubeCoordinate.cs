@@ -26,6 +26,12 @@ namespace Simulation.Tiling
             var row = z + (x - (x & 1)) / 2;
             return new OffsetCoordinate(col, row);
         }
+        public AxialCoordinate ToAxial()
+        {
+            var q = x;
+            var r = z;
+            return new AxialCoordinate(q, r);
+        }
 
         public static CubeCoordinate operator +(CubeCoordinate a, CubeCoordinate b)
         {
