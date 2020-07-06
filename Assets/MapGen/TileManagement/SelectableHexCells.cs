@@ -19,13 +19,13 @@ public class SelectableHexCells : MonoBehaviour, IFocusable
 
     public void OnMeDeselected()
     {
-        if(lastSelectedTile != default)
+        if(lastSelectedTile.HasValue)
         {
-            tileGenerator.ResetHexTilecolor(lastSelectedTile);
+            tileGenerator.ResetHexTilecolor(lastSelectedTile.Value);
         }
     }
 
-    private OffsetCoordinate lastSelectedTile;
+    private OffsetCoordinate? lastSelectedTile;
     public void OnMeSelected(Vector3 pointHit)
     {
         var positionOnPlane = new Vector2(pointHit.x, pointHit.z);

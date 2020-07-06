@@ -7,7 +7,7 @@ using UnityEngine;
 namespace Simulation.Tiling
 {
     [Serializable]
-    public class OffsetCoordinate
+    public struct OffsetCoordinate
     {
         public int row;
         public int column;
