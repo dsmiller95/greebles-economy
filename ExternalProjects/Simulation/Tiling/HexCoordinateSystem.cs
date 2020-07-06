@@ -18,12 +18,6 @@ namespace Simulation.Tiling
             this.hexRadius = hexRadius;
         }
 
-        public Vector2 TileMapToRelative(AxialCoordinate axial)
-        {
-            var x = qBasis.x * axial.q;
-            var y = qBasis.y * axial.q + rBasis.y * axial.r;
-            return new Vector2(x, y);
-        }
         /// <summary>
         /// Translate a tile map coordinate to a standard "real" position. this is not scaled based
         ///     on the size of the hexes. only use it for calculations that need to know about
@@ -31,13 +25,15 @@ namespace Simulation.Tiling
         /// </summary>
         /// <param name="offsetCoordinates"></param>
         /// <returns></returns>
-        public Vector2 TileMapToRelative(OffsetCoordinate offsetCoordinates)
+        public Vector2 TileMapToRelative(AxialCoordinate axial)
         {
-            return TileMapToRelative(offsetCoordinates.ToAxial());
+            var x = qBasis.x * axial.q;
+            var y = qBasis.y * axial.q + rBasis.y * axial.r;
+            return new Vector2(x, y);
         }
-        public Vector2 TileMapToReal(OffsetCoordinate offsetCoordinates)
+        public Vector2 TileMapToReal(AxialCoordinate coordinate)
         {
-            return TileMapToRelative(offsetCoordinates) * hexRadius;
+            return TileMapToRelative(coordinate) * hexRadius;
         }
 
         public CubeCoordinate RelativeToTileMap(Vector2 relativePosition)
@@ -50,22 +46,6 @@ namespace Simulation.Tiling
         {
             var relativePositioning = realPosition / hexRadius;
             return RelativeToTileMap(relativePositioning);
-        }
-
-
-        public int DistanceBetweenInJumps(OffsetCoordinate origin, OffsetCoordinate destination)
-        {
-            return this.DistanceBetweenInJumps(origin.ToCube(), destination.ToCube());
-        }
-
-        public int DistanceBetweenInJumps(AxialCoordinate origin, AxialCoordinate destination)
-        {
-            return this.DistanceBetweenInJumps(origin.ToCube(), destination.ToCube());
-        }
-
-        public int DistanceBetweenInJumps(CubeCoordinate origin, CubeCoordinate destination)
-        {
-            return origin.DistanceTo(destination);
         }
 
         public IEnumerable<AxialCoordinate> GetPositionsWithinJumpDistance(AxialCoordinate origin, int jumpDistance)
@@ -81,12 +61,6 @@ namespace Simulation.Tiling
             }
         }
 
-        public IEnumerable<OffsetCoordinate> GetPositionsWithinJumpDistance(OffsetCoordinate origin, int jumpDistance)
-        {
-            return GetPositionsWithinJumpDistance(origin.ToAxial(), jumpDistance).Select(x => x.ToOffset());
-
-        }
-
         public IEnumerable<Vector2Int> GetPositionsSpiralingAround(Vector2Int origin)
         {
             throw new NotImplementedException();
@@ -94,11 +68,6 @@ namespace Simulation.Tiling
 
         public IEnumerable<AxialCoordinate> GetRouteGenerator(AxialCoordinate origin, AxialCoordinate destination)
         {
-            if(origin.DistanceTo(destination) > 1000)
-            {
-                Debug.Log("trying to find route between preposterously distant points");
-            }
-
             var currentTileMapPos = new AxialCoordinate(origin.q, origin.r);
             var myDest = new AxialCoordinate(destination.q, destination.r);
             var iterations = 0;
@@ -109,13 +78,7 @@ namespace Simulation.Tiling
 
                 var nextMoveVector = GetClosestMatchingValidMove(realWorldVectorToDest);
 
-                var lastDistance = currentTileMapPos.DistanceTo(myDest);
                 currentTileMapPos = currentTileMapPos + nextMoveVector;
-                var newDistance = currentTileMapPos.DistanceTo(myDest);
-                if(newDistance >= lastDistance)
-                {
-                    throw new Exception("we're goin the wrong way!!");
-                }
 
                 yield return currentTileMapPos;
                 iterations++;
@@ -128,7 +91,6 @@ namespace Simulation.Tiling
 
         private AxialCoordinate GetClosestMatchingValidMove(Vector2 worldSpaceDestinationVector)
         {
-            //TODO: use the offsetCoordinate to get the neighbors
             var angle = Vector2.SignedAngle(Vector2.right, worldSpaceDestinationVector);
             if (0 <= angle && angle < 60)
             {

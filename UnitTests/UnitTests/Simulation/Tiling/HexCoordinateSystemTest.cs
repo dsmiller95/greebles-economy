@@ -49,10 +49,10 @@ namespace UnitTests.Simulation.Tiling
         {
             var coords = new[]
             {
-                new OffsetCoordinate(0, 0),
-                new OffsetCoordinate(1, 0),
-                new OffsetCoordinate(0, 1),
-                new OffsetCoordinate(1, 1),
+                new AxialCoordinate(0, 0),
+                new AxialCoordinate(1, 0),
+                new AxialCoordinate(0, 1),
+                new AxialCoordinate(1, 1),
             };
             var expectedCoords = new[]
             {
@@ -76,10 +76,10 @@ namespace UnitTests.Simulation.Tiling
         {
             var coords = new[]
             {
-                new OffsetCoordinate(0, 0),
-                new OffsetCoordinate(1, 0),
-                new OffsetCoordinate(0, 1),
-                new OffsetCoordinate(1, 1),
+                new AxialCoordinate(0, 0),
+                new AxialCoordinate(1, 0),
+                new AxialCoordinate(0, 1),
+                new AxialCoordinate(1, 1),
             };
             var expectedCoords = new[]
             {
@@ -174,14 +174,14 @@ namespace UnitTests.Simulation.Tiling
         {
             var coords = new[]
             {
-                new OffsetCoordinate(0, 0),
-                new OffsetCoordinate(1, 0),
-                new OffsetCoordinate(0, 1),
-                new OffsetCoordinate(1, 1),
-                new OffsetCoordinate(3, 3),
-                new OffsetCoordinate(2, 4),
-                new OffsetCoordinate(1, 3),
-                new OffsetCoordinate(5, 1),
+                new AxialCoordinate(0, 0),
+                new AxialCoordinate(1, 0),
+                new AxialCoordinate(0, 1),
+                new AxialCoordinate(1, 1),
+                new AxialCoordinate(3, 2),
+                new AxialCoordinate(2, 3),
+                new AxialCoordinate(1, 3),
+                new AxialCoordinate(5,-1),
             };
             var expectedJumps = new[]
             {
@@ -192,7 +192,7 @@ namespace UnitTests.Simulation.Tiling
 
             var actualJumps = coords
                 .RollingWindow(2)
-                .Select(pair => coordSystem.DistanceBetweenInJumps(pair[0], pair[1]));
+                .Select(pair => pair[0].DistanceTo(pair[1]));
 
             foreach (var pair in expectedJumps
                 .Select((x, index) => new { x, index })
@@ -208,40 +208,40 @@ namespace UnitTests.Simulation.Tiling
         [TestMethod]
         public void ShouldGetAllPositionsWithinDistance()
         {
-            var coord = new OffsetCoordinate(3, 3);
+            var coord = new AxialCoordinate(3, 2);
             var expectedCoordsInDistance = new[]
             {
-                new OffsetCoordinate(3, 3),
+                new AxialCoordinate(3, 2),
 
-                new OffsetCoordinate(3, 4),
-                new OffsetCoordinate(2, 4),
-                new OffsetCoordinate(4, 4),
-                new OffsetCoordinate(2, 3),
-                new OffsetCoordinate(4, 3),
-                new OffsetCoordinate(3, 2),
-
-                new OffsetCoordinate(3, 5),
-                new OffsetCoordinate(2, 5),
-                new OffsetCoordinate(4, 5),
-                new OffsetCoordinate(1, 4),
-                new OffsetCoordinate(5, 4),
-                new OffsetCoordinate(1, 3),
-                new OffsetCoordinate(5, 3),
-                new OffsetCoordinate(1, 2),
-                new OffsetCoordinate(5, 2),
-                new OffsetCoordinate(2, 2),
-                new OffsetCoordinate(4, 2),
-                new OffsetCoordinate(3, 1),
+                new AxialCoordinate(3, 3),
+                new AxialCoordinate(2, 3),
+                new AxialCoordinate(4, 2),
+                new AxialCoordinate(2, 2),
+                new AxialCoordinate(4, 1),
+                new AxialCoordinate(3, 1),
+ 
+                new AxialCoordinate(3, 4),
+                new AxialCoordinate(2, 4),
+                new AxialCoordinate(4, 3),
+                new AxialCoordinate(1, 4),
+                new AxialCoordinate(5, 2),
+                new AxialCoordinate(1, 3),
+                new AxialCoordinate(5, 1),
+                new AxialCoordinate(1, 2),
+                new AxialCoordinate(5, 0),
+                new AxialCoordinate(2, 1),
+                new AxialCoordinate(4, 0),
+                new AxialCoordinate(3, 0),
             }
-                .OrderBy(x => x.row)
-                .ThenBy(x => x.column)
+                .OrderBy(x => x.q)
+                .ThenBy(x => x.r)
                 .ToList();
 
             var coordSystem = new HexCoordinateSystem(2);
 
             var actualJumps = coordSystem.GetPositionsWithinJumpDistance(coord, 2)
-                .OrderBy(x => x.row)
-                .ThenBy(x => x.column)
+                .OrderBy(x => x.q)
+                .ThenBy(x => x.r)
                 .ToList();
 
             Assert.AreEqual(expectedCoordsInDistance.Count, actualJumps.Count);
@@ -258,44 +258,43 @@ namespace UnitTests.Simulation.Tiling
         [TestMethod]
         public void ShouldGetAllPositionsWithinDistanceWhenCrossDomain()
         {
-            var offsetToCrossDomain = new Vector2Int(-4, -2);
-            var coord = new Vector2Int(3, 3) + offsetToCrossDomain;
-            var realOffsetCoord = new OffsetCoordinate(coord.x, coord.y);
+            var offsetToCrossDomain = new AxialCoordinate(-4, -2);
+            var coord = new AxialCoordinate(3, 2) + offsetToCrossDomain;
+            //var realOffsetCoord = new AxialCoordinate(coord.x, coord.y);
             var expectedCoordsInDistance = new[]
             {
-                new Vector2Int(3, 3),
-                    
-                new Vector2Int(3, 4),
-                new Vector2Int(2, 4),
-                new Vector2Int(4, 4),
-                new Vector2Int(2, 3),
-                new Vector2Int(4, 3),
-                new Vector2Int(3, 2),
-                    
-                new Vector2Int(3, 5),
-                new Vector2Int(2, 5),
-                new Vector2Int(4, 5),
-                new Vector2Int(1, 4),
-                new Vector2Int(5, 4),
-                new Vector2Int(1, 3),
-                new Vector2Int(5, 3),
-                new Vector2Int(1, 2),
-                new Vector2Int(5, 2),
-                new Vector2Int(2, 2),
-                new Vector2Int(4, 2),
-                new Vector2Int(3, 1),
+                new AxialCoordinate(3, 2),
+
+                new AxialCoordinate(3, 3),
+                new AxialCoordinate(2, 3),
+                new AxialCoordinate(4, 2),
+                new AxialCoordinate(2, 2),
+                new AxialCoordinate(4, 1),
+                new AxialCoordinate(3, 1),
+
+                new AxialCoordinate(3, 4),
+                new AxialCoordinate(2, 4),
+                new AxialCoordinate(4, 3),
+                new AxialCoordinate(1, 4),
+                new AxialCoordinate(5, 2),
+                new AxialCoordinate(1, 3),
+                new AxialCoordinate(5, 1),
+                new AxialCoordinate(1, 2),
+                new AxialCoordinate(5, 0),
+                new AxialCoordinate(2, 1),
+                new AxialCoordinate(4, 0),
+                new AxialCoordinate(3, 0),
             }
                 .Select(x => x + offsetToCrossDomain)
-                .Select(x => new OffsetCoordinate(x.x, x.y))
-                .OrderBy(x => x.row)
-                .ThenBy(x => x.column)
+                .OrderBy(x => x.q)
+                .ThenBy(x => x.r)
                 .ToList();
 
             var coordSystem = new HexCoordinateSystem(2);
 
-            var actualJumps = coordSystem.GetPositionsWithinJumpDistance(realOffsetCoord, 2)
-                .OrderBy(x => x.row)
-                .ThenBy(x => x.column)
+            var actualJumps = coordSystem.GetPositionsWithinJumpDistance(coord, 2)
+                .OrderBy(x => x.q)
+                .ThenBy(x => x.r)
                 .ToList();
 
             Assert.AreEqual(expectedCoordsInDistance.Count, actualJumps.Count);
@@ -326,7 +325,7 @@ namespace UnitTests.Simulation.Tiling
 
             foreach (var pair in actualPath.RollingWindow(2))
             {
-                var distanceBetween = coordSystem.DistanceBetweenInJumps(pair[0], pair[1]);
+                var distanceBetween = pair[0].DistanceTo(pair[1]);
                 Assert.AreEqual(
                     1,
                     distanceBetween,
@@ -349,7 +348,7 @@ namespace UnitTests.Simulation.Tiling
 
             foreach (var pair in actualPath.RollingWindow(2))
             {
-                var distanceBetween = coordSystem.DistanceBetweenInJumps(pair[0], pair[1]);
+                var distanceBetween = pair[0].DistanceTo(pair[1]);
                 Assert.AreEqual(
                     1,
                     distanceBetween,

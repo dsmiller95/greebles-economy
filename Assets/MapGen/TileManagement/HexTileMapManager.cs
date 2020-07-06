@@ -49,11 +49,11 @@ namespace Assets.MapGen.TileManagement
         #region hex coordinate system
         public Vector2 TileMapToReal(AxialCoordinate tileMapPosition)
         {
-            return this.coordinateSystem.TileMapToRelative(tileMapPosition.ToOffset());
+            return this.coordinateSystem.TileMapToRelative(tileMapPosition);
         }
         public Vector2 TileMapPositionToPositionInPlane(AxialCoordinate tileMapPosition)
         {
-            return this.coordinateSystem.TileMapToReal(tileMapPosition.ToCube().ToOffset());
+            return this.coordinateSystem.TileMapToReal(tileMapPosition);
         }
         public AxialCoordinate PositionInPlaneToTilemapPosition(Vector2 positionInPlane)
         {
@@ -74,7 +74,7 @@ namespace Assets.MapGen.TileManagement
         }
         public int DistanceBetweenInJumps(AxialCoordinate origin, AxialCoordinate destination)
         {
-            return coordinateSystem.DistanceBetweenInJumps(origin.ToOffset(), destination.ToOffset());
+            return origin.DistanceTo(destination);
         }
         public TileRoute GetRouteBetweenMembers(ITilemapMember origin, ITilemapMember destination)
         {
