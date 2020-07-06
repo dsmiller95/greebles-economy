@@ -497,7 +497,7 @@ MonoBehaviour:
     densityPerSurfaceSize: 0.002
   - prefab: {fileID: 1140293900322245272, guid: 1ad692875fa053a4199f9744c750984a,
       type: 3}
-    densityPerSurfaceSize: 0.002
+    densityPerSurfaceSize: 0.004
   - prefab: {fileID: 4861457521204343749, guid: 736b9a328dd791b478180f339c3b6cbc,
       type: 3}
     densityPerSurfaceSize: 0.002
@@ -1581,11 +1581,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 11455738, guid: 407bd5cbe8c43334bb1b25c0f3826974, type: 3}
       propertyPath: panningSpeed
-      value: 25
+      value: 20
       objectReference: {fileID: 0}
     - target: {fileID: 11455738, guid: 407bd5cbe8c43334bb1b25c0f3826974, type: 3}
       propertyPath: limitMap
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 11455738, guid: 407bd5cbe8c43334bb1b25c0f3826974, type: 3}
+      propertyPath: minHeight
+      value: 5
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 407bd5cbe8c43334bb1b25c0f3826974, type: 3}
