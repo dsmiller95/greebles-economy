@@ -28,6 +28,8 @@ namespace Assets.MapGen
         /// </summary>
         public MaterialRegion[] extraTerrainRegions;
 
+        public Gradient colorRamp;
+
         public int[] defaultSubmeshCopies;
 
         public Vector2 perlinScale = new Vector2(1, 1);
@@ -61,8 +63,16 @@ namespace Assets.MapGen
         {
             var samplePoint = Vector2.Scale(point, perlinScale) + perlinOffset;
             var sample = Mathf.PerlinNoise(samplePoint.x, samplePoint.y);
+            sample = Mathf.Clamp01(sample);
             //Debug.Log($"sampling {point} as {samplePoint}: {sample}");
             return sample;
+        }
+
+        private Color GetColorForTerrainAtPoint(Vector2Int point)
+        {
+            var sample = SampleNoise(point);
+            return colorRamp.Evaluate(sample);
+
         }
 
         private MaterialRegion GetSubmeshForTerrainAtPoint(Vector3 point)
@@ -75,9 +85,10 @@ namespace Assets.MapGen
                     return extraTerrainRegions[i];
                 }
             }
-            throw new System.Exception("full range of extra terrains not properly defined");
+            throw new Exception("full range of extra terrains not properly defined");
         }
 
+        private CopiedMeshEditor meshEditor;
 
         private void SetupMesh(Mesh target, Mesh source, HexTileMapManager mapManager)
         {
@@ -92,35 +103,54 @@ namespace Assets.MapGen
             //    new Vector3(0, 0, 0),
             //};
 
-            using (var copier = new MeshCopier(
+            var copier = new MeshCopier(
                 source, 2,
-                target, targetSubmeshes))
+                target, targetSubmeshes);
+
+            foreach (var offset in offsets)
             {
-                foreach (var offset in offsets)
+                var planeLocation = mapManager.TileMapPositionToPositionInPlane(offset);
+                var realOffset = new Vector3(planeLocation.x, 0, planeLocation.y);
+                var vertexColor = GetColorForTerrainAtPoint(offset);
+                copier.NextCopy(realOffset, vertexColor);
+
+                foreach (var submesh in defaultSubmeshCopies)
                 {
-                    copier.NextCopy(offset);
-                    foreach (var submesh in defaultSubmeshCopies)
-                    {
-                        copier.CopySubmeshTrianglesToOffsetIndex(submesh, submesh);
-                    }
-                    var extraSubmeshMapping = GetSubmeshForTerrainAtPoint(offset);
+                    copier.CopySubmeshTrianglesToOffsetIndex(submesh, submesh);
+                }
+
+                if(extraTerrainRegions.Length > 0) {
+                    var extraSubmeshMapping = GetSubmeshForTerrainAtPoint(realOffset);
                     copier.CopySubmeshTrianglesToOffsetIndex(extraSubmeshMapping.sourceSubmesh, extraSubmeshMapping.destinationSubmesh);
                 }
             }
+
+            this.meshEditor = copier.FinalizeCopy();
         }
 
-        private IEnumerable<Vector3> GetTileOffsets(HexTileMapManager tilemapManager)
+        private IEnumerable<Vector2Int> GetTileOffsets(HexTileMapManager tilemapManager)
         {
-            var totalCells = new Vector2Int(tilemapManager.hexWidth, tilemapManager.hexHeight);
+            var totalCells = new Vector2Int(tilemapManager.hexWidth, tilemapManager.hexHeight);//new Vector2Int(10, 10);
             for (var verticalIndex = 0; verticalIndex < totalCells.y; verticalIndex++)
             {
                 for (var horizontalIndex = 0; horizontalIndex < totalCells.x; horizontalIndex++)
                 {
-                    var locationInTileMap = new Vector2Int(horizontalIndex, verticalIndex) + tilemapManager.tileMapMin;
-                    var planeLocation = tilemapManager.TileMapPositionToPositionInPlane(locationInTileMap);
-                    yield return new Vector3(planeLocation.x, 0, planeLocation.y);
+                    yield return new Vector2Int(horizontalIndex, verticalIndex) + tilemapManager.tileMapMin;
                 }
             }
+        }
+
+        public void SetHexTileColor(Vector2Int locationInTileMap, Color vertexColor)
+        {
+            var mapManager = GetComponent<HexTileMapManager>();
+            var vectorInArray = locationInTileMap - mapManager.tileMapMin;
+            var copyIndex = vectorInArray.y * mapManager.hexWidth + vectorInArray.x;
+            meshEditor.SetColorOnVertexesAtDuplicate(copyIndex, vertexColor);
+        }
+
+        public void ResetHexTilecolor(Vector2Int locationInTileMap)
+        {
+            this.SetHexTileColor(locationInTileMap, this.GetColorForTerrainAtPoint(locationInTileMap));
         }
     }
 

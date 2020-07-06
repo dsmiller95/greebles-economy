@@ -23,7 +23,7 @@ Material:
   m_Name: Middle
   m_Shader: {fileID: -6465566751694194690, guid: b269ffd5b68e625488397f7481223a10,
     type: 3}
-  m_ShaderKeywords: BOOLEAN_33907BC0_ON _EMISSION
+  m_ShaderKeywords: BOOLEAN_33907BC0_ON BOOLEAN_BA999A52_ON _EMISSION
   m_LightmapFlags: 2
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -76,6 +76,7 @@ Material:
     m_Floats:
     - BOOLEAN_33907BC0: 1
     - BOOLEAN_4BF3BE48: 0
+    - BOOLEAN_BA999A52: 1
     - BOOLEAN_FA8843C6: 0
     - _AlphaClip: 0
     - _Blend: 0

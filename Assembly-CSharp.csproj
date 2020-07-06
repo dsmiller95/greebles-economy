@@ -66,6 +66,7 @@
     <Compile Include="Assets\External\RTS_Camera\Demo\DemoScene.cs" />
     <Compile Include="Assets\External\RTS_Camera\Demo\TargetSelector.cs" />
     <Compile Include="Assets\External\RTS_Camera\Scripts\RTS_Camera.cs" />
+    <Compile Include="Assets\MapGen\CopiedMeshEditor.cs" />
     <Compile Include="Assets\MapGen\HaltonSequenceGenerator.cs" />
     <Compile Include="Assets\MapGen\HexTileGenerator.cs" />
     <Compile Include="Assets\MapGen\MapGenManager.cs" />

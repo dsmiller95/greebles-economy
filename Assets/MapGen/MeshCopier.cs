@@ -12,7 +12,7 @@ namespace Assets.MapGen
     ///     currently set up to copy all the vertextes to a set of offsets
     ///     and then selectively copy the triangles
     /// </summary>
-    public class MeshCopier : IDisposable
+    public class MeshCopier
     {
         private Mesh sourceMesh, targetMesh;
 
@@ -36,6 +36,7 @@ namespace Assets.MapGen
                 targetTrianglesBySubmesh[i] = new List<int>();
             }
             this.targetVertexes = new List<Vector3>();
+            this.targetColors = new List<Color>();
             this.targetUVs = new List<Vector2>();
 
             var sourceVertexes = sourceMesh.vertices;
@@ -48,12 +49,17 @@ namespace Assets.MapGen
 
         private int sourceVertexCount;
         private List<Vector3> targetVertexes;
+        private List<Color> targetColors;
         private List<Vector2> targetUVs;
         private List<int>[] targetTrianglesBySubmesh;
 
-        private void FinalizeCopy()
+        /// <summary>
+        /// assigns all the vertexes, uvs, and colors to the target mesh
+        /// </summary>
+        public CopiedMeshEditor FinalizeCopy()
         {
             targetMesh.SetVertices(targetVertexes);
+            targetMesh.SetColors(targetColors);
             targetMesh.SetUVs(0, targetUVs);
 
             for (var submesh = 0; submesh < targetSubmeshes; submesh++)
@@ -62,12 +68,19 @@ namespace Assets.MapGen
                 targetMesh.SetTriangles(submeshTriangles, submesh);
             }
             targetMesh.RecalculateNormals();
+
+            return new CopiedMeshEditor(sourceMesh.vertexCount, targetMesh);
         }
 
         private int currentDuplicateIndex = -1;
-        public void NextCopy(Vector3 offset)
+        /// <summary>
+        /// creates all the vertexes and uvs for the next copy of the source mesh
+        /// </summary>
+        /// <param name="offset"></param>
+        public void NextCopy(Vector3 offset, Color? vertexColor = null)
         {
             this.CopyVertexesToOffset(offset);
+            CopyOrSetColors(vertexColor);
             this.CopyUVsToOffsetIndex();
 
             currentDuplicateIndex++;
@@ -86,6 +99,25 @@ namespace Assets.MapGen
             }
         }
 
+        private void CopyOrSetColors(Color? colorOverride)
+        {
+            var sourceColorSize = sourceMesh.vertexCount;
+            var sourceColors = sourceMesh.colors;
+            if (!colorOverride.HasValue)
+            {
+                for (var vert = 0; vert < sourceColorSize; vert++)
+                {
+                    targetColors.Add(sourceColors[vert]);
+                }
+            }else
+            {
+                for (var vert = 0; vert < sourceColorSize; vert++)
+                {
+                    targetColors.Add(colorOverride.Value);
+                }
+            }
+        }
+
         private void CopyVertexesToOffset(Vector3 offset)
         {
             var sourceVertexes = sourceMesh.vertices;
@@ -100,12 +132,6 @@ namespace Assets.MapGen
             var sourceUVs = new List<Vector2>();
             sourceMesh.GetUVs(0, sourceUVs);
             targetUVs.AddRange(sourceUVs);
-        }
-
-
-        public void Dispose()
-        {
-            this.FinalizeCopy();
         }
     }
 }
