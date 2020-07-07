@@ -1,5 +1,6 @@
 ﻿using Assets.MapGen.TileManagement;
 using Assets.Scripts.MovementExtensions;
+using Simulation.Tiling;
 using System.Linq;
 using UnityEngine;
 
@@ -13,19 +14,38 @@ namespace Assets.Scripts.Market
     {
         public static void CalculateServiceRanges(HexTileMapManager manager)
         {
+            //foreach (var market in allMarkets)
+            //{
+            //    var marketMember = market.GetComponentInParent<HexMember>();
+
+            //    var myHexPosition = marketMember.PositionInTileMap;
+            //    var effectiveRange = HexTileMapManager
+            //        .GetPositionsWithinJumpDistance(myHexPosition, 2);
+            //    market.myServiceRange = effectiveRange.ToArray();
+            //}
+            
             var allMarkets = manager.GetAllOfType<MarketBehavior>().ToList();
             Debug.Log($"Initializing {allMarkets.Count} markets");
-            foreach (var market in allMarkets)
+            var marketPositions = allMarkets
+                .Select(x => x.GetComponentInParent<HexMember>())
+                .Select(x => x.PositionInTileMap)
+                .ToList();
+
+            var minimum = manager.tileMapMin;
+            var minimumAxial = minimum.ToAxial();
+            var maximum = manager.tileMapMax;
+
+            var voroniData = VoroniTilingMapper.SetupVoroniMap(marketPositions, minimum, maximum);
+
+            for(var row = 0; row < voroniData.Length; row++)
             {
-                var marketMember = market.GetComponentInParent<HexMember>();
-
-                var myHexPosition = marketMember.PositionInTileMap;
-                var effectiveRange = HexTileMapManager
-                    .GetPositionsWithinJumpDistance(myHexPosition, 2);
-                market.myServiceRange = effectiveRange.ToArray();
+                for(var col = 0; col < voroniData[row].Length; col++)
+                {
+                    var index = voroniData[row][col];
+                    var coordinate = new OffsetCoordinate(col, row).ToAxial() + minimumAxial;
+                    allMarkets[index].myServiceRange.Add(coordinate.ToOffset());
+                }
             }
-
-            //var marketMembers = allMarkets.Select(x => x.GetComponentInParent<HexMember>());
         }
     }
 }

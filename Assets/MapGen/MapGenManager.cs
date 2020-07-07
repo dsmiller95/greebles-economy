@@ -46,11 +46,12 @@ public class MapGenManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (isFirstUpdate && timeOfMapGen + 1 < Time.time)
+        if (isFirstUpdate && (timeOfMapGen + 1 < Time.time))
         {
+            isFirstUpdate = false;
+            Debug.Log("Map gen completed");
             //TODO: there has to be a better way :(
             MapGenCompleted();
-            isFirstUpdate = false;
         }
     }
 

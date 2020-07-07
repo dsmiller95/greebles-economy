@@ -15,6 +15,8 @@ namespace Assets.Scripts.Market
         public MarketPricePlotter PricePlotter;
         public MarketBehavior myMarket;
 
+        public Color32 tileColoring;
+
         private HexMember myMember;
         private HexTileGenerator tileGenerator;
 
@@ -61,12 +63,11 @@ namespace Assets.Scripts.Market
         {
             Debug.Log($"{gameObject.name} selected");
 
-            Color32 color = Color.green;
             var myHexPosition = myMember.PositionInTileMap;
             var mapManager = myMember.MapManager;
             var colorChanges = myMarket.myServiceRange
-                .Select(axial => axial.ToOffset())
-                .Select(position => (position, color));
+                //.Select(axial => axial.ToOffset())
+                .Select(position => (position, tileColoring));
 
             hexTilesChanged = tileGenerator.SetHexTileColors(colorChanges);
         }

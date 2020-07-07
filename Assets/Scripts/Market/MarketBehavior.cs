@@ -37,7 +37,7 @@ namespace Assets.Scripts.Market
 
         [HideInInspector]
         [NonSerialized]
-        public AxialCoordinate[] myServiceRange;
+        public IList<OffsetCoordinate> myServiceRange = new List<OffsetCoordinate>();
 
         private void Awake()
         {

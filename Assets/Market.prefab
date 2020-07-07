@@ -245,6 +245,9 @@ MonoBehaviour:
   ResourcePlotter: {fileID: 7119504726125291882}
   PricePlotter: {fileID: 3149401644907002803}
   myMarket: {fileID: 7086212739382045326}
+  tileColoring:
+    serializedVersion: 2
+    rgba: 4294958592
 --- !u!114 &7119504726125291882
 MonoBehaviour:
   m_ObjectHideFlags: 0

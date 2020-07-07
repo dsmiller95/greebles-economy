@@ -25,7 +25,6 @@ namespace Assets.Scripts.MovementExtensions
         {
             var manager = MapManager;
             manager.PlaceNewMapMember(this);
-            Debug.Log($"Placed new member {this.name}");
             this.UpdatePositionInWorldSpace();
         }
 
