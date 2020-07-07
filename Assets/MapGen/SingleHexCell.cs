@@ -1,4 +1,5 @@
-﻿using Assets.Scripts.MovementExtensions;
+﻿using Assets.MapGen.TileManagement;
+using Assets.Scripts.MovementExtensions;
 using Assets.UI.InfoPane;
 using Assets.UI.SelectionManager;
 using System.Collections.Generic;
@@ -46,7 +47,7 @@ namespace Assets.MapGen
             var myPosition = hexMember.PositionInTileMap;
             var mapManager = hexMember.MapManager;
 
-            var cells = mapManager.GetPositionsWithinJumpDistance(myPosition, (int)5)
+            var cells = HexTileMapManager.GetPositionsWithinJumpDistance(myPosition, (int)5)
                 .Select(position => new { position, distance = myPosition.DistanceTo(position)})
                 .Where(info => info.distance % 2 == 0)
                 .SelectMany(info =>

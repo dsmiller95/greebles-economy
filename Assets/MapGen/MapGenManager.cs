@@ -1,11 +1,9 @@
 ﻿using Assets.MapGen;
 using Assets.MapGen.TileManagement;
+using Assets.Scripts.Market;
 using Assets.Scripts.MovementExtensions;
 using Simulation.Tiling;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Rendering;
 
 [System.Serializable]
 public struct MapGenSpawnable
@@ -30,24 +28,38 @@ public class MapGenManager : MonoBehaviour
         var seed = Random.Range(100, 1000);
         pointGenerator = new HaltonSequenceGenerator(2, 3, seed, spawnBoxSize + new Vector2Int(1, 1));
 
-        foreach(var spawnable in spawnableItems)
+        foreach (var spawnable in spawnableItems)
         {
-            this.SpawnItemsForSpawnable(spawnable, spawnArea);
+            SpawnItemsForSpawnable(spawnable, spawnArea);
         }
+        timeOfMapGen = Time.time;
     }
+
+    private void MapGenCompleted()
+    {
+        MarketDataInitializer.CalculateServiceRanges(tileManager);
+    }
+
+    private float timeOfMapGen;
+    private bool isFirstUpdate = true;
 
     // Update is called once per frame
     void Update()
     {
-
+        if (isFirstUpdate && timeOfMapGen + 1 < Time.time)
+        {
+            //TODO: there has to be a better way :(
+            MapGenCompleted();
+            isFirstUpdate = false;
+        }
     }
 
     private void SpawnItemsForSpawnable(MapGenSpawnable spawnable, float spawnBoxArea)
     {
         var totalSpawns = spawnBoxArea * spawnable.densityPerSurfaceSize;
-        for(var i = 0; i < totalSpawns; i++)
+        for (var i = 0; i < totalSpawns; i++)
         {
-            this.SpawnItem(spawnable.prefab);
+            SpawnItem(spawnable.prefab);
         }
     }
 

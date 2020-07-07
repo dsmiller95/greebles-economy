@@ -140,7 +140,7 @@ namespace Assets.Scripts.MovementExtensions
         public IEnumerable<(GameObject, float)> GetObjectsWithinDistanceFromFilter(float maxDistance, Func<GameObject, bool> filter)
         {
             var myPosition = PositionInTileMap;
-            return MapManager.GetPositionsWithinJumpDistance(myPosition, (int)maxDistance)
+            return HexTileMapManager.GetPositionsWithinJumpDistance(myPosition, (int)maxDistance)
                 .SelectMany(position =>
                 {
                     var distance = myPosition.DistanceTo(position);

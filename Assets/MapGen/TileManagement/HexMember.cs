@@ -25,6 +25,7 @@ namespace Assets.Scripts.MovementExtensions
         {
             var manager = MapManager;
             manager.PlaceNewMapMember(this);
+            Debug.Log($"Placed new member {this.name}");
             this.UpdatePositionInWorldSpace();
         }
 
@@ -83,7 +84,7 @@ namespace Assets.Scripts.MovementExtensions
 
         public T TryGetType<T>()
         {
-            return this.GetComponent<T>();
+            return this.GetComponentInChildren<T>();
         }
     }
 }

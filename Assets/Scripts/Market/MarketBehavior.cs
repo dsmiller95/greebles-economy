@@ -3,6 +3,7 @@ using Assets.Scripts.Resources;
 using Assets.Scripts.Resources.Inventory;
 using Assets.Scripts.Trader;
 using Extensions;
+using Simulation.Tiling;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -33,6 +34,10 @@ namespace Assets.Scripts.Market
 
 
         public override SpaceFillingInventory<ResourceType> tradeInventory => _inventory;
+
+        [HideInInspector]
+        [NonSerialized]
+        public AxialCoordinate[] myServiceRange;
 
         private void Awake()
         {

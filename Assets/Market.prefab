@@ -117,7 +117,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 7127dc5c79065644d998cb90db8d70a6, type: 2}
+  - {fileID: 0}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -244,6 +244,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ResourcePlotter: {fileID: 7119504726125291882}
   PricePlotter: {fileID: 3149401644907002803}
+  myMarket: {fileID: 7086212739382045326}
 --- !u!114 &7119504726125291882
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -324,7 +325,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f7c001995a0ddc24d8e98e0f46bdcef2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  localPosition: {x: 0, y: 0}
+  localPosition:
+    q: 0
+    r: 0
   managerSetForInspector: {fileID: 0}
 --- !u!1 &7219099098458843105
 GameObject:

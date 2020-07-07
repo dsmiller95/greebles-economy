@@ -1,10 +1,7 @@
 ﻿using Assets.MapGen.TileManagement;
 using Assets.Scripts.MovementExtensions;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using UnityEngine;
 
 namespace Assets.Scripts.Market
 {
@@ -14,10 +11,21 @@ namespace Assets.Scripts.Market
     /// </summary>
     public class MarketDataInitializer
     {
-
-        public void CalculateServiceRanges(HexTileMapManager mapManager, IList<MarketBehavior> allMarkets)
+        public static void CalculateServiceRanges(HexTileMapManager manager)
         {
-            var marketMembers = allMarkets.Select(x => x.GetComponentInParent<HexMember>());
+            var allMarkets = manager.GetAllOfType<MarketBehavior>().ToList();
+            Debug.Log($"Initializing {allMarkets.Count} markets");
+            foreach (var market in allMarkets)
+            {
+                var marketMember = market.GetComponentInParent<HexMember>();
+
+                var myHexPosition = marketMember.PositionInTileMap;
+                var effectiveRange = HexTileMapManager
+                    .GetPositionsWithinJumpDistance(myHexPosition, 2);
+                market.myServiceRange = effectiveRange.ToArray();
+            }
+
+            //var marketMembers = allMarkets.Select(x => x.GetComponentInParent<HexMember>());
         }
     }
 }

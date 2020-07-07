@@ -13,6 +13,7 @@ namespace Assets.Scripts.Market
     {
         public ResourceTimeSeriesAdapter ResourcePlotter;
         public MarketPricePlotter PricePlotter;
+        public MarketBehavior myMarket;
 
         private HexMember myMember;
         private HexTileGenerator tileGenerator;
@@ -63,8 +64,7 @@ namespace Assets.Scripts.Market
             Color32 color = Color.green;
             var myHexPosition = myMember.PositionInTileMap;
             var mapManager = myMember.MapManager;
-            var colorChanges = mapManager
-                .GetPositionsWithinJumpDistance(myHexPosition, 2)
+            var colorChanges = myMarket.myServiceRange
                 .Select(axial => axial.ToOffset())
                 .Select(position => (position, color));
 

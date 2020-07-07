@@ -59,9 +59,9 @@ namespace Assets.MapGen.TileManagement
         {
             return this.coordinateSystem.RealToTileMap(positionInPlane).ToAxial();
         }
-        public IEnumerable<AxialCoordinate> GetPositionsWithinJumpDistance(AxialCoordinate origin, int jumpDistance)
+        public static IEnumerable<AxialCoordinate> GetPositionsWithinJumpDistance(AxialCoordinate origin, int jumpDistance)
         {
-            return coordinateSystem.GetPositionsWithinJumpDistance(origin, jumpDistance);
+            return HexCoordinateSystem.GetPositionsWithinJumpDistance(origin, jumpDistance);
         }
         public bool IsWithinDistance(ITilemapMember first, ITilemapMember second, int distance)
         {
@@ -83,10 +83,11 @@ namespace Assets.MapGen.TileManagement
                 .Where(x => x != null);
         }
 
-        private IList<ITilemapMember> GetListFromCoord(AxialCoordinate coordinates)
+
+
+        private IList<ITilemapMember> GetListFromCoord(OffsetCoordinate coordinate)
         {
-            var offsetCoordinates = coordinates.ToOffset();
-            var vectorInGrid = new Vector2Int(offsetCoordinates.column - tileMapMin.column, offsetCoordinates.row - tileMapMin.row);
+            var vectorInGrid = new Vector2Int(coordinate.column - tileMapMin.column, coordinate.row - tileMapMin.row);
             if (vectorInGrid.x < 0 || vectorInGrid.y < 0 || vectorInGrid.y >= tileMapHeight || vectorInGrid.x >= tileMapWidth)
             {
                 return null;
@@ -95,7 +96,12 @@ namespace Assets.MapGen.TileManagement
             return tileGrid[vectorInGrid.y][vectorInGrid.x];
         }
 
-        public IEnumerable<T> GetMembersAtLocation<T>(AxialCoordinate position, Func<T, bool> filter) where T :ITilemapMember
+        private IList<ITilemapMember> GetListFromCoord(AxialCoordinate coordinates)
+        {
+            return this.GetListFromCoord(coordinates.ToOffset());
+        }
+
+        public IEnumerable<T> GetMembersAtLocation<T>(AxialCoordinate position, Func<T, bool> filter) where T : ITilemapMember
         {
             var positionList = GetListFromCoord(position);
             return positionList?
@@ -113,6 +119,27 @@ namespace Assets.MapGen.TileManagement
         {
             var positionList = GetListFromCoord(position);
             return positionList?
+                .Select(member => member.TryGetType<T>())
+                .Where(x => x != null);
+        }
+
+        public IEnumerable<ITilemapMember> GetAllMembers()
+        {
+            return this.GetAllMemberInternal().SelectMany(x => x);
+        }
+        private IEnumerable<IEnumerable<ITilemapMember>> GetAllMemberInternal()
+        {
+            for (var row = 0; row < tileGrid.Length; row++)
+            {
+                for (var col = 0; col < tileGrid[row].Length; col++)
+                {
+                    yield return tileGrid[row][col];
+                }
+            }
+        }
+        public IEnumerable<T> GetAllOfType<T>()
+        {
+            return this.GetAllMembers()
                 .Select(member => member.TryGetType<T>())
                 .Where(x => x != null);
         }
