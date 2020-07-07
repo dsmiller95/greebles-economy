@@ -46,6 +46,12 @@ namespace Simulation.Tiling
             return row == 0 && column == 0;
         }
 
+        public bool IsBetween(OffsetCoordinate min, OffsetCoordinate max)
+        {
+            return min.row < row && row < max.row &&
+                min.column < column && column < max.column;
+        }
+
         public static explicit operator OffsetCoordinate(Vector2Int d) => new OffsetCoordinate(d.x, d.y);
 
 

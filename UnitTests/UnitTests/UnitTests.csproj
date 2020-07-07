@@ -66,6 +66,7 @@
     <Compile Include="Economics\UtilityAnalyzerTests\UtilityFromLedgerTest.cs" />
     <Compile Include="Simulation\Tiling\HexCoordinateSystemTest.cs" />
     <Compile Include="Simulation\Tiling\HexCoordinateConversionTest.cs" />
+    <Compile Include="Simulation\Tiling\VoroniTest.cs" />
     <Compile Include="UtilitiesTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

@@ -48,7 +48,7 @@ namespace Simulation.Tiling
             return RelativeToTileMap(relativePositioning);
         }
 
-        public IEnumerable<AxialCoordinate> GetPositionsWithinJumpDistance(AxialCoordinate origin, int jumpDistance)
+        public static IEnumerable<AxialCoordinate> GetPositionsWithinJumpDistance(AxialCoordinate origin, int jumpDistance)
         {
             for(var q = -jumpDistance; q <= jumpDistance; q++)
             {
@@ -76,7 +76,7 @@ namespace Simulation.Tiling
             }
         }
 
-        public IEnumerable<AxialCoordinate> GetRing(AxialCoordinate origin, int distance)
+        public static IEnumerable<AxialCoordinate> GetRing(AxialCoordinate origin, int distance)
         {
             if(distance == 0)
             {

@@ -239,7 +239,7 @@ namespace UnitTests.Simulation.Tiling
 
             var coordSystem = new HexCoordinateSystem(2);
 
-            var actualJumps = coordSystem.GetPositionsWithinJumpDistance(coord, 2)
+            var actualJumps = HexCoordinateSystem.GetPositionsWithinJumpDistance(coord, 2)
                 .OrderBy(x => x.q)
                 .ThenBy(x => x.r)
                 .ToList();
@@ -292,7 +292,7 @@ namespace UnitTests.Simulation.Tiling
 
             var coordSystem = new HexCoordinateSystem(2);
 
-            var actualJumps = coordSystem.GetPositionsWithinJumpDistance(coord, 2)
+            var actualJumps = HexCoordinateSystem.GetPositionsWithinJumpDistance(coord, 2)
                 .OrderBy(x => x.q)
                 .ThenBy(x => x.r)
                 .ToList();
@@ -387,7 +387,7 @@ namespace UnitTests.Simulation.Tiling
 
             var coordSystem = new HexCoordinateSystem(2);
 
-            var ring = coordSystem.GetRing(origin, 3).ToList();
+            var ring = HexCoordinateSystem.GetRing(origin, 3).ToList();
 
             Assert.AreEqual(6 * 3, ring.Count);
 
