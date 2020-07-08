@@ -815,6 +815,13 @@ MonoBehaviour:
     m_NumAlphaKeys: 2
   defaultSubmeshCopies: 0000000001000000
   perlinScale: {x: 0.02, y: 0.02}
+  octaves:
+  - frequency: {x: 1, y: 1}
+    relativeWeight: 1
+  - frequency: {x: 5, y: 5}
+    relativeWeight: 0.2
+  - frequency: {x: 10, y: 10}
+    relativeWeight: 0.1
 --- !u!23 &1140566649
 MeshRenderer:
   m_ObjectHideFlags: 0

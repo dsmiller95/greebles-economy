@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 namespace Assets.UI.SelectionManager
 {
@@ -39,6 +40,11 @@ namespace Assets.UI.SelectionManager
         {
             if (Input.GetMouseButtonDown(0))
             {
+                if (EventSystem.current.IsPointerOverGameObject())    // is the touch on the GUI
+                {
+                    // GUI Action
+                    return;
+                }
                 var inputCommand = inputRequests.Peek();
                 Ray ray = cam.ScreenPointToRay(Input.mousePosition);
                 RaycastHit hit;

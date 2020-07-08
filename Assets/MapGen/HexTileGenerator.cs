@@ -3,7 +3,6 @@ using Simulation.Tiling;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using TreeEditor;
 using UnityEngine;
 
 namespace Assets.MapGen
@@ -14,6 +13,24 @@ namespace Assets.MapGen
         public float regionPoint;
         public int sourceSubmesh;
         public int destinationSubmesh;
+    }
+
+    [Serializable]
+    public struct Octave
+    {
+        public Vector2 frequency;
+        public float relativeWeight;
+
+        public float SamplePerlin(Vector2 point)
+        {
+            var sampleVector = Vector2.Scale(point, frequency);
+            return Mathf.PerlinNoise(sampleVector.x, sampleVector.y) * relativeWeight;
+        }
+
+        public Octave ScaleFrequencies(Vector2 scale)
+        {
+            return new Octave { frequency = Vector2.Scale(frequency, scale), relativeWeight = relativeWeight };
+        }
     }
 
 
@@ -34,16 +51,24 @@ namespace Assets.MapGen
         public int[] defaultSubmeshCopies;
 
         public Vector2 perlinScale = new Vector2(1, 1);
+
+        public Octave[] octaves = new[] { new Octave() { frequency = new Vector2(1, 1), relativeWeight = 1 } };
+
+        private Octave[] scaledOctaves;
         private Vector2 perlinOffset;
 
 
         private HexTileMapManager mapManager;
         void Awake()
         {
-            this.perlinOffset = new Vector2(
+            perlinOffset = new Vector2(
                 UnityEngine.Random.Range(0, 5000),
                 UnityEngine.Random.Range(0, 5000)
                 );
+
+            scaledOctaves = octaves
+                .Select(x => x.ScaleFrequencies(perlinScale))
+                .ToArray();
 
         }
 
@@ -52,7 +77,7 @@ namespace Assets.MapGen
         {
             Mesh mesh = new Mesh();
 
-            this.mapManager = GetComponent<HexTileMapManager>();
+            mapManager = GetComponent<HexTileMapManager>();
 
             // this mesh can get pretty big, so we need the extra size
             mesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
@@ -68,11 +93,20 @@ namespace Assets.MapGen
 
         private float SampleNoise(Vector2 point)
         {
-            var samplePoint = Vector2.Scale(point, perlinScale) + perlinOffset;
-            var sample = Mathf.PerlinNoise(samplePoint.x, samplePoint.y);
-            sample = Mathf.Clamp01(sample);
-            //Debug.Log($"sampling {point} as {samplePoint}: {sample}");
-            return sample;
+            return SampleNoiseAtOctaves(scaledOctaves, point);
+        }
+
+        private float SampleNoiseAtOctaves(Octave[] octaves, Vector2 point)
+        {
+            var perlinVector = point + perlinOffset;
+
+            var sample = 0f;
+            foreach (var octave in octaves)
+            {
+                sample += octave.SamplePerlin(perlinVector);
+            }
+
+            return sample / octaves.Sum(octave => octave.relativeWeight);
         }
 
         private Color32 GetColorForTerrainAtPoint(OffsetCoordinate point)
@@ -84,9 +118,9 @@ namespace Assets.MapGen
         private MaterialRegion GetSubmeshForTerrainAtPoint(Vector3 point)
         {
             var sample = SampleNoise(new Vector2(point.x, point.z));
-            for(var i = 0; i < extraTerrainRegions.Length; i++)
+            for (var i = 0; i < extraTerrainRegions.Length; i++)
             {
-                if(extraTerrainRegions[i].regionPoint > sample)
+                if (extraTerrainRegions[i].regionPoint > sample)
                 {
                     return extraTerrainRegions[i];
                 }
@@ -125,13 +159,14 @@ namespace Assets.MapGen
                     copier.CopySubmeshTrianglesToOffsetIndex(submesh, submesh);
                 }
 
-                if(extraTerrainRegions.Length > 0) {
+                if (extraTerrainRegions.Length > 0)
+                {
                     var extraSubmeshMapping = GetSubmeshForTerrainAtPoint(realOffset);
                     copier.CopySubmeshTrianglesToOffsetIndex(extraSubmeshMapping.sourceSubmesh, extraSubmeshMapping.destinationSubmesh);
                 }
             }
 
-            this.meshEditor = copier.FinalizeCopy();
+            meshEditor = copier.FinalizeCopy();
         }
 
         private IEnumerable<OffsetCoordinate> GetTilesInRectangle(HexTileMapManager tilemapManager)
@@ -156,7 +191,7 @@ namespace Assets.MapGen
             var mapManager = GetComponent<HexTileMapManager>();
             var colors = colorsAtPositions.ToList();
             var colorChange = colors
-                .Select(x => (LocationToIndex(x.Item1), x.Item2) );
+                .Select(x => (LocationToIndex(x.Item1), x.Item2));
             meshEditor.SetColorsOnVertexesAtDuplicates(colorChange);
             return new HexTileColorChangeRecord
             {
@@ -164,14 +199,15 @@ namespace Assets.MapGen
             };
         }
 
-        public void ResetHexTileColors(HexTileColorChangeRecord changeRecord) {
-            if(changeRecord.changedIndexes == default)
+        public void ResetHexTileColors(HexTileColorChangeRecord changeRecord)
+        {
+            if (changeRecord.changedIndexes == default)
             {
                 return;
             }
             var colorChange = changeRecord.changedIndexes.Select(location =>
             {
-                var color = this.GetColorForTerrainAtPoint(location);
+                var color = GetColorForTerrainAtPoint(location);
                 return (LocationToIndex(location), color);
             });
             meshEditor.SetColorsOnVertexesAtDuplicates(colorChange);
@@ -185,7 +221,7 @@ namespace Assets.MapGen
 
         public void ResetHexTilecolor(OffsetCoordinate locationInTileMap)
         {
-            this.SetHexTileColor(locationInTileMap, this.GetColorForTerrainAtPoint(locationInTileMap));
+            SetHexTileColor(locationInTileMap, GetColorForTerrainAtPoint(locationInTileMap));
         }
 
         private int LocationToIndex(OffsetCoordinate locationInTileMap)
