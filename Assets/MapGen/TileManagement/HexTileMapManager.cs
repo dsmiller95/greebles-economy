@@ -28,11 +28,13 @@ namespace Assets.MapGen.TileManagement
 
         private IList<ITilemapMember>[][] tileGrid;
 
+        private IDictionary<int, IList<ITilemapMember>> tileMemberHashMap;
+
         private HexCoordinateSystem coordinateSystem;
 
         public void Awake()
         {
-            this.coordinateSystem = new HexCoordinateSystem(this.hexRadius);
+            coordinateSystem = new HexCoordinateSystem(hexRadius);
             tileMapMax = new OffsetCoordinate(tileMapMin.column + hexWidth, tileMapMin.row + hexHeight);
 
             tileGrid = new IList<ITilemapMember>[hexHeight][];
@@ -44,20 +46,22 @@ namespace Assets.MapGen.TileManagement
                     tileGrid[verticalIndex][horizontalIndex] = new List<ITilemapMember>();
                 }
             }
+
+            tileMemberHashMap = new Dictionary<int, IList<ITilemapMember>>();
         }
 
         #region hex coordinate system
         public Vector2 TileMapToReal(AxialCoordinate tileMapPosition)
         {
-            return this.coordinateSystem.TileMapToRelative(tileMapPosition);
+            return coordinateSystem.TileMapToRelative(tileMapPosition);
         }
         public Vector2 TileMapPositionToPositionInPlane(AxialCoordinate tileMapPosition)
         {
-            return this.coordinateSystem.TileMapToReal(tileMapPosition);
+            return coordinateSystem.TileMapToReal(tileMapPosition);
         }
         public AxialCoordinate PositionInPlaneToTilemapPosition(Vector2 positionInPlane)
         {
-            return this.coordinateSystem.RealToTileMap(positionInPlane).ToAxial();
+            return coordinateSystem.RealToTileMap(positionInPlane).ToAxial();
         }
         public static IEnumerable<AxialCoordinate> GetPositionsWithinJumpDistance(AxialCoordinate origin, int jumpDistance)
         {
@@ -76,6 +80,10 @@ namespace Assets.MapGen.TileManagement
 
         public IEnumerable<T> GetItemsWithinJumpDistance<T>(AxialCoordinate origin, int jumpDistance)
         {
+            //return tileMemberHashMap.Values
+            //    .SelectMany(x => x)   
+            //    .Select(x => x.TryGetType<T>())
+            //    .Where(x => x != null);
             return GetPositionsWithinJumpDistance(origin, jumpDistance)
                 .Select(position => GetItemsAtLocation<T>(position))
                 .Where(items => items != null)
@@ -98,7 +106,7 @@ namespace Assets.MapGen.TileManagement
 
         private IList<ITilemapMember> GetListFromCoord(AxialCoordinate coordinates)
         {
-            return this.GetListFromCoord(coordinates.ToOffset());
+            return GetListFromCoord(coordinates.ToOffset());
         }
 
         public IEnumerable<T> GetMembersAtLocation<T>(AxialCoordinate position, Func<T, bool> filter) where T : ITilemapMember
@@ -125,7 +133,7 @@ namespace Assets.MapGen.TileManagement
 
         public IEnumerable<ITilemapMember> GetAllMembers()
         {
-            return this.GetAllMemberInternal().SelectMany(x => x);
+            return GetAllMemberInternal().SelectMany(x => x);
         }
         private IEnumerable<IEnumerable<ITilemapMember>> GetAllMemberInternal()
         {
@@ -139,9 +147,14 @@ namespace Assets.MapGen.TileManagement
         }
         public IEnumerable<T> GetAllOfType<T>()
         {
-            return this.GetAllMembers()
+            return GetAllMembers()
                 .Select(member => member.TryGetType<T>())
                 .Where(x => x != null);
+        }
+
+        private int GetHashIndex(ITilemapMember member)
+        {
+            return member.PositionInTileMap.q / 10 + member.PositionInTileMap.r / 10;
         }
 
         public void PlaceNewMapMember(ITilemapMember member)
@@ -153,11 +166,29 @@ namespace Assets.MapGen.TileManagement
         {
             var position = item.PositionInTileMap;
             GetListFromCoord(position)?.Add(item);
+
+            var hash = GetHashIndex(item);
+            IList<ITilemapMember> hashList;
+            if (tileMemberHashMap.ContainsKey(hash))
+            {
+                hashList = tileMemberHashMap[hash];
+            }
+            else
+            {
+                hashList = new List<ITilemapMember>();
+            }
+            hashList.Add(item);
         }
         public void DeRegisterInGrid(ITilemapMember member)
         {
             var position = member.PositionInTileMap;
             GetListFromCoord(position)?.Remove(member);
+
+            var hash = GetHashIndex(member);
+            if (tileMemberHashMap.ContainsKey(hash))
+            {
+                tileMemberHashMap[hash].Remove(member);
+            }
         }
     }
 

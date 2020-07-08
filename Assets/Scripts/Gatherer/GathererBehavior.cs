@@ -19,8 +19,8 @@ namespace Assets.Scripts.Gatherer
     [RequireComponent(typeof(TimeTracker))]
     public class GathererBehavior : MonoBehaviour
     {
-        public const int searchRadius = 30;
-        public const float waitTimeBetweenSearches = 0.3f;
+        public const int searchRadius = 20;
+        public const float waitTimeBetweenSearches = 3f;
 
         public HomeBehavior home;
 
