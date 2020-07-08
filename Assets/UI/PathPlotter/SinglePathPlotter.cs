@@ -12,6 +12,9 @@ namespace Assets.UI.PathPlotter
         public float arrowOffset = 3;
         public float diplacementPerSecond = 0.2f;
         public Vector3 scale = new Vector3(1, 1, 1);
+
+        public CapsuleCollider collider;
+
         private Vector3 start => transform.position;
         void Awake()
         {
@@ -30,8 +33,18 @@ namespace Assets.UI.PathPlotter
             {
                 return;
             }
+            
             SetupModelInMesh(mesh);
             transform.rotation = GetRotation();
+
+            this.SetCapsuleCollider();
+        }
+
+        private void SetCapsuleCollider()
+        {
+            var distance = Vector3.Distance(start, end);
+            collider.center = new Vector3(0, 0, distance/2);
+            collider.height = collider.radius * 2 + distance;
         }
 
         float movementFactor = 0f;

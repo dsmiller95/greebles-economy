@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 8287222682364152894}
   - component: {fileID: 8287222682364152895}
   - component: {fileID: 8287222682364152888}
+  - component: {fileID: 1528503495076830816}
   m_Layer: 0
   m_Name: SinglePath
   m_TagString: Untagged
@@ -26,13 +27,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8287222682364152889}
-  m_LocalRotation: {x: 0.08416585, y: -0.061617546, z: 0.0052146106, w: 0.99453115}
-  m_LocalPosition: {x: -0.057, y: 1.75, z: 1.24}
+  m_LocalRotation: {x: -0.119390786, y: 0.22572425, z: 0.027885064, w: 0.96644545}
+  m_LocalPosition: {x: -0.21, y: 1.07, z: -0.3}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: -0.75, y: -6.576, z: 0}
 --- !u!114 &8287222682364152894
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -47,10 +48,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   pathSegmentMesh: {fileID: -7929139438592967118, guid: 0c42bc52abfa184449b7fef45d91c80d,
     type: 3}
-  end: {x: -1.23, y: 0.13, z: 10.67}
+  end: {x: 5.21, y: 4.14, z: 10.67}
   arrowOffset: 3.2
   diplacementPerSecond: 1
-  scale: {x: 31, y: 15, z: 35}
+  scale: {x: 31, y: 13.32, z: 35}
+  collider: {fileID: 1528503495076830816}
 --- !u!33 &8287222682364152895
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -98,3 +100,17 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+--- !u!136 &1528503495076830816
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8287222682364152889}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  m_Radius: 0.5
+  m_Height: 13.615158
+  m_Direction: 2
+  m_Center: {x: 0, y: 0, z: 6.307579}
