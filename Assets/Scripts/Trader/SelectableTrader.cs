@@ -1,4 +1,5 @@
-﻿using Assets.Scripts.Resources.UI;
+﻿using Assets.Scripts.Resources;
+using Assets.Scripts.Resources.UI;
 using Assets.Scripts.Trader;
 using Assets.UI.InfoPane;
 using Assets.UI.PathPlotter;
@@ -17,7 +18,7 @@ namespace Assets.Scripts.Gatherer
 
         public GameObject tradePanelPrefab;
         public GameObject multiPathPlotterPrefab;
-        private MultiPathPlotter mulitPathPlotter;
+        private MultiPathPlotter multiPathPlotter;
 
         // Start is called before the first frame update
         void Start()
@@ -52,7 +53,7 @@ namespace Assets.Scripts.Gatherer
                         tradeNodeList.tradeRouteUpdated = (tradeRoute) =>
                         {
                             trader.SetNewTradeRoute(tradeRoute);
-                            mulitPathPlotter.SetPath(trader.tradeRoute.Select(x => x.target.gameObject.transform.position).ToList());
+                            multiPathPlotter.SetPath(trader.tradeRoute.Select(x => x.target.gameObject.transform.position).ToList());
                         };
                     }
                 } }
@@ -73,16 +74,47 @@ namespace Assets.Scripts.Gatherer
 
         private void TeardownPathPlot()
         {   
-            SelectionTracker.globalTracker.RemoveSelectionInput(mulitPathPlotter);
-            Destroy(mulitPathPlotter.gameObject);
+            SelectionTracker.globalTracker.RemoveSelectionInput(multiPathPlotter);
+            Destroy(multiPathPlotter.gameObject);
         }
 
         private void SetupPathPlot()
         {
             var plotter = Instantiate(multiPathPlotterPrefab);
-            mulitPathPlotter = plotter.GetComponent<MultiPathPlotter>();
-            mulitPathPlotter.SetPath(trader.tradeRoute.Select(x => x.target.gameObject.transform.position).ToList());
-            SelectionTracker.globalTracker.PushSelectionInput(mulitPathPlotter);
+            multiPathPlotter = plotter.GetComponent<MultiPathPlotter>();
+            multiPathPlotter.SetPath(trader.tradeRoute.Select(x => x.target.gameObject.transform.position).ToList());
+
+            multiPathPlotter.ShouldSnapToObject = o =>
+            {
+                var willSnap = o.GetComponentInParent<TradeStop>() != null;
+                Debug.Log($"Should snap to {o.gameObject.name}: {willSnap}");
+                return willSnap;
+            };
+
+            multiPathPlotter.HasDroppedOnObject = (o, index) =>
+            {
+                var newTradeNode = new TradeNode
+                {
+                    target = o.GetComponentInParent<TradeStop>(),
+                    trades = new ResourceTrade[]
+                    {
+                        new ResourceTrade
+                        {
+                            amount = 0,
+                            type = ResourceType.Food
+                        },
+                        new ResourceTrade
+                        {
+                            amount = 0,
+                            type = ResourceType.Wood
+                        }
+                    }
+                };
+                trader.AddTradeNode(newTradeNode, index);
+                multiPathPlotter.SetPath(trader.tradeRoute.Select(x => x.target.gameObject.transform.position).ToList());
+            };
+
+            SelectionTracker.globalTracker.PushSelectionInput(multiPathPlotter);
         }
     }
 }

@@ -110,5 +110,12 @@ namespace Assets.Scripts.Trader
                 currentTradeTargetIndex = 0;
             }
         }
+
+        public void AddTradeNode(TradeNode node, int indexToInsert)
+        {
+            var newRoute = this.tradeRoute.ToList();
+            newRoute.Insert(indexToInsert, node);
+            this.SetNewTradeRoute(newRoute.ToArray());
+        }
     }
 }

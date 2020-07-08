@@ -1,6 +1,6 @@
 ﻿using Assets.UI.SelectionManager;
+using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -18,6 +18,16 @@ namespace Assets.UI.PathPlotter
         public float dragoutHeight = 1f;
         public string cameraName;
         private Camera cam;
+
+        private Plane targetPlane;
+
+        public Func<GameObject, bool> ShouldSnapToObject;
+        /// <summary>
+        /// Called with the GameObject that the route was dropped on,
+        ///     and the index of the game object at the end of the path which was split
+        /// </summary>
+        public Action<GameObject, int> HasDroppedOnObject;
+
         // Start is called before the first frame update
         void Awake()
         {
@@ -25,6 +35,8 @@ namespace Assets.UI.PathPlotter
             cam = GameObject.FindGameObjectsWithTag("MainCamera")
                 .Where(gameObject => gameObject.name == cameraName).First()
                 .GetComponent<Camera>();
+
+            targetPlane = new Plane(Vector3.up, new Vector3(0, dragoutHeight, 0));
         }
 
         public void Update()
@@ -35,7 +47,7 @@ namespace Assets.UI.PathPlotter
             }
             if (!Input.GetMouseButton(0))
             {
-                this.CancelTrackingMouse();
+                EndTrackingMouse();
                 return;
             }
             if (EventSystem.current.IsPointerOverGameObject()) // is the touch on the GUI
@@ -52,10 +64,26 @@ namespace Assets.UI.PathPlotter
                 return;
             }
 
-            var pointOnPlane = hit.point;
-            pointOnPlane.y = dragoutHeight;
+            var shouldSnap = ShouldSnapToObject(hit.transform.gameObject);
+            Vector3 newPoint;
+            if (shouldSnap)
+            {
+                newPoint = hit.transform.position;
+                currentSnappedObject = hit.transform.gameObject;
+            }
+            else
+            {
+                currentSnappedObject = null;
+                float planeHit;
+                if (!targetPlane.Raycast(ray, out planeHit))
+                {
+                    return;
+                }
 
-            this.MouseTrackingPositionChanged(pointOnPlane);
+                newPoint = ray.GetPoint(planeHit);
+            }
+
+            MouseTrackingPositionChanged(newPoint);
         }
 
         /// <summary>
@@ -101,14 +129,22 @@ namespace Assets.UI.PathPlotter
         }
 
         private int currentMouseTrackingIndex = -1;
+        private GameObject currentSnappedObject;
 
-        private void CancelTrackingMouse()
+        private void EndTrackingMouse()
         {
             var removed = pathRenders[currentMouseTrackingIndex];
             pathRenders.RemoveAt(currentMouseTrackingIndex);
 
             pathRenders[(currentMouseTrackingIndex) % pathRenders.Count].start = removed.start;
             Destroy(removed.gameObject);
+
+            if(currentSnappedObject != null)
+            {
+                HasDroppedOnObject(currentSnappedObject, currentMouseTrackingIndex);
+            }
+
+
             currentMouseTrackingIndex = -1;
         }
 
