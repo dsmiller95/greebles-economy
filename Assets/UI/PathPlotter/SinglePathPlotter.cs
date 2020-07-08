@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using UnityEngine;
 
 namespace Assets.UI.PathPlotter
@@ -15,7 +16,11 @@ namespace Assets.UI.PathPlotter
 
         public CapsuleCollider collider;
 
-        private Vector3 start => transform.position;
+        public Vector3 start
+        {
+            get => transform.position;
+            set => transform.position = value;
+        }
         void Awake()
         {
             // Get instantiated mesh

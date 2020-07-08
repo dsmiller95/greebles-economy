@@ -52,7 +52,7 @@ namespace Assets.Scripts.Gatherer
                         tradeNodeList.tradeRouteUpdated = (tradeRoute) =>
                         {
                             trader.SetNewTradeRoute(tradeRoute);
-                            mulitPathPlotter.SetPath(trader.tradeRoute.Select(x => x.target.gameObject.transform.position));
+                            mulitPathPlotter.SetPath(trader.tradeRoute.Select(x => x.target.gameObject.transform.position).ToList());
                         };
                     }
                 } }
@@ -72,7 +72,8 @@ namespace Assets.Scripts.Gatherer
         }
 
         private void TeardownPathPlot()
-        {
+        {   
+            SelectionTracker.globalTracker.RemoveSelectionInput(mulitPathPlotter);
             Destroy(mulitPathPlotter.gameObject);
         }
 
@@ -80,7 +81,8 @@ namespace Assets.Scripts.Gatherer
         {
             var plotter = Instantiate(multiPathPlotterPrefab);
             mulitPathPlotter = plotter.GetComponent<MultiPathPlotter>();
-            mulitPathPlotter.SetPath(trader.tradeRoute.Select(x => x.target.gameObject.transform.position));
+            mulitPathPlotter.SetPath(trader.tradeRoute.Select(x => x.target.gameObject.transform.position).ToList());
+            SelectionTracker.globalTracker.PushSelectionInput(mulitPathPlotter);
         }
     }
 }

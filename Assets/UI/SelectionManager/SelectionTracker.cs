@@ -12,7 +12,6 @@ namespace Assets.UI.SelectionManager
 
         public string cameraName;
 
-        public event EventHandler<GameObject> SelectionChanged;
         private Camera cam;
 
         private Stack<ISelectionInput> inputRequests = new Stack<ISelectionInput>();
@@ -58,7 +57,6 @@ namespace Assets.UI.SelectionManager
                         {
                             PopSelectionInput();
                         }
-                        SelectionChanged?.Invoke(this, hitGameObject);
                     }
                 }
             }
@@ -72,6 +70,11 @@ namespace Assets.UI.SelectionManager
                 Debug.LogWarning("Selection input stack is empty");
             }
             inputRequests.Peek().BeginSelectionInput();
+        }
+
+        public void RemoveSelectionInput(ISelectionInput input)
+        {
+            inputRequests = new Stack<ISelectionInput>(inputRequests.Where(x => x != input));
         }
 
         public void PushSelectionInputs(IList<ISelectionInput> inputs)

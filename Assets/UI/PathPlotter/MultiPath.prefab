@@ -43,7 +43,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ff4381e0137bbaf42b5addefdde82da3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  path: []
   loop: 1
   singlePathPlotterPrefab: {fileID: 8287222682364152889, guid: 8d8e0882708906642abd0f6261fcf338,
     type: 3}
+  dragoutHeight: 1
+  cameraName: Scene Camera
