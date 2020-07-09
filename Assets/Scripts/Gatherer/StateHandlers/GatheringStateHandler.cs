@@ -14,11 +14,10 @@ namespace Assets.Scripts.Gatherer.StateHandlers
         public GathererState stateHandle => GathererState.Gathering;
         public async Task<GathererState> HandleState(GathererBehavior data)
         {
-            if (data.AttemptToEnsureTarget(
-                gameObject => gameObject.GetComponent<IResource>() != null,
-                (gameObject, distance) =>
+            if (data.AttemptToEnsureTarget<IResource>(
+                gameObject => true,
+                (resource, distance) =>
                 {
-                    var resource = gameObject?.GetComponent<IResource>();
                     if (resource != null && resource.amount > 1E-05)
                     {
                         var type = resource._type;

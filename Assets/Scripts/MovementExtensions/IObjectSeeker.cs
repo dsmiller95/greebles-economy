@@ -21,6 +21,6 @@ namespace Assets.Scripts.MovementExtensions
 
         void BeginApproachingNewTarget(GameObject target);
 
-        IEnumerable<(GameObject, float)> GetObjectsWithinDistanceFromFilter(float distance, Func<GameObject, bool> filter);
+        IEnumerable<(T, float)> GetObjectsWithinDistanceFromFilter<T>(float distance, Func<T, bool> filter);
     }
 }

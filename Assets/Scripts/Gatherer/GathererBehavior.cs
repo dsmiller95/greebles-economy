@@ -139,7 +139,7 @@ namespace Assets.Scripts.Gatherer
         /// <param name="layerMask"></param>
         /// <param name="weightFunction"></param>
         /// <returns>true on the frame when a target is found or changed</returns>
-        public bool AttemptToEnsureTarget(Func<GameObject, bool> filter, Func<GameObject, float, float> weightFunction)
+        public bool AttemptToEnsureTarget<T>(Func<T, bool> filter, Func<T, float, float> weightFunction)
         {
             if (objectSeeker.CurrentTarget == null &&
                 // only check once per second if nothing found
@@ -151,20 +151,25 @@ namespace Assets.Scripts.Gatherer
                     weightFunction);
                 if(newTarget != null)
                 {
-                    objectSeeker.BeginApproachingNewTarget(newTarget);
-                    return true;
+                    var obj = (newTarget as MonoBehaviour)?.gameObject;
+                    if (obj)
+                    {
+                        objectSeeker.BeginApproachingNewTarget(obj);
+                        return true;
+                    }
+                    return false;
                 }
                 objectSeeker.ClearCurrentTarget();
             }
             return false;
         }
 
-        private GameObject GetClosestObjectSatisfyingCondition(Func<GameObject, bool> filter, Func<GameObject, float, float> weightFunction)
+        private T GetClosestObjectSatisfyingCondition<T>(Func<T, bool> filter, Func<T, float, float> weightFunction)
         {
             var validObjects = objectSeeker.GetObjectsWithinDistanceFromFilter(searchRadius, filter).ToList();
             if (validObjects.Count <= 0)
             {
-                return null;
+                return default;
             }
 
             return validObjects

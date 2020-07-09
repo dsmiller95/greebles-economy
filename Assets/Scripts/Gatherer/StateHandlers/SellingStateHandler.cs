@@ -52,14 +52,10 @@ namespace Assets.Scripts.Gatherer.StateHandlers
         public Task<GathererState> HandleState(GathererBehavior data)
         {
             var sellingStateDate = data.stateData[stateHandle] as SellingStateData;
-            data.AttemptToEnsureTarget(gameObject => gameObject.GetComponentInChildren<MarketBehavior>() != null,
-                (gameObject, distance) =>   
+            data.AttemptToEnsureTarget<MarketBehavior>(gameObject => true,
+                (market, distance) =>   
                 {
-                    if (gameObject?.GetComponentInChildren<MarketBehavior>() != null)
-                    {
-                        return -distance;
-                    }
-                    return float.MinValue;
+                    return -distance;
                 });
             var touchedTarget = data.objectSeeker.seekTargetToTouch();
             if (touchedTarget != null)

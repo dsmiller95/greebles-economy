@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.Tilemaps;
 
 namespace Assets.MapGen.TileManagement
 {
@@ -28,7 +29,8 @@ namespace Assets.MapGen.TileManagement
 
         private IList<ITilemapMember>[][] tileGrid;
 
-        private IDictionary<int, IList<ITilemapMember>> tileMemberHashMap;
+        private IDictionary<AxialCoordinate, IList<ITilemapMember>> tileMemberChunkMap;
+        private int ChunkSize = 10;
 
         private HexCoordinateSystem coordinateSystem;
 
@@ -47,7 +49,7 @@ namespace Assets.MapGen.TileManagement
                 }
             }
 
-            tileMemberHashMap = new Dictionary<int, IList<ITilemapMember>>();
+            tileMemberChunkMap = new Dictionary<AxialCoordinate, IList<ITilemapMember>>();
         }
 
         #region hex coordinate system
@@ -80,10 +82,6 @@ namespace Assets.MapGen.TileManagement
 
         public IEnumerable<T> GetItemsWithinJumpDistance<T>(AxialCoordinate origin, int jumpDistance)
         {
-            //return tileMemberHashMap.Values
-            //    .SelectMany(x => x)   
-            //    .Select(x => x.TryGetType<T>())
-            //    .Where(x => x != null);
             return GetPositionsWithinJumpDistance(origin, jumpDistance)
                 .Select(position => GetItemsAtLocation<T>(position))
                 .Where(items => items != null)
@@ -91,6 +89,15 @@ namespace Assets.MapGen.TileManagement
                 .Where(x => x != null);
         }
 
+        public IEnumerable<ITilemapMember> GetMembersWithinJumpDistanceByChunk(AxialCoordinate origin, int jumpDistance)
+        {
+            var chunk = origin / ChunkSize;
+            var chunkDistance = (jumpDistance / ChunkSize) + 1; //round up
+
+            return HexCoordinateSystem.GetPositionsWithinJumpDistance(chunk, chunkDistance)
+                .Where(pos => tileMemberChunkMap.ContainsKey(pos))
+                .SelectMany(pos => tileMemberChunkMap[pos]);
+        }
 
 
         private IList<ITilemapMember> GetListFromCoord(OffsetCoordinate coordinate)
@@ -152,9 +159,9 @@ namespace Assets.MapGen.TileManagement
                 .Where(x => x != null);
         }
 
-        private int GetHashIndex(ITilemapMember member)
+        private AxialCoordinate GetIndexInChunkMap(ITilemapMember member)
         {
-            return member.PositionInTileMap.q / 10 + member.PositionInTileMap.r / 10;
+            return member.PositionInTileMap / ChunkSize;
         }
 
         public void PlaceNewMapMember(ITilemapMember member)
@@ -167,27 +174,29 @@ namespace Assets.MapGen.TileManagement
             var position = item.PositionInTileMap;
             GetListFromCoord(position)?.Add(item);
 
-            var hash = GetHashIndex(item);
-            IList<ITilemapMember> hashList;
-            if (tileMemberHashMap.ContainsKey(hash))
+            var chunk = GetIndexInChunkMap(item);
+            IList<ITilemapMember> chunkList;
+            if(!tileMemberChunkMap.TryGetValue(chunk, out chunkList))
             {
-                hashList = tileMemberHashMap[hash];
+                chunkList = new List<ITilemapMember>();
+                tileMemberChunkMap[chunk] = chunkList;
             }
-            else
-            {
-                hashList = new List<ITilemapMember>();
-            }
-            hashList.Add(item);
+            chunkList.Add(item);
         }
         public void DeRegisterInGrid(ITilemapMember member)
         {
             var position = member.PositionInTileMap;
             GetListFromCoord(position)?.Remove(member);
 
-            var hash = GetHashIndex(member);
-            if (tileMemberHashMap.ContainsKey(hash))
+            var chunk = GetIndexInChunkMap(member);
+            IList<ITilemapMember> chunkList;
+            if (tileMemberChunkMap.TryGetValue(chunk, out chunkList))
             {
-                tileMemberHashMap[hash].Remove(member);
+                chunkList.Remove(member);
+                if (chunkList.Count == 0)
+                {
+                    tileMemberChunkMap.Remove(chunk);
+                }
             }
         }
     }

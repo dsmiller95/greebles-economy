@@ -65,16 +65,17 @@ namespace Assets.Scripts.MovementExtensions
             return new Vector3(difference.x, difference.y, difference.z).magnitude;
         }
 
-        public IEnumerable<(GameObject, float)> GetObjectsWithinDistanceFromFilter(float distance, Func<GameObject, bool> filter)
+        public IEnumerable<(T, float)> GetObjectsWithinDistanceFromFilter<T>(float distance, Func<T, bool> filter)
         {
             Collider[] itemsInRadius = Physics.OverlapSphere(transform.position, distance);
             foreach (Collider collider in itemsInRadius)
             {
                 var gameObject = collider.gameObject;
-                if (filter(gameObject))
+                var item = gameObject.GetComponentInChildren<T>();
+                if (filter(item))
                 {
                     float individualDistance = (transform.position - collider.transform.position).magnitude;
-                    yield return (collider.gameObject, individualDistance);
+                    yield return (item, individualDistance);
                 }
             }
         }

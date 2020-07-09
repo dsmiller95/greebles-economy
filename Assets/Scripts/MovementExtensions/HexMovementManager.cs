@@ -137,18 +137,19 @@ namespace Assets.Scripts.MovementExtensions
             return MapManager.IsWithinDistance(this, currentTargetMember, 1);
         }
 
-        public IEnumerable<(GameObject, float)> GetObjectsWithinDistanceFromFilter(float maxDistance, Func<GameObject, bool> filter)
+        public IEnumerable<(T, float)> GetObjectsWithinDistanceFromFilter<T>(float maxDistance, Func<T, bool> filter)
         {
-            var myPosition = PositionInTileMap;
-            return HexTileMapManager.GetPositionsWithinJumpDistance(myPosition, (int)maxDistance)
-                .SelectMany(position =>
+            var myPositionCube = PositionInTileMap.ToCube();
+            var members = MapManager.GetMembersWithinJumpDistanceByChunk(PositionInTileMap, Mathf.RoundToInt(maxDistance));
+            foreach(var member in members)
+            {
+                var item = member.TryGetType<T>();
+                if (item != null && filter(item))
                 {
-                    var distance = myPosition.DistanceTo(position);
-                    return MapManager
-                        .GetMembersAtLocation<HexMember>(position, member => filter(member.gameObject))
-                        ?.Select(hexMember => (hexMember.gameObject, (float)distance)) ?? new (GameObject, float)[0];
-
-                });
+                    var distance = member.PositionInTileMap.DistanceTo(myPositionCube);
+                    yield return (item, distance);
+                }
+            }
         }
 
     }

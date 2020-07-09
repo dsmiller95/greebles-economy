@@ -33,7 +33,12 @@ namespace Simulation.Tiling
 
         public int DistanceTo(AxialCoordinate other)
         {
-            return ToCube().DistanceTo(other.ToCube());
+            return this.DistanceTo(other.ToCube());
+        }
+
+        public int DistanceTo(CubeCoordinate other)
+        {
+            return ToCube().DistanceTo(other);
         }
 
 
@@ -81,6 +86,11 @@ namespace Simulation.Tiling
             return new AxialCoordinate(a.q - b.q, a.r - b.r);
         }
 
+        public static AxialCoordinate operator /(AxialCoordinate a, int b)
+        {
+            return new AxialCoordinate(a.q/b, a.r/b);
+        }
+
         public override bool Equals(object obj)
         {
             if (obj == null)
@@ -97,7 +107,7 @@ namespace Simulation.Tiling
 
         public override int GetHashCode()
         {
-            return $"{q},{r}".GetHashCode();
+            return q + (r << 16);
         }
 
         public override string ToString()
