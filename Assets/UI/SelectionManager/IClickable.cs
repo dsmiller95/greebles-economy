@@ -6,9 +6,8 @@ namespace Assets.UI.SelectionManager
     /// <summary>
     /// Implement this interface to allow the object to be focused. Will render the ui pane when focused
     /// </summary>
-    public interface IFocusable : IClickable
+    public interface IClickable
     {
-        void OnMeDeselected();
-        InfoPaneConfiguration GetInfoPaneConfiguration();
+        void MeClicked(RaycastHit hit);
     }
 }

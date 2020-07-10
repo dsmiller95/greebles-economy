@@ -66,15 +66,14 @@ namespace Assets.Scripts.Gatherer
             TeardownPathPlot();
         }
 
-        public void OnMeSelected(Vector3 pointHit)
+        public void MeClicked(RaycastHit hit)
         {
             Debug.Log($"{gameObject.name} selected");
             SetupPathPlot();
         }
 
         private void TeardownPathPlot()
-        {   
-            SelectionTracker.globalTracker.RemoveSelectionInput(multiPathPlotter);
+        {
             Destroy(multiPathPlotter.gameObject);
         }
 
@@ -113,8 +112,6 @@ namespace Assets.Scripts.Gatherer
                 trader.AddTradeNode(newTradeNode, index);
                 multiPathPlotter.SetPath(trader.tradeRoute.Select(x => x.target.gameObject.transform.position).ToList());
             };
-
-            SelectionTracker.globalTracker.PushSelectionInput(multiPathPlotter);
         }
     }
 }

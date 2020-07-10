@@ -165,6 +165,7 @@ GameObject:
   - component: {fileID: 151632026}
   - component: {fileID: 151632027}
   - component: {fileID: 151632028}
+  - component: {fileID: 151632029}
   m_Layer: 5
   m_Name: ObjectDetailsPane
   m_TagString: Untagged
@@ -218,6 +219,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   plottablePrefab: {fileID: 3768885320682460550, guid: 2f0a767e535845248a61b39201f160fe,
     type: 3}
+--- !u!114 &151632029
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 151632025}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 60c8d022bcaaa844f9fd5ecada7c683e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  paneBuilder: {fileID: 151632028}
 --- !u!1001 &166721738
 PrefabInstance:
   m_ObjectHideFlags: 0

@@ -26,8 +26,9 @@ public class SelectableHexCells : MonoBehaviour, IFocusable
     }
 
     private OffsetCoordinate? lastSelectedTile;
-    public void OnMeSelected(Vector3 pointHit)
+    public void MeClicked(RaycastHit hit)
     {
+        var pointHit = hit.point;
         var positionOnPlane = new Vector2(pointHit.x, pointHit.z);
         var hexCellCoordinate = mapManager.PositionInPlaneToTilemapPosition(positionOnPlane);
 

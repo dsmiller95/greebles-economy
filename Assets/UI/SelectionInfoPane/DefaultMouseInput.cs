@@ -1,10 +1,5 @@
 ﻿using Assets.UI.InfoPane;
 using Assets.UI.SelectionManager;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using UnityEngine;
 
 namespace Assets.UI.SelectionInfoPane
@@ -14,30 +9,55 @@ namespace Assets.UI.SelectionInfoPane
         public InfoPaneBuilder paneBuilder;
 
         #region Selection Managing
-        private GameObject currentlySelected;
+        private GameObject currentlySelectedObject;
+        private IFocusable currentlySelectedFocusable;
+
+        private void Start()
+        {
+            SelectionTracker.globalTracker.PushSelectionInput(this);
+        }
 
         public bool IsValidSelection(GameObject o)
         {
-            return o.GetComponentInParent<IFocusable>() != default;
+            return o.GetComponentInParent<IClickable>() != default;
         }
 
         public bool SelectedObject(GameObject o, RaycastHit hit)
         {
-            // GameObject overloads this. Will equate to null when it has been destroyed, even if it's not actually null
-            if (currentlySelected != null)
+            var clickable = o.GetComponentInParent<IClickable>();
+
+            if(clickable is IFocusable focusable)
             {
-                currentlySelected.GetComponentInChildren<IHighlightable>()?.SetHighlighted(HighlightState.None);
-                currentlySelected.GetComponentInParent<IFocusable>().OnMeDeselected();
+                this.Deselect();
+
+                currentlySelectedObject = o;
+                currentlySelectedFocusable = focusable;
+
+                currentlySelectedFocusable.MeClicked(hit);
+                currentlySelectedObject.GetComponentInChildren<IHighlightable>()?.SetHighlighted(HighlightState.Selected);
+
+
+                paneBuilder.FocusableSelected(currentlySelectedFocusable);
+            }else
+            {
+                Debug.Log("I've been clicked!!!!");
+                //this.Deselect();
+                clickable.MeClicked(hit);
             }
 
-            currentlySelected = o;
-
-            var currentFocusable = currentlySelected.GetComponentInParent<IFocusable>();
-            currentFocusable.OnMeSelected(hit.point);
-            currentlySelected.GetComponentInChildren<IHighlightable>()?.SetHighlighted(HighlightState.Selected);
-
-            paneBuilder.FocusableSelected(currentFocusable);
             return false;
+        }
+
+        private void Deselect()
+        {
+            // GameObject overloads this. Will equate to null when it has been destroyed, even if it's not actually null
+            if (currentlySelectedObject != null)
+            {
+                currentlySelectedObject.GetComponentInChildren<IHighlightable>()?.SetHighlighted(HighlightState.None);
+                currentlySelectedFocusable.OnMeDeselected();
+            }
+            currentlySelectedFocusable = null;
+            currentlySelectedObject = null;
         }
 
         public void BeginSelectionInput() { }

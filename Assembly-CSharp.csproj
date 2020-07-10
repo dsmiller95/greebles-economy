@@ -145,6 +145,7 @@
     <Compile Include="Assets\UI\SelectionInfoPane\InfoPaneConfiguration.cs" />
     <Compile Include="Assets\UI\SelectionInfoPane\UIElementSeriesBuilder.cs" />
     <Compile Include="Assets\UI\SelectionManager\GetObjectSelector\SingleObjectHighlightSelector.cs" />
+    <Compile Include="Assets\UI\SelectionManager\IClickable.cs" />
     <Compile Include="Assets\UI\SelectionManager\IFocusable.cs" />
     <Compile Include="Assets\UI\SelectionManager\IHighlightable.cs" />
     <Compile Include="Assets\UI\SelectionManager\ISelectionInput.cs" />

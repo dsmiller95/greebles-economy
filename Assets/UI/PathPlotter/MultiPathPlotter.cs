@@ -7,7 +7,7 @@ using UnityEngine.EventSystems;
 
 namespace Assets.UI.PathPlotter
 {
-    public class MultiPathPlotter : MonoBehaviour, ISelectionInput
+    public class MultiPathPlotter : MonoBehaviour, IClickable
     {
         //public Vector3[] path;
         public bool loop;
@@ -162,30 +162,21 @@ namespace Assets.UI.PathPlotter
             SetPathPoint(currentMouseTrackingIndex, newPosition);
         }
 
-        public void BeginSelectionInput()
+        private void SinglePathPlotterClicked(SinglePathPlotter plotter, RaycastHit hit)
         {
+            var index = pathRenders.IndexOf(plotter);
+            StartTrackingMouseAtPathIndex(index, hit.point);
         }
 
-        public void CloseSelectionInput()
+        public void MeClicked(RaycastHit hit)
         {
-        }
-
-        public bool Supersceded(ISelectionInput other)
-        {
-            return false;
-        }
-
-        public bool IsValidSelection(GameObject o)
-        {
-            return o.GetComponent<SinglePathPlotter>();
-        }
-
-        public bool SelectedObject(GameObject o, RaycastHit rayHit)
-        {
-            var singlePathPlotter = o.GetComponent<SinglePathPlotter>();
-            var index = pathRenders.IndexOf(singlePathPlotter);
-            StartTrackingMouseAtPathIndex(index, rayHit.point);
-            return false;
+            Debug.Log("I've been clicked!!!!");
+            var hitObject = hit.transform.gameObject;
+            var hitPath = hitObject.GetComponent<SinglePathPlotter>();
+            if(hitPath != null)
+            {
+                this.SinglePathPlotterClicked(hitPath, hit);
+            }
         }
     }
 }

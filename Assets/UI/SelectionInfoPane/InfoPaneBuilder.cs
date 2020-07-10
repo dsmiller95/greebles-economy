@@ -12,7 +12,6 @@ namespace Assets.UI.InfoPane
 
         private void Start()
         {
-            SelectionTracker.globalTracker.PushSelectionInput(this);
             panelBuilder = new UIElementSeriesBuilder(gameObject);
         }
 
@@ -47,42 +46,5 @@ namespace Assets.UI.InfoPane
         {
             SetNewPaneConfig(focusable.GetInfoPaneConfiguration());
         }
-
-        //#region Selection Managing
-        //private GameObject currentlySelected;
-
-        //public bool IsValidSelection(GameObject o)
-        //{
-        //    return o.GetComponentInParent<IFocusable>() != default;
-        //}
-
-        //public bool SelectedObject(GameObject o, RaycastHit hit)
-        //{
-        //    // GameObject overloads this. Will equate to null when it has been destroyed, even if it's not actually null
-        //    if(currentlySelected != null)
-        //    {
-        //        currentlySelected.GetComponentInChildren<IHighlightable>()?.SetHighlighted(HighlightState.None);
-        //        currentlySelected.GetComponentInParent<IFocusable>().OnMeDeselected();
-        //    }
-
-        //    currentlySelected = o;
-
-        //    var currentFocusable = currentlySelected.GetComponentInParent<IFocusable>();
-        //    currentFocusable.OnMeSelected(hit.point);
-        //    currentlySelected.GetComponentInChildren<IHighlightable>()?.SetHighlighted(HighlightState.Selected);
-
-        //    SetNewPaneConfig(currentFocusable.GetInfoPaneConfiguration());
-        //    return false;
-        //}
-
-        //public void BeginSelectionInput() { }
-        //public void CloseSelectionInput() { }
-
-        //public bool Supersceded(ISelectionInput other)
-        //{
-        //    return false;
-        //}
-        //#endregion
-    
     }
 }
