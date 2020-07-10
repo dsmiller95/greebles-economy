@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Assets.UI.InfoPane
 {
-    public class InfoPaneBuilder : MonoBehaviour, ISelectionInput
+    public class InfoPaneBuilder : MonoBehaviour//, ISelectionInput
     {
         public GameObject plottablePrefab;
         private UIElementSeriesBuilder panelBuilder;
@@ -43,40 +43,46 @@ namespace Assets.UI.InfoPane
             }
         }
 
-        #region Selection Managing
-        private GameObject currentlySelected;
-
-        public bool IsValidSelection(GameObject o)
+        public void FocusableSelected(IFocusable focusable)
         {
-            return o.GetComponentInParent<IFocusable>() != default;
+            SetNewPaneConfig(focusable.GetInfoPaneConfiguration());
         }
 
-        public bool SelectedObject(GameObject o, RaycastHit hit)
-        {
-            // GameObject overloads this. Will equate to null when it has been destroyed, even if it's not actually null
-            if(currentlySelected != null)
-            {
-                currentlySelected.GetComponentInChildren<IHighlightable>()?.SetHighlighted(HighlightState.None);
-                currentlySelected.GetComponentInParent<IFocusable>().OnMeDeselected();
-            }
+        //#region Selection Managing
+        //private GameObject currentlySelected;
 
-            currentlySelected = o;
+        //public bool IsValidSelection(GameObject o)
+        //{
+        //    return o.GetComponentInParent<IFocusable>() != default;
+        //}
 
-            var currentFocusable = currentlySelected.GetComponentInParent<IFocusable>();
-            currentFocusable.OnMeSelected(hit.point);
-            currentlySelected.GetComponentInChildren<IHighlightable>()?.SetHighlighted(HighlightState.Selected);
+        //public bool SelectedObject(GameObject o, RaycastHit hit)
+        //{
+        //    // GameObject overloads this. Will equate to null when it has been destroyed, even if it's not actually null
+        //    if(currentlySelected != null)
+        //    {
+        //        currentlySelected.GetComponentInChildren<IHighlightable>()?.SetHighlighted(HighlightState.None);
+        //        currentlySelected.GetComponentInParent<IFocusable>().OnMeDeselected();
+        //    }
 
-            SetNewPaneConfig(currentFocusable.GetInfoPaneConfiguration());
-            return false;
-        }
+        //    currentlySelected = o;
 
-        public void BeginSelectionInput() { }
-        public void CloseSelectionInput() { }
+        //    var currentFocusable = currentlySelected.GetComponentInParent<IFocusable>();
+        //    currentFocusable.OnMeSelected(hit.point);
+        //    currentlySelected.GetComponentInChildren<IHighlightable>()?.SetHighlighted(HighlightState.Selected);
 
-        public bool Supersceded(ISelectionInput other)
-        {
-            return false;
-        }
-        #endregion
+        //    SetNewPaneConfig(currentFocusable.GetInfoPaneConfiguration());
+        //    return false;
+        //}
+
+        //public void BeginSelectionInput() { }
+        //public void CloseSelectionInput() { }
+
+        //public bool Supersceded(ISelectionInput other)
+        //{
+        //    return false;
+        //}
+        //#endregion
+    
     }
 }

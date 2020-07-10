@@ -8,6 +8,6 @@ namespace Assets.Utilities.TreeEventSystem
 {
     public enum TreeEventType
     {
-        ExampleEvent
+        SelfRecievedRaycast
     }
 }

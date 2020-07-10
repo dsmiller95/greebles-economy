@@ -140,6 +140,7 @@
     <Compile Include="Assets\UI\Plotter\Series Plotter\IMultiPlottableSeries.cs" />
     <Compile Include="Assets\UI\Plotter\Series Plotter\IPlottableSeries.cs" />
     <Compile Include="Assets\UI\Plotter\Series Plotter\PlottableTimeSeries.cs" />
+    <Compile Include="Assets\UI\SelectionInfoPane\DefaultMouseInput.cs" />
     <Compile Include="Assets\UI\SelectionInfoPane\InfoPaneBuilder.cs" />
     <Compile Include="Assets\UI\SelectionInfoPane\InfoPaneConfiguration.cs" />
     <Compile Include="Assets\UI\SelectionInfoPane\UIElementSeriesBuilder.cs" />
