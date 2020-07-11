@@ -11,35 +11,27 @@ using UniRx.Triggers; // need UniRx.Triggers namespace for extend gameObejct
 
 namespace Assets.Scripts.Resources.InventoryDisplays
 {
-    [Serializable]
-    public struct PileConfig
-    {
-        public GameObject pilePrefab;
-        public AxialCoordinate location;
-    }
-
     public class InventoryStockpileManager : MonoBehaviour
     {
-        public PileConfig[] pileLocations;
-
-        //private SinglePile[] piles;
         private Dictionary<ResourceType, IList<SinglePile>> piles;
 
         public ResourceInventory inventoryForInspector;
-        //public HexMember
-
-        //internal NotifyingInventory<ResourceType> inventory;
 
         // Start is called before the first frame update
         void Start()
         {
             //this.inventory = inventoryForInspector.backingInventory;
             piles = new Dictionary<ResourceType, IList<SinglePile>>();
-            foreach(var pile in pileLocations
-                .Select(x => CreateNewPile(x)))
+            foreach(Transform child in transform)
             {
+                var pile = child.gameObject.GetComponent<SinglePile>();
+                if(pile == null)
+                {
+                    break;
+                }
+
                 IList<SinglePile> list;
-                if(!piles.TryGetValue(pile.pileType, out list))
+                if (!piles.TryGetValue(pile.pileType, out list))
                 {
                     list = new List<SinglePile>();
                     piles[pile.pileType] = list;
@@ -70,16 +62,6 @@ namespace Assets.Scripts.Resources.InventoryDisplays
                 // when remainingAmount hits 0, just keep going and set the resource number to 0 for ever other pile
                 remainingAmount -= amountForPile;
             }
-        }
-
-        private SinglePile CreateNewPile(PileConfig coordinate)
-        {
-            var newObject = Instantiate(coordinate.pilePrefab, transform);
-            var hexMember = newObject.GetComponent<HexMember>();
-            hexMember.localPosition = coordinate.location;
-
-            var pile = newObject.GetComponent<SinglePile>();
-            return pile;
         }
 
         // Update is called once per frame
