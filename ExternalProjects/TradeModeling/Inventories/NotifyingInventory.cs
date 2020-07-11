@@ -19,6 +19,8 @@ namespace TradeModeling.Inventories
 
     public class NotifyingInventory<T> : SpaceFillingInventory<T>
     {
+        //public Subject<ResourceChanged<T>> resourceChangeSubject;
+
         public event EventHandler<ResourceChanged<T>> resourceAmountChanges;
         public event EventHandler<ResourceChanged<T>> resourceCapacityChanges;
 

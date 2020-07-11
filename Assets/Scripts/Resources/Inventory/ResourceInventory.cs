@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using TradeModeling.Inventories;
+using UniRx;
 using UnityEngine;
 
 namespace Assets.Scripts.Resources.Inventory
@@ -25,6 +26,8 @@ namespace Assets.Scripts.Resources.Inventory
             get;
             private set;
         }
+        
+        public Subject<ResourceChanged<ResourceType>> resourceChangeSubject;
 
         void Awake()
         {

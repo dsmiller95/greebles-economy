@@ -61,11 +61,8 @@ namespace Assets.Scripts.Resources.InventoryDisplays
             {
                 var amountForPile = Math.Min(pile.capacity, remainingAmount);
                 pile.SetResourceNumber(amountForPile);
+                // when remainingAmount hits 0, just keep going and set the resource number to 0 for ever other pile
                 remainingAmount -= amountForPile;
-                if(remainingAmount <= 0)
-                {
-                    break;
-                }
             }
         }
 
