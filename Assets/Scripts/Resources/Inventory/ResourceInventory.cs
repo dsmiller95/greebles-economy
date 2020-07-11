@@ -20,7 +20,6 @@ namespace Assets.Scripts.Resources.Inventory
 
         public StartingInventoryAmount[] startingInventoryAmounts;
 
-
         public NotifyingInventory<ResourceType> backingInventory
         {
             get;
