@@ -442,9 +442,12 @@ MonoBehaviour:
       type: 3}
     location:
       q: 1
+      r: 0
+  - pilePrefab: {fileID: 6845204784729677355, guid: 30486d0635af3d54fad964ba128b4cbe,
+      type: 3}
+    location:
+      q: 0
       r: 1
-    resource: 1
-    capacity: 10
   inventoryForInspector: {fileID: 1119491403297866633}
 --- !u!1 &8082357802481383815
 GameObject:

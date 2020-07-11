@@ -3,13 +3,11 @@ using UnityEngine;
 
 namespace Assets.Scripts.Resources.InventoryDisplays
 {
-    //[RequireComponent(typeof(HexMember))]
-    public class WoodPile : SinglePile
+    public class MultiObjectPiler : SinglePile
     {
         public ResourceType type;
         public int maxCapacity = 10;
-        public override ResourceType pileType => ResourceType.Wood;
-
+        public override ResourceType pileType => type;
         public override int capacity => maxCapacity;
 
         public void Start()

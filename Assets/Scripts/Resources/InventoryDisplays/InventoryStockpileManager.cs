@@ -14,7 +14,6 @@ namespace Assets.Scripts.Resources.InventoryDisplays
     {
         public GameObject pilePrefab;
         public AxialCoordinate location;
-        public ResourceType resource;
     }
 
     public class InventoryStockpileManager : MonoBehaviour
