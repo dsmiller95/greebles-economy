@@ -172,11 +172,14 @@ namespace Assets.MapGen
         private IEnumerable<OffsetCoordinate> GetTilesInRectangle(HexTileMapManager tilemapManager)
         {
             var totalCells = new Vector2Int(tilemapManager.hexWidth, tilemapManager.hexHeight);//new Vector2Int(10, 10);
+            var min = tilemapManager.tileMapMin.ToAxial();
+
             for (var verticalIndex = 0; verticalIndex < totalCells.y; verticalIndex++)
             {
                 for (var horizontalIndex = 0; horizontalIndex < totalCells.x; horizontalIndex++)
                 {
-                    yield return new OffsetCoordinate(horizontalIndex + tilemapManager.tileMapMin.column, verticalIndex + tilemapManager.tileMapMin.row);
+                    var newPos = new OffsetCoordinate(horizontalIndex, verticalIndex);
+                    yield return (newPos.ToAxial() + min).ToOffset();
                 }
             }
         }
@@ -226,8 +229,8 @@ namespace Assets.MapGen
 
         private int LocationToIndex(OffsetCoordinate locationInTileMap)
         {
-            var vectorInArray = new Vector2Int(locationInTileMap.column - mapManager.tileMapMin.column, locationInTileMap.row - mapManager.tileMapMin.row);
-            var copyIndex = vectorInArray.y * mapManager.hexWidth + vectorInArray.x;
+            var offsetInArray = (locationInTileMap.ToAxial() - mapManager.tileMapMin.ToAxial()).ToOffset();
+            var copyIndex = offsetInArray.row * mapManager.hexWidth + offsetInArray.column;
             return copyIndex;
         }
     }
