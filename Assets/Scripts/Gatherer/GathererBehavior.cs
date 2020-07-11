@@ -150,11 +150,18 @@ namespace Assets.Scripts.Gatherer
                     filter,
                     weightFunction);
                 if(newTarget != null)
-                {
+                {   
                     var obj = (newTarget as MonoBehaviour)?.gameObject;
                     if (obj)
                     {
                         objectSeeker.BeginApproachingNewTarget(obj);
+
+                        var member = obj.GetComponentInParent<HexMember>();
+                        var distance = this.GetComponentInParent<HexMember>().PositionInTileMap.DistanceTo(member.PositionInTileMap);
+                        if(distance > 40)
+                        {
+                            Debug.LogError("too long");
+                        }
                         return true;
                     }
                     return false;
