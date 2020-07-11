@@ -36,14 +36,15 @@ namespace TradeModeling.Inventories
         ///     attached to non-space-filling items that still need some capacity information</param>
         public void NotifyAll(IEnumerable<ResourceChanged<T>> extraCapacityChanges)
         {
-            foreach (var resource in this.GetAllResourceTypes())
-            {
-                this.resourceAmountChanges?.Invoke(this, new ResourceChanged<T>(resource, this.Get(resource)));
-            }
+            // Make sure the capacity changes happen first -- otherwise, the listeners might not have made room for the amounts
             this.NotifyAllCapacityChange();
             foreach (var capacityChange in extraCapacityChanges)
             {
                 resourceCapacityChanges?.Invoke(this, capacityChange);
+            }
+            foreach (var resource in this.GetAllResourceTypes())
+            {
+                this.resourceAmountChanges?.Invoke(this, new ResourceChanged<T>(resource, this.Get(resource)));
             }
         }
 

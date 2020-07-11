@@ -52,9 +52,7 @@ namespace Assets.Scripts.Resources.InventoryDisplays
                 .Subscribe(resource =>
                 {
                     this.OnResourceAmountChanged(resource);
-                });
-
-            //inventory.resourceAmountChanges += OnResourceAmountChanged;
+                }).AddTo(this);
         }
 
         void OnResourceAmountChanged(ResourceChanged<ResourceType> type)

@@ -27,7 +27,6 @@ namespace Assets.Scripts.Resources.Inventory
             private set;
         }
 
-        public Subject<ResourceChanged<ResourceType>> resourceChangeSubject;
 
         void Awake()
         {
@@ -47,7 +46,13 @@ namespace Assets.Scripts.Resources.Inventory
                 initialInventory,
                 ResourceConfiguration.spaceFillingItems,
                 ResourceType.Gold);
-            resourceAmountsChanged = new ReplaySubject<ResourceChanged<ResourceType>>();
+
+
+            //make sure that the observables get initialized by now, at the latest
+            this.ResourceAmountsChangedAsObservable();
+            this.ResourceCapacityChangedAsObservable();
+
+            backingInventory.resourceCapacityChanges += OnResourceCapacityChanged;
             backingInventory.resourceAmountChanges += OnResourceAmountsChanged;
         }
 
@@ -65,22 +70,28 @@ namespace Assets.Scripts.Resources.Inventory
 
 
         private ReplaySubject<ResourceChanged<ResourceType>> resourceAmountsChanged;
+        private ReplaySubject<ResourceChanged<ResourceType>> resourceCapacityChanged;
         public IObservable<ResourceChanged<ResourceType>> ResourceAmountsChangedAsObservable()
         {
-            return resourceAmountsChanged;
+            return resourceAmountsChanged ?? (resourceAmountsChanged = new ReplaySubject<ResourceChanged<ResourceType>>());
         }
         private void OnResourceAmountsChanged(object sender, ResourceChanged<ResourceType> change)
         {
-            resourceAmountsChanged?.OnNext(change);
+            resourceAmountsChanged.OnNext(change);
         }
-
+        public IObservable<ResourceChanged<ResourceType>> ResourceCapacityChangedAsObservable()
+        {
+            return resourceCapacityChanged ?? (resourceCapacityChanged = new ReplaySubject<ResourceChanged<ResourceType>>());
+        }
+        private void OnResourceCapacityChanged(object sender, ResourceChanged<ResourceType> change)
+        {
+            resourceCapacityChanged.OnNext(change);
+        }
 
         protected override void RaiseOnCompletedOnDestroy()
         {
-            if (resourceAmountsChanged != null)
-            {
-                resourceAmountsChanged.OnCompleted();
-            }
+            resourceAmountsChanged?.OnCompleted();
+            resourceCapacityChanged?.OnCompleted();
         }
     }
 }

@@ -1,8 +1,8 @@
 ﻿using Assets.Scripts.Resources.Inventory;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using TradeModeling.Inventories;
+using UniRx;
 using UnityEngine;
 
 namespace Assets.Scripts.Resources.UI
@@ -31,8 +31,8 @@ namespace Assets.Scripts.Resources.UI
             _inventoryToTrack = inventoryToTrack.backingInventory;
             for (var i = 0; i < resourceConfiguration.Length; i++)
             {
-                var newBar = Instantiate(ResourceBarPrefab, this.transform);
-                newBar.transform.position += this.transform.TransformVector((Vector3)(offset * i));
+                var newBar = Instantiate(ResourceBarPrefab, transform);
+                newBar.transform.position += transform.TransformVector((Vector3)(offset * i));
                 var config = resourceConfiguration[i];
                 var resourceBar = newBar.GetComponent<ResourceBar>();
 
@@ -40,14 +40,17 @@ namespace Assets.Scripts.Resources.UI
 
                 resourceBars[config.type] = resourceBar;
             }
-            this._inventoryToTrack.resourceAmountChanges += (sender, change) =>
-            {
-                this.setValue(change.type, change.newValue);
-            };
-            this._inventoryToTrack.resourceCapacityChanges += (sender, change) =>
-            {
-                this.setMaxForType(change.type, change.newValue);
-            };
+
+            inventoryToTrack.ResourceCapacityChangedAsObservable()
+                .Subscribe(change =>
+                {
+                    setMaxForType(change.type, change.newValue);
+                }).AddTo(this);
+            inventoryToTrack.ResourceAmountsChangedAsObservable()
+                .Subscribe(change =>
+                {
+                    setValue(change.type, change.newValue);
+                }).AddTo(this);
         }
 
         // Start is called before the first frame update
