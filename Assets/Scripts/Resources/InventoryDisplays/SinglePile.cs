@@ -8,7 +8,8 @@ namespace Assets.Scripts.Resources.InventoryDisplays
     public abstract class SinglePile : MonoBehaviour
     {
         public abstract ResourceType pileType { get; }
-        public int capacity { get; set; }
+
+        public abstract int capacity { get; }
 
         public abstract void SetResourceNumber(int newResource);
     }

@@ -1,36 +1,30 @@
-﻿using UnityEngine;
+﻿using UnityEditor.PackageManager;
+using UnityEngine;
 
 namespace Assets.Scripts.Resources.InventoryDisplays
 {
     //[RequireComponent(typeof(HexMember))]
     public class WoodPile : SinglePile
     {
-        public GameObject woodModel;
-        public float pileOffset;
-
+        public ResourceType type;
+        public int maxCapacity = 10;
         public override ResourceType pileType => ResourceType.Wood;
+
+        public override int capacity => maxCapacity;
+
+        public void Start()
+        {
+            if(transform.childCount < maxCapacity)
+            {
+                throw new System.Exception("Must have at least as many children as capacity");
+            }
+        }
 
         public override void SetResourceNumber(int newResource)
         {
-            int childCount;
-            while ((childCount = transform.childCount) < newResource)
+            for(var child = 0; child < maxCapacity; child++)
             {
-                var offset = Vector3.up * pileOffset * childCount;
-                var newModel = Instantiate(woodModel, transform);
-                newModel.transform.localPosition = offset;
-            }
-            if ((childCount = transform.childCount) > newResource)
-            {
-                int count = 0;
-                for (var removedChild = newResource; removedChild < childCount; removedChild++)
-                {
-                    Destroy(transform.GetChild(removedChild).gameObject);
-                    count++;
-                    if (count > 1000)
-                    {
-                        throw new System.Exception("Too many l00p br0ther");
-                    }
-                }
+                transform.GetChild(child).gameObject.SetActive(child < newResource);
             }
         }
     }

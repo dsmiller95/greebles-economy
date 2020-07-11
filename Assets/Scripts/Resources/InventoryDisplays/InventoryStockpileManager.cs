@@ -15,7 +15,6 @@ namespace Assets.Scripts.Resources.InventoryDisplays
         public GameObject pilePrefab;
         public AxialCoordinate location;
         public ResourceType resource;
-        public int capacity;
     }
 
     public class InventoryStockpileManager : MonoBehaviour
@@ -78,7 +77,6 @@ namespace Assets.Scripts.Resources.InventoryDisplays
             hexMember.localPosition = coordinate.location;
 
             var pile = newObject.GetComponent<SinglePile>();
-            pile.capacity = coordinate.capacity;
             return pile;
         }
 
