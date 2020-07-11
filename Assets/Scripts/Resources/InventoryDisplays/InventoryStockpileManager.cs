@@ -6,6 +6,8 @@ using System.Collections.Generic;
 using System.Linq;
 using TradeModeling.Inventories;
 using UnityEngine;
+using UniRx;
+using UniRx.Triggers; // need UniRx.Triggers namespace for extend gameObejct
 
 namespace Assets.Scripts.Resources.InventoryDisplays
 {
@@ -26,12 +28,12 @@ namespace Assets.Scripts.Resources.InventoryDisplays
         public ResourceInventory inventoryForInspector;
         //public HexMember
 
-        internal NotifyingInventory<ResourceType> inventory;
+        //internal NotifyingInventory<ResourceType> inventory;
 
         // Start is called before the first frame update
         void Start()
         {
-            this.inventory = inventoryForInspector.backingInventory;
+            //this.inventory = inventoryForInspector.backingInventory;
             piles = new Dictionary<ResourceType, IList<SinglePile>>();
             foreach(var pile in pileLocations
                 .Select(x => CreateNewPile(x)))
@@ -46,10 +48,16 @@ namespace Assets.Scripts.Resources.InventoryDisplays
                 list.Add(pile);
             }
 
-            inventory.resourceAmountChanges += OnResourceAmountChanged;
+            inventoryForInspector.ResourceAmountsChangedAsObservable()
+                .Subscribe(resource =>
+                {
+                    this.OnResourceAmountChanged(resource);
+                });
+
+            //inventory.resourceAmountChanges += OnResourceAmountChanged;
         }
 
-        void OnResourceAmountChanged(object sender, ResourceChanged<ResourceType> type)
+        void OnResourceAmountChanged(ResourceChanged<ResourceType> type)
         {
             IList<SinglePile> pileList;
             if(!piles.TryGetValue(type.type, out pileList))

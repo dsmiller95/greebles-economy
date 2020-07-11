@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using TradeModeling.Inventories;
 using UniRx;
-using UnityEngine;
+using UniRx.Triggers;
 
 namespace Assets.Scripts.Resources.Inventory
 {
@@ -15,18 +14,19 @@ namespace Assets.Scripts.Resources.Inventory
         public float amount;
     }
 
-    public class ResourceInventory : MonoBehaviour
+    public class ResourceInventory : ObservableTriggerBase
     {
         public int inventoryCapacitySetForUI = 10;
 
         public StartingInventoryAmount[] startingInventoryAmounts;
+
 
         public NotifyingInventory<ResourceType> backingInventory
         {
             get;
             private set;
         }
-        
+
         public Subject<ResourceChanged<ResourceType>> resourceChangeSubject;
 
         void Awake()
@@ -43,22 +43,44 @@ namespace Assets.Scripts.Resources.Inventory
                 initialInventory[startingAmount.type] = startingAmount.amount;
             }
             backingInventory = new NotifyingInventory<ResourceType>(
-                this.inventoryCapacitySetForUI,
+                inventoryCapacitySetForUI,
                 initialInventory,
                 ResourceConfiguration.spaceFillingItems,
                 ResourceType.Gold);
+            resourceAmountsChanged = new ReplaySubject<ResourceChanged<ResourceType>>();
+            backingInventory.resourceAmountChanges += OnResourceAmountsChanged;
         }
 
         public void Start()
         {
-            this.backingInventory.NotifyAll(new[]
+            backingInventory.NotifyAll(new[]
             {
-            new ResourceChanged<ResourceType>(ResourceType.Gold, 200)
-        });
+                new ResourceChanged<ResourceType>(ResourceType.Gold, 200)
+            });
         }
 
         public void Update()
         {
+        }
+
+
+        private ReplaySubject<ResourceChanged<ResourceType>> resourceAmountsChanged;
+        public IObservable<ResourceChanged<ResourceType>> ResourceAmountsChangedAsObservable()
+        {
+            return resourceAmountsChanged;
+        }
+        private void OnResourceAmountsChanged(object sender, ResourceChanged<ResourceType> change)
+        {
+            resourceAmountsChanged?.OnNext(change);
+        }
+
+
+        protected override void RaiseOnCompletedOnDestroy()
+        {
+            if (resourceAmountsChanged != null)
+            {
+                resourceAmountsChanged.OnCompleted();
+            }
         }
     }
 }
