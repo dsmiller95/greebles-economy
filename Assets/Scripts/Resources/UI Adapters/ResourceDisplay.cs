@@ -22,13 +22,11 @@ namespace Assets.Scripts.Resources.UI
         public Vector2 offset = new Vector2(0, 10);
 
         public ResourceInventory inventoryToTrack;
-        public NotifyingInventory<ResourceType> _inventoryToTrack;
 
         private Dictionary<ResourceType, ResourceBar> resourceBars = new Dictionary<ResourceType, ResourceBar>();
 
         void Awake()
         {
-            _inventoryToTrack = inventoryToTrack.backingInventory;
             for (var i = 0; i < resourceConfiguration.Length; i++)
             {
                 var newBar = Instantiate(ResourceBarPrefab, transform);
