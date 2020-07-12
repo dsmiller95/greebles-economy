@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using TradeModeling.Inventories;
+using UniRx;
 using UnityEngine;
 
 namespace Assets.Scripts.Trader
@@ -44,12 +45,19 @@ namespace Assets.Scripts.Trader
 
         public TradeNode[] tradeRoute;
 
+        public ReactiveProperty<TradeNode[]> tradeRouteReactive { get; private set; }
+
         public HexMovementManager objectSeeker;
 
         internal NotifyingInventory<ResourceType> inventory;
 
         private void Awake()
         {
+            this.tradeRouteReactive = new ReactiveProperty<TradeNode[]>(this.tradeRoute);
+            this.tradeRouteReactive.Buffer(2, 1).Subscribe(routes =>
+            {
+                this.OnNewTradeRouteSet(routes[0], routes[1]);
+            });
             stateData = new Dictionary<TraderState, dynamic>();
         }
         // Start is called before the first frame update
@@ -96,11 +104,20 @@ namespace Assets.Scripts.Trader
         }
         public void SetNewTradeRoute(TradeNode[] tradeRoute)
         {
-            var previousTarget = hasTradeNodeTarget ? currentTradeNodeTarget.target : null;
             this.tradeRoute = tradeRoute;
+            this.tradeRouteReactive.Value = this.tradeRoute;
+        }
+
+        private void OnNewTradeRouteSet(TradeNode[] previousTradeRoute, TradeNode[] newTradeRoute)
+        {
+            TradeStop previousTarget = null;
+            if(currentTradeTargetIndex >= 0 && previousTradeRoute.Length > 0)
+            {
+                previousTarget = previousTradeRoute[currentTradeTargetIndex].target;
+            }
             if (previousTarget != null)
             {
-                currentTradeTargetIndex = tradeRoute
+                currentTradeTargetIndex = newTradeRoute
                     .Select((trade, index) => new { trade.target, index })
                     .Where(x => x.target == previousTarget)
                     .First().index;

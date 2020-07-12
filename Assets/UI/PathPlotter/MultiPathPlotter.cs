@@ -133,6 +133,7 @@ namespace Assets.UI.PathPlotter
             pathRenders[(currentMouseTrackingIndex) % pathRenders.Count].start = removed.start;
             Destroy(removed.gameObject);
 
+            //TODO: allow for cases where last drag pos is 0, 0
             if (lastDragPosition != default)
             {
                 PathDragEnd(lastDragPosition, currentMouseTrackingIndex);
