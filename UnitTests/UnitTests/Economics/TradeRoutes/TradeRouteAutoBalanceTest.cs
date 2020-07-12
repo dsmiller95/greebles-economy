@@ -10,6 +10,7 @@ namespace UnitTests.Economics.TradeRoutes
         [TestMethod]
         public void ShouldEmitNoTradesForSingleInventory()
         {
+            var distributeInventory = EconomicsTestUtilities.CreateInventory(new[] { (TestItemType.Cactus, 0f), (TestItemType.Corn, 0f) }, 100);
             var inventories = new[]
             {
                 EconomicsTestUtilities.CreateInventory(new []
@@ -19,7 +20,7 @@ namespace UnitTests.Economics.TradeRoutes
                 }, 100)
             };
 
-            var balanceTrades = TradeRouteAutoBalance.GetTradesWhichBalanceInventories(inventories, new[] { TestItemType.Cactus, TestItemType.Corn });
+            var balanceTrades = TradeRouteAutoBalance.GetTradesWhichBalanceInventories(distributeInventory, inventories, new[] { TestItemType.Cactus, TestItemType.Corn });
 
             Assert.AreEqual(1, balanceTrades.Length);
             Assert.AreEqual(0, balanceTrades[0].Length);
@@ -28,6 +29,7 @@ namespace UnitTests.Economics.TradeRoutes
         [TestMethod]
         public void ShouldEmitOneTradePerInventoryForTwoImbalancedInventories()
         {
+            var distributeInventory = EconomicsTestUtilities.CreateInventory(new[] { (TestItemType.Cactus, 0f), (TestItemType.Corn, 0f) }, 100);
             var inventories = new[]
             {
                 EconomicsTestUtilities.CreateInventory(new []
@@ -42,7 +44,7 @@ namespace UnitTests.Economics.TradeRoutes
                 }, 100)
             };
 
-            var balanceTrades = TradeRouteAutoBalance.GetTradesWhichBalanceInventories(inventories, new[] { TestItemType.Cactus, TestItemType.Corn });
+            var balanceTrades = TradeRouteAutoBalance.GetTradesWhichBalanceInventories(distributeInventory, inventories, new[] { TestItemType.Cactus, TestItemType.Corn });
 
             Assert.AreEqual(2, balanceTrades.Length);
             Assert.AreEqual(1, balanceTrades[0].Length);
@@ -59,6 +61,7 @@ namespace UnitTests.Economics.TradeRoutes
         [TestMethod]
         public void ShouldEmitTwoTradesPerMarketForTwoImbalancedInventories()
         {
+            var distributeInventory = EconomicsTestUtilities.CreateInventory(new[] { (TestItemType.Cactus, 0f), (TestItemType.Corn, 0f) }, 100);
             var inventories = new[]
             {
                 EconomicsTestUtilities.CreateInventory(new []
@@ -73,7 +76,7 @@ namespace UnitTests.Economics.TradeRoutes
                 }, 100)
             };
 
-            var balanceTrades = TradeRouteAutoBalance.GetTradesWhichBalanceInventories(inventories, new[] { TestItemType.Cactus, TestItemType.Corn });
+            var balanceTrades = TradeRouteAutoBalance.GetTradesWhichBalanceInventories(distributeInventory, inventories, new[] { TestItemType.Cactus, TestItemType.Corn });
 
             Assert.AreEqual(2, balanceTrades.Length);
 
@@ -95,8 +98,51 @@ namespace UnitTests.Economics.TradeRoutes
         }
 
         [TestMethod]
+        public void ShouldEmitTradesAddingFromDistributeInventory()
+        {
+            var distributeInventory = EconomicsTestUtilities.CreateInventory(new[]{
+                (TestItemType.Cactus, 4f),
+                (TestItemType.Corn, 8f),
+                }, 100);
+            var inventories = new[]
+            {
+                EconomicsTestUtilities.CreateInventory(new []
+                {
+                    (TestItemType.Cactus, 4f),
+                    (TestItemType.Corn, 2f)
+                }, 100),
+                EconomicsTestUtilities.CreateInventory(new []
+                {
+                    (TestItemType.Cactus, 10f),
+                    (TestItemType.Corn, 0f)
+                }, 100)
+            };
+
+            var balanceTrades = TradeRouteAutoBalance.GetTradesWhichBalanceInventories(distributeInventory, inventories, new[] { TestItemType.Cactus, TestItemType.Corn });
+
+            Assert.AreEqual(2, balanceTrades.Length);
+
+            Assert.AreEqual(2, balanceTrades[0].Length);
+            var firstMarketTrade = balanceTrades[0][0];
+            Assert.AreEqual(TestItemType.Cactus, firstMarketTrade.type);
+            Assert.AreEqual(5, firstMarketTrade.amount, 1e-5f);
+            firstMarketTrade = balanceTrades[0][1];
+            Assert.AreEqual(TestItemType.Corn, firstMarketTrade.type);
+            Assert.AreEqual(3, firstMarketTrade.amount, 1e-5f);
+
+            Assert.AreEqual(2, balanceTrades[1].Length);
+            var secondMarketTrade = balanceTrades[1][0];
+            Assert.AreEqual(TestItemType.Cactus, secondMarketTrade.type);
+            Assert.AreEqual(-1, secondMarketTrade.amount, 1e-5f);
+            secondMarketTrade = balanceTrades[1][1];
+            Assert.AreEqual(TestItemType.Corn, secondMarketTrade.type);
+            Assert.AreEqual(5, secondMarketTrade.amount, 1e-5f);
+        }
+
+        [TestMethod]
         public void ShouldEmitFloatingPointTrade()
         {
+            var distributeInventory = EconomicsTestUtilities.CreateInventory(new[] { (TestItemType.Cactus, 0f )}, 100);
             var inventories = new[]
             {
                 EconomicsTestUtilities.CreateInventory(new []
@@ -109,7 +155,7 @@ namespace UnitTests.Economics.TradeRoutes
                 }, 100)
             };
 
-            var balanceTrades = TradeRouteAutoBalance.GetTradesWhichBalanceInventories(inventories, new[] { TestItemType.Cactus });
+            var balanceTrades = TradeRouteAutoBalance.GetTradesWhichBalanceInventories(distributeInventory, inventories, new[] { TestItemType.Cactus });
 
             Assert.AreEqual(2, balanceTrades.Length);
 
@@ -126,6 +172,7 @@ namespace UnitTests.Economics.TradeRoutes
         [TestMethod]
         public void ShouldEmitIntegerTrade()
         {
+            var distributeInventory = EconomicsTestUtilities.CreateInventory(new[] { (TestItemType.Cactus, 0f) }, 100);
             var inventories = new[]
             {
                 EconomicsTestUtilities.CreateInventory(new []
@@ -138,7 +185,7 @@ namespace UnitTests.Economics.TradeRoutes
                 }, 100)
             };
 
-            var balanceTrades = TradeRouteAutoBalance.GetTradesWhichBalanceInventories(inventories, new[] { TestItemType.Cactus }, true);
+            var balanceTrades = TradeRouteAutoBalance.GetTradesWhichBalanceInventories(distributeInventory, inventories, new[] { TestItemType.Cactus }, true);
 
             Assert.AreEqual(2, balanceTrades.Length);
 
@@ -156,6 +203,7 @@ namespace UnitTests.Economics.TradeRoutes
         [TestMethod]
         public void ShouldEmitFloatingPointTradeAcrossMany()
         {
+            var distributeInventory = EconomicsTestUtilities.CreateInventory(new[] { (TestItemType.Cactus, 0f) }, 100);
             var inventories = new[]
                 {5f, 10f, 4f }
                 .Select(x => EconomicsTestUtilities.CreateInventory(new[]
@@ -164,7 +212,7 @@ namespace UnitTests.Economics.TradeRoutes
                     }, 100))
                 .ToArray();
 
-            var balanceTrades = TradeRouteAutoBalance.GetTradesWhichBalanceInventories(inventories, new[] { TestItemType.Cactus });
+            var balanceTrades = TradeRouteAutoBalance.GetTradesWhichBalanceInventories(distributeInventory, inventories, new[] { TestItemType.Cactus });
 
             Assert.AreEqual(3, balanceTrades.Length);
 
@@ -187,6 +235,7 @@ namespace UnitTests.Economics.TradeRoutes
         [TestMethod]
         public void ShouldEmitIntegerTradeAcrossMany()
         {
+            var distributeInventory = EconomicsTestUtilities.CreateInventory(new[] { (TestItemType.Cactus, 0f) }, 100);
             var inventories = new[]
                 {5f, 10f, 4f }
                 .Select(x => EconomicsTestUtilities.CreateInventory(new[]
@@ -195,7 +244,7 @@ namespace UnitTests.Economics.TradeRoutes
                     }, 100))
                 .ToArray();
 
-            var balanceTrades = TradeRouteAutoBalance.GetTradesWhichBalanceInventories(inventories, new[] { TestItemType.Cactus }, true);
+            var balanceTrades = TradeRouteAutoBalance.GetTradesWhichBalanceInventories(distributeInventory, inventories, new[] { TestItemType.Cactus }, true);
 
             Assert.AreEqual(3, balanceTrades.Length);
 
@@ -218,6 +267,7 @@ namespace UnitTests.Economics.TradeRoutes
         [TestMethod]
         public void ShouldEmitFloatingPointTradeAcrossVeryManySmallAmounts()
         {
+            var distributeInventory = EconomicsTestUtilities.CreateInventory(new[] { (TestItemType.Cactus, 0f) }, 100);
             var inventories = new[]
                 {10f, 4f, 4f, 4f, 4f }
                 .Select(x => EconomicsTestUtilities.CreateInventory(new[]
@@ -226,7 +276,7 @@ namespace UnitTests.Economics.TradeRoutes
                     }, 100))
                 .ToArray();
 
-            var balanceTrades = TradeRouteAutoBalance.GetTradesWhichBalanceInventories(inventories, new[] { TestItemType.Cactus });
+            var balanceTrades = TradeRouteAutoBalance.GetTradesWhichBalanceInventories(distributeInventory, inventories, new[] { TestItemType.Cactus });
 
             Assert.AreEqual(5, balanceTrades.Length);
 
@@ -251,6 +301,7 @@ namespace UnitTests.Economics.TradeRoutes
         [TestMethod]
         public void ShouldEmitIntegerTradeAcrossVeryManySmallAmounts()
         {
+            var distributeInventory = EconomicsTestUtilities.CreateInventory(new[] { (TestItemType.Cactus, 0f) }, 100);
             var inventories = new[]
                 {10f, 4f, 4f, 4f, 4f }
                 .Select(x => EconomicsTestUtilities.CreateInventory(new[]
@@ -259,7 +310,7 @@ namespace UnitTests.Economics.TradeRoutes
                     }, 100))
                 .ToArray();
 
-            var balanceTrades = TradeRouteAutoBalance.GetTradesWhichBalanceInventories(inventories, new[] { TestItemType.Cactus }, true);
+            var balanceTrades = TradeRouteAutoBalance.GetTradesWhichBalanceInventories(distributeInventory, inventories, new[] { TestItemType.Cactus }, true);
 
             Assert.AreEqual(5, balanceTrades.Length);
 
@@ -284,6 +335,7 @@ namespace UnitTests.Economics.TradeRoutes
         [TestMethod]
         public void ShouldEmitFloatingPointTradeAcrossVeryManyLargeAmounts()
         {
+            var distributeInventory = EconomicsTestUtilities.CreateInventory(new[] { (TestItemType.Cactus, 0f) }, 100);
             var inventories = new[]
                 {4f, 10f, 10f, 10f, 10f }
                 .Select(x => EconomicsTestUtilities.CreateInventory(new[]
@@ -292,7 +344,7 @@ namespace UnitTests.Economics.TradeRoutes
                     }, 100))
                 .ToArray();
 
-            var balanceTrades = TradeRouteAutoBalance.GetTradesWhichBalanceInventories(inventories, new[] { TestItemType.Cactus });
+            var balanceTrades = TradeRouteAutoBalance.GetTradesWhichBalanceInventories(distributeInventory, inventories, new[] { TestItemType.Cactus });
 
             Assert.AreEqual(5, balanceTrades.Length);
 
@@ -317,6 +369,7 @@ namespace UnitTests.Economics.TradeRoutes
         [TestMethod]
         public void ShouldEmitIntegerTradeAcrossVeryManyLargeAmounts()
         {
+            var distributeInventory = EconomicsTestUtilities.CreateInventory(new[] { (TestItemType.Cactus, 0f) }, 100);
             var inventories = new[]
                 {4f, 10f, 10f, 10f, 10f }
                 .Select(x => EconomicsTestUtilities.CreateInventory(new[]
@@ -325,7 +378,7 @@ namespace UnitTests.Economics.TradeRoutes
                     }, 100))
                 .ToArray();
 
-            var balanceTrades = TradeRouteAutoBalance.GetTradesWhichBalanceInventories(inventories, new[] { TestItemType.Cactus }, true);
+            var balanceTrades = TradeRouteAutoBalance.GetTradesWhichBalanceInventories(distributeInventory, inventories, new[] { TestItemType.Cactus }, true);
 
             Assert.AreEqual(5, balanceTrades.Length);
 

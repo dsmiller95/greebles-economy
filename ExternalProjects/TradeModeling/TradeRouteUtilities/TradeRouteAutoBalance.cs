@@ -20,10 +20,14 @@ namespace TradeModeling.TradeRouteUtilities
     }
     public static class TradeRouteAutoBalance
     {
-        public static ResourceTrade<T>[][] GetTradesWhichBalanceInventories<T>(IList<SpaceFillingInventory<T>> inventories, T[] resourcesToTrade, bool roundToInts = false)
+        public static ResourceTrade<T>[][] GetTradesWhichBalanceInventories<T>(
+            SpaceFillingInventory<T> inventoryToDistribute,
+            IList<SpaceFillingInventory<T>> inventories,
+            T[] resourcesToTrade,
+            bool roundToInts = false)
             where T : System.Enum
         {
-            var averageInventoryAmounts = resourcesToTrade.ToDictionary(x => x, x => 0f);
+            var averageInventoryAmounts = resourcesToTrade.ToDictionary(x => x, x => inventoryToDistribute.Get(x));
             foreach (var inventory in inventories)
             {
                 foreach (var resource in resourcesToTrade)
