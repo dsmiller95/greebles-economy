@@ -9,6 +9,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.UI;
+using UniRx;
 
 namespace Assets.UI.TraderConfigPanel
 {
@@ -20,21 +21,20 @@ namespace Assets.UI.TraderConfigPanel
         public Button addNewTradeNodeButton;
         public GameObject singleTradeNodePrefab;
 
-
-        public Action<TradeNode[]> tradeRouteUpdated;
-
-
         private IList<TradeNodePanel> myPanels;
         // Start is called before the first frame update
         void Start()
         {
-            RecreateAllPanels();
+            linkedTrader.tradeRouteReactive.Subscribe(route =>
+            {
+                RecreateAllPanels(route);
+            });
             GetComponent<DragZone>().orderingChanged += SetOrder;
 
             addNewTradeNodeButton.onClick.AddListener(AddNewTradeNodeButtonClicked);
         }
 
-        void RecreateAllPanels()
+        void RecreateAllPanels(TradeNode[] tradeRoute)
         {
             if (myPanels != default)
             {
@@ -44,7 +44,7 @@ namespace Assets.UI.TraderConfigPanel
                 }
             }
             var largestTrade = linkedTrader.inventory.inventoryCapacity;
-            myPanels = linkedTrader.tradeRoute
+            myPanels = tradeRoute
                 .Select(node => CreateSingleTradeNode(node, largestTrade))
                 .ToList();
         }
@@ -60,7 +60,7 @@ namespace Assets.UI.TraderConfigPanel
             {
                 var selection = await SelectionTracker.globalTracker.GetInputAsync<TradeStop>(market => true);
                 Debug.Log($"got market {selection.gameObject.name}");
-                NewTradeRoute(linkedTrader.tradeRoute.Append(new TradeNode
+                var newTradeNode = new TradeNode
                 {
                     target = selection,
                     trades = new ResourceTrade[]
@@ -76,9 +76,9 @@ namespace Assets.UI.TraderConfigPanel
                             type = ResourceType.Wood
                         }
                     }
-                }));
+                };
 
-                RecreateAllPanels();
+                linkedTrader.AddTradeNode(newTradeNode);
             }
             catch (ObjectSelectionCancelledException) { }
             catch (Exception e)
@@ -96,7 +96,7 @@ namespace Assets.UI.TraderConfigPanel
 
         private void InternalTradeRouteUpdated(TradeNode[] newRoute)
         {
-            tradeRouteUpdated?.Invoke(newRoute);
+            linkedTrader.tradeRouteReactive.Value = newRoute.ToList().ToArray();
         }
 
         private void NewTradeRoute(IEnumerable<TradeNode> newRoute)
@@ -114,7 +114,7 @@ namespace Assets.UI.TraderConfigPanel
                 maxTradeAmount,
                 () =>
                 {
-                    InternalTradeRouteUpdated(linkedTrader.tradeRoute);
+                    InternalTradeRouteUpdated(linkedTrader.tradeRouteReactive.Value);
                 });
         }
 

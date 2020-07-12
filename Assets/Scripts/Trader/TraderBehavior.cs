@@ -53,10 +53,10 @@ namespace Assets.Scripts.Trader
 
         private void Awake()
         {
-            this.tradeRouteReactive = new ReactiveProperty<TradeNode[]>(this.tradeRoute);
-            this.tradeRouteReactive.Buffer(2, 1).Subscribe(routes =>
+            tradeRouteReactive = new ReactiveProperty<TradeNode[]>(tradeRoute);
+            tradeRouteReactive.Buffer(2, 1).Subscribe(routes =>
             {
-                this.OnNewTradeRouteSet(routes[0], routes[1]);
+                OnNewTradeRouteSet(routes[0], routes[1]);
             });
             stateData = new Dictionary<TraderState, dynamic>();
         }
@@ -105,13 +105,13 @@ namespace Assets.Scripts.Trader
         public void SetNewTradeRoute(TradeNode[] tradeRoute)
         {
             this.tradeRoute = tradeRoute;
-            this.tradeRouteReactive.Value = this.tradeRoute.ToList().ToArray();
+            tradeRouteReactive.Value = this.tradeRoute.ToList().ToArray();
         }
 
         private void OnNewTradeRouteSet(TradeNode[] previousTradeRoute, TradeNode[] newTradeRoute)
         {
             TradeStop previousTarget = null;
-            if(currentTradeTargetIndex >= 0 && previousTradeRoute.Length > 0)
+            if (currentTradeTargetIndex >= 0 && previousTradeRoute.Length > 0)
             {
                 previousTarget = previousTradeRoute[currentTradeTargetIndex].target;
             }
@@ -128,11 +128,15 @@ namespace Assets.Scripts.Trader
             }
         }
 
-        public void AddTradeNode(TradeNode node, int indexToInsert)
+        public void AddTradeNode(TradeNode node, int indexToInsert = -1)
         {
-            var newRoute = this.tradeRoute.ToList();
+            if (indexToInsert == -1)
+            {
+                indexToInsert = tradeRoute.Length;
+            }
+            var newRoute = tradeRoute.ToList();
             newRoute.Insert(indexToInsert, node);
-            this.SetNewTradeRoute(newRoute.ToArray());
+            SetNewTradeRoute(newRoute.ToArray());
         }
     }
 }

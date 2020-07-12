@@ -25,21 +25,9 @@ namespace Assets.Scripts.Gatherer
         private MultiPathPlotter multiPathPlotter;
 
         private HexTileMapManager MapManager => GetComponentInParent<HexMember>().MapManager;
-        // Start is called before the first frame update
-        void Start()
-        {
-
-        }
-
-        // Update is called once per frame
-        void Update()
-        {
-
-        }
 
         public InfoPaneConfiguration GetInfoPaneConfiguration()
         {
-            //var traderPanel = GameObject.Instantiate(tradePanelPrefab, )
             return new InfoPaneConfiguration()
             {
                 plottables = new List<PlotPaneConfig>() {
@@ -55,10 +43,6 @@ namespace Assets.Scripts.Gatherer
                     {
                         var tradeNodeList = panel.GetComponentInChildren<TradeNodeList>();
                         tradeNodeList.linkedTrader = trader;
-                        tradeNodeList.tradeRouteUpdated = (tradeRoute) =>
-                        {
-                            trader.SetNewTradeRoute(tradeRoute);
-                        };
                     }
                 } }
             };
