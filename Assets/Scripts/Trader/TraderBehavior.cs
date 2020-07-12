@@ -43,6 +43,11 @@ namespace Assets.Scripts.Trader
         private AsyncStateMachine<TraderState, TraderBehavior> stateMachine;
         public IDictionary<TraderState, dynamic> stateData;
 
+        /// <summary>
+        /// This is only used to set the trade route in the inspector
+        ///     it should not be used to represent the trade route as it currently
+        ///     exists in the game
+        /// </summary>
         public TradeNode[] tradeRoute;
 
         public ReactiveProperty<TradeNode[]> tradeRouteReactive { get; private set; }
@@ -96,16 +101,16 @@ namespace Assets.Scripts.Trader
         }
 
         private int currentTradeTargetIndex = 0;
-        public bool hasTradeNodeTarget => tradeRoute.Length > 0 && currentTradeTargetIndex >= 0;
-        public TradeNode currentTradeNodeTarget => tradeRoute[currentTradeTargetIndex];
+        public bool hasTradeNodeTarget => tradeRouteReactive.Value.Length > 0 && currentTradeTargetIndex >= 0;
+        public TradeNode currentTradeNodeTarget => tradeRouteReactive.Value[currentTradeTargetIndex];
         public void NextTradeRoute()
         {
-            currentTradeTargetIndex = (currentTradeTargetIndex + 1) % tradeRoute.Length;
+            currentTradeTargetIndex = (currentTradeTargetIndex + 1) % tradeRouteReactive.Value.Length;
         }
         public void SetNewTradeRoute(TradeNode[] tradeRoute)
         {
-            this.tradeRoute = tradeRoute;
-            tradeRouteReactive.Value = this.tradeRoute.ToList().ToArray();
+            //this.tradeRoute = tradeRoute;
+            tradeRouteReactive.Value = tradeRoute.ToList().ToArray();
         }
 
         private void OnNewTradeRouteSet(TradeNode[] previousTradeRoute, TradeNode[] newTradeRoute)
@@ -130,11 +135,12 @@ namespace Assets.Scripts.Trader
 
         public void AddTradeNode(TradeNode node, int indexToInsert = -1)
         {
+            var currentRoute = tradeRouteReactive.Value;
             if (indexToInsert == -1)
             {
-                indexToInsert = tradeRoute.Length;
+                indexToInsert = currentRoute.Length;
             }
-            var newRoute = tradeRoute.ToList();
+            var newRoute = currentRoute.ToList();
             newRoute.Insert(indexToInsert, node);
             SetNewTradeRoute(newRoute.ToArray());
         }
