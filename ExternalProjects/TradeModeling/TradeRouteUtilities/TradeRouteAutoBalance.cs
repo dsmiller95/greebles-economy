@@ -38,7 +38,7 @@ namespace TradeModeling.TradeRouteUtilities
             }
 
             var tradeAmounts = inventories.Select(inventory =>
-                GetResourceTradesFromInventoryAndAverage(inventory, averageInventoryAmounts)
+                GetResourceTradesFromInventoryAndAverage(inventory, averageInventoryAmounts, roundToInts)
                 .Where(trade => trade.amount != 0)
                 .ToArray()
                 );
@@ -46,12 +46,18 @@ namespace TradeModeling.TradeRouteUtilities
             return tradeAmounts.ToArray();
         }
 
-        private static IEnumerable<ResourceTrade<T>> GetResourceTradesFromInventoryAndAverage<T>(SpaceFillingInventory<T> inventory, IDictionary<T, float> averageInventoryAmounts)
+        private static IEnumerable<ResourceTrade<T>> GetResourceTradesFromInventoryAndAverage<T>(SpaceFillingInventory<T> inventory, IDictionary<T, float> averageInventoryAmounts, bool roundToInt)
             where T : System.Enum
         {
             foreach (var resource in averageInventoryAmounts.Keys)
             {
                 var resourceDiff = averageInventoryAmounts[resource] - inventory.Get(resource);
+                if (roundToInt)
+                {
+                    //truncate to int. this has the effect of always rounding "down"
+                    //  AKA reducing the distance from 0
+                    resourceDiff = (int)resourceDiff;
+                }
                 yield return new ResourceTrade<T>
                 {
                     type = resource,
