@@ -96,7 +96,7 @@ namespace Assets.UI.TraderConfigPanel
 
         private void InternalTradeRouteUpdated(TradeNode[] newRoute)
         {
-            linkedTrader.tradeRouteReactive.Value = newRoute.ToList().ToArray();
+            linkedTrader.SetNewTradeRoute(newRoute);
         }
 
         private void NewTradeRoute(IEnumerable<TradeNode> newRoute)

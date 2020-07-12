@@ -38,11 +38,12 @@ namespace Assets.Scripts.Trader
 
         public ReactiveProperty<TradeNode[]> tradeRouteReactive { get; private set; }
 
+        public bool AutoTradeForInspector = true;
         /// <summary>
         /// If the trader should automatically determine what trades to perform at each
         ///     stop. Will attempt to balance resources between all nodes
         /// </summary>
-        public BoolReactiveProperty autoTrade { get; private set; }
+        public ReactiveProperty<bool> autoTrade { get; private set; }
 
         public HexMovementManager objectSeeker;
 
@@ -51,10 +52,12 @@ namespace Assets.Scripts.Trader
         private void Awake()
         {
             tradeRouteReactive = new ReactiveProperty<TradeNode[]>(tradeRoute);
+            autoTrade = new ReactiveProperty<bool>(AutoTradeForInspector);
             tradeRouteReactive.Buffer(2, 1).Subscribe(routes =>
             {
                 OnNewTradeRouteSet(routes[0], routes[1]);
             }).AddTo(this);
+
             stateData = new Dictionary<TraderState, dynamic>();
         }
         // Start is called before the first frame update
@@ -98,9 +101,26 @@ namespace Assets.Scripts.Trader
         public void NextTradeRoute()
         {
             currentTradeTargetIndex = (currentTradeTargetIndex + 1) % tradeRouteReactive.Value.Length;
+            if (currentTradeTargetIndex == 0 && autoTrade.Value)
+            {
+                SetNewTradeRoute(tradeRouteReactive.Value);
+            }
         }
+
         public void SetNewTradeRoute(TradeNode[] tradeRoute)
         {
+            if (autoTrade.Value)
+            {
+                // overwrite the actual values for the trade amounts with auto-generated ones
+                // while keeping the targets
+                var tradeInventories = tradeRoute.Select(x => x.target.tradeInventory).ToList();
+                var distributeInventory = inventory;
+                var newTrades = TradeRouteAutoBalance.GetTradesWhichBalanceInventories(distributeInventory, tradeInventories, ResourceConfiguration.spaceFillingItems, true);
+                for (var tradeIndex = 0; tradeIndex < newTrades.Length; tradeIndex++)
+                {
+                    tradeRoute[tradeIndex].trades = newTrades[tradeIndex];
+                }
+            }
             //this.tradeRoute = tradeRoute;
             tradeRouteReactive.Value = tradeRoute.ToList().ToArray();
         }
