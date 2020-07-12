@@ -40,15 +40,9 @@ namespace Assets.UI.TraderConfigPanel
 
         private void SwitchMarketClicked()
         {
-            SelectionTracker.globalTracker.PushSelectionInput(new SingleObjectHighlightSelector<TradeStop>(
-                market => true,
-                market =>
-                {
-                    MarketChanged(market);
-                }));
+            _ = SwitchMarketClickAsync();
         }
 
-        //TODO: switch out callback method for task one
         private async Task SwitchMarketClickAsync()
         {
             try
@@ -61,14 +55,6 @@ namespace Assets.UI.TraderConfigPanel
                 marketChanged?.Invoke();
             }
             catch (ObjectSelectionCancelledException) { }
-        }
-
-        private void MarketChanged(TradeStop market)
-        {
-            Debug.Log($"Market Picked: {market.gameObject.name}");
-            tradeNode.target = market;
-            description.text = $"Target: {tradeNode.target.gameObject.name}";
-            marketChanged?.Invoke();
         }
 
         private void ExpandButtonClicked()
