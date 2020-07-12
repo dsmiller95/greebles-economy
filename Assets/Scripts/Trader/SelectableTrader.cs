@@ -74,7 +74,7 @@ namespace Assets.Scripts.Gatherer
             trader.tradeRouteReactive.Subscribe(tradeRoute =>
             {
                 multiPathPlotter.SetPath(tradeRoute.Select(x => x.target.gameObject.transform.position).ToList());
-            }).AddTo(this);
+            }).AddTo(plotter);
 
             multiPathPlotter.GetPathPointOnPlaneFromPointHitOnDragoutPlane = pointHit =>
             {

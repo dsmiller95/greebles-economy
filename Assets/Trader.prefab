@@ -65,6 +65,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   tradeRoute: []
+  AutoTradeForInspector: 1
   objectSeeker: {fileID: -3910571299877369985}
 --- !u!114 &4074582326578602055
 MonoBehaviour:
@@ -116,6 +117,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ResourcePlotter: {fileID: 4203546649366712724}
   trader: {fileID: 3708657439585814329}
+  tradeStopSnapDistance: 2
   tradePanelPrefab: {fileID: 2986112439536874786, guid: c601b3dada949924c99ee05c45c8a394,
     type: 3}
   multiPathPlotterPrefab: {fileID: 7996700932571281009, guid: 1cb7051a04ed8c44597383b05c3bbf61,
@@ -217,9 +219,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 45fc74d5a5ff02042bcd64b4d75847c3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  localPosition: {x: 0, y: 0}
+  localPosition:
+    q: 0
+    r: 0
   managerSetForInspector: {fileID: 0}
-  speed: 1
+  speed: 0.25
   animtators:
   - {fileID: 8210320453602554796}
   - {fileID: 2122169006933674010}

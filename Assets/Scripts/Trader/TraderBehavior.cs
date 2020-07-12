@@ -101,7 +101,7 @@ namespace Assets.Scripts.Trader
         public void NextTradeRoute()
         {
             currentTradeTargetIndex = (currentTradeTargetIndex + 1) % tradeRouteReactive.Value.Length;
-            if (currentTradeTargetIndex == 0 && autoTrade.Value)
+            if (autoTrade.Value)
             {
                 SetNewTradeRoute(tradeRouteReactive.Value);
             }
