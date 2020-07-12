@@ -7,9 +7,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using UniRx;
 using UnityEngine;
 using UnityEngine.UI;
-using UniRx;
 
 namespace Assets.UI.TraderConfigPanel
 {
@@ -28,7 +28,7 @@ namespace Assets.UI.TraderConfigPanel
             linkedTrader.tradeRouteReactive.Subscribe(route =>
             {
                 RecreateAllPanels(route);
-            });
+            }).AddTo(this);
             GetComponent<DragZone>().orderingChanged += SetOrder;
 
             addNewTradeNodeButton.onClick.AddListener(AddNewTradeNodeButtonClicked);

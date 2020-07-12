@@ -57,7 +57,7 @@ namespace Assets.Scripts.Trader
             tradeRouteReactive.Buffer(2, 1).Subscribe(routes =>
             {
                 OnNewTradeRouteSet(routes[0], routes[1]);
-            });
+            }).AddTo(this);
             stateData = new Dictionary<TraderState, dynamic>();
         }
         // Start is called before the first frame update
