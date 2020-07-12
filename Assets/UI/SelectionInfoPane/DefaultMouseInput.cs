@@ -26,9 +26,9 @@ namespace Assets.UI.SelectionInfoPane
         {
             var clickable = o.GetComponentInParent<IClickable>();
 
-            if(clickable is IFocusable focusable)
+            if (clickable is IFocusable focusable)
             {
-                this.Deselect();
+                Deselect();
 
                 currentlySelectedObject = o;
                 currentlySelectedFocusable = focusable;
@@ -38,10 +38,9 @@ namespace Assets.UI.SelectionInfoPane
 
 
                 paneBuilder.FocusableSelected(currentlySelectedFocusable);
-            }else
+            }
+            else
             {
-                Debug.Log("I've been clicked!!!!");
-                //this.Deselect();
                 clickable.MeClicked(hit);
             }
 

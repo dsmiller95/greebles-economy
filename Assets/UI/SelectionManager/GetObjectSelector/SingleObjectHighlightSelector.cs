@@ -1,5 +1,4 @@
-﻿using Boo.Lang;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -7,9 +6,9 @@ using UnityEngine;
 
 namespace Assets.UI.SelectionManager.GetObjectSelector
 {
-    public class ObjectSelectionCancelledException: Exception
+    public class ObjectSelectionCancelledException : Exception
     {
-        public ObjectSelectionCancelledException(string description): base(description)
+        public ObjectSelectionCancelledException(string description) : base(description)
         {
 
         }
@@ -22,7 +21,6 @@ namespace Assets.UI.SelectionManager.GetObjectSelector
             var taskCompletor = new TaskCompletionSource<T>();
             var highlightSelector = new SingleObjectHighlightSelector<T>(filter, (item) =>
             {
-                Debug.Log($"set result market");
                 taskCompletor.SetResult(item);
             }, () =>
             {

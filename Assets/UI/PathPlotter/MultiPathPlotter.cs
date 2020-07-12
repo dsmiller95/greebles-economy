@@ -166,7 +166,6 @@ namespace Assets.UI.PathPlotter
 
         public void MeClicked(RaycastHit hit)
         {
-            Debug.Log("I've been clicked!!!!");
             var hitObject = hit.transform.gameObject;
             var hitPath = hitObject.GetComponent<SinglePathPlotter>();
             if (hitPath != null)

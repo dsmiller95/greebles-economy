@@ -59,7 +59,6 @@ namespace Assets.UI.TraderConfigPanel
             try
             {
                 var selection = await SelectionTracker.globalTracker.GetInputAsync<TradeStop>(market => true);
-                Debug.Log($"got market {selection.gameObject.name}");
                 var newTradeNode = new TradeNode
                 {
                     target = selection,
