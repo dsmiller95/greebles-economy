@@ -62,6 +62,7 @@
     <Compile Include="Economics\SigmoidPricedSpaceFillingOptimizer.cs" />
     <Compile Include="Economics\SpaceFillingOptimizer.cs" />
     <Compile Include="Economics\CombinedTransactionModelTest.cs" />
+    <Compile Include="Economics\TradeRoutes\TradeRouteAutoBalanceTest.cs" />
     <Compile Include="Economics\UtilityAnalyzerTests\InverseWeightedUtilityTest.cs" />
     <Compile Include="Economics\UtilityAnalyzerTests\UtilityFromLedgerTest.cs" />
     <Compile Include="Simulation\Tiling\HexCoordinateSystemTest.cs" />

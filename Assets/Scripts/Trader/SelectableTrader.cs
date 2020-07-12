@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UniRx;
+using TradeModeling.TradeRouteUtilities;
 
 namespace Assets.Scripts.Gatherer
 {
@@ -117,14 +118,14 @@ namespace Assets.Scripts.Gatherer
             return new TradeNode
             {
                 target = stop,
-                trades = new ResourceTrade[]
+                trades = new ResourceTrade<ResourceType>[]
                 {
-                        new ResourceTrade
+                        new ResourceTrade<ResourceType>
                         {
                             amount = 0,
                             type = ResourceType.Food
                         },
-                        new ResourceTrade
+                        new ResourceTrade<ResourceType>
                         {
                             amount = 0,
                             type = ResourceType.Wood

@@ -1,8 +1,10 @@
-﻿using Assets.Scripts.Trader;
+﻿using Assets.Scripts.Resources;
+using Assets.Scripts.Trader;
 using Assets.UI.Draggable;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using TradeModeling.TradeRouteUtilities;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UIElements;
@@ -53,7 +55,7 @@ namespace Assets.UI.TraderConfigPanel
             }
         }
 
-        private ResourceTradePanel CreateSingleResourceTrade(ResourceTrade trade)
+        private ResourceTradePanel CreateSingleResourceTrade(ResourceTrade<ResourceType> trade)
         {
             return ResourceTradePanel.InstantiateOnObject(
                 singleResourceTradePrefab,

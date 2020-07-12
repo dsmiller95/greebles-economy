@@ -7,26 +7,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using TradeModeling.Inventories;
+using TradeModeling.TradeRouteUtilities;
 using UniRx;
 using UnityEngine;
 
 namespace Assets.Scripts.Trader
 {
-
-    [Serializable]
-    public class ResourceTrade
-    {
-        /// <summary>
-        /// The type of resource to move
-        /// </summary>
-        public ResourceType type;
-        /// <summary>
-        /// the amount of resource to move into the market's inventory. Set to a negative value to withdraw
-        ///     resources from the market
-        /// </summary>
-        public float amount;
-    }
-
     [Serializable]
     public class TradeNode
     {
@@ -34,7 +20,7 @@ namespace Assets.Scripts.Trader
         /// <summary>
         /// A list of resource exchanges to attempt at this market
         /// </summary>
-        public ResourceTrade[] trades;
+        public ResourceTrade<ResourceType>[] trades;
     }
 
     [RequireComponent(typeof(ResourceInventory))]
@@ -51,6 +37,12 @@ namespace Assets.Scripts.Trader
         public TradeNode[] tradeRoute;
 
         public ReactiveProperty<TradeNode[]> tradeRouteReactive { get; private set; }
+
+        /// <summary>
+        /// If the trader should automatically determine what trades to perform at each
+        ///     stop. Will attempt to balance resources between all nodes
+        /// </summary>
+        public BoolReactiveProperty autoTrade { get; private set; }
 
         public HexMovementManager objectSeeker;
 

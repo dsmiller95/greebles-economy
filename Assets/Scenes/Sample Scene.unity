@@ -1821,6 +1821,16 @@ PrefabInstance:
       propertyPath: localPosition.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3708657439585814329, guid: 7a9a4f573a9ae1e48bc5a77fa1f10be5,
+        type: 3}
+      propertyPath: tradeRoute.Array.size
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3708657439585814329, guid: 7a9a4f573a9ae1e48bc5a77fa1f10be5,
+        type: 3}
+      propertyPath: tradeRoute.Array.data[0].trades.Array.size
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4063966645591292537, guid: 7a9a4f573a9ae1e48bc5a77fa1f10be5,
         type: 3}
       propertyPath: m_Name

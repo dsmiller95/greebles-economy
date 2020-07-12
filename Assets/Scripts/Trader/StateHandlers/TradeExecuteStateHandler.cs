@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using TradeModeling.TradeRouteUtilities;
 using UnityEngine;
 
 namespace Assets.Scripts.Trader.StateHandlers
@@ -19,7 +20,7 @@ namespace Assets.Scripts.Trader.StateHandlers
         class TradeExecuteStateData
         {
             public float lastExchangeTime;
-            public IList<ResourceTrade> remainingTrades;
+            public IList<ResourceTrade<ResourceType>> remainingTrades;
         }
 
         public TraderState stateHandle => TraderState.TradeExecute;
@@ -47,7 +48,7 @@ namespace Assets.Scripts.Trader.StateHandlers
                 }
                 else
                 {
-                    var newTrade = new ResourceTrade
+                    var newTrade = new ResourceTrade<ResourceType>
                     {
                         amount = remainingToTrade,
                         type = trade.type

@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using TradeModeling.TradeRouteUtilities;
 using UniRx;
 using UnityEngine;
 using UnityEngine.UI;
@@ -62,14 +63,14 @@ namespace Assets.UI.TraderConfigPanel
                 var newTradeNode = new TradeNode
                 {
                     target = selection,
-                    trades = new ResourceTrade[]
+                    trades = new ResourceTrade<ResourceType>[]
                     {
-                        new ResourceTrade
+                        new ResourceTrade<ResourceType>
                         {
                             amount = 0,
                             type = ResourceType.Food
                         },
-                        new ResourceTrade
+                        new ResourceTrade<ResourceType>
                         {
                             amount = 0,
                             type = ResourceType.Wood

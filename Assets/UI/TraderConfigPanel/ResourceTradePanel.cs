@@ -1,4 +1,6 @@
-﻿using Assets.Scripts.Trader;
+﻿using Assets.Scripts.Resources;
+using Assets.Scripts.Trader;
+using TradeModeling.TradeRouteUtilities;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -7,7 +9,7 @@ namespace Assets.UI.TraderConfigPanel
 {
     public class ResourceTradePanel : MonoBehaviour
     {
-        public ResourceTrade trade;
+        public ResourceTrade<ResourceType> trade;
         public int maxTradeAmount;
 
         [Header("UI element bindings")]
@@ -54,7 +56,7 @@ namespace Assets.UI.TraderConfigPanel
         public static ResourceTradePanel InstantiateOnObject(
             GameObject selfPrefab,
             GameObject container,
-            ResourceTrade trade,
+            ResourceTrade<ResourceType> trade,
             int maxTradeAmount)
         {
             var newTradeNode = GameObject.Instantiate(selfPrefab, container.transform);
