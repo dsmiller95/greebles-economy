@@ -25,6 +25,7 @@ namespace Assets.Scripts.Gatherer
         public HomeBehavior home;
 
         public int backpackSize = 10;
+        public GameObject backpack;
         public int pocketSize = 1;
 
         public ResourceType[] StuffIEat;
@@ -123,11 +124,13 @@ namespace Assets.Scripts.Gatherer
 
         internal void attachBackpack()
         {
+            backpack.SetActive(true);
             inventory.inventoryCapacity = pocketSize + backpackSize;
         }
 
         internal void removeBackpack()
         {
+            backpack.SetActive(false);
             inventory.inventoryCapacity = pocketSize;
         }
 
@@ -149,16 +152,16 @@ namespace Assets.Scripts.Gatherer
                 var newTarget = GetClosestObjectSatisfyingCondition(
                     filter,
                     weightFunction);
-                if(newTarget != null)
-                {   
+                if (newTarget != null)
+                {
                     var obj = (newTarget as MonoBehaviour)?.gameObject;
                     if (obj)
                     {
                         objectSeeker.BeginApproachingNewTarget(obj);
 
                         var member = obj.GetComponentInParent<HexMember>();
-                        var distance = this.GetComponentInParent<HexMember>().PositionInTileMap.DistanceTo(member.PositionInTileMap);
-                        if(distance > 40)
+                        var distance = GetComponentInParent<HexMember>().PositionInTileMap.DistanceTo(member.PositionInTileMap);
+                        if (distance > 40)
                         {
                             Debug.LogError("too long");
                         }

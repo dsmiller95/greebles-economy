@@ -1,49 +1,48 @@
-﻿using Assets.Scripts.MovementExtensions;
-using Assets.Scripts.Resources.Inventory;
-using Simulation.Tiling;
-using System;
+﻿using Assets.Scripts.Resources.Inventory;
 using System.Collections.Generic;
-using System.Linq;
 using TradeModeling.Inventories;
-using UnityEngine;
 using UniRx;
-using UniRx.Triggers; // need UniRx.Triggers namespace for extend gameObejct
+using UnityEngine;
 
 namespace Assets.Scripts.Resources.InventoryDisplays
 {
     public class InventoryStockpileManager : MonoBehaviour
     {
-        private IList<SinglePile> piles;
-
         public ResourceInventory inventoryForInspector;
 
         // Start is called before the first frame update
         void Start()
         {
-            //this.inventory = inventoryForInspector.backingInventory;
-            piles = new List<SinglePile>();
-            foreach(Transform child in transform)
-            {
-                var pile = child.gameObject.GetComponent<SinglePile>();
-                if(pile == null)
-                {
-                    break;
-                }
-                piles.Add(pile);
-            }
-
             inventoryForInspector.ResourceAmountsChangedAsObservable()
                 .Subscribe(resource =>
                 {
-                    this.OnResourceAmountChanged(resource);
+                    OnResourceAmountChanged(resource);
                 }).AddTo(this);
+        }
+
+        private IEnumerable<SinglePile> GetPiles()
+        {
+            foreach (Transform child in transform)
+            {
+                if (!child.gameObject.activeSelf)
+                {
+                    continue;
+                }
+                var pile = child.gameObject.GetComponent<SinglePile>();
+                if (pile == null)
+                {
+                    break;
+                }
+                yield return pile;
+            }
         }
 
         void OnResourceAmountChanged(ResourceChanged<ResourceType> type)
         {
             var currentInventory = inventoryForInspector.backingInventory.CreateSimulatedClone() as SpaceFillingInventory<ResourceType>;
 
-            foreach (var pile in piles) {
+            foreach (var pile in GetPiles())
+            {
                 var piledAmounts = new Dictionary<ResourceType, int>();
 
                 float amountPiledSoFar = 0;
