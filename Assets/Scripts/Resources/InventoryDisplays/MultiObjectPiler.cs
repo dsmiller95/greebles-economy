@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Assets.Scripts.Resources.InventoryDisplays
 {
-    public class MultiObjectPiler : SinglePile
+    public class MultiObjectPiler : SinglePileSingleType
     {
         public ResourceType type;
         public int maxCapacity = 10;

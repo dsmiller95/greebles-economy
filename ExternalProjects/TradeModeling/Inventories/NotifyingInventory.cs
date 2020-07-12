@@ -21,7 +21,7 @@ namespace TradeModeling.Inventories
     {
         //public Subject<ResourceChanged<T>> resourceChangeSubject;
 
-        public event EventHandler<ResourceChanged<T>> resourceAmountChanges;
+        public event EventHandler<ResourceChanged<T>> resourceAmountChanged;
         public event EventHandler<ResourceChanged<T>> resourceCapacityChanges;
 
         public NotifyingInventory(int capacity, IDictionary<T, float> initialItems, ICollection<T> spaceFillingItems, T moneyType)
@@ -44,7 +44,7 @@ namespace TradeModeling.Inventories
             }
             foreach (var resource in this.GetAllResourceTypes())
             {
-                this.resourceAmountChanges?.Invoke(this, new ResourceChanged<T>(resource, this.Get(resource)));
+                this.resourceAmountChanged?.Invoke(this, new ResourceChanged<T>(resource, this.Get(resource)));
             }
         }
 
@@ -65,8 +65,9 @@ namespace TradeModeling.Inventories
 
         protected override float SetInventoryValue(T type, float newValue)
         {
-            this.resourceAmountChanges?.Invoke(this, new ResourceChanged<T>(type, newValue));
-            return base.SetInventoryValue(type, newValue);
+            var setValue = base.SetInventoryValue(type, newValue);
+            this.resourceAmountChanged?.Invoke(this, new ResourceChanged<T>(type, newValue));
+            return setValue;
         }
     }
 }

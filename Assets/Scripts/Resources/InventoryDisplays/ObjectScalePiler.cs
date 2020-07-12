@@ -8,7 +8,7 @@ namespace Assets.Scripts.Resources.InventoryDisplays
     /// Scales up the first child based on how much resource this stockpile contains
     ///     Will scale based on volume, or a cube root of the resource number
     /// </summary>
-    public class ObjectScalePiler : SinglePile
+    public class ObjectScalePiler : SinglePileSingleType
     {
         public ResourceType type;
         public int maxCapacity = 10;

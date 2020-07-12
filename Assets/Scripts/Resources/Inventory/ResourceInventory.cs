@@ -52,7 +52,7 @@ namespace Assets.Scripts.Resources.Inventory
             this.ResourceCapacityChangedAsObservable();
 
             backingInventory.resourceCapacityChanges += OnResourceCapacityChanged;
-            backingInventory.resourceAmountChanges += OnResourceAmountsChanged;
+            backingInventory.resourceAmountChanged += OnResourceAmountsChanged;
         }
 
         public void Start()

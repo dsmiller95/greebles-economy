@@ -18,7 +18,7 @@ namespace TradeModeling.Inventories
             ICollection<T> spaceFillingItems,
             T moneyType)
         {
-            this._inventoryCapacity = capacity;
+            _inventoryCapacity = capacity;
             inventory = new Dictionary<T, float>(initialItems);
             this.spaceFillingItems = new HashSet<T>(spaceFillingItems);
             this.moneyType = moneyType;
@@ -26,10 +26,10 @@ namespace TradeModeling.Inventories
 
         private SpaceFillingInventory(SpaceFillingInventory<T> other)
         {
-            this._inventoryCapacity = other._inventoryCapacity;
+            _inventoryCapacity = other._inventoryCapacity;
             inventory = new Dictionary<T, float>(other.inventory);
-            this.spaceFillingItems = new HashSet<T>(other.spaceFillingItems);
-            this.moneyType = other.moneyType;
+            spaceFillingItems = new HashSet<T>(other.spaceFillingItems);
+            moneyType = other.moneyType;
         }
 
         private int _inventoryCapacity;
@@ -45,7 +45,7 @@ namespace TradeModeling.Inventories
 
         protected virtual int SetInventoryCapacity(int newCapacity)
         {
-            return this._inventoryCapacity = newCapacity;
+            return _inventoryCapacity = newCapacity;
         }
 
         /// <summary>
@@ -59,7 +59,7 @@ namespace TradeModeling.Inventories
             var result = new Dictionary<T, float>();
             foreach (var itemType in itemTypes)
             {
-                var transferOption = this.transferResourceInto(itemType, target, Get(itemType));
+                var transferOption = transferResourceInto(itemType, target, Get(itemType));
 
                 result[itemType] = transferOption.info;
                 transferOption.Execute();
@@ -87,7 +87,7 @@ namespace TradeModeling.Inventories
                 .Add(type, toAdd)
                 .Then(added => added, totalAdded =>
                 {
-                    this.SetInventoryValue(type, Get(type) - totalAdded);
+                    SetInventoryValue(type, Get(type) - totalAdded);
                 });
         }
 
@@ -98,7 +98,7 @@ namespace TradeModeling.Inventories
 
         protected IEnumerable<T> GetAllResourceTypes()
         {
-            return this.inventory.Keys;
+            return inventory.Keys;
         }
         /// <summary>
         /// Attempts to add as much of amount as possible into this inventory.
@@ -112,13 +112,13 @@ namespace TradeModeling.Inventories
             {
                 throw new NotImplementedException("cannot add a negative amount. use Consume for that purpose");
             }
-            if (this.spaceFillingItems.Contains(type))
+            if (spaceFillingItems.Contains(type))
             {
                 if (getFullRatio() >= 1)
                 {
                     return new ActionOption<float>(0, () => { });
                 }
-                var remainingSpace = Math.Max(0, this.inventoryCapacity - totalFullSpace);
+                var remainingSpace = Math.Max(0, inventoryCapacity - totalFullSpace);
                 amount = Math.Min(remainingSpace, amount);
             }
             return new ActionOption<float>(amount, () =>
@@ -132,7 +132,7 @@ namespace TradeModeling.Inventories
         /// </summary>
         /// <param name="type">the type to consume</param>
         /// <param name="amount">the amount to attempt to consume</param>
-        public void Consume(T type, float amount)
+        public ActionOption<float> Consume(T type, float amount)
         {
             if (amount < 0)
             {
@@ -140,7 +140,11 @@ namespace TradeModeling.Inventories
             }
 
             var toConsume = Math.Min(amount, Get(type));
-            this.SetInventoryValue(type, Get(type) - toConsume);
+
+            return new ActionOption<float>(toConsume, () =>
+            {
+                SetInventoryValue(type, Get(type) - toConsume);
+            });
         }
 
         protected virtual float SetInventoryValue(T type, float newValue)
@@ -149,10 +153,7 @@ namespace TradeModeling.Inventories
             return newValue;
         }
 
-        public float totalFullSpace
-        {
-            get => this.spaceFillingItems.Select(x => inventory[x]).Sum();
-        }
+        public float totalFullSpace => spaceFillingItems.Select(x => inventory[x]).Sum();
 
         public float getFullRatio()
         {
@@ -175,7 +176,7 @@ namespace TradeModeling.Inventories
 
         public float GetCurrentFunds()
         {
-            return this.Get(moneyType);
+            return Get(moneyType);
         }
 
         public IExchangeInventory CreateSimulatedClone()
@@ -185,7 +186,7 @@ namespace TradeModeling.Inventories
 
         public string ToString(Func<T, string> serializer)
         {
-            return MyUtilities.SerializeDictionary(this.inventory, serializer, num => num.ToString());
+            return MyUtilities.SerializeDictionary(inventory, serializer, num => num.ToString());
         }
     }
 }

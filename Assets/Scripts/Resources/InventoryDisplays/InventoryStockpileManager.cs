@@ -13,7 +13,7 @@ namespace Assets.Scripts.Resources.InventoryDisplays
 {
     public class InventoryStockpileManager : MonoBehaviour
     {
-        private Dictionary<ResourceType, IList<SinglePile>> piles;
+        private IList<SinglePile> piles;
 
         public ResourceInventory inventoryForInspector;
 
@@ -21,7 +21,7 @@ namespace Assets.Scripts.Resources.InventoryDisplays
         void Start()
         {
             //this.inventory = inventoryForInspector.backingInventory;
-            piles = new Dictionary<ResourceType, IList<SinglePile>>();
+            piles = new List<SinglePile>();
             foreach(Transform child in transform)
             {
                 var pile = child.gameObject.GetComponent<SinglePile>();
@@ -29,15 +29,7 @@ namespace Assets.Scripts.Resources.InventoryDisplays
                 {
                     break;
                 }
-
-                IList<SinglePile> list;
-                if (!piles.TryGetValue(pile.pileType, out list))
-                {
-                    list = new List<SinglePile>();
-                    piles[pile.pileType] = list;
-                }
-
-                list.Add(pile);
+                piles.Add(pile);
             }
 
             inventoryForInspector.ResourceAmountsChangedAsObservable()
@@ -49,18 +41,21 @@ namespace Assets.Scripts.Resources.InventoryDisplays
 
         void OnResourceAmountChanged(ResourceChanged<ResourceType> type)
         {
-            IList<SinglePile> pileList;
-            if(!piles.TryGetValue(type.type, out pileList))
-            {
-                return;
-            }
-            int remainingAmount = (int)type.newValue;
-            foreach(var pile in pileList)
-            {
-                var amountForPile = Math.Min(pile.capacity, remainingAmount);
-                pile.SetResourceNumber(amountForPile);
-                // when remainingAmount hits 0, just keep going and set the resource number to 0 for ever other pile
-                remainingAmount -= amountForPile;
+            var currentInventory = inventoryForInspector.backingInventory.CreateSimulatedClone() as SpaceFillingInventory<ResourceType>;
+
+            foreach (var pile in piles) {
+                var piledAmounts = new Dictionary<ResourceType, int>();
+
+                float amountPiledSoFar = 0;
+                foreach (var resource in pile.pileTypes)
+                {
+                    var consumeAttempt = currentInventory.Consume(resource, pile.capacity - amountPiledSoFar);
+                    consumeAttempt.Execute();
+                    amountPiledSoFar += consumeAttempt.info;
+
+                    piledAmounts[resource] = (int)consumeAttempt.info;
+                }
+                pile.SetResourceNumbers(piledAmounts);
             }
         }
 

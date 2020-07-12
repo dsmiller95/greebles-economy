@@ -105,9 +105,11 @@
     <Compile Include="Assets\Scripts\Resources\IResource.cs" />
     <Compile Include="Assets\Scripts\Resources\Inventory\ResourceInventory.cs" />
     <Compile Include="Assets\Scripts\Resources\InventoryDisplays\InventoryStockpileManager.cs" />
+    <Compile Include="Assets\Scripts\Resources\InventoryDisplays\MultiDifferentObjectPiler.cs" />
     <Compile Include="Assets\Scripts\Resources\InventoryDisplays\MultiObjectPiler.cs" />
     <Compile Include="Assets\Scripts\Resources\InventoryDisplays\ObjectScalePiler.cs" />
     <Compile Include="Assets\Scripts\Resources\InventoryDisplays\SinglePile.cs" />
+    <Compile Include="Assets\Scripts\Resources\InventoryDisplays\SinglePileSingleType.cs" />
     <Compile Include="Assets\Scripts\Resources\Resource.cs" />
     <Compile Include="Assets\Scripts\Resources\ResourceConfiguration.cs" />
     <Compile Include="Assets\Scripts\Resources\ResourceConfigurer.cs" />

@@ -42,7 +42,7 @@ namespace Assets.Scripts.Gatherer.StateHandlers
                     // otherwise time to slep
                     return Task.FromResult(myState.ateFood ? GathererState.Sleeping : GathererState.Dying);
                 }
-                inventoryToConsumeFrom.Consume(firstAvailableResource, 1);
+                inventoryToConsumeFrom.Consume(firstAvailableResource, 1).Execute();
                 if(firstAvailableResource == ResourceType.Food)
                 {
                     myState.ateFood = true;
