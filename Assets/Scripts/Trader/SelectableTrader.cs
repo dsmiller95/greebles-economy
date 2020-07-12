@@ -17,6 +17,7 @@ namespace Assets.Scripts.Gatherer
     {
         public ResourceTimeSeriesAdapter ResourcePlotter;
         public TraderBehavior trader;
+        public int tradeStopSnapDistance = 2;
 
         public GameObject tradePanelPrefab;
         public GameObject multiPathPlotterPrefab;
@@ -86,7 +87,6 @@ namespace Assets.Scripts.Gatherer
             multiPathPlotter = plotter.GetComponent<MultiPathPlotter>();
             multiPathPlotter.SetPath(trader.tradeRoute.Select(x => x.target.gameObject.transform.position).ToList());
 
-            var snapDistance = 2;
             multiPathPlotter.GetPathPointOnPlaneFromPointHitOnDragoutPlane = pointHit =>
             {
                 var manager = MapManager;
@@ -94,7 +94,7 @@ namespace Assets.Scripts.Gatherer
                 var tilePostion = manager.PositionInPlaneToTilemapPosition(pointHit);
 
                 var closestStop = manager
-                    .GetMembersWithinJumpDistanceSlow(tilePostion, snapDistance)
+                    .GetMembersWithinJumpDistanceSlow(tilePostion, tradeStopSnapDistance)
                     .Distinct()
                     .Where(member => member.TryGetType<TradeStop>() != null)
                     .Select(member => new { position = member.PositionInTileMap, dist = member.PositionInTileMap.DistanceTo(tilePostion) })
