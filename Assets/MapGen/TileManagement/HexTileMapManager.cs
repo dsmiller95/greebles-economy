@@ -80,6 +80,15 @@ namespace Assets.MapGen.TileManagement
         }
         #endregion
 
+        public IEnumerable<ITilemapMember> GetMembersWithinJumpDistanceSlow(AxialCoordinate origin, int jumpDistance)
+        {
+            return GetPositionsWithinJumpDistance(origin, jumpDistance)
+                .Select(position => GetListFromCoord(position))
+                .Where(members => members != null)
+                .SelectMany(members => members)
+                .Where(member => member != null);
+        }
+
         public IEnumerable<T> GetItemsWithinJumpDistance<T>(AxialCoordinate origin, int jumpDistance)
         {
             return GetPositionsWithinJumpDistance(origin, jumpDistance)

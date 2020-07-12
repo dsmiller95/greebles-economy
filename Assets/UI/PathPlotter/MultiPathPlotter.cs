@@ -21,12 +21,20 @@ namespace Assets.UI.PathPlotter
 
         private Plane targetPlane;
 
-        public Func<GameObject, bool> ShouldSnapToObject;
         /// <summary>
-        /// Called with the GameObject that the route was dropped on,
-        ///     and the index of the game object at the end of the path which was split
+        /// Called whenever one of the individual paths is being dragged out,
+        ///     every time the mouse position needs to be updated. The vector of the hit
+        ///     of a raycast from the camera on a flat plane is passed in, and the 
+        ///     position on the plane that should be snapped to is returned. for
+        ///     no snapping simply return the input vector
         /// </summary>
-        public Action<GameObject, int> HasDroppedOnObject;
+        public Func<Vector2, Vector2> GetPathPointOnPlaneFromPointHitOnDragoutPlane;
+        /// <summary>
+        /// Called whenver the drag has ended. the Vector2 passed in corresponds to the
+        ///     same vector2 that was snapped to, the same vector that was returned from
+        ///     <see cref="GetPathPointOnPlaneFromPointHitOnDragoutPlane"/>
+        /// </summary>
+        public Action<Vector2, int> PathDragEnd;
 
         // Start is called before the first frame update
         void Awake()
@@ -36,7 +44,7 @@ namespace Assets.UI.PathPlotter
                 .Where(gameObject => gameObject.name == cameraName).First()
                 .GetComponent<Camera>();
 
-            targetPlane = new Plane(Vector3.up, new Vector3(0, dragoutHeight, 0));
+            targetPlane = new Plane(Vector3.up, new Vector3(0, 0, 0));
         }
 
         public void Update()
@@ -57,33 +65,19 @@ namespace Assets.UI.PathPlotter
             }
 
             Ray ray = cam.ScreenPointToRay(Input.mousePosition);
-            RaycastHit hit;
 
-            if (!Physics.Raycast(ray, out hit, 1000))
+            float planeHit;
+            if (!targetPlane.Raycast(ray, out planeHit))
             {
+                Debug.Log("ray from camera did not hit the floating plane");
                 return;
             }
 
-            var shouldSnap = ShouldSnapToObject(hit.transform.gameObject);
-            Vector3 newPoint;
-            if (shouldSnap)
-            {
-                newPoint = hit.transform.position;
-                currentSnappedObject = hit.transform.gameObject;
-            }
-            else
-            {
-                currentSnappedObject = null;
-                float planeHit;
-                if (!targetPlane.Raycast(ray, out planeHit))
-                {
-                    return;
-                }
-
-                newPoint = ray.GetPoint(planeHit);
-            }
-
-            MouseTrackingPositionChanged(newPoint);
+            var pointHitOnPlane = ray.GetPoint(planeHit);
+            var pointConverted = GetPathPointOnPlaneFromPointHitOnDragoutPlane(new Vector2(pointHitOnPlane.x, pointHitOnPlane.z));
+            lastDragPosition = pointConverted;
+            var newPointOnPlane = new Vector3(pointConverted.x, dragoutHeight, pointConverted.y);
+            MouseTrackingPositionChanged(newPointOnPlane);
         }
 
         /// <summary>
@@ -129,7 +123,7 @@ namespace Assets.UI.PathPlotter
         }
 
         private int currentMouseTrackingIndex = -1;
-        private GameObject currentSnappedObject;
+        private Vector2 lastDragPosition;
 
         private void EndTrackingMouse()
         {
@@ -139,9 +133,10 @@ namespace Assets.UI.PathPlotter
             pathRenders[(currentMouseTrackingIndex) % pathRenders.Count].start = removed.start;
             Destroy(removed.gameObject);
 
-            if(currentSnappedObject != null)
+            if (lastDragPosition != default)
             {
-                HasDroppedOnObject(currentSnappedObject, currentMouseTrackingIndex);
+                PathDragEnd(lastDragPosition, currentMouseTrackingIndex);
+                lastDragPosition = default;
             }
 
 
@@ -173,9 +168,9 @@ namespace Assets.UI.PathPlotter
             Debug.Log("I've been clicked!!!!");
             var hitObject = hit.transform.gameObject;
             var hitPath = hitObject.GetComponent<SinglePathPlotter>();
-            if(hitPath != null)
+            if (hitPath != null)
             {
-                this.SinglePathPlotterClicked(hitPath, hit);
+                SinglePathPlotterClicked(hitPath, hit);
             }
         }
     }

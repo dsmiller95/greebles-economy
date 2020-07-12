@@ -1,4 +1,6 @@
-﻿using Assets.Scripts.Resources;
+﻿using Assets.MapGen.TileManagement;
+using Assets.Scripts.MovementExtensions;
+using Assets.Scripts.Resources;
 using Assets.Scripts.Resources.UI;
 using Assets.Scripts.Trader;
 using Assets.UI.InfoPane;
@@ -20,6 +22,7 @@ namespace Assets.Scripts.Gatherer
         public GameObject multiPathPlotterPrefab;
         private MultiPathPlotter multiPathPlotter;
 
+        private HexTileMapManager MapManager => GetComponentInParent<HexMember>().MapManager;
         // Start is called before the first frame update
         void Start()
         {
@@ -83,20 +86,52 @@ namespace Assets.Scripts.Gatherer
             multiPathPlotter = plotter.GetComponent<MultiPathPlotter>();
             multiPathPlotter.SetPath(trader.tradeRoute.Select(x => x.target.gameObject.transform.position).ToList());
 
-            multiPathPlotter.ShouldSnapToObject = o =>
+            var snapDistance = 2;
+            multiPathPlotter.GetPathPointOnPlaneFromPointHitOnDragoutPlane = pointHit =>
             {
-                var willSnap = o.GetComponentInParent<TradeStop>() != null;
-                Debug.Log($"Should snap to {o.gameObject.name}: {willSnap}");
-                return willSnap;
+                var manager = MapManager;
+
+                var tilePostion = manager.PositionInPlaneToTilemapPosition(pointHit);
+
+                var closestStop = manager
+                    .GetMembersWithinJumpDistanceSlow(tilePostion, snapDistance)
+                    .Distinct()
+                    .Where(member => member.TryGetType<TradeStop>() != null)
+                    .Select(member => new { position = member.PositionInTileMap, dist = member.PositionInTileMap.DistanceTo(tilePostion) })
+                    .OrderBy(data => data.dist)
+                    .FirstOrDefault()?.position ?? tilePostion;
+
+                var snappedPosition = manager.TileMapPositionToPositionInPlane(closestStop);
+
+                return snappedPosition;
             };
 
-            multiPathPlotter.HasDroppedOnObject = (o, index) =>
+            multiPathPlotter.PathDragEnd = (pointEnd, index) =>
             {
-                var newTradeNode = new TradeNode
+                var manager = MapManager;
+
+                var tilePostion = manager.PositionInPlaneToTilemapPosition(pointEnd);
+
+                var members = manager.GetItemsAtLocation<TradeStop>(tilePostion);
+                if (members == null || members.Count() <= 0)
                 {
-                    target = o.GetComponentInParent<TradeStop>(),
-                    trades = new ResourceTrade[]
-                    {
+                    return;
+                }
+                var targetStop = members.First();
+
+                var newTradeNode = GetDefaultTradeNode(targetStop);
+                trader.AddTradeNode(newTradeNode, index);
+                multiPathPlotter.SetPath(trader.tradeRoute.Select(x => x.target.gameObject.transform.position).ToList());
+            };
+        }
+
+        private TradeNode GetDefaultTradeNode(TradeStop stop)
+        {
+            return new TradeNode
+            {
+                target = stop,
+                trades = new ResourceTrade[]
+                {
                         new ResourceTrade
                         {
                             amount = 0,
@@ -107,10 +142,7 @@ namespace Assets.Scripts.Gatherer
                             amount = 0,
                             type = ResourceType.Wood
                         }
-                    }
-                };
-                trader.AddTradeNode(newTradeNode, index);
-                multiPathPlotter.SetPath(trader.tradeRoute.Select(x => x.target.gameObject.transform.position).ToList());
+                }
             };
         }
     }

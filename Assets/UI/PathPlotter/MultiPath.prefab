@@ -46,5 +46,5 @@ MonoBehaviour:
   loop: 1
   singlePathPlotterPrefab: {fileID: 8287222682364152889, guid: 8d8e0882708906642abd0f6261fcf338,
     type: 3}
-  dragoutHeight: 1
+  dragoutHeight: 0.5
   cameraName: Scene Camera
