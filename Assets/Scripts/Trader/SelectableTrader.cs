@@ -12,6 +12,8 @@ using System.Linq;
 using UnityEngine;
 using UniRx;
 using TradeModeling.TradeRouteUtilities;
+using Assets.UI;
+using RTS_Cam;
 
 namespace Assets.Scripts.Gatherer
 {
@@ -51,12 +53,16 @@ namespace Assets.Scripts.Gatherer
 
         public void OnMeDeselected()
         {
+            var rtsCam = CameraGetter.GetCameraObject().GetComponent<RTS_Camera>();
+            rtsCam.targetFollow = default;
             Debug.Log($"{gameObject.name} deselected");
             TeardownPathPlot();
         }
 
         public void MeClicked(RaycastHit hit)
         {
+            var rtsCam = CameraGetter.GetCameraObject().GetComponent<RTS_Camera>();
+            rtsCam.targetFollow = this.transform;
             Debug.Log($"{gameObject.name} selected");
             SetupPathPlot();
         }

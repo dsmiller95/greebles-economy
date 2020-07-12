@@ -1,6 +1,8 @@
 ﻿using Assets.Scripts.Resources.UI;
+using Assets.UI;
 using Assets.UI.InfoPane;
 using Assets.UI.SelectionManager;
+using RTS_Cam;
 using System.Collections.Generic;
 using UnityEngine;
 using static Assets.Scripts.Gatherer.StateHandlers.SellingStateHandler;
@@ -45,11 +47,15 @@ namespace Assets.Scripts.Gatherer
 
         public void OnMeDeselected()
         {
+            var rtsCam = CameraGetter.GetCameraObject().GetComponent<RTS_Camera>();
+            rtsCam.targetFollow = default;
             Debug.Log($"{gameObject.name} deselected");
         }
 
         public void MeClicked(RaycastHit hit)
         {
+            var rtsCam = CameraGetter.GetCameraObject().GetComponent<RTS_Camera>();
+            rtsCam.targetFollow = this.transform;
             Debug.Log($"{gameObject.name} selected");
         }
     }

@@ -1,8 +1,9 @@
 ﻿using Assets.UI.InfoPane;
 using Assets.UI.SelectionManager;
+using RTS_Cam;
 using UnityEngine;
 
-namespace Assets.UI.SelectionInfoPane
+namespace Assets.UI.SelectionManager
 {
     public class DefaultMouseInput : MonoBehaviour, ISelectionInput
     {
@@ -35,7 +36,6 @@ namespace Assets.UI.SelectionInfoPane
 
                 currentlySelectedFocusable.MeClicked(hit);
                 currentlySelectedObject.GetComponentInChildren<IHighlightable>()?.SetHighlighted(HighlightState.Selected);
-
 
                 paneBuilder.FocusableSelected(currentlySelectedFocusable);
             }

@@ -131,6 +131,7 @@
     <Compile Include="Assets\Scripts\resource spawner\SpawnMarker.cs" />
     <Compile Include="Assets\Time\TimeController.cs" />
     <Compile Include="Assets\UI\Billboard.cs" />
+    <Compile Include="Assets\UI\CameraGetter.cs" />
     <Compile Include="Assets\UI\Draggable\DragItem.cs" />
     <Compile Include="Assets\UI\Draggable\DragZone.cs" />
     <Compile Include="Assets\UI\PathPlotter\MultiPathPlotter.cs" />
@@ -146,10 +147,10 @@
     <Compile Include="Assets\UI\Plotter\Series Plotter\IMultiPlottableSeries.cs" />
     <Compile Include="Assets\UI\Plotter\Series Plotter\IPlottableSeries.cs" />
     <Compile Include="Assets\UI\Plotter\Series Plotter\PlottableTimeSeries.cs" />
-    <Compile Include="Assets\UI\SelectionInfoPane\DefaultMouseInput.cs" />
     <Compile Include="Assets\UI\SelectionInfoPane\InfoPaneBuilder.cs" />
     <Compile Include="Assets\UI\SelectionInfoPane\InfoPaneConfiguration.cs" />
     <Compile Include="Assets\UI\SelectionInfoPane\UIElementSeriesBuilder.cs" />
+    <Compile Include="Assets\UI\SelectionManager\DefaultMouseInput.cs" />
     <Compile Include="Assets\UI\SelectionManager\GetObjectSelector\SingleObjectHighlightSelector.cs" />
     <Compile Include="Assets\UI\SelectionManager\IClickable.cs" />
     <Compile Include="Assets\UI\SelectionManager\IFocusable.cs" />

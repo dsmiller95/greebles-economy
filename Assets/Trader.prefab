@@ -223,7 +223,7 @@ MonoBehaviour:
     q: 0
     r: 0
   managerSetForInspector: {fileID: 0}
-  speed: 0.25
+  speed: 0.5
   animtators:
   - {fileID: 8210320453602554796}
   - {fileID: 2122169006933674010}
