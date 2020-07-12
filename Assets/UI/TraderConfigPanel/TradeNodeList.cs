@@ -85,16 +85,24 @@ namespace Assets.UI.TraderConfigPanel
             {
                 Debug.LogError($"Error when using the asynchronous selection requester");
                 Debug.LogException(e);
-                throw; }
+                throw;
+            }
         }
 
         private void SetOrder()
         {
             NewTradeRoute(GetComponentsInChildren<TradeNodePanel>().Select(x => x.tradeNode));
         }
+
+        private void InternalTradeRouteUpdated(TradeNode[] newRoute)
+        {
+            tradeRouteUpdated?.Invoke(newRoute);
+        }
+
         private void NewTradeRoute(IEnumerable<TradeNode> newRoute)
         {
-            tradeRouteUpdated?.Invoke(newRoute.ToArray());
+            var routeArray = newRoute.ToArray();
+            InternalTradeRouteUpdated(routeArray);
         }
 
         private TradeNodePanel CreateSingleTradeNode(TradeNode node, float maxTradeAmount)
@@ -106,7 +114,7 @@ namespace Assets.UI.TraderConfigPanel
                 maxTradeAmount,
                 () =>
                 {
-                    tradeRouteUpdated?.Invoke(linkedTrader.tradeRoute);
+                    InternalTradeRouteUpdated(linkedTrader.tradeRoute);
                 });
         }
 

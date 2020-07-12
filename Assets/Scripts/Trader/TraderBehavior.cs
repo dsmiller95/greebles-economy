@@ -105,7 +105,7 @@ namespace Assets.Scripts.Trader
         public void SetNewTradeRoute(TradeNode[] tradeRoute)
         {
             this.tradeRoute = tradeRoute;
-            this.tradeRouteReactive.Value = this.tradeRoute;
+            this.tradeRouteReactive.Value = this.tradeRoute.ToList().ToArray();
         }
 
         private void OnNewTradeRouteSet(TradeNode[] previousTradeRoute, TradeNode[] newTradeRoute)

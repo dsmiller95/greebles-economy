@@ -10,6 +10,7 @@ using Assets.UI.TraderConfigPanel;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UniRx;
 
 namespace Assets.Scripts.Gatherer
 {
@@ -57,7 +58,6 @@ namespace Assets.Scripts.Gatherer
                         tradeNodeList.tradeRouteUpdated = (tradeRoute) =>
                         {
                             trader.SetNewTradeRoute(tradeRoute);
-                            multiPathPlotter.SetPath(trader.tradeRoute.Select(x => x.target.gameObject.transform.position).ToList());
                         };
                     }
                 } }
@@ -86,6 +86,11 @@ namespace Assets.Scripts.Gatherer
             var plotter = Instantiate(multiPathPlotterPrefab);
             multiPathPlotter = plotter.GetComponent<MultiPathPlotter>();
             multiPathPlotter.SetPath(trader.tradeRoute.Select(x => x.target.gameObject.transform.position).ToList());
+
+            trader.tradeRouteReactive.Subscribe(tradeRoute =>
+            {
+                multiPathPlotter.SetPath(tradeRoute.Select(x => x.target.gameObject.transform.position).ToList());
+            });
 
             multiPathPlotter.GetPathPointOnPlaneFromPointHitOnDragoutPlane = pointHit =>
             {
@@ -121,7 +126,6 @@ namespace Assets.Scripts.Gatherer
 
                 var newTradeNode = GetDefaultTradeNode(targetStop);
                 trader.AddTradeNode(newTradeNode, index);
-                multiPathPlotter.SetPath(trader.tradeRoute.Select(x => x.target.gameObject.transform.position).ToList());
             };
         }
 
