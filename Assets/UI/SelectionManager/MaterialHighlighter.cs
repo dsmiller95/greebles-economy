@@ -18,6 +18,8 @@ namespace Assets.UI.SelectionManager
             if (outlineMaterial)
             {
                 var outlineObject = GameObject.Instantiate(gameObject, transform);
+                outlineObject.transform.localScale = Vector3.one;
+                outlineObject.transform.localRotation = Quaternion.identity;
                 Destroy(outlineObject.GetComponent<MaterialHighlighter>()); //.enabled = false;
 
                 outlineRenderer = outlineObject.GetComponent<Renderer>();

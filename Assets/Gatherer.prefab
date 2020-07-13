@@ -411,7 +411,7 @@ MonoBehaviour:
   speed: 0.3
   animtators:
   - {fileID: 800049337303605667}
-  - {fileID: 1725415029301296577}
+  - {fileID: 6060423229245386532}
 --- !u!1 &4933364518822464141
 GameObject:
   m_ObjectHideFlags: 0
@@ -596,7 +596,22 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
---- !u!95 &1725415029301296577
+--- !u!114 &5447301329495182726
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8910320003765474022}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 17a1329ecfd54714e8086ab67edda2bd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  baseMaterial: {fileID: 2100000, guid: 1a1299152cdc7a445ae272a808d55557, type: 2}
+  selectedMaterial: {fileID: 2100000, guid: d4d215fcc7017e94eb8defeee9bfecaa, type: 2}
+  outlineMaterial: {fileID: 2100000, guid: 0336d35aa50f4424e98c196f3e331cf2, type: 2}
+--- !u!95 &6060423229245386532
 Animator:
   serializedVersion: 3
   m_ObjectHideFlags: 0
@@ -615,21 +630,6 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
---- !u!114 &5447301329495182726
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8910320003765474022}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 17a1329ecfd54714e8086ab67edda2bd, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  baseMaterial: {fileID: 2100000, guid: 1a1299152cdc7a445ae272a808d55557, type: 2}
-  selectedMaterial: {fileID: 2100000, guid: d4d215fcc7017e94eb8defeee9bfecaa, type: 2}
-  outlineMaterial: {fileID: 2100000, guid: 0336d35aa50f4424e98c196f3e331cf2, type: 2}
 --- !u!1001 &119312703131665444
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -838,6 +838,11 @@ PrefabInstance:
       propertyPath: m_Materials.Array.data[0]
       value: 
       objectReference: {fileID: 2100000, guid: 1a1299152cdc7a445ae272a808d55557, type: 2}
+    - target: {fileID: 7561110372842451503, guid: cc2ad9e5f52e216438b8cc572393f526,
+        type: 3}
+      propertyPath: m_AABB.m_Center.y
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: cc2ad9e5f52e216438b8cc572393f526, type: 3}
 --- !u!1 &8910320003765474022 stripped
