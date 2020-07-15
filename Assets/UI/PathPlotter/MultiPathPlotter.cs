@@ -123,7 +123,7 @@ namespace Assets.UI.PathPlotter
         }
 
         private int currentMouseTrackingIndex = -1;
-        private Vector2 lastDragPosition;
+        private Vector2? lastDragPosition;
 
         private void EndTrackingMouse()
         {
@@ -134,10 +134,10 @@ namespace Assets.UI.PathPlotter
             Destroy(removed.gameObject);
 
             //TODO: allow for cases where last drag pos is 0, 0
-            if (lastDragPosition != default)
+            if (lastDragPosition.HasValue)
             {
-                PathDragEnd(lastDragPosition, currentMouseTrackingIndex);
-                lastDragPosition = default;
+                PathDragEnd(lastDragPosition.Value, currentMouseTrackingIndex);
+                lastDragPosition = null;
             }
 
 
