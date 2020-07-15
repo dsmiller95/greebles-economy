@@ -241,9 +241,9 @@ MonoBehaviour:
   inventoryCapacitySetForUI: 100
   startingInventoryAmounts:
   - type: 1
-    amount: 10
+    amount: 20
   - type: 2
-    amount: 10
+    amount: 20
   - type: 4
     amount: 50
 --- !u!114 &2428442771590661238

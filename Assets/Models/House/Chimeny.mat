@@ -76,6 +76,7 @@ Material:
     m_Floats:
     - BOOLEAN_33907BC0: 1
     - BOOLEAN_4BF3BE48: 1
+    - BOOLEAN_BA999A52: 0
     - BOOLEAN_FA8843C6: 1
     - _AlphaClip: 0
     - _Blend: 0

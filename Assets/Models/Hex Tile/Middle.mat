@@ -21,7 +21,7 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Middle
-  m_Shader: {fileID: -6465566751694194690, guid: b269ffd5b68e625488397f7481223a10,
+  m_Shader: {fileID: -6465566751694194690, guid: 497ffedc6f731a142862568a9fb8c34d,
     type: 3}
   m_ShaderKeywords: BOOLEAN_33907BC0_ON BOOLEAN_BA999A52_ON _EMISSION
   m_LightmapFlags: 2
@@ -78,6 +78,8 @@ Material:
     - BOOLEAN_4BF3BE48: 0
     - BOOLEAN_BA999A52: 1
     - BOOLEAN_FA8843C6: 0
+    - Vector1_76F907F5: 0
+    - Vector1_7E90C1CF: 0
     - _AlphaClip: 0
     - _Blend: 0
     - _BumpScale: 1
