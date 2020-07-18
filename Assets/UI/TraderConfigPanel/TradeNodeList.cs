@@ -59,7 +59,7 @@ namespace Assets.UI.TraderConfigPanel
         {
             try
             {
-                var selection = await SelectionTracker.globalTracker.GetInputAsync<TradeStop>(market => true);
+                var selection = await SelectionTracker.instance.GetInputAsync<TradeStop>(market => true);
                 var newTradeNode = new TradeNode
                 {
                     target = selection,

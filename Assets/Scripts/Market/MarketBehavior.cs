@@ -1,4 +1,4 @@
-﻿using Assets.Scripts.MovementExtensions;
+﻿using Assets.MapGen.TileManagement;
 using Assets.Scripts.Resources;
 using Assets.Scripts.Resources.Inventory;
 using Assets.Scripts.Trader;

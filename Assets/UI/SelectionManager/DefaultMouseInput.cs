@@ -15,15 +15,15 @@ namespace Assets.UI.SelectionManager
 
         private void Start()
         {
-            SelectionTracker.globalTracker.PushSelectionInput(this);
+            SelectionTracker.instance.PushSelectionInput(this);
         }
 
-        public bool IsValidSelection(GameObject o)
+        public bool IsValidClick(GameObject o)
         {
             return o.GetComponentInParent<IClickable>() != default;
         }
 
-        public bool SelectedObject(GameObject o, RaycastHit hit)
+        public bool ObjectClicked(GameObject o, RaycastHit hit)
         {
             var clickable = o.GetComponentInParent<IClickable>();
 

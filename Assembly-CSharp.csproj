@@ -79,6 +79,8 @@
     <Compile Include="Assets\MapGen\TileManagement\SelectableHexCells.cs" />
     <Compile Include="Assets\MapGen\TileManagement\TileRoute.cs" />
     <Compile Include="Assets\Scripts\Castle\CastleBehavior.cs" />
+    <Compile Include="Assets\Scripts\Castle\CastleUIButtonActions.cs" />
+    <Compile Include="Assets\Scripts\Castle\ObjectPlacer.cs" />
     <Compile Include="Assets\Scripts\Castle\SelectableCastle.cs" />
     <Compile Include="Assets\Scripts\Gatherer\GatherBehaviorOptimizer.cs" />
     <Compile Include="Assets\Scripts\Gatherer\GathererBehavior.cs" />
@@ -178,7 +180,7 @@
     <None Include="Assets\External\RTS_Camera\Demo\Projectors\Guidelines.txt" />
     <None Include="Assets\Materials\Toon\Toon.shader" />
     <None Include="Assets\Materials\outlineSource.shader" />
-    <None Include="Assets\UI\Icons34x34byAilsEnglish2013\Readme.txt" />
+    <None Include="Assets\UI\Icons\Icons34x34byAilsEnglish2013\Readme.txt" />
     <None Include="Assets\External\netstandard2.0\UnityEngine.CoreModule.xml" />
     <Reference Include="Unity.RenderPipeline.Universal.ShaderLibrary">
       <HintPath>C:/source/greebles-economy/Library/ScriptAssemblies/Unity.RenderPipeline.Universal.ShaderLibrary.dll</HintPath>

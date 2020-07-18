@@ -8,7 +8,7 @@ namespace Assets.UI.SelectionManager
 {
     public class SelectionTracker : MonoBehaviour
     {
-        public static SelectionTracker globalTracker;
+        public static SelectionTracker instance;
 
         public string cameraName;
 
@@ -18,11 +18,11 @@ namespace Assets.UI.SelectionManager
 
         private void Awake()
         {
-            if (SelectionTracker.globalTracker != default)
+            if (SelectionTracker.instance != default)
             {
                 Debug.LogError("Cannot register more than one selection tracker");
             }
-            SelectionTracker.globalTracker = this;
+            SelectionTracker.instance = this;
         }
 
         // Start is called before the first frame update
@@ -51,9 +51,9 @@ namespace Assets.UI.SelectionManager
                 if (Physics.Raycast(ray, out hit, 1000))
                 {
                     var hitGameObject = hit.transform.gameObject;
-                    if (inputCommand.IsValidSelection(hitGameObject))
+                    if (inputCommand.IsValidClick(hitGameObject))
                     {
-                        if (inputCommand.SelectedObject(hitGameObject, hit))
+                        if (inputCommand.ObjectClicked(hitGameObject, hit))
                         {
                             PopSelectionInput();
                         }

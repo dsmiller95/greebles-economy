@@ -1,12 +1,8 @@
-﻿using Assets;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using TradeModeling.Inventories;
+﻿using Assets.MapGen.TileManagement;
 using System.Threading.Tasks;
 using TradeModeling.Economics;
-using System.Threading;
-using Assets.Scripts.MovementExtensions;
+using TradeModeling.Inventories;
+using UnityEngine;
 
 namespace Assets.Scripts.Resources
 {
@@ -15,7 +11,7 @@ namespace Assets.Scripts.Resources
     {
         public ResourceType _type => type;
 
-        public float amount => this.value;
+        public float amount => value;
 
         public ResourceType type;
         public float value = 1;
@@ -32,27 +28,27 @@ namespace Assets.Scripts.Resources
             {
                 if (amount == -1)
                 {
-                    amount = this.value;
+                    amount = value;
                 }
                 eatOption = inventory.Add(_type, amount);
                 /* Determine if this resource will be completely consumed by this operation
                  * If it will be, mark as completely eaten and then get rid of the gameObject when this operation completes
                  */
-                if (this.isCompletelyEaten)
+                if (isCompletelyEaten)
                 {
                     return false;
                 }
-                this.value -= eatOption.info;
+                value -= eatOption.info;
                 if (Mathf.Abs(value) <= float.Epsilon * 10)
                 {
-                    this.isCompletelyEaten = true;
+                    isCompletelyEaten = true;
                 }
                 currentConsumerCount++;
             }
-            await Task.Delay((int)(this.gatherTime * 1000));
+            await Task.Delay((int)(gatherTime * 1000));
             eatOption.Execute();
 
-            this.DestroyIfNoOtherConsumers();
+            DestroyIfNoOtherConsumers();
 
             return true;
         }
@@ -63,11 +59,11 @@ namespace Assets.Scripts.Resources
             lock (this)
             {
                 currentConsumerCount--;
-                willDestroy = currentConsumerCount == 0 && this.isCompletelyEaten;
+                willDestroy = currentConsumerCount == 0 && isCompletelyEaten;
             }
             if (willDestroy)
             {
-                Destroy(this.gameObject);
+                Destroy(gameObject);
             }
         }
     }

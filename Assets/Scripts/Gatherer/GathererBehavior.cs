@@ -1,4 +1,5 @@
-﻿using Assets.Scripts.Gatherer.StateHandlers;
+﻿using Assets.MapGen.TileManagement;
+using Assets.Scripts.Gatherer.StateHandlers;
 using Assets.Scripts.Home;
 using Assets.Scripts.MovementExtensions;
 using Assets.Scripts.Resources;

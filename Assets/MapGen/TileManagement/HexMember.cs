@@ -2,7 +2,7 @@
 using Simulation.Tiling;
 using UnityEngine;
 
-namespace Assets.Scripts.MovementExtensions
+namespace Assets.MapGen.TileManagement
 {
     public class HexMember : MonoBehaviour, ITilemapMember
     {
@@ -63,8 +63,15 @@ namespace Assets.Scripts.MovementExtensions
                 if (newManager != null)
                 {
                     cachedTileMapManager = newManager;
+                    return cachedTileMapManager;
                 }
-                return cachedTileMapManager;
+                newManager = this.GetComponentInParent<HexTileMapManager>();
+                if (newManager != null)
+                {
+                    cachedTileMapManager = newManager;
+                    return cachedTileMapManager;
+                }
+                return null;
             }
             set => cachedTileMapManager = value;
         }

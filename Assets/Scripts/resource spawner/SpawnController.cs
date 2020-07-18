@@ -1,4 +1,4 @@
-﻿using Assets.Scripts.MovementExtensions;
+﻿using Assets.MapGen.TileManagement;
 using Simulation.Tiling;
 using System.Linq;
 using UnityEngine;

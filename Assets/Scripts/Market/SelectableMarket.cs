@@ -1,5 +1,5 @@
 ﻿using Assets.MapGen;
-using Assets.Scripts.MovementExtensions;
+using Assets.MapGen.TileManagement;
 using Assets.Scripts.Resources.UI;
 using Assets.UI.InfoPane;
 using Assets.UI.SelectionManager;

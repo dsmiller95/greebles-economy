@@ -16,7 +16,7 @@ namespace Assets.UI.PathPlotter
         private IList<SinglePathPlotter> pathRenders;
 
         public float dragoutHeight = 1f;
-        public string cameraName;
+        public string cameraName = "Scene Camera";
         private Camera cam;
 
         private Plane targetPlane;

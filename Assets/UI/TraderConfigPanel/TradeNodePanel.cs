@@ -47,7 +47,7 @@ namespace Assets.UI.TraderConfigPanel
         {
             try
             {
-                var selection = await SelectionTracker.globalTracker.GetInputAsync<TradeStop>(target => true);
+                var selection = await SelectionTracker.instance.GetInputAsync<TradeStop>(target => true);
 
                 tradeNode.target = selection;
                 description.text = $"Target: {tradeNode.target.gameObject.name}";

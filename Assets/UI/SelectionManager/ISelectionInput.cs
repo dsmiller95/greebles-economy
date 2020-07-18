@@ -29,13 +29,13 @@ namespace Assets.UI.SelectionManager
         /// </summary>
         /// <param name="o">The GameObject</param>
         /// <returns>if the object is a valid selection</returns>
-        bool IsValidSelection(GameObject o);
+        bool IsValidClick(GameObject o);
         /// <summary>
         /// Called when an object is selected, and is a valid selection for this operation
         /// </summary>
         /// <param name="o"></param>
         /// <returns>true if this selection input should be removed from the stack, if it is completed</returns>
-        bool SelectedObject(GameObject o, RaycastHit rayHit);
+        bool ObjectClicked(GameObject o, RaycastHit rayHit);
 
     }
 }

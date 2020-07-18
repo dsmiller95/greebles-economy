@@ -1,11 +1,10 @@
 ﻿using Assets.UI.Plotter;
 using Assets.UI.SelectionManager;
-using System.Linq;
 using UnityEngine;
 
 namespace Assets.UI.InfoPane
 {
-    public class InfoPaneBuilder : MonoBehaviour//, ISelectionInput
+    public class InfoPaneBuilder : MonoBehaviour
     {
         public GameObject plottablePrefab;
         private UIElementSeriesBuilder panelBuilder;

@@ -67,13 +67,13 @@ namespace Assets.UI.SelectionManager.GetObjectSelector
             }
         }
 
-        public bool IsValidSelection(GameObject o)
+        public bool IsValidClick(GameObject o)
         {
             var obj = o.GetComponent<T>();
             return obj != null && filter(obj);
         }
 
-        public bool SelectedObject(GameObject o, RaycastHit rayHit)
+        public bool ObjectClicked(GameObject o, RaycastHit rayHit)
         {
             itemSelected(o.GetComponent<T>());
             return true;

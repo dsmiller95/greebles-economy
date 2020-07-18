@@ -1,4 +1,4 @@
-﻿using Assets.Scripts.MovementExtensions;
+﻿using Assets.MapGen.TileManagement;
 using UnityEngine;
 
 [RequireComponent(typeof(HexMember))]
