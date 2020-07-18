@@ -10,28 +10,24 @@ namespace Assets.MapGen
         private int verticalRadix;
         private int indexInSequence;
 
-        private Vector2 offset;
-        private Vector2 scale;
-
-        public HaltonSequenceGenerator(int horizontalRadix, int verticalRadix, int seed, Vector2 maximum, Vector2 minimum = default)
+        public HaltonSequenceGenerator(int horizontalRadix, int verticalRadix, int seed)
         {
             this.horizontalRadix = horizontalRadix;
             this.verticalRadix = verticalRadix;
             indexInSequence = seed;
-
-            this.offset = minimum;
-            this.scale = maximum - minimum;
         }
 
-        public Vector2 Sample()
+        public Vector2 Sample(Vector2 maximum, Vector2 minimum = default)
         {
+            var offset = minimum;
+            var scale = maximum - minimum;
             var sample = new Vector2(
                 HaltonSequence.Get(indexInSequence, horizontalRadix),
                 HaltonSequence.Get(indexInSequence, verticalRadix)
                 );
             indexInSequence++;
 
-            return sample * scale - offset;
+            return (sample * scale) + offset;
         }
     }
 }

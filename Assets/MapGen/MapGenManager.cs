@@ -4,12 +4,18 @@ using Assets.Scripts.Market;
 using Assets.Scripts.MovementExtensions;
 using Simulation.Tiling;
 using UnityEngine;
+using UnityEngine.Video;
 
 [System.Serializable]
 public struct MapGenSpawnable
 {
     public GameObject prefab;
     public float densityPerSurfaceSize;
+    /// <summary>
+    /// Set to 0 or 1 to spawn across the whole surface. represents the percentage size of the map
+    /// that should be covered by this spawn
+    /// </summary>
+    public float scaleFactor;
 }
 
 [RequireComponent(typeof(HexMember))]
@@ -26,11 +32,17 @@ public class MapGenManager : MonoBehaviour
     {
         var spawnArea = spawnBoxSize.x * spawnBoxSize.y;
         var seed = Random.Range(100, 1000);
-        pointGenerator = new HaltonSequenceGenerator(2, 3, seed, spawnBoxSize + new Vector2Int(1, 1));
+        pointGenerator = new HaltonSequenceGenerator(2, 3, seed);
 
         foreach (var spawnable in spawnableItems)
         {
-            SpawnItemsForSpawnable(spawnable, spawnArea);
+            SpawnItemsForSpawnable(
+                spawnable,
+                spawnArea * (
+                    spawnable.scaleFactor == 0 ?
+                        1 :
+                        (spawnable.scaleFactor * spawnable.scaleFactor)
+                ));
         }
         timeOfMapGen = Time.time;
     }
@@ -60,21 +72,32 @@ public class MapGenManager : MonoBehaviour
         var totalSpawns = spawnBoxArea * spawnable.densityPerSurfaceSize;
         for (var i = 0; i < totalSpawns; i++)
         {
-            SpawnItem(spawnable.prefab);
+            SpawnItem(spawnable);
         }
     }
 
-    private void SpawnItem(GameObject prefab)
+    private void SpawnItem(MapGenSpawnable spawnable)
     {
-        var newItem = Instantiate(prefab, transform);
+        var newItem = Instantiate(spawnable.prefab, transform);
         var hexItem = newItem.GetComponentInChildren<HexMember>();
-        var newPosition = getRandomPosInBounds();
+        var newPosition = getRandomPosInBounds(spawnable.scaleFactor);
         hexItem.localPosition = newPosition;
     }
 
-    private AxialCoordinate getRandomPosInBounds()
+    private AxialCoordinate getRandomPosInBounds(float scaleFactor)
     {
-        var nextPoint = pointGenerator.Sample();
+        Vector2 nextPoint;
+        if(scaleFactor == 0)
+        {
+            nextPoint = pointGenerator.Sample(spawnBoxSize + new Vector2Int(1, 1));
+        }else
+        {
+            var maxSize = spawnBoxSize + new Vector2Int(1, 1);
+            var newMin = ((Vector2)maxSize) * ((1 - scaleFactor) / 2f);
+            var newMax = ((Vector2)maxSize) * ((1 + scaleFactor) / 2f);
+
+            nextPoint = pointGenerator.Sample(newMax, newMin);
+        }
 
         return new OffsetCoordinate(
             Mathf.FloorToInt(nextPoint.x),
