@@ -3,8 +3,10 @@ using Assets.UI.Modals;
 using Assets.UI.Plotter;
 using Assets.UI.Plotter.Function;
 using Boo.Lang;
+using TMPro;
 using TradeModeling.Functions;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace Assets.Scripts.Market
 {
@@ -12,13 +14,37 @@ namespace Assets.Scripts.Market
     {
         public MarketBehavior market;
         public GraphPlotter plotter;
+        public Slider slider;
+
+        public ResourceType defaultResource = ResourceType.Food;
+        private ResourceType currentResource;
 
         public void Start()
         {
-            var resource = ResourceType.Food;
-            var color = ResourceConfiguration.resourceColoring[resource];
+            this.SetupSelfForResource(defaultResource);
+        }
 
-            var priceFunctionConfig = market.GetSellPriceFunctions()[resource];
+        public TextMeshProUGUI sliderLabelText;
+        public void OnPriceSliderChanged(float sliderValue)
+        {
+            sliderLabelText.text = sliderValue.ToString("F0");
+            market.targetInventoryAmounts[currentResource] = sliderValue;
+        }
+
+        public void OnResourceSelected(ResourceType resource)
+        {
+            this.SetupSelfForResource(resource);
+        }
+
+        private void SetupSelfForResource(ResourceType resource)
+        {
+            currentResource = resource;
+
+            var color = ResourceConfiguration.resourceColoring[currentResource];
+
+            var inventoryCapacity = market._inventory.inventoryCapacity;
+
+            var priceFunctionConfig = market.GetSellPriceFunctions()[currentResource];
             var priceFunction = new SigmoidFunction(priceFunctionConfig);
 
             var functionAdapter = new PlottableFunctionToSeriesAdapter(
@@ -26,8 +52,8 @@ namespace Assets.Scripts.Market
                 new PlottableFunctionConfig
                 {
                     start = 0,
-                    end = market._inventory.inventoryCapacity,
-                    steps = market._inventory.inventoryCapacity
+                    end = inventoryCapacity,
+                    steps = inventoryCapacity
                 },
                 new PlottableConfig
                 {
@@ -35,7 +61,9 @@ namespace Assets.Scripts.Market
                     lineColor = color,
                     yScale = priceFunctionConfig.yRange
                 });
-
+            slider.minValue = 0f;
+            slider.maxValue = inventoryCapacity;
+            slider.value = market.targetInventoryAmounts[currentResource];
             plotter.Plottables = new[] { functionAdapter };
             functionAdapter.PlotFunction();
         }
@@ -45,5 +73,16 @@ namespace Assets.Scripts.Market
             base.OnConfirm();
             Debug.Log($"setting prices for {market.name}");
         }
+
+        #region event handler assistors
+        public void OnFoodSelected()
+        {
+            this.OnResourceSelected(ResourceType.Food);
+        }
+        public void OnWoodSelected()
+        {
+            this.OnResourceSelected(ResourceType.Wood);
+        }
+        #endregion
     }
 }

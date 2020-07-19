@@ -72,18 +72,6 @@ namespace Assets.Scripts.Market
             });
         }
 
-        // Start is called before the first frame update
-        void Start()
-        {
-
-        }
-
-        // Update is called once per frame
-        void Update()
-        {
-
-        }
-
         [Obsolete("Use the MarketExchangeAdapter provided by GetExchangeAdapter()", true)]
         public Dictionary<ResourceType, ResourceSellResult> sellAllGoodsInInventory(SpaceFillingInventory<ResourceType> inventory)
         {
