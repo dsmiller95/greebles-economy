@@ -21,7 +21,7 @@ public class CastleUIButtonActions : MonoBehaviour
 {
     public CastleBehavior castle;
 
-    public GameObject homePlaceObject;
+    public GameObject homePlaceObjectPrefab;
     public GameObject homePrefab;
     /// <summary>
     /// the cost of home ownership
@@ -33,7 +33,6 @@ public class CastleUIButtonActions : MonoBehaviour
     public void StartBuildingTrader()
     {
     }
-
     public void StartBuildingHome()
     {
         var castleInventory = castle.inventory.backingInventory;
@@ -41,7 +40,7 @@ public class CastleUIButtonActions : MonoBehaviour
             .Select(x => new { cost = x, purchase = castleInventory.Consume(x.resource, x.cost) }).ToList();
         if(consumes.Any(x => Mathf.Abs(x.cost.cost - x.purchase.info) > 1e-5))
         {
-            Debug.LogWarning("Ya can't afford it ya shmuck");
+            Debug.LogWarning("You can't afford it ya shmuck");
             return;
         }
 
@@ -50,17 +49,17 @@ public class CastleUIButtonActions : MonoBehaviour
             costConsume.purchase.Execute();
         }
         
-
-        Debug.Log("home building starting");
         var placer = ObjectPlacer.instance;
+        var hexMapParent = castle.GetComponentInParent<HexTileMapManager>().transform;
+        var homePlaceObject = Instantiate(homePlaceObjectPrefab, hexMapParent);
         placer.PlaceObject(homePlaceObject, (coords) =>
         {
-            Debug.Log("home buildt");
-            Debug.Log(coords);
-
-            var newItem = Instantiate(homePrefab, castle.GetComponentInParent<HexTileMapManager>().transform);
+            var newItem = Instantiate(homePrefab, hexMapParent);
             var hexItem = newItem.GetComponentInChildren<HexMember>();
-            hexItem.localPosition = coords;
+            hexItem.PositionInTileMap = coords;
+        }, () =>
+        {
+            Destroy(homePlaceObject);
         });
     }
 }

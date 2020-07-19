@@ -134,6 +134,7 @@
     <Compile Include="Assets\Scripts\resource spawner\SpawnController.cs" />
     <Compile Include="Assets\Scripts\resource spawner\SpawnMarker.cs" />
     <Compile Include="Assets\Time\TimeController.cs" />
+    <Compile Include="Assets\UI\Action buttons\ActionButtonPanelManager.cs" />
     <Compile Include="Assets\UI\Billboard.cs" />
     <Compile Include="Assets\UI\CameraGetter.cs" />
     <Compile Include="Assets\UI\Draggable\DragItem.cs" />

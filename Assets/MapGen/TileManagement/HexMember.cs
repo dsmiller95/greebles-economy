@@ -1,5 +1,4 @@
-﻿using Assets.MapGen.TileManagement;
-using Simulation.Tiling;
+﻿using Simulation.Tiling;
 using UnityEngine;
 
 namespace Assets.MapGen.TileManagement
@@ -9,7 +8,18 @@ namespace Assets.MapGen.TileManagement
         public AxialCoordinate localPosition;
         public HexTileMapManager managerSetForInspector;
 
-        private ITilemapMember parentMemberTransform;
+
+        private ITilemapMember _parentMemeCache;
+        private ITilemapMember parentMemberTransform
+        {
+            get {
+                if(_parentMemeCache == null)
+                {
+                    _parentMemeCache = transform.parent.GetComponentInParent<ITilemapMember>();
+                }
+                return _parentMemeCache;
+            }
+        }
 
         void Awake()
         {
@@ -17,15 +27,15 @@ namespace Assets.MapGen.TileManagement
             {
                 MapManager = managerSetForInspector;
             }
-            parentMemberTransform = transform.parent.GetComponentInParent<ITilemapMember>();
         }
 
         // Start is called before the first frame update
         public void Start()
         {
-            var manager = MapManager;
-            manager.PlaceNewMapMember(this);
-            this.UpdatePositionInWorldSpace();
+            // this is not a no-op: will trigger the logic which ensures that this component is registered
+            // in the grid, while making sure it is only registered once
+            this.PositionInTileMap = this.PositionInTileMap;
+            UpdatePositionInWorldSpace();
         }
 
         public void OnDestroy()
@@ -44,7 +54,7 @@ namespace Assets.MapGen.TileManagement
                 MapManager?.DeRegisterInGrid(this);
                 localPosition = value - (parentMemberTransform?.PositionInTileMap ?? new AxialCoordinate(0, 0));
                 MapManager?.RegisterInGrid(this);
-                this.UpdatePositionInWorldSpace();
+                UpdatePositionInWorldSpace();
             }
         }
 
@@ -65,7 +75,7 @@ namespace Assets.MapGen.TileManagement
                     cachedTileMapManager = newManager;
                     return cachedTileMapManager;
                 }
-                newManager = this.GetComponentInParent<HexTileMapManager>();
+                newManager = GetComponentInParent<HexTileMapManager>();
                 if (newManager != null)
                 {
                     cachedTileMapManager = newManager;
@@ -78,7 +88,7 @@ namespace Assets.MapGen.TileManagement
 
         public void UpdatePositionInWorldSpace()
         {
-            transform.position = this.GetPositionInWorldSpace();
+            transform.position = GetPositionInWorldSpace();
         }
 
         protected virtual Vector3 GetPositionInWorldSpace()
@@ -90,7 +100,11 @@ namespace Assets.MapGen.TileManagement
 
         public T TryGetType<T>()
         {
-            return this.GetComponentInChildren<T>();
+            if (this == null)
+            {
+                Debug.LogError($"Error: attempting to access destroyed HexMember at {this.PositionInTileMap}");
+            }
+            return GetComponentInChildren<T>();
         }
     }
 }

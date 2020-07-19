@@ -58,5 +58,10 @@ namespace Assets.Scripts.Gatherer
             rtsCam.targetFollow = this.transform;
             Debug.Log($"{gameObject.name} selected");
         }
+
+        public GameObject InstantiateButtonPanel(GameObject panelParent)
+        {
+            return null;
+        }
     }
 }

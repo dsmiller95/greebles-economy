@@ -50,6 +50,10 @@ namespace Assets.Scripts.Gatherer
                 } }
             };
         }
+        public GameObject InstantiateButtonPanel(GameObject panelParent)
+        {
+            return null;
+        }
 
         public void OnMeDeselected()
         {

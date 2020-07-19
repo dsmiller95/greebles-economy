@@ -4,22 +4,19 @@ using Assets.UI.SelectionManager;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Assets.Scripts.Home
+namespace Assets.Scripts.Castle
 {
     public class SelectableCastle : MonoBehaviour, IFocusable
     {
         public ResourceTimeSeriesAdapter ResourcePlotter;
 
-        // Start is called before the first frame update
-        void Start()
+        public GameObject buttonPanelPrefab;
+
+        public GameObject InstantiateButtonPanel(GameObject panelParent)
         {
-
-        }
-
-        // Update is called once per frame
-        void Update()
-        {
-
+            var newButtonPanel = Instantiate(buttonPanelPrefab, panelParent.transform);
+            newButtonPanel.GetComponentInChildren<CastleUIButtonActions>().castle = GetComponent<CastleBehavior>();
+            return newButtonPanel;
         }
 
         public InfoPaneConfiguration GetInfoPaneConfiguration()
@@ -27,11 +24,11 @@ namespace Assets.Scripts.Home
             return new InfoPaneConfiguration()
             {
                 plottables = new List<PlotPaneConfig>() {
-                new PlotPaneConfig {
-                    plot = ResourcePlotter,
-                    header = "Inventory"
+                    new PlotPaneConfig {
+                        plot = ResourcePlotter,
+                        header = "Inventory"
+                    }
                 }
-            }
             };
         }
         public void OnMeDeselected()

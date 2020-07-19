@@ -1,6 +1,5 @@
-﻿using Assets.UI.InfoPane;
-using Assets.UI.SelectionManager;
-using RTS_Cam;
+﻿using Assets.UI.ActionButtons;
+using Assets.UI.InfoPane;
 using UnityEngine;
 
 namespace Assets.UI.SelectionManager
@@ -8,6 +7,7 @@ namespace Assets.UI.SelectionManager
     public class DefaultMouseInput : MonoBehaviour, ISelectionInput
     {
         public InfoPaneBuilder paneBuilder;
+        public ActionButtonPanelManager buttonPanel;
 
         #region Selection Managing
         private GameObject currentlySelectedObject;
@@ -38,6 +38,7 @@ namespace Assets.UI.SelectionManager
                 currentlySelectedObject.GetComponentInChildren<IHighlightable>()?.SetHighlighted(HighlightState.Selected);
 
                 paneBuilder.FocusableSelected(currentlySelectedFocusable);
+                buttonPanel.SetButtonPanelFocus(currentlySelectedFocusable);
             }
             else
             {

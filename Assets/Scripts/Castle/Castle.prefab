@@ -284,6 +284,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ResourcePlotter: {fileID: 7501850775287197711}
+  buttonPanelPrefab: {fileID: 8071999842875870868, guid: bd2f6fb4f0dbf594e9ade86c1c9c6da1,
+    type: 3}
 --- !u!1 &7576603598544235346
 GameObject:
   m_ObjectHideFlags: 0

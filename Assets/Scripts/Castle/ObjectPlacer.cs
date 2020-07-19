@@ -49,10 +49,12 @@ namespace Assets.Scripts.Castle
         }
 
         private Action<AxialCoordinate> onPlaced;
-        public void PlaceObject(GameObject placeObject, Action<AxialCoordinate> onPlaced)
+        private Action onExit;
+        public void PlaceObject(GameObject placeObject, Action<AxialCoordinate> onPlaced, Action onExit = null)
         {
             this.placeIndicator = placeObject;
             this.onPlaced = onPlaced;
+            this.onExit = onExit;
             SelectionTracker.instance.PushSelectionInput(this);
         }
 
@@ -88,6 +90,7 @@ namespace Assets.Scripts.Castle
             this.placeIndicator.SetActive(false);
         }
 
+
         public void BeginSelectionInput()
         {
             this.BeginTracking();
@@ -108,6 +111,7 @@ namespace Assets.Scripts.Castle
         {
             var placePostion = GetCoordFromCurrentMousePos();
             this.onPlaced(placePostion);
+            this.onExit?.Invoke();
             return true;
         }
 

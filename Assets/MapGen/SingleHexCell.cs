@@ -85,6 +85,10 @@ namespace Assets.MapGen
         }
 
 
+        public GameObject InstantiateButtonPanel(GameObject panelParent)
+        {
+            return null;
+        }
         public InfoPaneConfiguration GetInfoPaneConfiguration()
         {
             return null;

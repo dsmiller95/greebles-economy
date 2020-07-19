@@ -16,6 +16,10 @@ public class SelectableHexCells : MonoBehaviour, IFocusable
     {
         return null;
     }
+    public GameObject InstantiateButtonPanel(GameObject panelParent)
+    {
+        return null;
+    }
 
     public void OnMeDeselected()
     {

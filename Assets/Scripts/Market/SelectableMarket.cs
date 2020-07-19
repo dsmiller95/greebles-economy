@@ -27,11 +27,9 @@ namespace Assets.Scripts.Market
             tileGenerator = GetComponentInParent<HexTileGenerator>();
         }
 
-
-        // Update is called once per frame
-        void Update()
+        public GameObject InstantiateButtonPanel(GameObject panelParent)
         {
-
+            return null;
         }
 
         public InfoPaneConfiguration GetInfoPaneConfiguration()

@@ -17,6 +17,10 @@ namespace TradeModeling.Functions
         /// The offset from the center of the range where the sigmoid function should cross 0.5
         /// </summary>
         public float offset;
+        /// <summary>
+        /// The range of values that should be represented in the output of the function. at a value of one
+        ///     the function's domain is (0, 1), at 3 it is (0, 3), etc
+        /// </summary>
 
         public float yRange;
     }

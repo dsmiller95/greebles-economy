@@ -173,11 +173,6 @@ namespace Assets.MapGen.TileManagement
             return member.PositionInTileMap / ChunkSize;
         }
 
-        public void PlaceNewMapMember(ITilemapMember member)
-        {
-            RegisterInGrid(member);
-        }
-
         public void RegisterInGrid(ITilemapMember item)
         {
             var position = item.PositionInTileMap;

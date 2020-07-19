@@ -10,16 +10,9 @@ namespace Assets.Scripts.Home
     {
         public ResourceTimeSeriesAdapter ResourcePlotter;
 
-        // Start is called before the first frame update
-        void Start()
+        public GameObject InstantiateButtonPanel(GameObject panelParent)
         {
-
-        }
-
-        // Update is called once per frame
-        void Update()
-        {
-
+            return null;
         }
 
         public InfoPaneConfiguration GetInfoPaneConfiguration()
