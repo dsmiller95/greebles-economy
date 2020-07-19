@@ -40,7 +40,7 @@ namespace Simulation.Tiling
         {
             var cubicFloating = ConvertSizeScaledPointToFloatingCubic(relativePosition);
             cubicFloating.z = -cubicFloating.x - cubicFloating.y;
-            return RoundToNearestCube(cubicFloating);
+            return new CubeCoordinate(cubicFloating);
         }
         public CubeCoordinate RealToTileMap(Vector2 realPosition)
         {
@@ -154,32 +154,5 @@ namespace Simulation.Tiling
             var cubicCoords = new Vector3(q, r, 0);
             return cubicCoords;
         }
-
-        private CubeCoordinate RoundToNearestCube(Vector3 floatCube)
-        {
-            var roundedCoord = new CubeCoordinate(
-                Mathf.RoundToInt(floatCube.x),
-                Mathf.RoundToInt(floatCube.y),
-                Mathf.RoundToInt(floatCube.z)
-                );
-
-            var xDiff = Mathf.Abs(roundedCoord.x - floatCube.x);
-            var yDiff = Mathf.Abs(roundedCoord.y - floatCube.y);
-            var zDiff = Mathf.Abs(roundedCoord.z - floatCube.z);
-
-            if(xDiff > yDiff && xDiff > zDiff)
-            {
-                roundedCoord.x = -roundedCoord.y - roundedCoord.z;
-            }else if (yDiff > zDiff)
-            {
-                roundedCoord.y = -roundedCoord.x - roundedCoord.z;
-            }else
-            {
-                roundedCoord.z = -roundedCoord.x - roundedCoord.y;
-            }
-
-            return roundedCoord;
-        }
-
     }
 }

@@ -111,7 +111,12 @@ namespace Assets.MapGen
 
         private Color32 GetColorForTerrainAtPoint(OffsetCoordinate point)
         {
-            var sample = SampleNoise(new Vector2(point.column, point.row));
+            // map noise over a larger hex grid size to get larger-scale
+            //  hexagons of terrain. looks kinda neato
+            var largeHexGridRadius = 1;
+            var largeHexGridRelativeScale = largeHexGridRadius * 2 + 1;
+            var scaled = point.ToCube().GetCoordInLargerHexGrid(largeHexGridRadius);
+            var sample = SampleNoise(new Vector2(scaled.x, scaled.y) * largeHexGridRelativeScale);
             return colorRamp.Evaluate(sample);
         }
 

@@ -20,6 +20,31 @@ namespace Simulation.Tiling
             this.z = z;
         }
 
+
+        public CubeCoordinate(Vector3 floatCube)
+        {
+            x = Mathf.RoundToInt(floatCube.x);
+            y = Mathf.RoundToInt(floatCube.y);
+            z = Mathf.RoundToInt(floatCube.z);
+
+            var xDiff = Mathf.Abs(x - floatCube.x);
+            var yDiff = Mathf.Abs(y - floatCube.y);
+            var zDiff = Mathf.Abs(z - floatCube.z);
+
+            if (xDiff > yDiff && xDiff > zDiff)
+            {
+                x = -y - z;
+            }
+            else if (yDiff > zDiff)
+            {
+                y = -x - z;
+            }
+            else
+            {
+                z = -x - y;
+            }
+        }
+
         public OffsetCoordinate ToOffset()
         {
             var col = x;
@@ -31,6 +56,19 @@ namespace Simulation.Tiling
             var q = x;
             var r = z;
             return new AxialCoordinate(q, r);
+        }
+
+        public CubeCoordinate GetCoordInLargerHexGrid(int r)
+        {
+            float area = 3 * r * r + 3 * r + 1;
+            int shift = 3 * r + 2;
+            var xh = Mathf.FloorToInt((y + (shift * x)) / area);
+            var yh = Mathf.FloorToInt((z + (shift * y)) / area);
+            var zh = Mathf.FloorToInt((x + (shift * z)) / area);
+            var i = Mathf.FloorToInt((1 + xh - yh) / 3f);
+            var j = Mathf.FloorToInt((1 + yh - zh) / 3f);
+            var k = Mathf.FloorToInt((1 + zh - xh) / 3f);
+            return new CubeCoordinate(i, j, k);
         }
 
         public int DistanceTo(CubeCoordinate other)
@@ -46,6 +84,11 @@ namespace Simulation.Tiling
         public static CubeCoordinate operator -(CubeCoordinate a, CubeCoordinate b)
         {
             return new CubeCoordinate(a.x - b.x, a.y - b.y, a.z - b.z);
+        }
+
+        public static CubeCoordinate operator /(CubeCoordinate a, int b)
+        {
+            return new CubeCoordinate(a.x / b, a.y / b, a.z / b);
         }
 
         public override bool Equals(object obj)

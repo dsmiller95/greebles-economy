@@ -30,7 +30,7 @@ namespace Assets.MapGen.TileManagement
         private IList<ITilemapMember>[][] tileGrid;
 
         private IDictionary<AxialCoordinate, IList<ITilemapMember>> tileMemberChunkMap;
-        private int ChunkSize = 10;
+        private int ChunkRadius = 10;
 
         private HexCoordinateSystem coordinateSystem;
 
@@ -100,10 +100,15 @@ namespace Assets.MapGen.TileManagement
 
         public IEnumerable<ITilemapMember> GetMembersWithinJumpDistanceByChunk(AxialCoordinate origin, int jumpDistance)
         {
-            var chunk = origin / ChunkSize;
-            var chunkDistance = (jumpDistance / ChunkSize) + 1; //round up
+            var chunk = this.GetIndexInChunkMap(origin);
+            var originOffsetByDistance = origin + new AxialCoordinate(jumpDistance, 0);
+            var maxChunkOffset = GetIndexInChunkMap(originOffsetByDistance);
 
-            return HexCoordinateSystem.GetPositionsWithinJumpDistance(chunk, chunkDistance)
+            // the distance between these two points will always be the maximum distance we need to traverse
+            //  in chunk-space to encompass every point in regular-space that is JumpDistance or more distance away
+            var chunkDistance = chunk.DistanceTo(maxChunkOffset);
+
+            return HexCoordinateSystem.GetPositionsWithinJumpDistance(chunk.ToAxial(), chunkDistance)
                 .Where(pos => tileMemberChunkMap.ContainsKey(pos))
                 .SelectMany(pos => tileMemberChunkMap[pos]);
         }
@@ -168,9 +173,9 @@ namespace Assets.MapGen.TileManagement
                 .Where(x => x != null);
         }
 
-        private AxialCoordinate GetIndexInChunkMap(ITilemapMember member)
+        private CubeCoordinate GetIndexInChunkMap(AxialCoordinate member)
         {
-            return member.PositionInTileMap / ChunkSize;
+            return member.ToCube().GetCoordInLargerHexGrid(ChunkRadius);
         }
 
         public void RegisterInGrid(ITilemapMember item)
@@ -178,7 +183,7 @@ namespace Assets.MapGen.TileManagement
             var position = item.PositionInTileMap;
             GetListFromCoord(position)?.Add(item);
 
-            var chunk = GetIndexInChunkMap(item);
+            var chunk = GetIndexInChunkMap(item.PositionInTileMap).ToAxial();
             IList<ITilemapMember> chunkList;
             if(!tileMemberChunkMap.TryGetValue(chunk, out chunkList))
             {
@@ -192,7 +197,7 @@ namespace Assets.MapGen.TileManagement
             var position = member.PositionInTileMap;
             GetListFromCoord(position)?.Remove(member);
 
-            var chunk = GetIndexInChunkMap(member);
+            var chunk = GetIndexInChunkMap(member.PositionInTileMap).ToAxial();
             IList<ITilemapMember> chunkList;
             if (tileMemberChunkMap.TryGetValue(chunk, out chunkList))
             {
