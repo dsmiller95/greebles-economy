@@ -15,6 +15,8 @@ namespace Assets.Scripts.Market
         public MarketPricePlotter PricePlotter;
         public MarketBehavior myMarket;
 
+        public GameObject buttonPanelPrefab;
+
         public Color32 tileColoring;
 
         private HexMember myMember;
@@ -29,7 +31,9 @@ namespace Assets.Scripts.Market
 
         public GameObject InstantiateButtonPanel(GameObject panelParent)
         {
-            return null;
+            var newButtonPanel = Instantiate(buttonPanelPrefab, panelParent.transform);
+            newButtonPanel.GetComponentInChildren<MarketUIActions>().market = GetComponent<MarketBehavior>();
+            return newButtonPanel;
         }
 
         public InfoPaneConfiguration GetInfoPaneConfiguration()

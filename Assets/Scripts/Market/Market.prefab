@@ -180,6 +180,8 @@ MonoBehaviour:
   ResourcePlotter: {fileID: 7119504726125291882}
   PricePlotter: {fileID: 3149401644907002803}
   myMarket: {fileID: 7086212739382045326}
+  buttonPanelPrefab: {fileID: 9129699802787879584, guid: a8656d1a2f4c080428a9570d3d944cf2,
+    type: 3}
   tileColoring:
     serializedVersion: 2
     rgba: 4294958592
@@ -268,6 +270,7 @@ MonoBehaviour:
     q: 0
     r: 0
   managerSetForInspector: {fileID: 0}
+  doesRegisterInManagerIndex: 1
 --- !u!1 &7219099098458843105
 GameObject:
   m_ObjectHideFlags: 0

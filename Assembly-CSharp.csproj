@@ -101,8 +101,10 @@
     <Compile Include="Assets\Scripts\Market\MarketBehavior.cs" />
     <Compile Include="Assets\Scripts\Market\MarketDataInitializer.cs" />
     <Compile Include="Assets\Scripts\Market\MarketPricePlotter.cs" />
+    <Compile Include="Assets\Scripts\Market\MarketUIActions.cs" />
     <Compile Include="Assets\Scripts\Market\ResourceSellResult.cs" />
     <Compile Include="Assets\Scripts\Market\SelectableMarket.cs" />
+    <Compile Include="Assets\Scripts\Market\SetPriceModal.cs" />
     <Compile Include="Assets\Scripts\MovementExtensions\FreeFormObjectSeeker.cs" />
     <Compile Include="Assets\Scripts\MovementExtensions\HexMovementManager.cs" />
     <Compile Include="Assets\Scripts\MovementExtensions\IObjectSeeker.cs" />
@@ -140,6 +142,8 @@
     <Compile Include="Assets\UI\CameraGetter.cs" />
     <Compile Include="Assets\UI\Draggable\DragItem.cs" />
     <Compile Include="Assets\UI\Draggable\DragZone.cs" />
+    <Compile Include="Assets\UI\Modals\ModalContainer.cs" />
+    <Compile Include="Assets\UI\Modals\ModalManager.cs" />
     <Compile Include="Assets\UI\PathPlotter\MultiPathPlotter.cs" />
     <Compile Include="Assets\UI\PathPlotter\SinglePathPlotter.cs" />
     <Compile Include="Assets\UI\Plotter\Function Plotter\IPlottableFunction.cs" />
