@@ -27,7 +27,7 @@ namespace Assets.UI.InfoPane
 
                 var plotter = newPlottable.GetComponentInChildren<GraphPlotter>();
                 var series = plottableConfig.plot.GetPlottableSeries();
-                plotter.SetPlottablesPreStart(series);
+                plotter.Plottables = series;
                 panelBuilder.AddNextPanel(newPlottable);
             }
             if (paneConfiguration.uiObjects != default)

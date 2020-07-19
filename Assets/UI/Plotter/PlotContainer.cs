@@ -106,8 +106,8 @@ namespace Assets.UI.Plotter
             var points = plottable.GetSeries();
             var plotConfig = plottable.GetPlottableConfig();
 
-            float graphHeight = parent.container.sizeDelta.y;
-            float graphWidth = parent.container.sizeDelta.x;
+            float graphHeight = parent.container.rect.height;
+            float graphWidth = parent.container.rect.width;
             float xUIScale = graphWidth / plottable.GetPointRange();
             var uiScale = new Vector2(xUIScale, graphHeight / plotConfig.yScale);
             return points.Select(point => new Vector2(point.x * uiScale.x, Mathf.Clamp(point.y * uiScale.y, 0, graphHeight)));

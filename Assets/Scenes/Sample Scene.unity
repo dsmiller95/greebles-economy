@@ -2492,7 +2492,7 @@ PrefabInstance:
     - target: {fileID: 1240274070678166401, guid: 02ba883446395d64faf7689f4401ede4,
         type: 3}
       propertyPath: m_Name
-      value: Modal
+      value: Set Prices Modal
       objectReference: {fileID: 0}
     - target: {fileID: 1240274070678166401, guid: 02ba883446395d64faf7689f4401ede4,
         type: 3}
