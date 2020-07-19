@@ -626,7 +626,7 @@ MonoBehaviour:
   - prefab: {fileID: 1140293900322245272, guid: 1ad692875fa053a4199f9744c750984a,
       type: 3}
     densityPerSurfaceSize: 0.004
-    scaleFactor: 0
+    scaleFactor: 0.2
   - prefab: {fileID: 4861457521204343749, guid: 736b9a328dd791b478180f339c3b6cbc,
       type: 3}
     densityPerSurfaceSize: 0.002

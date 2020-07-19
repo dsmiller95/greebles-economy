@@ -105,6 +105,10 @@ namespace Assets.Scripts.Trader
                 return;
             }
             currentTradeTargetIndex = (currentTradeTargetIndex + 1) % tradeRouteReactive.Value.Length;
+        }
+
+        public void TradeRouteRecalculate()
+        {
             if (autoTrade.Value)
             {
                 SetNewTradeRoute(tradeRouteReactive.Value);

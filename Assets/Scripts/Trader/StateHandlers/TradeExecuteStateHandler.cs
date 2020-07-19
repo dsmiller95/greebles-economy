@@ -70,6 +70,7 @@ namespace Assets.Scripts.Trader.StateHandlers
         public void TransitionIntoState(TraderBehavior data)
         {
             data.objectSeeker.ClearCurrentTarget();
+            data.TradeRouteRecalculate();
             data.stateData[stateHandle] = new TradeExecuteStateData
             {
                 lastExchangeTime = Time.time,

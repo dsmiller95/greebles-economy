@@ -23,6 +23,7 @@ namespace TradeModeling.TradeRouteUtilities
         public static ResourceTrade<T>[][] GetTradesWhichBalanceInventories<T>(
             SpaceFillingInventory<T> inventoryToDistribute,
             IList<SpaceFillingInventory<T>> inventories,
+            // IList<Dictionary<T, float>> targetAmounts, TODO: figure out a nice way to generate trades based on a target inventory composition
             T[] resourcesToTrade,
             bool roundToInts = false)
             where T : System.Enum
