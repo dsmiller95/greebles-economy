@@ -14,6 +14,12 @@ namespace Assets.Scripts.Trader.StateHandlers
 
         public Task<TraderState> HandleState(TraderBehavior data)
         {
+            if(data.objectSeeker.CurrentTarget == null)
+            {
+                // if we never had a target, or if our current target was destroyed
+                // abort and re-evaluate our life
+                return Task.FromResult(TraderState.Initial);
+            }
             if (data.objectSeeker.seekTargetToTouch())
             {
                 return Task.FromResult(TraderState.TradeExecute);
@@ -24,10 +30,10 @@ namespace Assets.Scripts.Trader.StateHandlers
         public TraderState validPreviousStates => ~TraderState.TradeTransit;
         public void TransitionIntoState(TraderBehavior data)
         {
-            data.objectSeeker.BeginApproachingNewTarget(data.currentTradeNodeTarget.target.gameObject);
+            data.objectSeeker.BeginApproachingNewTarget(data.currentTradeNodeTarget?.target.gameObject);
         }
 
-        public TraderState validNextStates => TraderState.TradeExecute;
+        public TraderState validNextStates => TraderState.TradeExecute | TraderState.Initial;
         public void TransitionOutOfState(TraderBehavior data)
         {
         }

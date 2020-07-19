@@ -25,6 +25,9 @@ namespace Assets.Scripts.Gatherer
 
         public GameObject tradePanelPrefab;
         public GameObject multiPathPlotterPrefab;
+
+        public GameObject buttonPanelPrefab;
+
         private MultiPathPlotter multiPathPlotter;
 
         private HexTileMapManager MapManager => GetComponentInParent<HexMember>().MapManager;
@@ -52,7 +55,9 @@ namespace Assets.Scripts.Gatherer
         }
         public GameObject InstantiateButtonPanel(GameObject panelParent)
         {
-            return null;
+            var newButtonPanel = Instantiate(buttonPanelPrefab, panelParent.transform);
+            newButtonPanel.GetComponentInChildren<TraderUIActions>().trader = GetComponent<TraderBehavior>();
+            return newButtonPanel;
         }
 
         public void OnMeDeselected()

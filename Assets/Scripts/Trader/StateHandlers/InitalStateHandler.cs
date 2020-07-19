@@ -20,7 +20,10 @@ namespace Assets.Scripts.Trader.StateHandlers
             return Task.FromResult(TraderState.Initial);
         }
 
-        public TraderState validPreviousStates => TraderState.None;
+        // This state can act as an exit or failsafe state to back into
+        //  if something has gone wrong when handling any other state and it must be aborted
+        //  for example if a UI action invalidates the current behavior
+        public TraderState validPreviousStates => ~TraderState.Initial;
         public void TransitionIntoState(TraderBehavior data)
         {
         }

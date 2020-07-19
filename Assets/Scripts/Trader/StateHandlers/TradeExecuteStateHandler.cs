@@ -37,7 +37,14 @@ namespace Assets.Scripts.Trader.StateHandlers
                 myState.lastExchangeTime = Time.time;
                 
                 var trade = myState.remainingTrades[0];
-                var targetInventory = data.currentTradeNodeTarget.target.tradeInventory;
+                var targetInventory = data.currentTradeNodeTarget?.target.tradeInventory;
+                if(targetInventory == null)
+                {
+                    //this is a bad state: we're trying to conduct some trade but our trade target has dissapeared
+                    // this can happen if the trade routes are cleared through the UI in teh middle of our trading
+                    // Abort!! we'll have to step back to the beginning and re-evaluate our opportunities
+                    return Task.FromResult(TraderState.Initial);
+                }
                 var option = data.inventory.transferResourceInto(trade.type, targetInventory, Mathf.Sign(trade.amount));
                 var remainingToTrade = trade.amount - option.info;
                 option.Execute();
@@ -66,7 +73,7 @@ namespace Assets.Scripts.Trader.StateHandlers
             data.stateData[stateHandle] = new TradeExecuteStateData
             {
                 lastExchangeTime = Time.time,
-                remainingTrades = data.currentTradeNodeTarget.trades.Where(trade => Math.Abs(trade.amount) > 1E-5).ToList()
+                remainingTrades = data.currentTradeNodeTarget?.trades.Where(trade => Math.Abs(trade.amount) > 1E-5).ToList() ?? new List<ResourceTrade<ResourceType>>()
             };
         }
 

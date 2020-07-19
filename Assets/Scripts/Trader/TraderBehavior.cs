@@ -97,9 +97,13 @@ namespace Assets.Scripts.Trader
 
         private int currentTradeTargetIndex = 0;
         public bool hasTradeNodeTarget => tradeRouteReactive.Value.Length > 0 && currentTradeTargetIndex >= 0;
-        public TradeNode currentTradeNodeTarget => tradeRouteReactive.Value[currentTradeTargetIndex];
+        public TradeNode currentTradeNodeTarget => hasTradeNodeTarget ? tradeRouteReactive.Value[currentTradeTargetIndex] : null;
         public void NextTradeRoute()
         {
+            if (this.tradeRouteReactive.Value.Length <= 0) {
+                currentTradeTargetIndex = 0;
+                return;
+            }
             currentTradeTargetIndex = (currentTradeTargetIndex + 1) % tradeRouteReactive.Value.Length;
             if (autoTrade.Value)
             {
@@ -121,7 +125,6 @@ namespace Assets.Scripts.Trader
                     tradeRoute[tradeIndex].trades = newTrades[tradeIndex];
                 }
             }
-            //this.tradeRoute = tradeRoute;
             tradeRouteReactive.Value = tradeRoute.ToList().ToArray();
         }
 
@@ -132,7 +135,7 @@ namespace Assets.Scripts.Trader
             {
                 previousTarget = previousTradeRoute[currentTradeTargetIndex].target;
             }
-            if (previousTarget != null)
+            if (previousTarget != null && newTradeRoute.Length > 0)
             {
                 currentTradeTargetIndex = newTradeRoute
                     .Select((trade, index) => new { trade.target, index })

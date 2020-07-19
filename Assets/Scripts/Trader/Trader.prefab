@@ -122,6 +122,8 @@ MonoBehaviour:
     type: 3}
   multiPathPlotterPrefab: {fileID: 7996700932571281009, guid: 1cb7051a04ed8c44597383b05c3bbf61,
     type: 3}
+  buttonPanelPrefab: {fileID: 4848080058522671098, guid: d0a9e7b61b4f8cc4d923561424ef2991,
+    type: 3}
 --- !u!95 &8210320453602554796
 Animator:
   serializedVersion: 3
