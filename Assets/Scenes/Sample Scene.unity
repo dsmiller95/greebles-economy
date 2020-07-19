@@ -663,6 +663,7 @@ MonoBehaviour:
     q: -70
     r: -15
   managerSetForInspector: {fileID: 1140566651}
+  doesRegisterInManagerIndex: 0
 --- !u!1 &705507993
 GameObject:
   m_ObjectHideFlags: 0
@@ -1611,6 +1612,7 @@ MonoBehaviour:
     q: 0
     r: 0
   managerSetForInspector: {fileID: 1140566651}
+  doesRegisterInManagerIndex: 0
 --- !u!4 &1302152326
 Transform:
   m_ObjectHideFlags: 0

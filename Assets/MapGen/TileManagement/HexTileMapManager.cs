@@ -180,6 +180,10 @@ namespace Assets.MapGen.TileManagement
 
         public void RegisterInGrid(ITilemapMember item)
         {
+            if (!item.DoesRegisterInIndex)
+            {
+                return;
+            }
             var position = item.PositionInTileMap;
             GetListFromCoord(position)?.Add(item);
 
@@ -194,6 +198,8 @@ namespace Assets.MapGen.TileManagement
         }
         public void DeRegisterInGrid(ITilemapMember member)
         {
+            //do not check if member registers in the grid. Just in case the value changed
+            //  it's important that it gets removed if it was ever registered
             var position = member.PositionInTileMap;
             GetListFromCoord(position)?.Remove(member);
 

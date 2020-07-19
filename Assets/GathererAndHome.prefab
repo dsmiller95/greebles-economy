@@ -46,9 +46,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   localPosition:
-    row: 0
-    column: 0
+    q: 0
+    r: 0
   managerSetForInspector: {fileID: 0}
+  doesRegisterInManagerIndex: 0
 --- !u!1001 &62050884170840022
 PrefabInstance:
   m_ObjectHideFlags: 0

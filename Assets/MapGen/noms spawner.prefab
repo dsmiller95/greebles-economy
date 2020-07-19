@@ -44,8 +44,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f7c001995a0ddc24d8e98e0f46bdcef2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  localPosition: {x: 0, y: 0}
+  localPosition:
+    q: 0
+    r: 0
   managerSetForInspector: {fileID: 0}
+  doesRegisterInManagerIndex: 0
 --- !u!1 &1538038064276675139
 GameObject:
   m_ObjectHideFlags: 0

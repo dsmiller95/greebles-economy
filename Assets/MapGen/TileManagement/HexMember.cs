@@ -7,7 +7,14 @@ namespace Assets.MapGen.TileManagement
     {
         public AxialCoordinate localPosition;
         public HexTileMapManager managerSetForInspector;
-
+        /// <summary>
+        /// sets whether this member is searchable through the map manager
+        ///     if set to false, then the only way to gain access to this member is via reference
+        ///     if set to true, this member can be found by querying a location or range of locations
+        ///         in the map manager
+        /// </summary>
+        public bool doesRegisterInManagerIndex = true;
+        public bool DoesRegisterInIndex => doesRegisterInManagerIndex;
 
         private ITilemapMember _parentMemeCache;
         private ITilemapMember parentMemberTransform
