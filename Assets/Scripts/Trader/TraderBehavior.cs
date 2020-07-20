@@ -122,8 +122,15 @@ namespace Assets.Scripts.Trader
                 // overwrite the actual values for the trade amounts with auto-generated ones
                 // while keeping the targets
                 var tradeInventories = tradeRoute.Select(x => x.target.tradeInventory).ToList();
+                var tradeConstraints = tradeRoute.Select(x => x.target.targetInventoryAmounts).ToList();
                 var distributeInventory = inventory;
-                var newTrades = TradeRouteAutoBalance.GetTradesWhichBalanceInventories(distributeInventory, tradeInventories, ResourceConfiguration.spaceFillingItems, true);
+                var newTrades = TradeRouteAutoBalance.GetTradesWhichBalanceInventories(
+                    distributeInventory,
+                    tradeInventories,
+                    tradeConstraints,
+                    ResourceConfiguration.spaceFillingItems,
+                    true);
+
                 for (var tradeIndex = 0; tradeIndex < newTrades.Length; tradeIndex++)
                 {
                     tradeRoute[tradeIndex].trades = newTrades[tradeIndex];

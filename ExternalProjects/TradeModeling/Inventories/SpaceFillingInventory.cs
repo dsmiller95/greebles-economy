@@ -48,6 +48,11 @@ namespace TradeModeling.Inventories
             return _inventoryCapacity = newCapacity;
         }
 
+        public Dictionary<T, float> GetCurrentResourceAmounts()
+        {
+            return this.inventory.ToDictionary(x => x.Key, x => x.Value);
+        }
+
         /// <summary>
         /// Drain all the items from this inventory of type res
         /// </summary>
