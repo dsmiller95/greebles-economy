@@ -57,7 +57,7 @@ namespace UnitTests.Economics
                 selfInventory,
                 marketInventory,
                 new[] { "wood", "food" },
-                exchangeModel, exchangeModel, exchangeModel);
+                exchangeModel, exchangeModel);
 
             var _ledger = optimizer.Optimize();
 
@@ -114,7 +114,7 @@ namespace UnitTests.Economics
                 selfInventory,
                 marketInventory,
                 new[] { "wood", "food" },
-                exchangeModel, exchangeModel, exchangeModel);
+                exchangeModel, exchangeModel);
 
             optimizer.Optimize();
 
@@ -172,7 +172,7 @@ namespace UnitTests.Economics
                 selfInventory,
                 marketInventory,
                 new[] { "wood", "food" },
-                exchangeModel, exchangeModel, exchangeModel);
+                exchangeModel, exchangeModel);
 
             optimizer.Optimize();
 
@@ -230,7 +230,7 @@ namespace UnitTests.Economics
                 selfInventory,
                 marketInventory,
                 new[] { "wood", "food" },
-                exchangeModel, exchangeModel, exchangeModel);
+                exchangeModel, exchangeModel);
 
             optimizer.Optimize();
 
@@ -291,7 +291,7 @@ namespace UnitTests.Economics
                 selfInventory,
                 marketInventory,
                 new[] { "wood", "food" },
-                exchangeModel, exchangeModel, exchangeModel);
+                exchangeModel, exchangeModel);
 
             optimizer.Optimize();
 
@@ -348,7 +348,7 @@ namespace UnitTests.Economics
                 selfInventory,
                 marketInventory,
                 new[] { "wood", "food" },
-                exchangeModel, exchangeModel, exchangeModel);
+                exchangeModel, exchangeModel);
 
             var transactionLedger = optimizer.Optimize();
 
@@ -426,7 +426,7 @@ namespace UnitTests.Economics
                 selfInventory,
                 marketInventory,
                 new[] { "wood", "food" },
-                exchangeModel, exchangeModel, exchangeModel);
+                exchangeModel, exchangeModel);
 
             var transactionLedger = optimizer.Optimize();
 
@@ -498,7 +498,7 @@ namespace UnitTests.Economics
                 selfInventory,
                 marketInventory,
                 new[] { "wood", "food" },
-                exchangeModel, exchangeModel, exchangeModel);
+                exchangeModel, exchangeModel);
 
             var transactionLedger = optimizer.Optimize();
 
@@ -570,7 +570,7 @@ namespace UnitTests.Economics
                 selfInventory,
                 marketInventory,
                 new[] { "wood", "water", "food" },
-                exchangeModel, exchangeModel, exchangeModel);
+                exchangeModel, exchangeModel);
 
             var transactionLedger = optimizer.Optimize();
 
@@ -637,7 +637,7 @@ namespace UnitTests.Economics
                 selfInventory,
                 marketInventory,
                 new[] { "wood", "food" },
-                exchangeModel, exchangeModel, exchangeModel);
+                exchangeModel, exchangeModel);
 
             var transactionLedger = optimizer.Optimize();
 
@@ -696,7 +696,7 @@ namespace UnitTests.Economics
                 selfInventory,
                 marketInventory,
                 new[] { "wood", "food" },
-                exchangeModel, exchangeModel, exchangeModel);
+                exchangeModel, exchangeModel);
 
             var transactionLedger = optimizer.Optimize();
 
@@ -752,7 +752,7 @@ namespace UnitTests.Economics
                 selfInventory,
                 marketInventory,
                 new[] { "wood", "food" },
-                exchangeModel, exchangeModel, exchangeModel);
+                exchangeModel, exchangeModel);
 
             var transactionLedger = optimizer.Optimize();
 

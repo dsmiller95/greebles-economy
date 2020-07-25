@@ -18,8 +18,7 @@ namespace TradeModeling.Economics
         private Self selfInventory;
         private Other otherInventory;
         private IList<Resource> tradeableResources;
-        private IPurchaser<Resource, Self, Other> purchaser;
-        private ISeller<Resource, Self, Other> seller;
+        private IExchange<Resource, Self, Other> exchange;
         private IUtilityEvaluator<Resource, Self> utilityFunctions;
 
         private float increment = 1;
@@ -28,15 +27,13 @@ namespace TradeModeling.Economics
             Self selfInventory,
             Other otherInventory,
             IEnumerable<Resource> tradeableResources,
-            IPurchaser<Resource, Self, Other> purchaser,
-            ISeller<Resource, Self, Other> seller,
+            IExchange<Resource, Self, Other> exchange,
             IUtilityEvaluator<Resource, Self> utilityFunctions)
         {
             this.selfInventory = selfInventory;
             this.otherInventory = otherInventory;
             this.tradeableResources = tradeableResources.ToList();
-            this.purchaser = purchaser;
-            this.seller = seller;
+            this.exchange = exchange;
             this.utilityFunctions = utilityFunctions;
         }
 
@@ -97,7 +94,7 @@ namespace TradeModeling.Economics
             if (executesPurchase)
             {
                 // Must sell first to get the money; then purchase
-                var actualSellResult = seller.Sell(minUtility, sellOption.amount, selfInventory, otherInventory);
+                var actualSellResult = exchange.Sell(minUtility, sellOption.amount, selfInventory, otherInventory);
                 actualSellResult.Execute();
                 purchaseOption.ReExecutePurchases(selfInventory, otherInventory);
                 return (actualSellResult.info, purchaseOption.ledger);
@@ -131,7 +128,7 @@ namespace TradeModeling.Economics
 
                 // Execute all operations on a simulated inventory to make sure all prices, utilities,
                 //  and any constraints on size are respected
-                sellOption = seller.Sell(minUtility, purchaseAmount, simSelfInventory, simOtherInventory);
+                sellOption = exchange.Sell(minUtility, purchaseAmount, simSelfInventory, simOtherInventory);
                 // If the sold amount is less than the requested amount by more than increment
                 //  this means that we aren't going to gain anything at all
                 if (sellOption.info.amount <= (purchaseAmount - increment))
@@ -191,7 +188,7 @@ namespace TradeModeling.Economics
                     !EqualityComparer<Resource>.Default.Equals(resource, default);
                     resource = optimizer.GetHighestPurchaseableUtilityPerCost(simSelf, simOther, bannedPurchases))
                 {
-                    var purchaseResult = optimizer.purchaser.Purchase(resource, optimizer.increment, simSelf, simOther);
+                    var purchaseResult = optimizer.exchange.Purchase(resource, optimizer.increment, simSelf, simOther);
                     ledger.utilityGained += optimizer.utilityFunctions.GetIncrementalUtility(
                         resource,
                         simSelf,
@@ -228,7 +225,7 @@ namespace TradeModeling.Economics
             {
                 foreach (var purchase in purchases)
                 {
-                    optimizer.purchaser.Purchase(purchase, optimizer.increment, simSelf, simOther).Execute();
+                    optimizer.exchange.Purchase(purchase, optimizer.increment, simSelf, simOther).Execute();
                 }
             }
         }
@@ -242,12 +239,12 @@ namespace TradeModeling.Economics
         private Resource GetHighestSellableValuePerUtility(float increment, Self simSelf, Other simOther)
         {
             var resourceObject = tradeableResources
-                .Where(resource => seller.CanSell(resource, simSelf, simOther))
+                .Where(resource => exchange.CanSell(resource, simSelf, simOther))
                 .Select(resource => new
                 {
                     resource,
                     valuePerUtility =
-                        seller.Sell(resource, increment, simSelf, simOther).info.cost
+                        exchange.Sell(resource, increment, simSelf, simOther).info.cost
                         / -utilityFunctions.GetIncrementalUtility(resource, simSelf, -increment)
                 })
                 .OrderBy(resource => resource.valuePerUtility)
@@ -264,12 +261,12 @@ namespace TradeModeling.Economics
         {
             var resourceObject = tradeableResources
                 .Where(resource => !bannedResources.Contains(resource))
-                .Where(resource => purchaser.CanPurchase(resource, simSelf, simOther))
+                .Where(resource => exchange.CanPurchase(resource, simSelf, simOther))
                 .Select(resource => new
                 {
                     resource,
                     utility = utilityFunctions.GetIncrementalUtility(resource, simSelf, increment),
-                    purchase = purchaser.Purchase(resource, increment, simSelf, simOther).info
+                    purchase = exchange.Purchase(resource, increment, simSelf, simOther).info
                 })
                 // The purchase could have been restricted in size based on available funds
                 .Where(resource => resource.purchase.amount == increment)

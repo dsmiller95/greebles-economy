@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace TradeModeling.Economics
+﻿namespace TradeModeling.Economics
 {
     public interface ISeller<Resource, Self, Other>
         where Self : class, IExchangeInventory

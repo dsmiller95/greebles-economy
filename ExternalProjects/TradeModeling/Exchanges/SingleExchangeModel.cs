@@ -6,7 +6,7 @@ using TradeModeling.Inventories;
 
 namespace TradeModeling.Exchanges
 {
-    public class SingleExchangeModel<T> : IMarketExchangeAdapter<T>
+    public class SingleExchangeModel<T> : IExchangeAdapter<T>
     {
         protected IDictionary<T, float> marketSellRates;
         protected IDictionary<T, float> marketBuyRates;

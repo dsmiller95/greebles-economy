@@ -1,22 +1,23 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using TradeModeling.Inventories;
 
 namespace TradeModeling.Exchanges
 {
     public class AdaptableExchangePool<T> : IEnumerable<SingleExchangeModel<T>>
     {
-        private IList<AdaptableSingleExchangeModel<T>> exchangePool;
+        private IList<AdaptableExchangeModel<T>> exchangePool;
 
-        public AdaptableExchangePool(int poolSize, AdaptableSingleExchangeModel<T> poolSeed)
+        public AdaptableExchangePool(int poolSize, AdaptableExchangeModel<T> poolSeed)
         {
-            exchangePool = new List<AdaptableSingleExchangeModel<T>>();
+            exchangePool = new List<AdaptableExchangeModel<T>>();
             for (; poolSize > 0; poolSize--)
             {
                 exchangePool.Add(poolSeed.GetVariant());
             }
         }
-        public AdaptableExchangePool(IEnumerable<AdaptableSingleExchangeModel<T>> pool)
+        public AdaptableExchangePool(IEnumerable<AdaptableExchangeModel<T>> pool)
         {
             exchangePool = pool.ToList();
         }

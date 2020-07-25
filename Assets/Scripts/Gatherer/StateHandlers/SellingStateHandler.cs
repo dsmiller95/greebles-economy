@@ -69,7 +69,7 @@ namespace Assets.Scripts.Gatherer.StateHandlers
                     data.inventory,
                     market._inventory,
                     ResourceConfiguration.spaceFillingItems,
-                    exchangeAdapter, exchangeAdapter,
+                    exchangeAdapter,
                     data.utilityFunction
                     );
 

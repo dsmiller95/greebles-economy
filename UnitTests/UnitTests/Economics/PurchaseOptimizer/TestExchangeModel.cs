@@ -10,9 +10,7 @@ namespace UnitTests.Economics
         public float money;
     }
 
-    class TestExchangeModel :
-        IPurchaser<string, TestInventoryModel, TestInventoryModel>,
-        ISeller<string, TestInventoryModel, TestInventoryModel>,
+    class TestExchangeModel : IExchange<string, TestInventoryModel, TestInventoryModel>,
         IUtilityEvaluator<string, TestInventoryModel>
     {
         public IDictionary<string, IIncrementalFunction> utilityFunctions;

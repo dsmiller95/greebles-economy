@@ -62,7 +62,6 @@ namespace UnitTests.Economics
                 market,
                 new[] { TestItemType.Cactus, TestItemType.Corn },
                 exchangeAdapter,
-                exchangeAdapter,
                 utilityFunctions);
 
             optimizer.Optimize();
@@ -127,7 +126,6 @@ namespace UnitTests.Economics
                 market,
                 new[] { TestItemType.Cactus, TestItemType.Corn },
                 exchangeAdapter,
-                exchangeAdapter,
                 utilityFunctions);
 
             optimizer.Optimize();
@@ -190,7 +188,6 @@ namespace UnitTests.Economics
                 self,
                 market,
                 new[] { TestItemType.Cactus, TestItemType.Corn },
-                exchangeAdapter,
                 exchangeAdapter,
                 utilityFunctions);
 

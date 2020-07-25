@@ -46,7 +46,7 @@ namespace Assets.Scripts.Market
             _inventory = inventory.backingInventory;
         }
 
-        public IMarketExchangeAdapter<ResourceType> GetExchangeAdapter()
+        public IExchangeAdapter<ResourceType> GetExchangeAdapter()
         {
             return new SigmoidMarketExchangeAdapter<ResourceType>(
                 GetSellPriceFunctions(),

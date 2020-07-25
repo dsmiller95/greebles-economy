@@ -7,7 +7,7 @@ using TradeModeling.Inventories;
 
 namespace TradeModeling.Exchanges
 {
-    public class SigmoidMarketExchangeAdapter<T> : IMarketExchangeAdapter<T>
+    public class SigmoidMarketExchangeAdapter<T> : IExchangeAdapter<T>
     {
         private IDictionary<T, SigmoidFunction> marketSellRates;
         private IDictionary<T, SigmoidFunction> marketBuyRates;
