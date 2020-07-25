@@ -1,4 +1,6 @@
-﻿namespace TradeModeling.Economics
+﻿using TradeModeling.Inventories;
+
+namespace TradeModeling.Economics
 {
 
     public struct ExchangeResult<Resource>

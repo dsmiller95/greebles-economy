@@ -1,4 +1,6 @@
-﻿namespace TradeModeling.Economics
+﻿using TradeModeling.Inventories;
+
+namespace TradeModeling.Economics
 {
     public interface ISeller<Resource, Self, Other>
         where Self : class, IExchangeInventory

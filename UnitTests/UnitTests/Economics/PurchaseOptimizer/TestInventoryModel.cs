@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using TradeModeling.Economics;
+using TradeModeling.Inventories;
 
 namespace UnitTests.Economics
 {
@@ -21,18 +19,18 @@ namespace UnitTests.Economics
 
         private TestInventoryModel(TestInventoryModel other)
         {
-            this.inventory = new Dictionary<string, float>(other.inventory);
-            this.bank = other.bank;
+            inventory = new Dictionary<string, float>(other.inventory);
+            bank = other.bank;
         }
 
         public float Get(string resource)
         {
-            return this.inventory[resource];
+            return inventory[resource];
         }
         public void Add(string resource, float amount)
         {
-            this.inventory[resource] += amount;
-            if (this.inventory[resource] < 0)
+            inventory[resource] += amount;
+            if (inventory[resource] < 0)
             {
                 throw new Exception($"Self inventory went below 0 on {resource}");
             }
@@ -45,7 +43,7 @@ namespace UnitTests.Economics
 
         public float GetCurrentFunds()
         {
-            return this.bank;
+            return bank;
         }
     }
 }
