@@ -24,7 +24,7 @@ namespace TradeModeling.TradeRouteUtilities
         public static ResourceTrade<T>[][] GetTradesWhichBalanceInventories<T>(
             SpaceFillingInventory<T> inventoryToDistribute,
             IList<SpaceFillingInventory<T>> inventories,
-            IList<Dictionary<T, float>> maximumAmounts, //TODO: figure out a nice way to generate trades based on a target inventory composition
+            IList<Dictionary<T, float>> maximumAmounts,
             T[] resourcesToTrade,
             bool roundToInts = false)
             where T : System.Enum
@@ -72,9 +72,6 @@ namespace TradeModeling.TradeRouteUtilities
                     eligibleInventoryIndexes = nextEligibleInventoryIndexes;
                 }
             }
-
-
-
 
             var tradeAmounts = inventories
                 .Zip(actualTargetInventories, (inventory, target) => new { inventory, target })

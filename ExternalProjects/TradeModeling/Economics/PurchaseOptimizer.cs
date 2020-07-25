@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.InteropServices.ComTypes;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace TradeModeling.Economics
 {
@@ -23,7 +20,7 @@ namespace TradeModeling.Economics
         private IList<Resource> tradeableResources;
         private IPurchaser<Resource, Self, Other> purchaser;
         private ISeller<Resource, Self, Other> seller;
-        private IUtilityEvaluator<Resource, Self> utilityFunction;
+        private IUtilityEvaluator<Resource, Self> utilityFunctions;
 
         private float increment = 1;
 
@@ -33,14 +30,14 @@ namespace TradeModeling.Economics
             IEnumerable<Resource> tradeableResources,
             IPurchaser<Resource, Self, Other> purchaser,
             ISeller<Resource, Self, Other> seller,
-            IUtilityEvaluator<Resource, Self> utilityFunction)
+            IUtilityEvaluator<Resource, Self> utilityFunctions)
         {
             this.selfInventory = selfInventory;
             this.otherInventory = otherInventory;
             this.tradeableResources = tradeableResources.ToList();
             this.purchaser = purchaser;
             this.seller = seller;
-            this.utilityFunction = utilityFunction;
+            this.utilityFunctions = utilityFunctions;
         }
 
         /// <summary>
@@ -63,7 +60,7 @@ namespace TradeModeling.Economics
                 !EqualityComparer<Resource>.Default.Equals(minUtility, default) && executesPurchase;
                 minUtility = GetHighestSellableValuePerUtility(increment, selfInventory, otherInventory))
             {
-                var nextTransaction = this.SellUntilPurchaseCanHappen(minUtility);
+                var nextTransaction = SellUntilPurchaseCanHappen(minUtility);
 
                 if (!nextTransaction.HasValue)
                 {
@@ -71,7 +68,7 @@ namespace TradeModeling.Economics
                 }
                 transactionLedger.Add(nextTransaction.Value);
                 iterations++;
-                if(iterations > 1000)
+                if (iterations > 1000)
                 {
                     throw new Exception("Attempted to optimize over too many iterations, broke to safegaurd against infinite loop");
                 }
@@ -83,13 +80,13 @@ namespace TradeModeling.Economics
         private (ExchangeResult<Resource>?, PurchaseOperationResult<Resource>)? SellUntilPurchaseCanHappen(Resource minUtility)
         {
             var firstOption = GetFirstPossiblePurchase(minUtility);
-            if(!firstOption.HasValue)
+            if (!firstOption.HasValue)
             {
                 return null;
             }
             var (sellOption, purchaseOption) = firstOption.Value;
 
-            var utilityLostFromSell = utilityFunction.GetIncrementalUtility(
+            var utilityLostFromSell = utilityFunctions.GetIncrementalUtility(
                     minUtility,
                     selfInventory,
                     -sellOption.amount
@@ -143,7 +140,7 @@ namespace TradeModeling.Economics
                 }
                 sellOption.Execute();
 
-                purchaseOption = PurchaseResult.Purchase(this, simSelfInventory, simOtherInventory, new[] { minUtility});
+                purchaseOption = PurchaseResult.Purchase(this, simSelfInventory, simOtherInventory, new[] { minUtility });
 
                 iterations++;
                 if (iterations > 1000)
@@ -187,7 +184,7 @@ namespace TradeModeling.Economics
                 ledger.exchages = new List<ExchangeResult<Resource>>();
 
                 int iterations = 0;
-                
+
                 //drain the bank
                 for (
                     var resource = optimizer.GetHighestPurchaseableUtilityPerCost(simSelf, simOther, bannedPurchases);
@@ -195,7 +192,7 @@ namespace TradeModeling.Economics
                     resource = optimizer.GetHighestPurchaseableUtilityPerCost(simSelf, simOther, bannedPurchases))
                 {
                     var purchaseResult = optimizer.purchaser.Purchase(resource, optimizer.increment, simSelf, simOther);
-                    ledger.utilityGained += optimizer.utilityFunction.GetIncrementalUtility(
+                    ledger.utilityGained += optimizer.utilityFunctions.GetIncrementalUtility(
                         resource,
                         simSelf,
                         purchaseResult.info.amount);
@@ -220,7 +217,7 @@ namespace TradeModeling.Economics
             /// <returns>the amount of utility gained during purchase</returns>
             public static PurchaseResult Purchase(PurchaseOptimizer<Resource, Self, Other> optimizer, Self simSelf, Other simOther, Resource[] bannedPurchases = null)
             {
-                if(bannedPurchases == null)
+                if (bannedPurchases == null)
                 {
                     bannedPurchases = new Resource[0];
                 }
@@ -246,11 +243,12 @@ namespace TradeModeling.Economics
         {
             var resourceObject = tradeableResources
                 .Where(resource => seller.CanSell(resource, simSelf, simOther))
-                .Select(resource => new {
+                .Select(resource => new
+                {
                     resource,
-                    valuePerUtility = 
+                    valuePerUtility =
                         seller.Sell(resource, increment, simSelf, simOther).info.cost
-                        / -utilityFunction.GetIncrementalUtility(resource, simSelf, - increment)
+                        / -utilityFunctions.GetIncrementalUtility(resource, simSelf, -increment)
                 })
                 .OrderBy(resource => resource.valuePerUtility)
                 .LastOrDefault();
@@ -267,9 +265,10 @@ namespace TradeModeling.Economics
             var resourceObject = tradeableResources
                 .Where(resource => !bannedResources.Contains(resource))
                 .Where(resource => purchaser.CanPurchase(resource, simSelf, simOther))
-                .Select(resource => new {
+                .Select(resource => new
+                {
                     resource,
-                    utility = utilityFunction.GetIncrementalUtility(resource, simSelf, increment),
+                    utility = utilityFunctions.GetIncrementalUtility(resource, simSelf, increment),
                     purchase = purchaser.Purchase(resource, increment, simSelf, simOther).info
                 })
                 // The purchase could have been restricted in size based on available funds
@@ -278,7 +277,7 @@ namespace TradeModeling.Economics
                 .OrderBy(resource => resource.utility / resource.purchase.cost)
                 .LastOrDefault();
 
-            if(resourceObject == default)
+            if (resourceObject == default)
             {
                 return default(Resource);
             }

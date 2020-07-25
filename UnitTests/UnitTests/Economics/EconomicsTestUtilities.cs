@@ -35,11 +35,11 @@ namespace UnitTests.Economics
                 moneyType);
         }
 
-        public static MarketExchangeAdapter<TestItemType> CreateExchangeAdapter(
+        public static SingleExchangeModel<TestItemType> CreateExchangeAdapter(
             (TestItemType, float)[] exchangeRates,
             TestItemType moneyType = TestItemType.Pesos)
         {
-            return new MarketExchangeAdapter<TestItemType>(exchangeRates.ToDictionary(x => x.Item1, x => x.Item2), moneyType);
+            return new SingleExchangeModel<TestItemType>(exchangeRates.ToDictionary(x => x.Item1, x => x.Item2), moneyType);
         }
 
         public static SigmoidMarketExchangeAdapter<TestItemType> CreateSigmoidExchangeAdapter(
