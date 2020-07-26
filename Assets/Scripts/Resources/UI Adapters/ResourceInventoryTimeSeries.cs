@@ -1,10 +1,5 @@
 ﻿using Assets.Scripts.Resources.Inventory;
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
 using TradeModeling.Inventories;
-using UnityEngine;
 
 namespace Assets.Scripts.Resources.UI
 {
@@ -12,7 +7,7 @@ namespace Assets.Scripts.Resources.UI
     {
 
         public ResourceInventory inventory;
-        private SpaceFillingInventory<ResourceType> _inventory;
+        private BasicInventory<ResourceType> _inventory;
 
         private void Awake()
         {
@@ -21,7 +16,7 @@ namespace Assets.Scripts.Resources.UI
 
         protected override float GetResourceValue(ResourceType resourceType)
         {
-            return this._inventory.Get(resourceType);
+            return _inventory.Get(resourceType);
         }
     }
 }

@@ -30,10 +30,10 @@ namespace Assets.Scripts.Market
         private Dictionary<ResourceType, float> sellPriceDictionary;
         private Dictionary<ResourceType, float> purchasePriceDictionary;
         public ResourceInventory inventory;
-        public SpaceFillingInventory<ResourceType> _inventory;
+        public BasicInventory<ResourceType> _inventory;
 
 
-        public override SpaceFillingInventory<ResourceType> tradeInventory => _inventory;
+        public override BasicInventory<ResourceType> tradeInventory => _inventory;
 
         [HideInInspector]
         [NonSerialized]
@@ -56,29 +56,30 @@ namespace Assets.Scripts.Market
 
         public IDictionary<ResourceType, SigmoidFunctionConfig> GetSellPriceFunctions()
         {
-            return MapPricesToConfigs(sellPriceDictionary);
+            // TODO: wat do when not space filling
+            return MapPricesToConfigs(sellPriceDictionary, 50);
         }
         public IDictionary<ResourceType, SigmoidFunctionConfig> GetPurchasePriceFunctions()
         {
-            return MapPricesToConfigs(purchasePriceDictionary);
+            return MapPricesToConfigs(purchasePriceDictionary, 50);
         }
 
-        private IDictionary<ResourceType, SigmoidFunctionConfig> MapPricesToConfigs(IDictionary<ResourceType, float> prices)
+        private IDictionary<ResourceType, SigmoidFunctionConfig> MapPricesToConfigs(IDictionary<ResourceType, float> prices, float defaultInvSize)
         {
             return prices.SelectDictionary(x => new SigmoidFunctionConfig
             {
-                range = tradeInventory.inventoryCapacity,
+                range = (tradeInventory.itemSource as ISpaceFillingItemSource<ResourceType>)?.inventoryCapacity ?? defaultInvSize,
                 yRange = x
             });
         }
 
         [Obsolete("Use the MarketExchangeAdapter provided by GetExchangeAdapter()", true)]
-        public Dictionary<ResourceType, ResourceSellResult> sellAllGoodsInInventory(SpaceFillingInventory<ResourceType> inventory)
+        public Dictionary<ResourceType, ResourceSellResult> sellAllGoodsInInventory(BasicInventory<ResourceType> inventory)
         {
             return SellAllGoods(inventory, _inventory, ResourceConfiguration.spaceFillingItems, sellPriceDictionary);
         }
 
-        private static Dictionary<ResourceType, ResourceSellResult> SellAllGoods(SpaceFillingInventory<ResourceType> seller, SpaceFillingInventory<ResourceType> consumer, ResourceType[] types, Dictionary<ResourceType, float> prices)
+        private static Dictionary<ResourceType, ResourceSellResult> SellAllGoods(BasicInventory<ResourceType> seller, BasicInventory<ResourceType> consumer, ResourceType[] types, Dictionary<ResourceType, float> prices)
         {
             var result = seller.DrainAllInto(consumer, types)
                 .Select(pair =>

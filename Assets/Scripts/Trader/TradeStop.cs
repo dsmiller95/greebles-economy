@@ -7,7 +7,7 @@ namespace Assets.Scripts.Trader
 {
     public abstract class TradeStop : MonoBehaviour
     {
-        public abstract SpaceFillingInventory<ResourceType> tradeInventory { get; }
+        public abstract BasicInventory<ResourceType> tradeInventory { get; }
 
         /// <summary>
         /// dictionary used to specify the amount that the trader should attempt to 
@@ -17,9 +17,13 @@ namespace Assets.Scripts.Trader
 
         public void Start()
         {
-            foreach(ResourceType resource in System.Enum.GetValues(typeof(ResourceType)))
+            var source = tradeInventory.itemSource;
+            if(source is ISpaceFillingItemSource<ResourceType> spaceFilling)
             {
-                targetInventoryAmounts[resource] = tradeInventory.inventoryCapacity;
+                foreach (ResourceType resource in spaceFilling.SpaceFillingItems)
+                {
+                    targetInventoryAmounts[resource] = spaceFilling.inventoryCapacity;
+                }
             }
         }
     }

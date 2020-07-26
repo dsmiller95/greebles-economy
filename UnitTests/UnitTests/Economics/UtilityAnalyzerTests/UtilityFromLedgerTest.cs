@@ -60,7 +60,7 @@ namespace UnitTests.Economics.UtilityAnalyzerTests
         [TestMethod]
         public void ShouldEvaluateUtilityAtEndWithNoTransactions()
         {
-            var endingInventory = EconomicsTestUtilities.CreateInventory(new[]
+            var endingInventory = EconomicsTestUtilities.CreateInventoryWithSpaceBacking(new[]
             {
                 (TestItemType.Cactus, 1f),
                 (TestItemType.Corn, 2f)
@@ -89,7 +89,7 @@ namespace UnitTests.Economics.UtilityAnalyzerTests
         [TestMethod]
         public void ShouldEvaluateUtilityWhenAllCornTradedForCactus()
         {
-            var endingInventory = EconomicsTestUtilities.CreateInventory(new[]
+            var endingInventory = EconomicsTestUtilities.CreateInventoryWithSpaceBacking(new[]
             {
                 (TestItemType.Cactus, 2f),
                 (TestItemType.Corn, 0f)
@@ -120,7 +120,7 @@ namespace UnitTests.Economics.UtilityAnalyzerTests
         [TestMethod]
         public void ShouldEvaluateUtilityWhenOneCornTradedForTwoCactus()
         {
-            var endingInventory = EconomicsTestUtilities.CreateInventory(new[]
+            var endingInventory = EconomicsTestUtilities.CreateInventoryWithSpaceBacking(new[]
             {
                 (TestItemType.Cactus, 2f),
                 (TestItemType.Corn, 0f)
@@ -151,7 +151,7 @@ namespace UnitTests.Economics.UtilityAnalyzerTests
         [TestMethod]
         public void ShouldEvaluateUtilityWhenOneCornTradedForTwoCactusOverBaseInventory()
         {
-            var endingInventory = EconomicsTestUtilities.CreateInventory(new[]
+            var endingInventory = EconomicsTestUtilities.CreateInventoryWithSpaceBacking(new[]
             {
                 (TestItemType.Cactus, 3f),
                 (TestItemType.Corn, 1f)
@@ -187,7 +187,7 @@ namespace UnitTests.Economics.UtilityAnalyzerTests
         [TestMethod]
         public void ShouldEvaluateUtilityWhenAllCornTradedForCactus2DifferentAmounts()
         {
-            var endingInventory = EconomicsTestUtilities.CreateInventory(new[]
+            var endingInventory = EconomicsTestUtilities.CreateInventoryWithSpaceBacking(new[]
             {
                 (TestItemType.Cactus, 6f),
                 (TestItemType.Corn, 12f)
@@ -226,7 +226,7 @@ namespace UnitTests.Economics.UtilityAnalyzerTests
         [TestMethod]
         public void ShouldEvaluateUtilityWhenTradedThroughIntermediary()
         {
-            var endingInventory = EconomicsTestUtilities.CreateInventory(new[]
+            var endingInventory = EconomicsTestUtilities.CreateInventoryWithSpaceBacking(new[]
             {
                 (TestItemType.Cactus, 2f),
                 (TestItemType.Chilis, 0f),

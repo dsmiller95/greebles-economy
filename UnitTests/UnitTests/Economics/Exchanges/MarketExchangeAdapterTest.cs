@@ -14,13 +14,13 @@ namespace UnitTests.Economics
         [TestMethod]
         public void ShouldExecuteSimplePurchase()
         {
-            var market = EconomicsTestUtilities.CreateInventory(new[]
+            var market = EconomicsTestUtilities.CreateInventoryWithSpaceBacking(new[]
             {
                 (TestItemType.Cactus,   2f),
                 (TestItemType.Corn,     2f),
                 (TestItemType.Pesos,    5f)
             });
-            var self = EconomicsTestUtilities.CreateInventory(new[]
+            var self = EconomicsTestUtilities.CreateInventoryWithSpaceBacking(new[]
             {
                 (TestItemType.Cactus,   2f),
                 (TestItemType.Corn,     2f),
@@ -46,13 +46,13 @@ namespace UnitTests.Economics
         [TestMethod]
         public void ShouldSimulateExecutionSimplePurchase()
         {
-            var market = EconomicsTestUtilities.CreateInventory(new[]
+            var market = EconomicsTestUtilities.CreateInventoryWithSpaceBacking(new[]
             {
                 (TestItemType.Cactus,   2f),
                 (TestItemType.Corn,     2f),
                 (TestItemType.Pesos,    5f)
             });
-            var self = EconomicsTestUtilities.CreateInventory(new[]
+            var self = EconomicsTestUtilities.CreateInventoryWithSpaceBacking(new[]
             {
                 (TestItemType.Cactus,   2f),
                 (TestItemType.Corn,     2f),
@@ -77,13 +77,13 @@ namespace UnitTests.Economics
         [TestMethod]
         public void WhenMarketIsEmptyShouldNotPurchase()
         {
-            var market = EconomicsTestUtilities.CreateInventory(new[]
+            var market = EconomicsTestUtilities.CreateInventoryWithSpaceBacking(new[]
             {
                 (TestItemType.Cactus,   2f),
                 (TestItemType.Corn,     0f),
                 (TestItemType.Pesos,    5f)
             });
-            var self = EconomicsTestUtilities.CreateInventory(new[]
+            var self = EconomicsTestUtilities.CreateInventoryWithSpaceBacking(new[]
             {
                 (TestItemType.Cactus,   2f),
                 (TestItemType.Corn,     2f),
@@ -109,13 +109,13 @@ namespace UnitTests.Economics
         [TestMethod]
         public void WhenSelfIsFullShouldNotPurchase()
         {
-            var market = EconomicsTestUtilities.CreateInventory(new[]
+            var market = EconomicsTestUtilities.CreateInventoryWithSpaceBacking(new[]
             {
                 (TestItemType.Cactus,   2f),
                 (TestItemType.Corn,     2f),
                 (TestItemType.Pesos,    5f)
             });
-            var self = EconomicsTestUtilities.CreateInventory(new[]
+            var self = EconomicsTestUtilities.CreateInventoryWithSpaceBacking(new[]
             {
                 (TestItemType.Cactus,   2f),
                 (TestItemType.Corn,     2f),
@@ -141,13 +141,13 @@ namespace UnitTests.Economics
         [TestMethod]
         public void WhenSelfIsBrokeShouldNotPurchase()
         {
-            var market = EconomicsTestUtilities.CreateInventory(new[]
+            var market = EconomicsTestUtilities.CreateInventoryWithSpaceBacking(new[]
             {
                 (TestItemType.Cactus,   2f),
                 (TestItemType.Corn,     2f),
                 (TestItemType.Pesos,    5f)
             });
-            var self = EconomicsTestUtilities.CreateInventory(new[]
+            var self = EconomicsTestUtilities.CreateInventoryWithSpaceBacking(new[]
             {
                 (TestItemType.Cactus,   2f),
                 (TestItemType.Corn,     2f),
@@ -174,13 +174,13 @@ namespace UnitTests.Economics
         [TestMethod]
         public void ShouldExecuteSimpleSell()
         {
-            var market = EconomicsTestUtilities.CreateInventory(new[]
+            var market = EconomicsTestUtilities.CreateInventoryWithSpaceBacking(new[]
             {
                 (TestItemType.Cactus,   2f),
                 (TestItemType.Corn,     2f),
                 (TestItemType.Pesos,    5f)
             });
-            var self = EconomicsTestUtilities.CreateInventory(new[]
+            var self = EconomicsTestUtilities.CreateInventoryWithSpaceBacking(new[]
             {
                 (TestItemType.Cactus,   2f),
                 (TestItemType.Corn,     2f),
@@ -206,13 +206,13 @@ namespace UnitTests.Economics
         [TestMethod]
         public void ShouldSimulateExecutionOfSimpleSell()
         {
-            var market = EconomicsTestUtilities.CreateInventory(new[]
+            var market = EconomicsTestUtilities.CreateInventoryWithSpaceBacking(new[]
             {
                 (TestItemType.Cactus,   2f),
                 (TestItemType.Corn,     2f),
                 (TestItemType.Pesos,    5f)
             });
-            var self = EconomicsTestUtilities.CreateInventory(new[]
+            var self = EconomicsTestUtilities.CreateInventoryWithSpaceBacking(new[]
             {
                 (TestItemType.Cactus,   2f),
                 (TestItemType.Corn,     2f),
@@ -237,13 +237,13 @@ namespace UnitTests.Economics
         [TestMethod]
         public void WhenSelfIsEmptyShouldNotSell()
         {
-            var market = EconomicsTestUtilities.CreateInventory(new[]
+            var market = EconomicsTestUtilities.CreateInventoryWithSpaceBacking(new[]
             {
                 (TestItemType.Cactus,   2f),
                 (TestItemType.Corn,     2f),
                 (TestItemType.Pesos,    5f)
             });
-            var self = EconomicsTestUtilities.CreateInventory(new[]
+            var self = EconomicsTestUtilities.CreateInventoryWithSpaceBacking(new[]
             {
                 (TestItemType.Cactus,   2f),
                 (TestItemType.Corn,     0f),
@@ -268,13 +268,13 @@ namespace UnitTests.Economics
         [TestMethod]
         public void WhenMarketIsFullShouldNotSell()
         {
-            var market = EconomicsTestUtilities.CreateInventory(new[]
+            var market = EconomicsTestUtilities.CreateInventoryWithSpaceBacking(new[]
             {
                 (TestItemType.Cactus,   2f),
                 (TestItemType.Corn,     2f),
                 (TestItemType.Pesos,    5f)
             }, 4);
-            var self = EconomicsTestUtilities.CreateInventory(new[]
+            var self = EconomicsTestUtilities.CreateInventoryWithSpaceBacking(new[]
             {
                 (TestItemType.Cactus,   2f),
                 (TestItemType.Corn,     2f),
@@ -300,13 +300,13 @@ namespace UnitTests.Economics
         [TestMethod]
         public void WhenMarketIsBrokeShouldNotSell()
         {
-            var market = EconomicsTestUtilities.CreateInventory(new[]
+            var market = EconomicsTestUtilities.CreateInventoryWithSpaceBacking(new[]
             {
                 (TestItemType.Cactus,   2f),
                 (TestItemType.Corn,     2f),
                 (TestItemType.Pesos,    0f)
             });
-            var self = EconomicsTestUtilities.CreateInventory(new[]
+            var self = EconomicsTestUtilities.CreateInventoryWithSpaceBacking(new[]
             {
                 (TestItemType.Cactus,   2f),
                 (TestItemType.Corn,     2f),

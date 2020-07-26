@@ -20,10 +20,10 @@ namespace UnitTests.Economics.TradeRoutes
         public void ShouldEmitNoTradesForSingleInventory()
         {
             var tradeableItems = new[] { TestItemType.Cactus, TestItemType.Corn };
-            var distributeInventory = EconomicsTestUtilities.CreateInventory(new[] { (TestItemType.Cactus, 0f), (TestItemType.Corn, 0f) }, 100);
+            var distributeInventory = EconomicsTestUtilities.CreateInventoryWithSpaceBacking(new[] { (TestItemType.Cactus, 0f), (TestItemType.Corn, 0f) }, 100);
             var inventories = new[]
             {
-                EconomicsTestUtilities.CreateInventory(new []
+                EconomicsTestUtilities.CreateInventoryWithSpaceBacking(new []
                 {
                     (TestItemType.Cactus, 1f),
                     (TestItemType.Corn, 2f)
@@ -45,15 +45,15 @@ namespace UnitTests.Economics.TradeRoutes
         public void ShouldEmitOneTradePerInventoryForTwoImbalancedInventories()
         {
             var tradeableItems = new[] { TestItemType.Cactus, TestItemType.Corn };
-            var distributeInventory = EconomicsTestUtilities.CreateInventory(new[] { (TestItemType.Cactus, 0f), (TestItemType.Corn, 0f) }, 100);
+            var distributeInventory = EconomicsTestUtilities.CreateInventoryWithSpaceBacking(new[] { (TestItemType.Cactus, 0f), (TestItemType.Corn, 0f) }, 100);
             var inventories = new[]
             {
-                EconomicsTestUtilities.CreateInventory(new []
+                EconomicsTestUtilities.CreateInventoryWithSpaceBacking(new []
                 {
                     (TestItemType.Cactus, 1f),
                     (TestItemType.Corn, 2f)
                 }, 100),
-                EconomicsTestUtilities.CreateInventory(new []
+                EconomicsTestUtilities.CreateInventoryWithSpaceBacking(new []
                 {
                     (TestItemType.Cactus, 1f),
                     (TestItemType.Corn, 0f)
@@ -82,15 +82,15 @@ namespace UnitTests.Economics.TradeRoutes
         public void ShouldEmitTwoTradesPerMarketForTwoImbalancedInventories()
         {
             var tradeableItems = new[] { TestItemType.Cactus, TestItemType.Corn };
-            var distributeInventory = EconomicsTestUtilities.CreateInventory(new[] { (TestItemType.Cactus, 0f), (TestItemType.Corn, 0f) }, 100);
+            var distributeInventory = EconomicsTestUtilities.CreateInventoryWithSpaceBacking(new[] { (TestItemType.Cactus, 0f), (TestItemType.Corn, 0f) }, 100);
             var inventories = new[]
             {
-                EconomicsTestUtilities.CreateInventory(new []
+                EconomicsTestUtilities.CreateInventoryWithSpaceBacking(new []
                 {
                     (TestItemType.Cactus, 4f),
                     (TestItemType.Corn, 2f)
                 }, 100),
-                EconomicsTestUtilities.CreateInventory(new []
+                EconomicsTestUtilities.CreateInventoryWithSpaceBacking(new []
                 {
                     (TestItemType.Cactus, 10f),
                     (TestItemType.Corn, 0f)
@@ -126,18 +126,18 @@ namespace UnitTests.Economics.TradeRoutes
         public void ShouldEmitTradesAddingFromDistributeInventory()
         {
             var tradeableItems = new[] { TestItemType.Cactus, TestItemType.Corn };
-            var distributeInventory = EconomicsTestUtilities.CreateInventory(new[]{
+            var distributeInventory = EconomicsTestUtilities.CreateInventoryWithSpaceBacking(new[]{
                 (TestItemType.Cactus, 4f),
                 (TestItemType.Corn, 8f),
                 }, 100);
             var inventories = new[]
             {
-                EconomicsTestUtilities.CreateInventory(new []
+                EconomicsTestUtilities.CreateInventoryWithSpaceBacking(new []
                 {
                     (TestItemType.Cactus, 4f),
                     (TestItemType.Corn, 2f)
                 }, 100),
-                EconomicsTestUtilities.CreateInventory(new []
+                EconomicsTestUtilities.CreateInventoryWithSpaceBacking(new []
                 {
                     (TestItemType.Cactus, 10f),
                     (TestItemType.Corn, 0f)
@@ -173,14 +173,14 @@ namespace UnitTests.Economics.TradeRoutes
         public void ShouldEmitFloatingPointTrade()
         {
             var tradeableItems = new[] { TestItemType.Cactus };
-            var distributeInventory = EconomicsTestUtilities.CreateInventory(new[] { (TestItemType.Cactus, 0f) }, 100);
+            var distributeInventory = EconomicsTestUtilities.CreateInventoryWithSpaceBacking(new[] { (TestItemType.Cactus, 0f) }, 100);
             var inventories = new[]
             {
-                EconomicsTestUtilities.CreateInventory(new []
+                EconomicsTestUtilities.CreateInventoryWithSpaceBacking(new []
                 {
                     (TestItemType.Cactus, 5f)
                 }, 100),
-                EconomicsTestUtilities.CreateInventory(new []
+                EconomicsTestUtilities.CreateInventoryWithSpaceBacking(new []
                 {
                     (TestItemType.Cactus, 10f)
                 }, 100)
@@ -208,14 +208,14 @@ namespace UnitTests.Economics.TradeRoutes
         public void ShouldEmitIntegerTrade()
         {
             var tradeableItems = new[] { TestItemType.Cactus };
-            var distributeInventory = EconomicsTestUtilities.CreateInventory(new[] { (TestItemType.Cactus, 0f) }, 100);
+            var distributeInventory = EconomicsTestUtilities.CreateInventoryWithSpaceBacking(new[] { (TestItemType.Cactus, 0f) }, 100);
             var inventories = new[]
             {
-                EconomicsTestUtilities.CreateInventory(new []
+                EconomicsTestUtilities.CreateInventoryWithSpaceBacking(new []
                 {
                     (TestItemType.Cactus, 5f)
                 }, 100),
-                EconomicsTestUtilities.CreateInventory(new []
+                EconomicsTestUtilities.CreateInventoryWithSpaceBacking(new []
                 {
                     (TestItemType.Cactus, 10f)
                 }, 100)
@@ -245,10 +245,10 @@ namespace UnitTests.Economics.TradeRoutes
         public void ShouldEmitFloatingPointTradeAcrossMany()
         {
             var tradeableItems = new[] { TestItemType.Cactus };
-            var distributeInventory = EconomicsTestUtilities.CreateInventory(new[] { (TestItemType.Cactus, 0f) }, 100);
+            var distributeInventory = EconomicsTestUtilities.CreateInventoryWithSpaceBacking(new[] { (TestItemType.Cactus, 0f) }, 100);
             var inventories = new[]
                 {5f, 10f, 4f }
-                .Select(x => EconomicsTestUtilities.CreateInventory(new[]
+                .Select(x => EconomicsTestUtilities.CreateInventoryWithSpaceBacking(new[]
                     {
                         (TestItemType.Cactus, x)
                     }, 100))
@@ -282,10 +282,10 @@ namespace UnitTests.Economics.TradeRoutes
         public void ShouldEmitIntegerTradeAcrossMany()
         {
             var tradeableItems = new[] { TestItemType.Cactus };
-            var distributeInventory = EconomicsTestUtilities.CreateInventory(new[] { (TestItemType.Cactus, 0f) }, 100);
+            var distributeInventory = EconomicsTestUtilities.CreateInventoryWithSpaceBacking(new[] { (TestItemType.Cactus, 0f) }, 100);
             var inventories = new[]
                 {5f, 10f, 4f }
-                .Select(x => EconomicsTestUtilities.CreateInventory(new[]
+                .Select(x => EconomicsTestUtilities.CreateInventoryWithSpaceBacking(new[]
                     {
                         (TestItemType.Cactus, x)
                     }, 100))
@@ -320,10 +320,10 @@ namespace UnitTests.Economics.TradeRoutes
         public void ShouldEmitFloatingPointTradeAcrossVeryManySmallAmounts()
         {
             var tradeableItems = new[] { TestItemType.Cactus };
-            var distributeInventory = EconomicsTestUtilities.CreateInventory(new[] { (TestItemType.Cactus, 0f) }, 100);
+            var distributeInventory = EconomicsTestUtilities.CreateInventoryWithSpaceBacking(new[] { (TestItemType.Cactus, 0f) }, 100);
             var inventories = new[]
                 {10f, 4f, 4f, 4f, 4f }
-                .Select(x => EconomicsTestUtilities.CreateInventory(new[]
+                .Select(x => EconomicsTestUtilities.CreateInventoryWithSpaceBacking(new[]
                     {
                         (TestItemType.Cactus, x)
                     }, 100))
@@ -359,10 +359,10 @@ namespace UnitTests.Economics.TradeRoutes
         public void ShouldEmitIntegerTradeAcrossVeryManySmallAmounts()
         {
             var tradeableItems = new[] { TestItemType.Cactus };
-            var distributeInventory = EconomicsTestUtilities.CreateInventory(new[] { (TestItemType.Cactus, 0f) }, 100);
+            var distributeInventory = EconomicsTestUtilities.CreateInventoryWithSpaceBacking(new[] { (TestItemType.Cactus, 0f) }, 100);
             var inventories = new[]
                 {10f, 4f, 4f, 4f, 4f }
-                .Select(x => EconomicsTestUtilities.CreateInventory(new[]
+                .Select(x => EconomicsTestUtilities.CreateInventoryWithSpaceBacking(new[]
                     {
                         (TestItemType.Cactus, x)
                     }, 100))
@@ -399,10 +399,10 @@ namespace UnitTests.Economics.TradeRoutes
         public void ShouldEmitFloatingPointTradeAcrossVeryManyLargeAmounts()
         {
             var tradeableItems = new[] { TestItemType.Cactus };
-            var distributeInventory = EconomicsTestUtilities.CreateInventory(new[] { (TestItemType.Cactus, 0f) }, 100);
+            var distributeInventory = EconomicsTestUtilities.CreateInventoryWithSpaceBacking(new[] { (TestItemType.Cactus, 0f) }, 100);
             var inventories = new[]
                 {4f, 10f, 10f, 10f, 10f }
-                .Select(x => EconomicsTestUtilities.CreateInventory(new[]
+                .Select(x => EconomicsTestUtilities.CreateInventoryWithSpaceBacking(new[]
                     {
                         (TestItemType.Cactus, x)
                     }, 100))
@@ -438,10 +438,10 @@ namespace UnitTests.Economics.TradeRoutes
         public void ShouldEmitIntegerTradeAcrossVeryManyLargeAmounts()
         {
             var tradeableItems = new[] { TestItemType.Cactus };
-            var distributeInventory = EconomicsTestUtilities.CreateInventory(new[] { (TestItemType.Cactus, 0f) }, 100);
+            var distributeInventory = EconomicsTestUtilities.CreateInventoryWithSpaceBacking(new[] { (TestItemType.Cactus, 0f) }, 100);
             var inventories = new[]
                 {4f, 10f, 10f, 10f, 10f }
-                .Select(x => EconomicsTestUtilities.CreateInventory(new[]
+                .Select(x => EconomicsTestUtilities.CreateInventoryWithSpaceBacking(new[]
                     {
                         (TestItemType.Cactus, x)
                     }, 100))
@@ -480,10 +480,10 @@ namespace UnitTests.Economics.TradeRoutes
         public void ShouldEmitFloatingPointTradeLimitedByTargetConstraints()
         {
             var tradeableItems = new[] { TestItemType.Cactus };
-            var distributeInventory = EconomicsTestUtilities.CreateInventory(new[] { (TestItemType.Cactus, 0f) }, 100);
+            var distributeInventory = EconomicsTestUtilities.CreateInventoryWithSpaceBacking(new[] { (TestItemType.Cactus, 0f) }, 100);
             var inventories = new[]
                 {4f, 10f, 10f, 10f, 10f }
-                .Select(x => EconomicsTestUtilities.CreateInventory(new[]
+                .Select(x => EconomicsTestUtilities.CreateInventoryWithSpaceBacking(new[]
                     {
                         (TestItemType.Cactus, x)
                     }, 100))

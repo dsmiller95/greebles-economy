@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using TradeModeling.Inventories;
 using TradeModeling.TradeRouteUtilities;
 using UniRx;
 using UnityEngine;
@@ -44,7 +45,8 @@ namespace Assets.UI.TraderConfigPanel
                     Destroy(panel.gameObject);
                 }
             }
-            var largestTrade = linkedTrader.inventory.inventoryCapacity;
+            // todo: ?
+            var largestTrade = (linkedTrader.inventory.itemSource as ISpaceFillingItemSource<ResourceType>)?.inventoryCapacity ?? 100;
             myPanels = tradeRoute
                 .Select(node => CreateSingleTradeNode(node, largestTrade))
                 .ToList();

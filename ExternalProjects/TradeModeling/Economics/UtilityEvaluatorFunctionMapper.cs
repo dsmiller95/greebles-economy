@@ -4,7 +4,7 @@ using TradeModeling.Inventories;
 
 namespace TradeModeling.Economics
 {
-    public class UtilityEvaluatorFunctionMapper<T>: IUtilityEvaluator<T, SpaceFillingInventory<T>>
+    public class UtilityEvaluatorFunctionMapper<T>: IUtilityEvaluator<T, BasicInventory<T>>
     {
         private IDictionary<T, IIncrementalFunction> utilityFunctions;
         public UtilityEvaluatorFunctionMapper(IDictionary<T, IIncrementalFunction> utilityFunctions)
@@ -12,12 +12,12 @@ namespace TradeModeling.Economics
             this.utilityFunctions = utilityFunctions;
         }
 
-        public float GetIncrementalUtility(T type, SpaceFillingInventory<T> selfInventory, float increment)
+        public float GetIncrementalUtility(T type, BasicInventory<T> selfInventory, float increment)
         {
             return utilityFunctions[type].GetIncrementalValue(selfInventory.Get(type), increment);
         }
 
-        public float GetTotalUtility(T type, SpaceFillingInventory<T> inventory)
+        public float GetTotalUtility(T type, BasicInventory<T> inventory)
         {
             return utilityFunctions[type].GetNetValue(inventory.Get(type));
         }

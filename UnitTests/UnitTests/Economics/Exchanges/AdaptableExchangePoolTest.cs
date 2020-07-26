@@ -11,7 +11,7 @@ namespace UnitTests.Economics.Exchanges
         [TestMethod]
         public void ShouldDistributeResourcesAcrossPoolOnCreation()
         {
-            var starterMarketInventory = EconomicsTestUtilities.CreateInventory(new[]
+            var starterMarketInventory = EconomicsTestUtilities.CreateInventoryWithSpaceBacking(new[]
             {
                 (TestItemType.Cactus,   10f),
                 (TestItemType.Corn,     8f),

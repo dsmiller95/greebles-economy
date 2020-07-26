@@ -76,7 +76,7 @@ namespace UnitTests.Economics.Inventories
         [TestMethod]
         public void ShouldAddUpToCapacity()
         {
-            var spaceFillingInventory = EconomicsTestUtilities.CreateInventory(new[]
+            var spaceFillingInventory = EconomicsTestUtilities.CreateInventoryWithSpaceBacking(new[]
             {
                 (TestItemType.Cactus,   2f),
                 (TestItemType.Corn,     3f),
@@ -95,13 +95,13 @@ namespace UnitTests.Economics.Inventories
         [TestMethod]
         public void ShouldTransferBasedOnCapacity()
         {
-            var spaceFillingInventorySource = EconomicsTestUtilities.CreateInventory(new[]
+            var spaceFillingInventorySource = EconomicsTestUtilities.CreateInventoryWithSpaceBacking(new[]
             {
                 (TestItemType.Cactus,   10f),
                 (TestItemType.Corn,     10f),
                 (TestItemType.Pesos,    5f)
             }, 100, new[] { TestItemType.Cactus, TestItemType.Corn });
-            var spaceFillingInventoryTarget = EconomicsTestUtilities.CreateInventory(new[]
+            var spaceFillingInventoryTarget = EconomicsTestUtilities.CreateInventoryWithSpaceBacking(new[]
             {
                 (TestItemType.Cactus,   2f),
                 (TestItemType.Corn,     3f),
@@ -122,7 +122,7 @@ namespace UnitTests.Economics.Inventories
         [TestMethod]
         public void ShouldNotifyOfResourceChanges()
         {
-            var inventory = EconomicsTestUtilities.CreateInventory(new[]
+            var inventory = EconomicsTestUtilities.CreateInventoryWithSpaceBacking(new[]
             {
                 (TestItemType.Cactus,   2f),
                 (TestItemType.Corn,     3f),
@@ -131,9 +131,11 @@ namespace UnitTests.Economics.Inventories
             var notifier = new InventoryNotifier<TestItemType>(inventory.itemSource, 50);
 
             var notifications = new Queue<ResourceChanged<TestItemType>>();
+            var amountAtNotification = -1f;
             notifier.resourceAmountChanged += (sender, change) =>
             {
                 notifications.Enqueue(change);
+                amountAtNotification = inventory.Get(change.type);
             };
 
             inventory.Add(TestItemType.Cactus, 10).Execute();
@@ -141,12 +143,13 @@ namespace UnitTests.Economics.Inventories
             var notification = notifications.Dequeue();
             Assert.AreEqual(TestItemType.Cactus, notification.type);
             Assert.AreEqual(12, notification.newValue);
+            Assert.AreEqual(12, amountAtNotification);
         }
 
         [TestMethod]
         public void ShouldNotifyOfCapacityChange()
         {
-            var inventory = EconomicsTestUtilities.CreateInventory(new[]
+            var inventory = EconomicsTestUtilities.CreateInventoryWithSpaceBacking(new[]
             {
                 (TestItemType.Cactus,   2f),
                 (TestItemType.Corn,     3f),
@@ -160,7 +163,9 @@ namespace UnitTests.Economics.Inventories
                 notifications.Add(change);
             };
 
-            inventory.inventoryCapacity = 30;
+            // TODO: create our own item source?
+            var source = inventory.itemSource as ISpaceFillingItemSource<TestItemType>;
+            source.inventoryCapacity = 30;
 
             Assert.AreEqual(notifications.Count, 3);
             Assert.AreEqual(30, notifications.Find(x => x.type == TestItemType.Cactus).newValue);
@@ -171,7 +176,7 @@ namespace UnitTests.Economics.Inventories
         [TestMethod]
         public void ShouldNotifyEverything()
         {
-            var inventory = EconomicsTestUtilities.CreateInventory(new[]
+            var inventory = EconomicsTestUtilities.CreateInventoryWithSpaceBacking(new[]
             {
                 (TestItemType.Cactus,   2f),
                 (TestItemType.Corn,     3f),

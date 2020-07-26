@@ -8,8 +8,8 @@ namespace Assets.Scripts.Castle
     public class CastleBehavior : TradeStop
     {
         public ResourceInventory inventory;
-        private SpaceFillingInventory<ResourceType> _inventory;
-        public override SpaceFillingInventory<ResourceType> tradeInventory => _inventory;
+        private BasicInventory<ResourceType> _inventory;
+        public override BasicInventory<ResourceType> tradeInventory => _inventory;
 
         private void Awake()
         {

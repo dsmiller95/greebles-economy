@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using TradeModeling.Functions;
+using TradeModeling.Inventories;
 using UnityEngine;
 
 public class MarketPricePlotter : PlottableFunctionsToSeriesAdapter
@@ -16,11 +17,13 @@ public class MarketPricePlotter : PlottableFunctionsToSeriesAdapter
     new public void Start()
     {
         adapters = new List<PlottableFunctionToSeriesAdapter>();
+        // TODO: ??
+        var plotSize = (market._inventory.itemSource as ISpaceFillingItemSource<ResourceType>)?.inventoryCapacity ?? 100;
         var plotFunctionConfig = new PlottableFunctionConfig
         {
             start = 0,
-            end = market._inventory.inventoryCapacity,
-            steps = market._inventory.inventoryCapacity
+            end = plotSize,
+            steps = plotSize
         };
         var allPriceFunctions = market.GetSellPriceFunctions().ToList();
         var maxYScale = allPriceFunctions.Max(x => x.Value.yRange);

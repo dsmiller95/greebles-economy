@@ -5,6 +5,7 @@ using Assets.UI.Plotter.Function;
 using Boo.Lang;
 using TMPro;
 using TradeModeling.Functions;
+using TradeModeling.Inventories;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -41,8 +42,8 @@ namespace Assets.Scripts.Market
             currentResource = resource;
 
             var color = ResourceConfiguration.resourceColoring[currentResource];
-
-            var inventoryCapacity = market._inventory.inventoryCapacity;
+            //TODO: ?
+            var inventoryCapacity = (market._inventory.itemSource as ISpaceFillingItemSource<ResourceType>)?.inventoryCapacity ?? 100;
 
             var priceFunctionConfig = market.GetSellPriceFunctions()[currentResource];
             var priceFunction = new SigmoidFunction(priceFunctionConfig);

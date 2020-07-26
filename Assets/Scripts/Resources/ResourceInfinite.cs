@@ -1,10 +1,6 @@
-﻿using Assets;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using System;
+﻿using System.Threading.Tasks;
 using TradeModeling.Inventories;
-using System.Threading.Tasks;
+using UnityEngine;
 
 namespace Assets.Scripts.Resources
 {
@@ -17,12 +13,12 @@ namespace Assets.Scripts.Resources
         public ResourceType type;
         public float gatherTime = 1;
 
-        public async Task<bool> Eat(SpaceFillingInventory<ResourceType> inventory, float amount = -1)
+        public async Task<bool> Eat(BasicInventory<ResourceType> inventory, float amount = -1)
         {
-            await Task.Delay((int)(this.gatherTime * 1000));
+            await Task.Delay((int)(gatherTime * 1000));
             if (amount == -1)
             {
-                amount = inventory.inventoryCapacity;
+                amount = float.MaxValue;
             }
             var eatenInfo = inventory.Add(_type, amount);
             eatenInfo.Execute();

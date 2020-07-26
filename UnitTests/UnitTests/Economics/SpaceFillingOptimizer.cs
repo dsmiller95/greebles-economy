@@ -17,13 +17,13 @@ namespace UnitTests.Economics
         [TestMethod]
         public void ShouldOptimizeForUtilityWithVeryLargeInventory()
         {
-            var self = EconomicsTestUtilities.CreateInventory(new[]
+            var self = EconomicsTestUtilities.CreateInventoryWithSpaceBacking(new[]
             {
                 (TestItemType.Cactus,   10f),
                 (TestItemType.Corn,     2f),
                 (TestItemType.Pesos,    2f)
             }, 100);
-            var market = EconomicsTestUtilities.CreateInventory(new[]
+            var market = EconomicsTestUtilities.CreateInventoryWithSpaceBacking(new[]
             {
                 (TestItemType.Cactus,   20f),
                 (TestItemType.Corn,     20f),
@@ -46,7 +46,7 @@ namespace UnitTests.Economics
                 }) }
             });
 
-            var optimizer = new PurchaseOptimizer<TestItemType, SpaceFillingInventory<TestItemType>, SpaceFillingInventory<TestItemType>>(
+            var optimizer = new PurchaseOptimizer<TestItemType, BasicInventory<TestItemType>, BasicInventory<TestItemType>>(
                 self,
                 market,
                 new[] { TestItemType.Cactus, TestItemType.Corn },
@@ -67,13 +67,13 @@ namespace UnitTests.Economics
         [TestMethod]
         public void ShouldOptimizeForMaxUtilityWithRestrictedInventoryUnlimitedMoney()
         {
-            var self = EconomicsTestUtilities.CreateInventory(new[]
+            var self = EconomicsTestUtilities.CreateInventoryWithSpaceBacking(new[]
             {
                 (TestItemType.Cactus,   0f),
                 (TestItemType.Corn,     0f),
                 (TestItemType.Pesos,    100f)
             }, 10);
-            var market = EconomicsTestUtilities.CreateInventory(new[]
+            var market = EconomicsTestUtilities.CreateInventoryWithSpaceBacking(new[]
             {
                 (TestItemType.Cactus,   20f),
                 (TestItemType.Corn,     20f),
@@ -96,7 +96,7 @@ namespace UnitTests.Economics
                 }) }
             });
 
-            var optimizer = new PurchaseOptimizer<TestItemType, SpaceFillingInventory<TestItemType>, SpaceFillingInventory<TestItemType>>(
+            var optimizer = new PurchaseOptimizer<TestItemType, BasicInventory<TestItemType>, BasicInventory<TestItemType>>(
                 self,
                 market,
                 new[] { TestItemType.Cactus, TestItemType.Corn },
@@ -118,13 +118,13 @@ namespace UnitTests.Economics
         [TestMethod]
         public void ShouldOptimizeForMaxUtilityWithRestrictedInventoryNoMoney()
         {
-            var self = EconomicsTestUtilities.CreateInventory(new[]
+            var self = EconomicsTestUtilities.CreateInventoryWithSpaceBacking(new[]
             {
                 (TestItemType.Cactus,   0f),
                 (TestItemType.Corn,     10f),
                 (TestItemType.Pesos,    0f)
             }, 10);
-            var market = EconomicsTestUtilities.CreateInventory(new[]
+            var market = EconomicsTestUtilities.CreateInventoryWithSpaceBacking(new[]
             {
                 (TestItemType.Cactus,   20f),
                 (TestItemType.Corn,     20f),
@@ -147,7 +147,7 @@ namespace UnitTests.Economics
                 }) }
             });
 
-            var optimizer = new PurchaseOptimizer<TestItemType, SpaceFillingInventory<TestItemType>, SpaceFillingInventory<TestItemType>>(
+            var optimizer = new PurchaseOptimizer<TestItemType, BasicInventory<TestItemType>, BasicInventory<TestItemType>>(
                 self,
                 market,
                 new[] { TestItemType.Cactus, TestItemType.Corn },
@@ -168,13 +168,13 @@ namespace UnitTests.Economics
         [TestMethod]
         public void ShouldOptimizeForUtilityWithVeryLargeInventoryAndGenerateSourceUtilityWeights()
         {
-            var self = EconomicsTestUtilities.CreateInventory(new[]
+            var self = EconomicsTestUtilities.CreateInventoryWithSpaceBacking(new[]
             {
                 (TestItemType.Cactus,   10f),
                 (TestItemType.Corn,     2f),
                 (TestItemType.Pesos,    2f)
             }, 100);
-            var market = EconomicsTestUtilities.CreateInventory(new[]
+            var market = EconomicsTestUtilities.CreateInventoryWithSpaceBacking(new[]
             {
                 (TestItemType.Cactus,   20f),
                 (TestItemType.Corn,     20f),
@@ -198,7 +198,7 @@ namespace UnitTests.Economics
             });
 
             var tradeableResources = new[] { TestItemType.Cactus, TestItemType.Corn };
-            var optimizer = new PurchaseOptimizer<TestItemType, SpaceFillingInventory<TestItemType>, SpaceFillingInventory<TestItemType>>(
+            var optimizer = new PurchaseOptimizer<TestItemType, BasicInventory<TestItemType>, BasicInventory<TestItemType>>(
                 self,
                 market,
                 new[] { TestItemType.Cactus, TestItemType.Corn },

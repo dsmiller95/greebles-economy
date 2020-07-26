@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TradeModeling.Inventories;
 using UnityEngine;
 
 namespace Assets.Scripts.Gatherer.StateHandlers
@@ -33,9 +34,15 @@ namespace Assets.Scripts.Gatherer.StateHandlers
             {
                 await data.eatResource(touchedObject);
             }
-
-            if (data.inventory.getFullRatio() >= 1)
+            if(data.inventory.itemSource is ISpaceFillingItemSource<ResourceType> spaceFilling)
             {
+                if(spaceFilling.getFullRatio() >= 1)
+                {
+                    return GathererState.GoingHome;
+                }
+            }else
+            {
+                // only collect one thing at a time if our inventory has no capacity
                 return GathererState.GoingHome;
             }
             return GathererState.Gathering;

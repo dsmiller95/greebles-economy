@@ -65,7 +65,7 @@ namespace Assets.Scripts.Gatherer.StateHandlers
                 var market = touchedTarget.GetComponentInChildren<MarketBehavior>();
 
                 var exchangeAdapter = market.GetExchangeAdapter();
-                var optimizer = new PurchaseOptimizer<ResourceType, SpaceFillingInventory<ResourceType>, SpaceFillingInventory<ResourceType>>(
+                var optimizer = new PurchaseOptimizer<ResourceType, BasicInventory<ResourceType>, BasicInventory<ResourceType>>(
                     data.inventory,
                     market._inventory,
                     ResourceConfiguration.spaceFillingItems,

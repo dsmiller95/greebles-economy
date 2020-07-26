@@ -21,18 +21,26 @@ namespace UnitTests.Economics
     }
     public static class EconomicsTestUtilities
     {
-        public static SpaceFillingInventory<TestItemType> CreateInventory(
+        public static ISpaceFillingItemSource<TestItemType> CreateSpaceFillingSource(
+            (TestItemType, float)[] initialItems,
+            int capacity = 10,
+            TestItemType[] spaceFillingItems = null)
+        {
+            spaceFillingItems = spaceFillingItems ?? new[] { TestItemType.Cactus, TestItemType.Corn };
+            return new SpaceFillingInventorySource<TestItemType>(
+                initialItems.ToDictionary(x => x.Item1, x => x.Item2),
+                spaceFillingItems,
+                capacity);
+        }
+
+        public static BasicInventory<TestItemType> CreateInventoryWithSpaceBacking(
             (TestItemType, float)[] initialItems,
             int capacity = 10,
             TestItemType[] spaceFillingItems = null,
             TestItemType moneyType = TestItemType.Pesos)
         {
-            spaceFillingItems = spaceFillingItems ?? new[] { TestItemType.Cactus, TestItemType.Corn };
-            return new SpaceFillingInventory<TestItemType>(
-                capacity,
-                initialItems.ToDictionary(x => x.Item1, x => x.Item2),
-                spaceFillingItems,
-                moneyType);
+            var backing = CreateSpaceFillingSource(initialItems, capacity, spaceFillingItems);
+            return new BasicInventory<TestItemType>(backing, moneyType);
         }
         public static BasicInventory<TestItemType> CreateBasicInventory(
             (TestItemType, float)[] initialItems,

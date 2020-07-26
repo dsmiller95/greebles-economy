@@ -53,8 +53,8 @@ namespace TradeModeling.Inventories
 
         private float SetInventoryValue(T type, float newValue)
         {
-            OnResourceChanged?.Invoke(type, newValue);
             inventory[type] = newValue;
+            OnResourceChanged?.Invoke(type, newValue);
             return newValue;
         }
 

@@ -13,9 +13,9 @@ namespace Assets.Scripts.Home
     public class HomeBehavior : TradeStop
     {
         public ResourceInventory inventory;
-        private SpaceFillingInventory<ResourceType> _inventory;
+        private BasicInventory<ResourceType> _inventory;
 
-        public override SpaceFillingInventory<ResourceType> tradeInventory => _inventory;
+        public override BasicInventory<ResourceType> tradeInventory => _inventory;
 
         private void Awake()
         {
@@ -27,12 +27,12 @@ namespace Assets.Scripts.Home
         /// </summary>
         /// <param name="inventoryToDrain">the inventory to drain</param>
         /// <returns>True if the home's inventory is full</returns>
-        public bool depositAllGoods(SpaceFillingInventory<ResourceType> inventoryToDrain)
+        public bool depositAllGoods(BasicInventory<ResourceType> inventoryToDrain)
         {
             inventoryToDrain.DrainAllInto(_inventory, ResourceConfiguration.spaceFillingItems);
-            return _inventory.getFullRatio() >= 1;
+            return ((_inventory.itemSource as ISpaceFillingItemSource<ResourceType>)?.getFullRatio() ?? 0) >= 1;
         }
-        public void withdrawAllGoods(SpaceFillingInventory<ResourceType> inventoryToDepositTo)
+        public void withdrawAllGoods(BasicInventory<ResourceType> inventoryToDepositTo)
         {
             _inventory.DrainAllInto(inventoryToDepositTo, ResourceConfiguration.spaceFillingItems);
         }

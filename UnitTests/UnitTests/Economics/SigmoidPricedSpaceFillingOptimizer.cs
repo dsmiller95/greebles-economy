@@ -16,13 +16,13 @@ namespace UnitTests.Economics
         [TestMethod]
         public void ShouldOptimizeForUtilityWithVeryLargeInventoryAndEqualUtility()
         {
-            var self = EconomicsTestUtilities.CreateInventory(new[]
+            var self = EconomicsTestUtilities.CreateInventoryWithSpaceBacking(new[]
             {
                 (TestItemType.Cactus,   10f),
                 (TestItemType.Corn,     2f),
                 (TestItemType.Pesos,    2f)
             }, 100);
-            var market = EconomicsTestUtilities.CreateInventory(new[]
+            var market = EconomicsTestUtilities.CreateInventoryWithSpaceBacking(new[]
             {
                 (TestItemType.Cactus,   20f),
                 (TestItemType.Corn,     20f),
@@ -57,7 +57,7 @@ namespace UnitTests.Economics
                 }) }
             });
 
-            var optimizer = new PurchaseOptimizer<TestItemType, SpaceFillingInventory<TestItemType>, SpaceFillingInventory<TestItemType>>(
+            var optimizer = new PurchaseOptimizer<TestItemType, BasicInventory<TestItemType>, BasicInventory<TestItemType>>(
                 self,
                 market,
                 new[] { TestItemType.Cactus, TestItemType.Corn },
@@ -80,13 +80,13 @@ namespace UnitTests.Economics
         [TestMethod]
         public void ShouldOptimizeForUtilityWithSmallInventoryAndEqualUtility()
         {
-            var self = EconomicsTestUtilities.CreateInventory(new[]
+            var self = EconomicsTestUtilities.CreateInventoryWithSpaceBacking(new[]
             {
                 (TestItemType.Cactus,   10f),
                 (TestItemType.Corn,     2f),
                 (TestItemType.Pesos,    2f)
             }, 18);
-            var market = EconomicsTestUtilities.CreateInventory(new[]
+            var market = EconomicsTestUtilities.CreateInventoryWithSpaceBacking(new[]
             {
                 (TestItemType.Cactus,   20f),
                 (TestItemType.Corn,     20f),
@@ -121,7 +121,7 @@ namespace UnitTests.Economics
                 }) }
             });
 
-            var optimizer = new PurchaseOptimizer<TestItemType, SpaceFillingInventory<TestItemType>, SpaceFillingInventory<TestItemType>>(
+            var optimizer = new PurchaseOptimizer<TestItemType, BasicInventory<TestItemType>, BasicInventory<TestItemType>>(
                 self,
                 market,
                 new[] { TestItemType.Cactus, TestItemType.Corn },
@@ -143,13 +143,13 @@ namespace UnitTests.Economics
         [TestMethod]
         public void ShouldOptimizeForUtilityWhenCheapPlentifulExpensiveRare()
         {
-            var self = EconomicsTestUtilities.CreateInventory(new[]
+            var self = EconomicsTestUtilities.CreateInventoryWithSpaceBacking(new[]
             {
                 (TestItemType.Cactus,   10f),
                 (TestItemType.Corn,     0f),
                 (TestItemType.Pesos,    0f)
             }, 100);
-            var market = EconomicsTestUtilities.CreateInventory(new[]
+            var market = EconomicsTestUtilities.CreateInventoryWithSpaceBacking(new[]
             {
                 (TestItemType.Cactus,   30f),
                 (TestItemType.Corn,     20f),
@@ -184,7 +184,7 @@ namespace UnitTests.Economics
                 }) }
             });
 
-            var optimizer = new PurchaseOptimizer<TestItemType, SpaceFillingInventory<TestItemType>, SpaceFillingInventory<TestItemType>>(
+            var optimizer = new PurchaseOptimizer<TestItemType, BasicInventory<TestItemType>, BasicInventory<TestItemType>>(
                 self,
                 market,
                 new[] { TestItemType.Cactus, TestItemType.Corn },
