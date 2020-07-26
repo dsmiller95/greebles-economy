@@ -21,21 +21,6 @@ namespace UnitTests.Economics
     }
     public static class EconomicsTestUtilities
     {
-        public static NotifyingInventory<TestItemType> CreateNotifyingInventory(
-            (TestItemType, float)[] initialItems,
-            int capacity = 10,
-            int defaultCapacity = 10,
-            TestItemType[] spaceFillingItems = null,
-            TestItemType moneyType = TestItemType.Pesos)
-        {
-            spaceFillingItems = spaceFillingItems ?? new[] { TestItemType.Cactus, TestItemType.Corn };
-            return new NotifyingInventory<TestItemType>(
-                capacity,
-                initialItems.ToDictionary(x => x.Item1, x => x.Item2),
-                spaceFillingItems,
-                moneyType,
-                defaultCapacity);
-        }
         public static SpaceFillingInventory<TestItemType> CreateInventory(
             (TestItemType, float)[] initialItems,
             int capacity = 10,

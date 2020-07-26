@@ -47,7 +47,7 @@ namespace Assets.Scripts.Trader
 
         public HexMovementManager objectSeeker;
 
-        internal NotifyingInventory<ResourceType> inventory;
+        internal SpaceFillingInventory<ResourceType> inventory;
 
         private void Awake()
         {

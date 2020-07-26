@@ -3,6 +3,16 @@ using System.Collections.Generic;
 
 namespace TradeModeling.Inventories
 {
+    public struct ResourceChanged<T>
+    {
+        public ResourceChanged(T type, float newValue)
+        {
+            this.type = type;
+            this.newValue = newValue;
+        }
+        public T type;
+        public float newValue;
+    }
     /// <summary>
     /// An object which wraps an inventory item source and sends out notifications when it changes
     /// </summary>

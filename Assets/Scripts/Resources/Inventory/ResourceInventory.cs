@@ -20,12 +20,13 @@ namespace Assets.Scripts.Resources.Inventory
 
         public StartingInventoryAmount[] startingInventoryAmounts;
 
-        public NotifyingInventory<ResourceType> backingInventory
+        public SpaceFillingInventory<ResourceType> backingInventory
         {
             get;
             private set;
         }
 
+        private InventoryNotifier<ResourceType> inventoryNotifier;
 
         void Awake()
         {
@@ -40,25 +41,24 @@ namespace Assets.Scripts.Resources.Inventory
             {
                 initialInventory[startingAmount.type] = startingAmount.amount;
             }
-            backingInventory = new NotifyingInventory<ResourceType>(
+            backingInventory = new SpaceFillingInventory<ResourceType>(
                 inventoryCapacitySetForUI,
                 initialInventory,
                 ResourceConfiguration.spaceFillingItems,
-                ResourceType.Gold,
-                200);
-
+                ResourceType.Gold);
+            inventoryNotifier = new InventoryNotifier<ResourceType>(backingInventory.itemSource, 200);
 
             //make sure that the observables get initialized by now, at the latest
             this.ResourceAmountsChangedAsObservable();
             this.ResourceCapacityChangedAsObservable();
 
-            backingInventory.resourceCapacityChanges += OnResourceCapacityChanged;
-            backingInventory.resourceAmountChanged += OnResourceAmountsChanged;
+            inventoryNotifier.resourceCapacityChanges += OnResourceCapacityChanged;
+            inventoryNotifier.resourceAmountChanged += OnResourceAmountsChanged;
         }
 
         public void Start()
         {
-            backingInventory.NotifyAll();
+            inventoryNotifier.NotifyAll();
         }
 
         public void Update()

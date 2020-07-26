@@ -12,7 +12,7 @@ namespace TradeModeling.Inventories
     {
         protected T moneyType;
 
-        protected IInventoryItemSource<T> itemSource;
+        public IInventoryItemSource<T> itemSource;
 
         public BasicInventory(
             IInventoryItemSource<T> source,

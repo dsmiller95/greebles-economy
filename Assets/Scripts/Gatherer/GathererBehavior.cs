@@ -34,7 +34,7 @@ namespace Assets.Scripts.Gatherer
 
         internal float lastTargetCheckTime = 0;
 
-        internal NotifyingInventory<ResourceType> inventory;
+        internal SpaceFillingInventory<ResourceType> inventory;
         internal ITimeTracker timeTracker;
         internal GatherBehaviorOptimizer optimizer;
 

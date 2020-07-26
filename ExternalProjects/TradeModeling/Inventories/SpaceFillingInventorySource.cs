@@ -12,6 +12,7 @@ namespace TradeModeling.Inventories
     public class SpaceFillingInventorySource<T> : BasicInventorySource<T>, ISpaceFillingItemSource<T>
     {
         protected ISet<T> spaceFillingItems;
+        public Action<float> OnCapacityChanged { private get; set; }
 
         public SpaceFillingInventorySource(
             IDictionary<T, float> initialItems,
@@ -43,15 +44,14 @@ namespace TradeModeling.Inventories
 
         protected virtual int SetInventoryCapacity(int newCapacity)
         {
+            _inventoryCapacity = newCapacity;
             OnCapacityChanged?.Invoke(newCapacity);
-            return _inventoryCapacity = newCapacity;
+            return _inventoryCapacity;
         }
 
         public float totalFullSpace => spaceFillingItems.Select(x => Get(x)).Sum();
 
         public float remainingCapacity => inventoryCapacity - totalFullSpace;
-
-        public Action<float> OnCapacityChanged { private get; set; }
 
         public float getFullRatio()
         {
