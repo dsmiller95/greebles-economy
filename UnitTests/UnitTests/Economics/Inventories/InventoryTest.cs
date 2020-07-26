@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using TradeModeling.Inventories;
 
 namespace UnitTests.Economics.Inventories
 {
@@ -115,5 +118,65 @@ namespace UnitTests.Economics.Inventories
             Assert.AreEqual(5, spaceFillingInventorySource.Get(TestItemType.Cactus));
             Assert.AreEqual(7, spaceFillingInventoryTarget.Get(TestItemType.Cactus));
         }
+
+        [TestMethod]
+        public void ShouldNotifyOfResourceChanges()
+        {
+            var notifyingInventory = EconomicsTestUtilities.CreateNotifyingInventory(new[]
+            {
+                (TestItemType.Cactus,   2f),
+                (TestItemType.Corn,     3f),
+                (TestItemType.Pesos,    5f)
+            }, 100, 50, new[] { TestItemType.Cactus, TestItemType.Corn });
+
+
+            var notifications = new Queue<ResourceChanged<TestItemType>>();
+            notifyingInventory.resourceAmountChanged += (sender, change) =>
+            {
+                notifications.Enqueue(change);
+            };
+
+            notifyingInventory.Add(TestItemType.Cactus, 10).Execute();
+            Assert.AreEqual(notifications.Count, 1);
+            var notification = notifications.Dequeue();
+            Assert.AreEqual(TestItemType.Cactus, notification.type);
+            Assert.AreEqual(12, notification.newValue);
+        }
+
+        [TestMethod]
+        public void ShouldNotifyEverything()
+        {
+            var notifyingInventory = EconomicsTestUtilities.CreateNotifyingInventory(new[]
+            {
+                (TestItemType.Cactus,   2f),
+                (TestItemType.Corn,     3f),
+                (TestItemType.Pesos,    5f)
+            }, 20, 50, new[] { TestItemType.Cactus, TestItemType.Corn });
+
+
+            var resourceNotifications = new List<ResourceChanged<TestItemType>>();
+            notifyingInventory.resourceAmountChanged += (sender, change) =>
+            {
+                resourceNotifications.Add(change);
+            };
+            var capacityNotifications = new List<ResourceChanged<TestItemType>>();
+            notifyingInventory.resourceCapacityChanges += (sender, change) =>
+            {
+                capacityNotifications.Add(change);
+            };
+
+            notifyingInventory.NotifyAll();
+
+            Assert.AreEqual(resourceNotifications.Count, 3);
+            Assert.AreEqual(2, resourceNotifications.Find(x => x.type == TestItemType.Cactus).newValue);
+            Assert.AreEqual(3, resourceNotifications.Find(x => x.type == TestItemType.Corn).newValue);
+            Assert.AreEqual(5, resourceNotifications.Find(x => x.type == TestItemType.Pesos).newValue);
+
+            Assert.AreEqual(capacityNotifications.Count, 3);
+            Assert.AreEqual(20, capacityNotifications.Find(x => x.type == TestItemType.Cactus).newValue);
+            Assert.AreEqual(20, capacityNotifications.Find(x => x.type == TestItemType.Corn).newValue);
+            Assert.AreEqual(50, capacityNotifications.Find(x => x.type == TestItemType.Pesos).newValue);
+        }
+
     }
 }

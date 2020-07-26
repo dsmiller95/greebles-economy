@@ -9,7 +9,7 @@ namespace TradeModeling.Inventories
     /// An inventory with infinite capacity
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public class SpaceFillingInventorySource<T> : BasicInventorySource<T>
+    public class SpaceFillingInventorySource<T> : BasicInventorySource<T>, ISpaceFillingItemSource<T>
     {
         protected ISet<T> spaceFillingItems;
 
@@ -43,12 +43,15 @@ namespace TradeModeling.Inventories
 
         protected virtual int SetInventoryCapacity(int newCapacity)
         {
+            OnCapacityChanged?.Invoke(newCapacity);
             return _inventoryCapacity = newCapacity;
         }
 
         public float totalFullSpace => spaceFillingItems.Select(x => Get(x)).Sum();
 
-        public float remainingCapacity => this.inventoryCapacity - totalFullSpace;
+        public float remainingCapacity => inventoryCapacity - totalFullSpace;
+
+        public Action<float> OnCapacityChanged { private get; set; }
 
         public float getFullRatio()
         {
@@ -69,7 +72,7 @@ namespace TradeModeling.Inventories
             }
             return remainingCapacity > 0;
         }
-        public override IInventoryItemSource<T> Clone()
+        public override IInventoryItemSource<T> CloneSimulated()
         {
             return new SpaceFillingInventorySource<T>(this);
         }

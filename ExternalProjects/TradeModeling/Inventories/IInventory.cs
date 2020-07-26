@@ -3,7 +3,7 @@ using TradeModeling.Economics;
 
 namespace TradeModeling.Inventories
 {
-    public interface IInventory<T>
+    public interface IInventory<T> : IExchangeInventory
     {
         Dictionary<T, float> DrainAllInto(IInventory<T> target, T[] items);
 

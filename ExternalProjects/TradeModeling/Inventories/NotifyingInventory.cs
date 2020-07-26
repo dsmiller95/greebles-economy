@@ -16,60 +16,45 @@ namespace TradeModeling.Inventories
         public float newValue;
     }
 
-    public class NotifyingInventory<T> : SpaceFillingInventory<T>
+    public class NotifyingInventory<T> : SpaceFillingInventory<T>, INotifyingInventory<T>
     {
-        //public Subject<ResourceChanged<T>> resourceChangeSubject;
+        public event EventHandler<ResourceChanged<T>> resourceCapacityChanges
+        {
+            add
+            {
+                ((INotifyingInventory<T>)myNotifier).resourceCapacityChanges += value;
+            }
 
-        public event EventHandler<ResourceChanged<T>> resourceAmountChanged;
-        public event EventHandler<ResourceChanged<T>> resourceCapacityChanges;
+            remove
+            {
+                ((INotifyingInventory<T>)myNotifier).resourceCapacityChanges -= value;
+            }
+        }
 
-        public NotifyingInventory(int capacity, IDictionary<T, float> initialItems, ICollection<T> spaceFillingItems, T moneyType)
+        public event EventHandler<ResourceChanged<T>> resourceAmountChanged
+        {
+            add
+            {
+                ((INotifyingInventory<T>)myNotifier).resourceAmountChanged += value;
+            }
+
+            remove
+            {
+                ((INotifyingInventory<T>)myNotifier).resourceAmountChanged -= value;
+            }
+        }
+
+        private InventoryNotifier<T> myNotifier;
+
+        public NotifyingInventory(int capacity, IDictionary<T, float> initialItems, ICollection<T> spaceFillingItems, T moneyType, float defaultCapacity)
             : base(capacity, initialItems, spaceFillingItems, moneyType)
         {
+            myNotifier = new InventoryNotifier<T>(this.itemSource, defaultCapacity);
         }
 
-        /// <summary>
-        /// Send out an event on all resources with the current values and capacities; if applicable
-        /// </summary>
-        /// <param name="extraCapacityChanges">any extra capacity change events to emit. This can be used to help configure listeners
-        ///     attached to non-space-filling items that still need some capacity information</param>
-        public void NotifyAll(IEnumerable<ResourceChanged<T>> extraCapacityChanges)
+        public void NotifyAll()
         {
-            // Make sure the capacity changes happen first -- otherwise, the listeners might not have made room for the amounts
-            NotifyAllCapacityChange();
-            foreach (var capacityChange in extraCapacityChanges)
-            {
-                resourceCapacityChanges?.Invoke(this, capacityChange);
-            }
-            foreach (var resource in GetAllResourceTypes())
-            {
-                resourceAmountChanged?.Invoke(this, new ResourceChanged<T>(resource, Get(resource)));
-            }
-        }
-
-        protected override int SetInventoryCapacity(int newCapacity)
-        {
-            var actualNewCapacity = base.SetInventoryCapacity(newCapacity);
-            NotifyAllCapacityChange();
-            return actualNewCapacity;
-        }
-
-        private void NotifyAllCapacityChange()
-        {
-            foreach (var resourceType in (this.itemSource as SpaceFillingInventorySource<T>).SpaceFillingItems)
-            {
-                resourceCapacityChanges?.Invoke(this, new ResourceChanged<T>(resourceType, GetInventoryCapacity()));
-            }
-        }
-
-        protected override ActionOption<float> SetInventoryValue(T type, float attemptNewValue)
-        {
-            return base
-                .SetInventoryValue(type, attemptNewValue)
-                .Then(actualNewValue =>
-                    {
-                        resourceAmountChanged?.Invoke(this, new ResourceChanged<T>(type, actualNewValue));
-                    });
+            ((INotifyingInventory<T>)myNotifier).NotifyAll();
         }
     }
 }

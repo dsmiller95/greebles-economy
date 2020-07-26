@@ -23,19 +23,19 @@ namespace TradeModeling.Inventories
         }
         protected int GetInventoryCapacity()
         {
-            return (itemSource as SpaceFillingInventorySource<T>).inventoryCapacity;
+            return (itemSource as ISpaceFillingItemSource<T>).inventoryCapacity;
         }
 
         protected virtual int SetInventoryCapacity(int newCapacity)
         {
-            return (itemSource as SpaceFillingInventorySource<T>).inventoryCapacity = newCapacity;
+            return (itemSource as ISpaceFillingItemSource<T>).inventoryCapacity = newCapacity;
         }
 
-        public float totalFullSpace => (itemSource as SpaceFillingInventorySource<T>).totalFullSpace;
+        public float totalFullSpace => (itemSource as ISpaceFillingItemSource<T>).totalFullSpace;
 
         public float getFullRatio()
         {
-            return (itemSource as SpaceFillingInventorySource<T>).getFullRatio();
+            return (itemSource as ISpaceFillingItemSource<T>).getFullRatio();
         }
 
         public override IExchangeInventory CreateSimulatedClone()

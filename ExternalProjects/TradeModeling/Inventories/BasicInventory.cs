@@ -28,7 +28,7 @@ namespace TradeModeling.Inventories
         {
         }
 
-        protected BasicInventory(BasicInventory<T> other) : this(other.itemSource.Clone(), other.moneyType)
+        protected BasicInventory(BasicInventory<T> other) : this(other.itemSource.CloneSimulated(), other.moneyType)
         {
         }
 

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using TradeModeling.Economics;
 
 namespace TradeModeling.Inventories
@@ -12,6 +13,8 @@ namespace TradeModeling.Inventories
     /// <typeparam name="T"></typeparam>
     public interface IInventoryItemSource<T>
     {
+        Action<T, float> OnResourceChanged { set; }
+
         Dictionary<T, float> GetCurrentResourceAmounts();
 
         float Get(T type);
@@ -33,6 +36,12 @@ namespace TradeModeling.Inventories
         /// <returns>True if its possible to fit any amount of <paramref name="resource"/> into this inventory</returns>
         bool CanFitMoreOf(T resource);
 
-        IInventoryItemSource<T> Clone();
+        /// <summary>
+        /// Create an item source which will simulate the interactions on this inventory
+        ///     this should include things like space restrictions and the current amount of items in the inventory
+        ///     Should not copy event bindings or external references
+        /// </summary>
+        /// <returns>A simulated clone</returns>
+        IInventoryItemSource<T> CloneSimulated();
     }
 }

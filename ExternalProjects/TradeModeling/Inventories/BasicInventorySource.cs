@@ -13,6 +13,8 @@ namespace TradeModeling.Inventories
     {
         protected IDictionary<T, float> inventory;
 
+        public Action<T, float> OnResourceChanged { private get; set; }
+
         public BasicInventorySource(
             IDictionary<T, float> initialItems)
         {
@@ -51,6 +53,7 @@ namespace TradeModeling.Inventories
 
         private float SetInventoryValue(T type, float newValue)
         {
+            OnResourceChanged?.Invoke(type, newValue);
             inventory[type] = newValue;
             return newValue;
         }
@@ -59,7 +62,7 @@ namespace TradeModeling.Inventories
         {
             return true;
         }
-        public virtual IInventoryItemSource<T> Clone()
+        public virtual IInventoryItemSource<T> CloneSimulated()
         {
             return new BasicInventorySource<T>(this);
         }

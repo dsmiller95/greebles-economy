@@ -44,7 +44,8 @@ namespace Assets.Scripts.Resources.Inventory
                 inventoryCapacitySetForUI,
                 initialInventory,
                 ResourceConfiguration.spaceFillingItems,
-                ResourceType.Gold);
+                ResourceType.Gold,
+                200);
 
 
             //make sure that the observables get initialized by now, at the latest
@@ -57,10 +58,7 @@ namespace Assets.Scripts.Resources.Inventory
 
         public void Start()
         {
-            backingInventory.NotifyAll(new[]
-            {
-                new ResourceChanged<ResourceType>(ResourceType.Gold, 200)
-            });
+            backingInventory.NotifyAll();
         }
 
         public void Update()
