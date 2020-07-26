@@ -30,8 +30,9 @@ namespace Assets.Scripts.Market
         private Dictionary<ResourceType, float> sellPriceDictionary;
         private Dictionary<ResourceType, float> purchasePriceDictionary;
         public ResourceInventory inventory;
+        
         public BasicInventory<ResourceType> _inventory;
-
+        public float defaultSigmoidSizeIfNoInventorySpace = 50;
 
         public override BasicInventory<ResourceType> tradeInventory => _inventory;
 
@@ -56,12 +57,11 @@ namespace Assets.Scripts.Market
 
         public IDictionary<ResourceType, SigmoidFunctionConfig> GetSellPriceFunctions()
         {
-            // TODO: wat do when not space filling
-            return MapPricesToConfigs(sellPriceDictionary, 50);
+            return MapPricesToConfigs(sellPriceDictionary, defaultSigmoidSizeIfNoInventorySpace);
         }
         public IDictionary<ResourceType, SigmoidFunctionConfig> GetPurchasePriceFunctions()
         {
-            return MapPricesToConfigs(purchasePriceDictionary, 50);
+            return MapPricesToConfigs(purchasePriceDictionary, defaultSigmoidSizeIfNoInventorySpace);
         }
 
         private IDictionary<ResourceType, SigmoidFunctionConfig> MapPricesToConfigs(IDictionary<ResourceType, float> prices, float defaultInvSize)

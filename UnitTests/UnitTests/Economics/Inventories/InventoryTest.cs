@@ -163,7 +163,6 @@ namespace UnitTests.Economics.Inventories
                 notifications.Add(change);
             };
 
-            // TODO: create our own item source?
             var source = inventory.itemSource as ISpaceFillingItemSource<TestItemType>;
             source.inventoryCapacity = 30;
 

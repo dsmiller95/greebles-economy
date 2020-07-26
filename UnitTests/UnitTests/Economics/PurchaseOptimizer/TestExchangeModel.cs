@@ -69,7 +69,6 @@ namespace UnitTests.Economics
                 self.bank += price;
 
                 market.Add(resourceType, actualSell);
-                // TODO: give the market a bank as well
             });
         }
         public bool CanSell(string resourceType, TestInventoryModel self, TestInventoryModel market)

@@ -13,17 +13,17 @@ public class MarketPricePlotter : PlottableFunctionsToSeriesAdapter
 {
     private IList<PlottableFunctionToSeriesAdapter> adapters;
     public MarketBehavior market;
+    public float defaultPlotSizeIfInfiniteSpace = 100;
 
     new public void Start()
     {
         adapters = new List<PlottableFunctionToSeriesAdapter>();
-        // TODO: ??
-        var plotSize = (market._inventory.itemSource as ISpaceFillingItemSource<ResourceType>)?.inventoryCapacity ?? 100;
+        var plotSize = (market._inventory.itemSource as ISpaceFillingItemSource<ResourceType>)?.inventoryCapacity ?? defaultPlotSizeIfInfiniteSpace;
         var plotFunctionConfig = new PlottableFunctionConfig
         {
             start = 0,
             end = plotSize,
-            steps = plotSize
+            steps = (int)plotSize
         };
         var allPriceFunctions = market.GetSellPriceFunctions().ToList();
         var maxYScale = allPriceFunctions.Max(x => x.Value.yRange);

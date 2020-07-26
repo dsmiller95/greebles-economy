@@ -16,6 +16,7 @@ namespace Assets.Scripts.Market
         public MarketBehavior market;
         public GraphPlotter plotter;
         public Slider slider;
+        public int maxTargetValueDefaultWhenInfiniteCapacity = 100;
 
         public ResourceType defaultResource = ResourceType.Food;
         private ResourceType currentResource;
@@ -42,8 +43,7 @@ namespace Assets.Scripts.Market
             currentResource = resource;
 
             var color = ResourceConfiguration.resourceColoring[currentResource];
-            //TODO: ?
-            var inventoryCapacity = (market._inventory.itemSource as ISpaceFillingItemSource<ResourceType>)?.inventoryCapacity ?? 100;
+            var inventoryCapacity = (market._inventory.itemSource as ISpaceFillingItemSource<ResourceType>)?.inventoryCapacity ?? maxTargetValueDefaultWhenInfiniteCapacity;
 
             var priceFunctionConfig = market.GetSellPriceFunctions()[currentResource];
             var priceFunction = new SigmoidFunction(priceFunctionConfig);

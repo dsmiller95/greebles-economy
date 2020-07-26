@@ -22,6 +22,7 @@ namespace Assets.UI.TraderConfigPanel
 
         public Button addNewTradeNodeButton;
         public GameObject singleTradeNodePrefab;
+        public int maximumTradeSliderSizeWhenInfiniteInventory = 100;
 
         private IList<TradeNodePanel> myPanels;
         // Start is called before the first frame update
@@ -45,8 +46,7 @@ namespace Assets.UI.TraderConfigPanel
                     Destroy(panel.gameObject);
                 }
             }
-            // todo: ?
-            var largestTrade = (linkedTrader.inventory.itemSource as ISpaceFillingItemSource<ResourceType>)?.inventoryCapacity ?? 100;
+            var largestTrade = (linkedTrader.inventory.itemSource as ISpaceFillingItemSource<ResourceType>)?.inventoryCapacity ?? maximumTradeSliderSizeWhenInfiniteInventory;
             myPanels = tradeRoute
                 .Select(node => CreateSingleTradeNode(node, largestTrade))
                 .ToList();
