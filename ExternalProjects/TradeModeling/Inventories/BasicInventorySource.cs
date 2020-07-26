@@ -39,7 +39,7 @@ namespace TradeModeling.Inventories
             return inventory.Keys;
         }
 
-        public ActionOption<float> SetAmount(T type, float amount)
+        public virtual ActionOption<float> SetAmount(T type, float amount)
         {
             // cannot have a negative amount
             var newInventoryAmount = Math.Max(amount, 0);
@@ -59,7 +59,7 @@ namespace TradeModeling.Inventories
         {
             return true;
         }
-        public IInventoryItemSource<T> Clone()
+        public virtual IInventoryItemSource<T> Clone()
         {
             return new BasicInventorySource<T>(this);
         }

@@ -69,5 +69,51 @@ namespace UnitTests.Economics.Inventories
 
             Assert.AreEqual(15, basicInventory.Get(TestItemType.Pesos));
         }
+
+        [TestMethod]
+        public void ShouldAddUpToCapacity()
+        {
+            var spaceFillingInventory = EconomicsTestUtilities.CreateInventory(new[]
+            {
+                (TestItemType.Cactus,   2f),
+                (TestItemType.Corn,     3f),
+                (TestItemType.Pesos,    5f)
+            }, 10, new[] { TestItemType.Cactus, TestItemType.Corn });
+
+            var addOption = spaceFillingInventory.Add(TestItemType.Cactus, 10);
+
+            Assert.AreEqual(5, addOption.info);
+            Assert.AreEqual(2, spaceFillingInventory.Get(TestItemType.Cactus));
+            addOption.Execute();
+
+            Assert.AreEqual(7, spaceFillingInventory.Get(TestItemType.Cactus));
+        }
+
+        [TestMethod]
+        public void ShouldTransferBasedOnCapacity()
+        {
+            var spaceFillingInventorySource = EconomicsTestUtilities.CreateInventory(new[]
+            {
+                (TestItemType.Cactus,   10f),
+                (TestItemType.Corn,     10f),
+                (TestItemType.Pesos,    5f)
+            }, 100, new[] { TestItemType.Cactus, TestItemType.Corn });
+            var spaceFillingInventoryTarget = EconomicsTestUtilities.CreateInventory(new[]
+            {
+                (TestItemType.Cactus,   2f),
+                (TestItemType.Corn,     3f),
+                (TestItemType.Pesos,    5f)
+            }, 10, new[] { TestItemType.Cactus, TestItemType.Corn });
+
+            var transferOption = spaceFillingInventorySource.transferResourceInto(TestItemType.Cactus, spaceFillingInventoryTarget, 10);
+
+            Assert.AreEqual(5, transferOption.info);
+            Assert.AreEqual(10, spaceFillingInventorySource.Get(TestItemType.Cactus));
+            Assert.AreEqual(2, spaceFillingInventoryTarget.Get(TestItemType.Cactus));
+            transferOption.Execute();
+
+            Assert.AreEqual(5, spaceFillingInventorySource.Get(TestItemType.Cactus));
+            Assert.AreEqual(7, spaceFillingInventoryTarget.Get(TestItemType.Cactus));
+        }
     }
 }

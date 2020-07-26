@@ -139,7 +139,7 @@ namespace TradeModeling.Inventories
         /// <returns>True if its possible to fit any amount of <paramref name="resource"/> into this inventory</returns>
         public virtual bool CanFitMoreOf(T resource)
         {
-            return true;
+            return itemSource.CanFitMoreOf(resource);
         }
 
         public float GetCurrentFunds()

@@ -56,7 +56,7 @@ namespace TradeModeling.Inventories
 
         private void NotifyAllCapacityChange()
         {
-            foreach (var resourceType in spaceFillingItems)
+            foreach (var resourceType in (this.itemSource as SpaceFillingInventorySource<T>).SpaceFillingItems)
             {
                 resourceCapacityChanges?.Invoke(this, new ResourceChanged<T>(resourceType, GetInventoryCapacity()));
             }
