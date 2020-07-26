@@ -34,6 +34,14 @@ namespace UnitTests.Economics
                 spaceFillingItems,
                 moneyType);
         }
+        public static BasicInventory<TestItemType> CreateBasicInventory(
+            (TestItemType, float)[] initialItems,
+            TestItemType moneyType = TestItemType.Pesos)
+        {
+            return new BasicInventory<TestItemType>(
+                initialItems.ToDictionary(x => x.Item1, x => x.Item2),
+                moneyType);
+        }
 
         public static SingleExchangeModel<TestItemType> CreateExchangeAdapter(
             (TestItemType, float)[] exchangeRates,

@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace TradeModeling.Economics
 {
@@ -14,30 +10,49 @@ namespace TradeModeling.Economics
         public ActionOption(OptionInfo info, Action onExecute)
         {
             this.info = info;
-            this.option = onExecute;
+            option = onExecute;
         }
 
         public void Execute()
         {
-            this.option();
+            option();
         }
 
         public ActionOption<T1> Then<T1>(Func<OptionInfo, T1> infoGenerator, Action<T1, OptionInfo> execute)
         {
-            var newInfo = infoGenerator(this.info);
+            var newInfo = infoGenerator(info);
             return new ActionOption<T1>(newInfo, () =>
             {
-                this.Execute();
-                execute(newInfo, this.info);
+                Execute();
+                execute(newInfo, info);
             });
         }
+
         public ActionOption<T1> Then<T1>(Func<OptionInfo, T1> infoGenerator, Action<T1> execute = null)
         {
-            var newInfo = infoGenerator(this.info);
+            var newInfo = infoGenerator(info);
             return new ActionOption<T1>(newInfo, () =>
             {
-                this.Execute();
+                Execute();
                 execute?.Invoke(newInfo);
+            });
+        }
+        public ActionOption<OptionInfo> Then(Action<OptionInfo> onExecute)
+        {
+            return new ActionOption<OptionInfo>(info, () =>
+            {
+                Execute();
+                onExecute?.Invoke(info);
+            });
+        }
+
+        public ActionOption<T1> Then<T1>(Func<OptionInfo, ActionOption<T1>> nextActionGenerator)
+        {
+            var nextAction = nextActionGenerator(info);
+            return new ActionOption<T1>(nextAction.info, () =>
+            {
+                Execute();
+                nextAction.Execute();
             });
         }
     }

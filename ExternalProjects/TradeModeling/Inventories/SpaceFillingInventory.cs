@@ -63,7 +63,7 @@ namespace TradeModeling.Inventories
             return base.Add(type, amount);
         }
 
-        public float totalFullSpace => spaceFillingItems.Select(x => inventory[x]).Sum();
+        public float totalFullSpace => spaceFillingItems.Select(x => Get(x)).Sum();
 
         public float getFullRatio()
         {

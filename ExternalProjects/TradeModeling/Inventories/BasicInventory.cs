@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using TradeModeling.Economics;
 
 namespace TradeModeling.Inventories
@@ -11,27 +10,31 @@ namespace TradeModeling.Inventories
     /// <typeparam name="T"></typeparam>
     public class BasicInventory<T> : IExchangeInventory, IInventory<T>
     {
-
-        protected IDictionary<T, float> inventory;
         protected T moneyType;
 
+        protected IInventoryItemSource<T> itemSource;
+
         public BasicInventory(
-            IDictionary<T, float> initialItems,
+            IInventoryItemSource<T> source,
             T moneyType)
         {
-            inventory = new Dictionary<T, float>(initialItems);
+            itemSource = source;
             this.moneyType = moneyType;
         }
 
-        protected BasicInventory(BasicInventory<T> other)
+        public BasicInventory(
+            IDictionary<T, float> initialItems,
+            T moneyType) : this(new BasicInventorySource<T>(initialItems), moneyType)
         {
-            inventory = new Dictionary<T, float>(other.inventory);
-            moneyType = other.moneyType;
+        }
+
+        protected BasicInventory(BasicInventory<T> other) : this(other.itemSource.Clone(), other.moneyType)
+        {
         }
 
         public Dictionary<T, float> GetCurrentResourceAmounts()
         {
-            return this.inventory.ToDictionary(x => x.Key, x => x.Value);
+            return itemSource.GetCurrentResourceAmounts();
         }
 
         /// <summary>
@@ -67,24 +70,25 @@ namespace TradeModeling.Inventories
                 return target.transferResourceInto(type, this, -amount)
                     .Then(added => -added);
             }
-            var toAdd = Math.Min(amount, Get(type));
+            var currentAmount = Get(type);
+
+            var possibleNewAmount = SetInventoryValue(type, currentAmount - amount).info;
+            var idealAddAmount = currentAmount - possibleNewAmount;
 
             return target
-                .Add(type, toAdd)
-                .Then(added => added, totalAdded =>
-                {
-                    SetInventoryValue(type, Get(type) - totalAdded);
-                });
+                .Add(type, idealAddAmount)
+                .Then(addedAmount => SetInventoryValue(type, currentAmount - addedAmount))
+                .Then(newAmount => currentAmount - newAmount);
         }
 
         public float Get(T type)
         {
-            return inventory[type];
+            return itemSource.Get(type);
         }
 
         protected IEnumerable<T> GetAllResourceTypes()
         {
-            return inventory.Keys;
+            return itemSource.GetAllResourceTypes();
         }
         /// <summary>
         /// Attempts to add as much of amount as possible into this inventory.
@@ -98,10 +102,10 @@ namespace TradeModeling.Inventories
             {
                 throw new NotImplementedException("cannot add a negative amount. use Consume for that purpose");
             }
-            return new ActionOption<float>(amount, () =>
-            {
-                SetInventoryValue(type, inventory[type] + amount);
-            });
+
+            var currentAmount = Get(type);
+            return SetInventoryValue(type, currentAmount + amount)
+                .Then(newAmount => newAmount - currentAmount);
         }
 
         /// <summary>
@@ -109,6 +113,7 @@ namespace TradeModeling.Inventories
         /// </summary>
         /// <param name="type">the type to consume</param>
         /// <param name="amount">the amount to attempt to consume</param>
+        /// <returns>an optional action representing the amount that was actually consumed</returns>
         public ActionOption<float> Consume(T type, float amount)
         {
             if (amount < 0)
@@ -116,18 +121,15 @@ namespace TradeModeling.Inventories
                 throw new NotImplementedException();
             }
 
-            var toConsume = Math.Min(amount, Get(type));
+            var currentAmount = Get(type);
+            return SetInventoryValue(type, currentAmount - amount)
+                .Then(newAmount => currentAmount - newAmount);
 
-            return new ActionOption<float>(toConsume, () =>
-            {
-                SetInventoryValue(type, Get(type) - toConsume);
-            });
         }
 
-        protected virtual float SetInventoryValue(T type, float newValue)
+        protected virtual ActionOption<float> SetInventoryValue(T type, float newValue)
         {
-            inventory[type] = newValue;
-            return newValue;
+            return itemSource.SetAmount(type, newValue);
         }
 
         /// <summary>
@@ -152,7 +154,7 @@ namespace TradeModeling.Inventories
 
         public string ToString(Func<T, string> serializer)
         {
-            return MyUtilities.SerializeDictionary(inventory, serializer, num => num.ToString());
+            return MyUtilities.SerializeDictionary(GetCurrentResourceAmounts(), serializer, num => num.ToString());
         }
     }
 }

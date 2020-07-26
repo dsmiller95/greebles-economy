@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using TradeModeling.Economics;
 
 namespace TradeModeling.Inventories
 {
@@ -37,21 +36,21 @@ namespace TradeModeling.Inventories
         public void NotifyAll(IEnumerable<ResourceChanged<T>> extraCapacityChanges)
         {
             // Make sure the capacity changes happen first -- otherwise, the listeners might not have made room for the amounts
-            this.NotifyAllCapacityChange();
+            NotifyAllCapacityChange();
             foreach (var capacityChange in extraCapacityChanges)
             {
                 resourceCapacityChanges?.Invoke(this, capacityChange);
             }
-            foreach (var resource in this.GetAllResourceTypes())
+            foreach (var resource in GetAllResourceTypes())
             {
-                this.resourceAmountChanged?.Invoke(this, new ResourceChanged<T>(resource, this.Get(resource)));
+                resourceAmountChanged?.Invoke(this, new ResourceChanged<T>(resource, Get(resource)));
             }
         }
 
         protected override int SetInventoryCapacity(int newCapacity)
         {
             var actualNewCapacity = base.SetInventoryCapacity(newCapacity);
-            this.NotifyAllCapacityChange();
+            NotifyAllCapacityChange();
             return actualNewCapacity;
         }
 
@@ -63,11 +62,14 @@ namespace TradeModeling.Inventories
             }
         }
 
-        protected override float SetInventoryValue(T type, float newValue)
+        protected override ActionOption<float> SetInventoryValue(T type, float attemptNewValue)
         {
-            var setValue = base.SetInventoryValue(type, newValue);
-            this.resourceAmountChanged?.Invoke(this, new ResourceChanged<T>(type, newValue));
-            return setValue;
+            return base
+                .SetInventoryValue(type, attemptNewValue)
+                .Then(actualNewValue =>
+                    {
+                        resourceAmountChanged?.Invoke(this, new ResourceChanged<T>(type, actualNewValue));
+                    });
         }
     }
 }
