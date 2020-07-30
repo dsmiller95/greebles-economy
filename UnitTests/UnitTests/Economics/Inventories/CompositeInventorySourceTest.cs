@@ -100,13 +100,14 @@ namespace UnitTests.Economics.Inventories
 
             // try to set to 25
             option = composite.SetAmount(TestItemType.Cactus, 25f);
-            Assert.AreEqual(20f, option.info);
+            // can only fit up to 17 because of the 3 Corn in one of the inventories
+            Assert.AreEqual(17f, option.info);
             option.Execute();
-            Assert.AreEqual(20f, composite.Get(TestItemType.Cactus));
+            Assert.AreEqual(17f, composite.Get(TestItemType.Cactus));
             Assert.AreEqual(false, composite.CanFitMoreOf(TestItemType.Cactus));
             Assert.AreEqual(10f, sourceInventory1.Get(TestItemType.Cactus));
             Assert.AreEqual(false, sourceInventory1.CanFitMoreOf(TestItemType.Cactus));
-            Assert.AreEqual(10f, sourceInventory2.Get(TestItemType.Cactus));
+            Assert.AreEqual(7f, sourceInventory2.Get(TestItemType.Cactus));
             Assert.AreEqual(false, sourceInventory2.CanFitMoreOf(TestItemType.Cactus));
         }
     }
