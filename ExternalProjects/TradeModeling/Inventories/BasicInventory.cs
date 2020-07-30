@@ -103,9 +103,7 @@ namespace TradeModeling.Inventories
                 throw new NotImplementedException("cannot add a negative amount. use Consume for that purpose");
             }
 
-            var currentAmount = Get(type);
-            return SetInventoryValue(type, currentAmount + amount)
-                .Then(newAmount => newAmount - currentAmount);
+            return itemSource.Add(type, amount);
         }
 
         /// <summary>

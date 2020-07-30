@@ -44,4 +44,27 @@ namespace TradeModeling.Inventories
         /// <returns>A simulated clone</returns>
         IInventoryItemSource<T> CloneSimulated();
     }
+
+    public static class ItemSourceExtensions
+    {
+
+        /// <summary>
+        /// Attempts to add as much of amount as possible into this inventory.
+        /// </summary>
+        /// <param name="type">the type of resource to add</param>
+        /// <param name="amount">the maximum amount of resource to add to the inventory</param>
+        /// <returns>An option to execute the transfer, wrapping the amount of the resource that was actually added</returns>
+        public static ActionOption<float> Add<T>(this IInventoryItemSource<T> inventory, T type, float amount)
+        {
+            if (amount < 0)
+            {
+                throw new NotImplementedException("cannot add a negative amount. use Consume for that purpose");
+            }
+
+            var currentAmount = inventory.Get(type);
+            return inventory.SetAmount(type, currentAmount + amount)
+                .Then(newAmount => newAmount - currentAmount);
+        }
+
+    }
 }

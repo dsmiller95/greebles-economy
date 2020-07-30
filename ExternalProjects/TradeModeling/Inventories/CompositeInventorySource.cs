@@ -69,25 +69,61 @@ namespace TradeModeling.Inventories
 
         public virtual ActionOption<float> SetAmount(T type, float amount)
         {
+            var totalSpace = SetInventoryValueInOrder(type, amount).Sum(x => x.info);
+
             // cannot have a negative amount
-            var newInventoryAmount = Math.Max(amount, 0);
-            return new ActionOption<float>(newInventoryAmount, () =>
+            var nonNegativeAmount = Math.Max(amount, 0);
+            var newAmount = Math.Min(nonNegativeAmount, totalSpace);
+            return new ActionOption<float>(newAmount, () =>
             {
-                SetInventoryValue(type, newInventoryAmount);
-                OnResourceChanged?.Invoke(type, newInventoryAmount);
+                SetInventoryValue(type, newAmount);
+                OnResourceChanged?.Invoke(type, newAmount);
             });
         }
 
-        private float SetInventoryValue(T type, float newValue)
+        private IEnumerable<ActionOption<float>> SetInventoryValueInOrder(T type, float newValue)
         {
-            //TODO: set up some sort of distribution algoreythm
-            //inventory[type] = newValue;
-            return newValue;
+            foreach(var inventory in inventorySources)
+            {
+                var option = inventory.SetAmount(type, newValue);
+                yield return option;
+                newValue -= option.info;
+                if(newValue <= 1e-5)
+                {
+                    yield break;
+                }
+            }
+        }
+
+        private void SetInventoryValue(T type, float newValue)
+        {
+            var inventorySourcesToFill = inventorySources;
+            var average = newValue / inventorySourcesToFill.Count;
+            var totalItemsToAllocate = newValue;
+            foreach (var inventory in inventorySourcesToFill)
+            {
+                var setOption = inventory.SetAmount(type, average);
+                totalItemsToAllocate -= setOption.info;
+                setOption.Execute();
+            }
+            inventorySourcesToFill = inventorySourcesToFill.Where(x => x.CanFitMoreOf(type)).ToList();
+
+            while(totalItemsToAllocate > 0 && inventorySourcesToFill.Count > 0)
+            {
+                var averageAmountToAdd = totalItemsToAllocate / inventorySourcesToFill.Count;
+                foreach(var inventory in inventorySourcesToFill)
+                {
+                    var addOption = inventory.Add(type, averageAmountToAdd);
+                    totalItemsToAllocate -= addOption.info;
+                    addOption.Execute();
+                }
+                inventorySourcesToFill = inventorySourcesToFill.Where(x => x.CanFitMoreOf(type)).ToList();
+            }
         }
 
         public virtual bool CanFitMoreOf(T resource)
         {
-            return true;
+            return inventorySources.Any(x => x.CanFitMoreOf(resource));
         }
         public virtual IInventoryItemSource<T> CloneSimulated()
         {
