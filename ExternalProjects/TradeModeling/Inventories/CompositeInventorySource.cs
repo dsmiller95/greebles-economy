@@ -79,9 +79,12 @@ namespace TradeModeling.Inventories
                 switch (distributionMode)
                 {
                     case CompositeDistributionMode.EVEN:
-                        SetInventoryValueEvenlyDistributed(type, newAmount);
+                        SetInventoryValueEvenlyDistributed(type, newAmount, false);
                         break;
 
+                    case CompositeDistributionMode.EVEN_SNAP_TO_INT:
+                        SetInventoryValueEvenlyDistributed(type, newAmount, true);
+                        break;
                     case CompositeDistributionMode.IN_ORDER:
                         foreach (var option in inOrderOptions)
                         {
@@ -107,22 +110,25 @@ namespace TradeModeling.Inventories
             }
         }
 
-        private void SetInventoryValueEvenlyDistributed(T type, float newValue)
+        private void SetInventoryValueEvenlyDistributed(T type, float newValue, bool stickInts)
         {
             var inventorySourcesToFill = inventorySources;
-            var average = newValue / inventorySourcesToFill.Count;
-            var totalItemsToAllocate = newValue;
             foreach (var inventory in inventorySourcesToFill)
             {
-                var setOption = inventory.SetAmount(type, average);
-                totalItemsToAllocate -= setOption.info;
-                setOption.Execute();
+                inventory.SetAmount(type, 0f).Execute();
             }
+
+            var totalItemsToAllocate = newValue;
             inventorySourcesToFill = inventorySourcesToFill.Where(x => x.CanFitMoreOf(type)).ToList();
 
             while (totalItemsToAllocate > 0 && inventorySourcesToFill.Count > 0)
             {
                 var averageAmountToAdd = totalItemsToAllocate / inventorySourcesToFill.Count;
+                if(stickInts && (averageAmountToAdd = (float)Math.Floor(averageAmountToAdd)) < 1)
+                {
+                    SetInventoryValueBySteps(type, totalItemsToAllocate, inventorySourcesToFill, 1);
+                    return;
+                }
                 foreach (var inventory in inventorySourcesToFill)
                 {
                     var addOption = inventory.Add(type, averageAmountToAdd);
@@ -133,6 +139,26 @@ namespace TradeModeling.Inventories
             }
         }
 
+        private void SetInventoryValueBySteps(T type, float totalItemsToAllocate, IList<IInventoryItemSource<T>> inventorySourcesToFill, float step)
+        {
+            inventorySourcesToFill = inventorySourcesToFill.Where(x => x.CanFitMoreOf(type)).ToList();
+
+            while (totalItemsToAllocate > 0 && inventorySourcesToFill.Count > 0)
+            {
+                foreach (var inventory in inventorySourcesToFill)
+                {
+                    var amountToAdd = Math.Min(step, totalItemsToAllocate);
+                    var addOption = inventory.Add(type, amountToAdd);
+                    totalItemsToAllocate -= addOption.info;
+                    addOption.Execute();
+                    if(totalItemsToAllocate <= 1e-5)
+                    {
+                        return;
+                    }
+                }
+                inventorySourcesToFill = inventorySourcesToFill.Where(x => x.CanFitMoreOf(type)).ToList();
+            }
+        }
         public virtual bool CanFitMoreOf(T resource)
         {
             return inventorySources.Any(x => x.CanFitMoreOf(resource));
