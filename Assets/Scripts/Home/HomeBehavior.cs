@@ -30,7 +30,7 @@ namespace Assets.Scripts.Home
         public bool depositAllGoods(IInventory<ResourceType> inventoryToDrain)
         {
             inventoryToDrain.DrainAllInto(_inventory, ResourceConfiguration.spaceFillingItems);
-            return ((_inventory as ISpaceFillingInventory<ResourceType>)?.getFullRatio() ?? 0) >= 1;
+            return ((_inventory as ISpaceFillingInventoryAccess<ResourceType>)?.getFullRatio() ?? 0) >= 1;
         }
         public void withdrawAllGoods(IInventory<ResourceType> inventoryToDepositTo)
         {

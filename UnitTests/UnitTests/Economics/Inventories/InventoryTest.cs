@@ -1,7 +1,6 @@
-﻿using System;
-using System.Collections;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
 using System.Collections.Generic;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TradeModeling.Inventories;
 
 namespace UnitTests.Economics.Inventories
@@ -117,6 +116,115 @@ namespace UnitTests.Economics.Inventories
 
             Assert.AreEqual(5, spaceFillingInventorySource.Get(TestItemType.Cactus));
             Assert.AreEqual(7, spaceFillingInventoryTarget.Get(TestItemType.Cactus));
+        }
+
+        [TestMethod]
+        public void ShouldNotTransferBasedOnCapacityWhenNotInSpacefilling()
+        {
+            var spaceFillingInventorySource = EconomicsTestUtilities.CreateSpaceFillingSource(new[]
+            {
+                (TestItemType.Cactus,   10f),
+                (TestItemType.Corn,     10f),
+                (TestItemType.Pesos,    5f)
+            }, 100, new[] { TestItemType.Cactus, TestItemType.Corn });
+            var spaceFillingInventoryTarget = EconomicsTestUtilities.CreateSpaceFillingSource(new[]
+            {
+                (TestItemType.Cactus,   2f),
+                (TestItemType.Corn,     3f),
+                (TestItemType.Pesos,    5f)
+            }, 10, new[] { TestItemType.Cactus, TestItemType.Corn });
+
+            var transferOption = spaceFillingInventorySource.TransferResourceInto(TestItemType.Pesos, spaceFillingInventoryTarget, 10);
+
+            Assert.AreEqual(5, transferOption.info);
+            Assert.AreEqual(5f, spaceFillingInventorySource.Get(TestItemType.Pesos));
+            Assert.AreEqual(5f, spaceFillingInventoryTarget.Get(TestItemType.Pesos));
+            transferOption.Execute();
+
+            Assert.AreEqual(0, spaceFillingInventorySource.Get(TestItemType.Pesos));
+            Assert.AreEqual(10, spaceFillingInventoryTarget.Get(TestItemType.Pesos));
+        }
+        [TestMethod]
+        public void ShouldSetAmountBasedOnCapacityWhenPartOfSpaceFilling()
+        {
+            var spaceFillingInventoryTarget = EconomicsTestUtilities.CreateSpaceFillingSource(new[]
+            {
+                (TestItemType.Cactus,   2f),
+                (TestItemType.Corn,     3f),
+                (TestItemType.Pesos,    5f)
+            }, 10, new[] { TestItemType.Cactus, TestItemType.Corn });
+
+            var transferOption = spaceFillingInventoryTarget.SetAmount(TestItemType.Cactus, 10);
+
+            Assert.AreEqual(7, transferOption.info);
+            Assert.AreEqual(2, spaceFillingInventoryTarget.Get(TestItemType.Cactus));
+            transferOption.Execute();
+
+            Assert.AreEqual(7, spaceFillingInventoryTarget.Get(TestItemType.Cactus));
+        }
+
+        [TestMethod]
+        public void ShouldNotSetAmountBasedOnCapacityWhenNotPartOfSpaceFilling()
+        {
+            var spaceFillingInventoryTarget = EconomicsTestUtilities.CreateSpaceFillingSource(new[]
+            {
+                (TestItemType.Cactus,   2f),
+                (TestItemType.Corn,     3f),
+                (TestItemType.Pesos,    5f)
+            }, 10, new[] { TestItemType.Cactus, TestItemType.Corn });
+
+            var transferOption = spaceFillingInventoryTarget.SetAmount(TestItemType.Pesos, 20);
+
+            Assert.AreEqual(20, transferOption.info);
+            Assert.AreEqual(5, spaceFillingInventoryTarget.Get(TestItemType.Pesos));
+            transferOption.Execute();
+
+            Assert.AreEqual(20, spaceFillingInventoryTarget.Get(TestItemType.Pesos));
+        }
+
+        [TestMethod]
+        public void ShouldThrowErrorWhenInitialInventoryContainsInvalidOptions()
+        {
+            try
+            {
+                var spaceFillingInventoryTarget = EconomicsTestUtilities.CreateSpaceFillingSource(new[]
+                    {
+                    (TestItemType.Cactus,   2f),
+                    (TestItemType.Corn,     3f),
+                    (TestItemType.Pesos,    5f)
+                },
+                    10,
+                    new[] { TestItemType.Cactus, TestItemType.Corn },
+                    new[] { TestItemType.Cactus, TestItemType.Corn });
+            }catch(Exception e)
+            {
+                Assert.IsTrue(e is ArgumentException);
+                return;
+            }
+            Assert.Fail("Should not allow an inventory to be created with invalid items");
+        }
+
+        [TestMethod]
+        public void ShouldNotSetAmountWhenNotPartOfValidOptions()
+        {
+            var spaceFillingInventoryTarget = EconomicsTestUtilities.CreateSpaceFillingSource(new[]
+            {
+                (TestItemType.Cactus,   2f),
+                (TestItemType.Corn,     3f)
+            },
+            10,
+            new[] { TestItemType.Cactus, TestItemType.Corn },
+            new[] { TestItemType.Cactus, TestItemType.Corn });
+
+            Assert.IsFalse(spaceFillingInventoryTarget.CanFitMoreOf(TestItemType.Pesos));
+            Assert.IsTrue(spaceFillingInventoryTarget.CanFitMoreOf(TestItemType.Cactus));
+
+            var transferOption = spaceFillingInventoryTarget.SetAmount(TestItemType.Pesos, 20);
+
+            Assert.AreEqual(0, transferOption.info);
+            Assert.AreEqual(0, spaceFillingInventoryTarget.Get(TestItemType.Pesos));
+            transferOption.Execute();
+            Assert.AreEqual(0, spaceFillingInventoryTarget.Get(TestItemType.Pesos));
         }
 
         [TestMethod]

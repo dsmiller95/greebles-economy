@@ -19,13 +19,15 @@ namespace UnitTests.Economics
         public static ISpaceFillingInventory<TestItemType> CreateSpaceFillingSource(
             (TestItemType, float)[] initialItems,
             int capacity = 10,
-            TestItemType[] spaceFillingItems = null)
+            TestItemType[] spaceFillingItems = null,
+            TestItemType[] validItems = null)
         {
             spaceFillingItems = spaceFillingItems ?? new[] { TestItemType.Cactus, TestItemType.Corn };
             return new SpaceFillingInventory<TestItemType>(
                 initialItems.ToDictionary(x => x.Item1, x => x.Item2),
                 spaceFillingItems,
-                capacity);
+                capacity,
+                validItems);
         }
         public static IInventory<TestItemType> CreateBasicSource(
             (TestItemType, float)[] initialItems,

@@ -43,7 +43,7 @@ namespace Assets.Scripts.Market
             currentResource = resource;
 
             var color = ResourceConfiguration.resourceColoring[currentResource];
-            var inventoryCapacity = (market._inventory as ISpaceFillingInventory<ResourceType>)?.inventoryCapacity ?? maxTargetValueDefaultWhenInfiniteCapacity;
+            var inventoryCapacity = (market._inventory as ISpaceFillingInventoryAccess<ResourceType>)?.GetInventoryCapacity() ?? maxTargetValueDefaultWhenInfiniteCapacity;
 
             var priceFunctionConfig = market.GetSellPriceFunctions()[currentResource];
             var priceFunction = new SigmoidFunction(priceFunctionConfig);

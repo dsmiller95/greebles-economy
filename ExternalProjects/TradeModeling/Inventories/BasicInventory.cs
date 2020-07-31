@@ -33,7 +33,12 @@ namespace TradeModeling.Inventories
 
         public float Get(T type)
         {
-            return inventory[type];
+            float value;
+            if(inventory.TryGetValue(type, out value))
+            {
+                return value;
+            }
+            return 0;
         }
 
         public IEnumerable<T> GetAllResourceTypes()

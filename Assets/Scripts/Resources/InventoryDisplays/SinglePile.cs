@@ -1,11 +1,8 @@
-﻿using Assets.Scripts.MovementExtensions;
-using JetBrains.Annotations;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 namespace Assets.Scripts.Resources.InventoryDisplays
 {
-    //[RequireComponent(typeof(HexMember))]
     public abstract class SinglePile : MonoBehaviour
     {
         public abstract ResourceType[] pileTypes { get; }

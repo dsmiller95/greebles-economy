@@ -18,7 +18,7 @@ public class MarketPricePlotter : PlottableFunctionsToSeriesAdapter
     new public void Start()
     {
         adapters = new List<PlottableFunctionToSeriesAdapter>();
-        var plotSize = (market._inventory as ISpaceFillingInventory<ResourceType>)?.inventoryCapacity ?? defaultPlotSizeIfInfiniteSpace;
+        var plotSize = (market._inventory as ISpaceFillingInventoryAccess<ResourceType>)?.GetInventoryCapacity() ?? defaultPlotSizeIfInfiniteSpace;
         var plotFunctionConfig = new PlottableFunctionConfig
         {
             start = 0,

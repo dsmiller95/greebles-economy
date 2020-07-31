@@ -46,7 +46,7 @@ namespace Assets.UI.TraderConfigPanel
                     Destroy(panel.gameObject);
                 }
             }
-            var largestTrade = (linkedTrader.inventory as ISpaceFillingInventory<ResourceType>)?.inventoryCapacity ?? maximumTradeSliderSizeWhenInfiniteInventory;
+            var largestTrade = (linkedTrader.inventory as ISpaceFillingInventoryAccess<ResourceType>)?.GetInventoryCapacity() ?? maximumTradeSliderSizeWhenInfiniteInventory;
             myPanels = tradeRoute
                 .Select(node => CreateSingleTradeNode(node, largestTrade))
                 .ToList();

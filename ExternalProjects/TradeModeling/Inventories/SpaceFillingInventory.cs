@@ -12,15 +12,25 @@ namespace TradeModeling.Inventories
     public class SpaceFillingInventory<T> : BasicInventory<T>, ISpaceFillingInventory<T>
     {
         protected ISet<T> spaceFillingItems;
+        protected ISet<T> validItems;
         public Action<float> OnCapacityChanged { private get; set; }
 
         public SpaceFillingInventory(
             IDictionary<T, float> initialItems,
             ICollection<T> spaceFillingItems,
-            int capacity) : base(initialItems)
+            int capacity,
+            ICollection<T> validItems = null) : base(initialItems)
         {
             _inventoryCapacity = capacity;
             this.spaceFillingItems = new HashSet<T>(spaceFillingItems);
+            if(validItems != null)
+            {
+                this.validItems = new HashSet<T>(validItems);
+                if (inventory.Select(x => x.Key).Except(this.validItems).Any())
+                {
+                    throw new ArgumentException("initial inventory cannot contain any items not in the valid item list");
+                }
+            }
         }
 
         protected SpaceFillingInventory(SpaceFillingInventory<T> other) : base(other)
@@ -37,7 +47,7 @@ namespace TradeModeling.Inventories
             get => GetInventoryCapacity();
             set => SetInventoryCapacity(value);
         }
-        protected int GetInventoryCapacity()
+        public int GetInventoryCapacity()
         {
             return _inventoryCapacity;
         }
@@ -60,12 +70,22 @@ namespace TradeModeling.Inventories
 
         public override ActionOption<float> SetAmount(T type, float amount)
         {
-            var spaceRestrictedAmount = Math.Min(amount, Get(type) + remainingCapacity);
-            return base.SetAmount(type, spaceRestrictedAmount);
+            if (validItems != null && !validItems.Contains(type))
+            {
+                amount = 0;
+            }else if (spaceFillingItems.Contains(type))
+            {
+                amount = Math.Min(amount, Get(type) + remainingCapacity);
+            }
+            return base.SetAmount(type, amount);
         }
 
         public override bool CanFitMoreOf(T resource)
         {
+            if (validItems != null && !validItems.Contains(resource))
+            {
+                return false;
+            }
             if (!spaceFillingItems.Contains(resource))
             {
                 return base.CanFitMoreOf(resource);

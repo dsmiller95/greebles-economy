@@ -49,6 +49,7 @@ MonoBehaviour:
     q: 0
     r: 0
   managerSetForInspector: {fileID: 0}
+  doesRegisterInManagerIndex: 1
 --- !u!114 &3893530037328788336
 MonoBehaviour:
   m_ObjectHideFlags: 0

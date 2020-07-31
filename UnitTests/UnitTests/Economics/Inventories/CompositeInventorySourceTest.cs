@@ -46,6 +46,10 @@ namespace UnitTests.Economics.Inventories
             Assert.AreEqual(5f, composite.Get(TestItemType.Pesos));
             Assert.AreEqual(true, composite.CanFitMoreOf(TestItemType.Cactus));
 
+            Assert.AreEqual(10f, composite.GetInventoryCapacity());
+            Assert.AreEqual(5f, composite.totalFullSpace);
+            Assert.AreEqual(5f, composite.remainingCapacity);
+            Assert.AreEqual(.5f, composite.getFullRatio());
 
             var option = composite.SetAmount(TestItemType.Cactus, 10f);
             Assert.AreEqual(7f, option.info);
@@ -77,6 +81,11 @@ namespace UnitTests.Economics.Inventories
             Assert.AreEqual(3f, composite.Get(TestItemType.Corn));
             Assert.AreEqual(10f, composite.Get(TestItemType.Pesos));
             Assert.AreEqual(true, composite.CanFitMoreOf(TestItemType.Cactus));
+
+            Assert.AreEqual(20f, composite.GetInventoryCapacity());
+            Assert.AreEqual(5f, composite.totalFullSpace);
+            Assert.AreEqual(15f, composite.remainingCapacity);
+            Assert.AreEqual(.25f, composite.getFullRatio());
 
             // set to 10
             var option = composite.SetAmount(TestItemType.Cactus, 10f);

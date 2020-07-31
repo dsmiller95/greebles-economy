@@ -16,11 +16,12 @@ namespace TradeModeling.Inventories
     /// An inventory which only stores items in a list of other inventory sources
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public class CompositeInventory<T> : IInventory<T>
+    public class CompositeInventory<T> : ISpaceFillingInventoryAccess<T>
     {
         private IList<IInventory<T>> inventorySources;
 
         public Action<T, float> OnResourceChanged { private get; set; }
+
 
         private ISet<T> AllResourceTypes;
         private CompositeDistributionMode distributionMode;
@@ -124,7 +125,7 @@ namespace TradeModeling.Inventories
             while (totalItemsToAllocate > 0 && inventorySourcesToFill.Count > 0)
             {
                 var averageAmountToAdd = totalItemsToAllocate / inventorySourcesToFill.Count;
-                if(stickInts && (averageAmountToAdd = (float)Math.Floor(averageAmountToAdd)) < 1)
+                if (stickInts && (averageAmountToAdd = (float)Math.Floor(averageAmountToAdd)) < 1)
                 {
                     SetInventoryValueBySteps(type, totalItemsToAllocate, inventorySourcesToFill, 1);
                     return;
@@ -151,7 +152,7 @@ namespace TradeModeling.Inventories
                     var addOption = inventory.Add(type, amountToAdd);
                     totalItemsToAllocate -= addOption.info;
                     addOption.Execute();
-                    if(totalItemsToAllocate <= 1e-5)
+                    if (totalItemsToAllocate <= 1e-5)
                     {
                         return;
                     }
@@ -173,6 +174,50 @@ namespace TradeModeling.Inventories
         public string ToString(Func<T, string> serializer)
         {
             return MyUtilities.SerializeDictionary(GetCurrentResourceAmounts(), serializer, num => num.ToString());
+        }
+
+        private bool HasInfiniteCapacity()
+        {
+            return inventorySources.Any(x => !(x is ISpaceFillingInventoryAccess<T>));
+        }
+
+        public float totalFullSpace
+        {
+            get
+            {
+                if (HasInfiniteCapacity())
+                {
+                    return 0;
+                }
+                return inventorySources.OfType<ISpaceFillingInventoryAccess<T>>().Sum(x => x.totalFullSpace);
+            }
+        }
+
+        public float remainingCapacity
+        {
+            get
+            {
+                if (HasInfiniteCapacity())
+                {
+                    return int.MaxValue;
+                }
+                return inventorySources.OfType<ISpaceFillingInventoryAccess<T>>().Sum(x => x.remainingCapacity);
+            }
+        }
+
+        public int GetInventoryCapacity()
+        {
+            if (HasInfiniteCapacity())
+            {
+                return int.MaxValue;
+            }
+
+            return inventorySources.OfType<ISpaceFillingInventoryAccess<T>>().Sum(x => x.GetInventoryCapacity());
+        }
+
+        public float getFullRatio()
+        {
+            return totalFullSpace / GetInventoryCapacity();
         }
     }
 }

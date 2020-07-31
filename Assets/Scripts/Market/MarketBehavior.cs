@@ -68,7 +68,7 @@ namespace Assets.Scripts.Market
         {
             return prices.SelectDictionary(x => new SigmoidFunctionConfig
             {
-                range = (tradeInventory as ISpaceFillingInventory<ResourceType>)?.inventoryCapacity ?? defaultInvSize,
+                range = (tradeInventory as ISpaceFillingInventoryAccess<ResourceType>)?.GetInventoryCapacity() ?? defaultInvSize,
                 yRange = x
             });
         }
