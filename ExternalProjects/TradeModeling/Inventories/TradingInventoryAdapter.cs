@@ -8,13 +8,13 @@ namespace TradeModeling.Inventories
     /// An inventory with infinite capacity
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public class BasicInventory<T> : IExchangeInventory, IInventory<T>
+    public class TradingInventoryAdapter<T> : IExchangeInventory, IInventory<T>
     {
         protected T moneyType;
 
         public IInventoryItemSource<T> itemSource;
 
-        public BasicInventory(
+        public TradingInventoryAdapter(
             IInventoryItemSource<T> source,
             T moneyType)
         {
@@ -22,14 +22,19 @@ namespace TradeModeling.Inventories
             this.moneyType = moneyType;
         }
 
-        public BasicInventory(
+        public TradingInventoryAdapter(
             IDictionary<T, float> initialItems,
             T moneyType) : this(new BasicInventorySource<T>(initialItems), moneyType)
         {
         }
 
-        protected BasicInventory(BasicInventory<T> other) : this(other.itemSource.CloneSimulated(), other.moneyType)
+        protected TradingInventoryAdapter(TradingInventoryAdapter<T> other) : this(other.itemSource.CloneSimulated(), other.moneyType)
         {
+        }
+
+        public IInventoryItemSource<T> GetBacker()
+        {
+            return itemSource;
         }
 
         public Dictionary<T, float> GetCurrentResourceAmounts()
@@ -45,15 +50,7 @@ namespace TradeModeling.Inventories
         /// <returns>A map from the resource type to the amount transfered</returns>
         public Dictionary<T, float> DrainAllInto(IInventory<T> target, T[] itemTypes)
         {
-            var result = new Dictionary<T, float>();
-            foreach (var itemType in itemTypes)
-            {
-                var transferOption = transferResourceInto(itemType, target, Get(itemType));
-
-                result[itemType] = transferOption.info;
-                transferOption.Execute();
-            }
-            return result;
+            return itemSource.DrainAllInto(target.GetBacker(), itemTypes);
         }
 
         /// <summary>
@@ -65,20 +62,7 @@ namespace TradeModeling.Inventories
         /// <returns>An option to execute the transfer, wrapping the amount which would be transferred</returns>
         public ActionOption<float> transferResourceInto(T type, IInventory<T> target, float amount)
         {
-            if (amount < 0)
-            {
-                return target.transferResourceInto(type, this, -amount)
-                    .Then(added => -added);
-            }
-            var currentAmount = Get(type);
-
-            var possibleNewAmount = SetInventoryValue(type, currentAmount - amount).info;
-            var idealAddAmount = currentAmount - possibleNewAmount;
-
-            return target
-                .Add(type, idealAddAmount)
-                .Then(addedAmount => SetInventoryValue(type, currentAmount - addedAmount))
-                .Then(newAmount => currentAmount - newAmount);
+            return itemSource.transferResourceInto(type, target.GetBacker(), amount);
         }
 
         public float Get(T type)
@@ -98,11 +82,6 @@ namespace TradeModeling.Inventories
         /// <returns>An option to execute the transfer, wrapping the amount of the resource that was actually added</returns>
         public virtual ActionOption<float> Add(T type, float amount)
         {
-            if (amount < 0)
-            {
-                throw new NotImplementedException("cannot add a negative amount. use Consume for that purpose");
-            }
-
             return itemSource.Add(type, amount);
         }
 
@@ -114,15 +93,7 @@ namespace TradeModeling.Inventories
         /// <returns>an optional action representing the amount that was actually consumed</returns>
         public ActionOption<float> Consume(T type, float amount)
         {
-            if (amount < 0)
-            {
-                throw new NotImplementedException();
-            }
-
-            var currentAmount = Get(type);
-            return SetInventoryValue(type, currentAmount - amount)
-                .Then(newAmount => currentAmount - newAmount);
-
+            return itemSource.Consume(type, amount);
         }
 
         protected virtual ActionOption<float> SetInventoryValue(T type, float newValue)
@@ -147,7 +118,7 @@ namespace TradeModeling.Inventories
 
         public virtual IExchangeInventory CreateSimulatedClone()
         {
-            return new BasicInventory<T>(this);
+            return new TradingInventoryAdapter<T>(this);
         }
 
         public string ToString(Func<T, string> serializer)

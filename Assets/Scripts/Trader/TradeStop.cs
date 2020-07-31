@@ -7,7 +7,7 @@ namespace Assets.Scripts.Trader
 {
     public abstract class TradeStop : MonoBehaviour
     {
-        public abstract BasicInventory<ResourceType> tradeInventory { get; }
+        public abstract TradingInventoryAdapter<ResourceType> tradeInventory { get; }
 
         /// <summary>
         /// dictionary used to specify the amount that the trader should attempt to 

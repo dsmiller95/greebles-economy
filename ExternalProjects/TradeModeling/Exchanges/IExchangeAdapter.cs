@@ -3,7 +3,7 @@ using TradeModeling.Inventories;
 
 namespace TradeModeling.Exchanges
 {
-    public interface IExchangeAdapter<T> : IExchange<T, BasicInventory<T>, BasicInventory<T>>
+    public interface IExchangeAdapter<T> : IExchange<T, TradingInventoryAdapter<T>, TradingInventoryAdapter<T>>
     {
     }
 }

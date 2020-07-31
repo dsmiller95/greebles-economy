@@ -19,9 +19,9 @@ namespace TradeModeling.Economics
     {
         public Dictionary<Resource, float> GetTotalUtilityByInitialResource(
             IList<Resource> tradeableResources,
-            BasicInventory<Resource> endingInventory,
+            TradingInventoryAdapter<Resource> endingInventory,
             IList<(ExchangeResult<Resource>?, PurchaseOperationResult<Resource>)> transactionLedger,
-            IUtilityEvaluator<Resource, BasicInventory<Resource>> utilityEvaluator
+            IUtilityEvaluator<Resource, TradingInventoryAdapter<Resource>> utilityEvaluator
             )
         {
             var endingUtilities = tradeableResources.ToDictionary(

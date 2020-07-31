@@ -5,6 +5,7 @@ namespace TradeModeling.Inventories
 {
     public interface IInventory<T> : IExchangeInventory
     {
+        IInventoryItemSource<T> GetBacker();
         Dictionary<T, float> DrainAllInto(IInventory<T> target, T[] items);
 
         /// <summary>

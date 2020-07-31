@@ -66,5 +66,68 @@ namespace TradeModeling.Inventories
                 .Then(newAmount => newAmount - currentAmount);
         }
 
+        /// <summary>
+        /// Consume up to a certain amount out of the inventory
+        /// </summary>
+        /// <param name="type">the type to consume</param>
+        /// <param name="amount">the amount to attempt to consume</param>
+        /// <returns>an optional action representing the amount that was actually consumed</returns>
+        public static ActionOption<float> Consume<T>(this IInventoryItemSource<T> inventory, T type, float amount)
+        {
+            if (amount < 0)
+            {
+                throw new NotImplementedException();
+            }
+
+            var currentAmount = inventory.Get(type);
+            return inventory.SetAmount(type, currentAmount - amount)
+                .Then(newAmount => currentAmount - newAmount);
+
+        }
+
+        /// <summary>
+        /// Drain all the items from this inventory of type res
+        /// </summary>
+        /// <param name="target">the inventory to drain the items into</param>
+        /// <param name="res">the type of items to transfer. Could be a flags</param>
+        /// <returns>A map from the resource type to the amount transfered</returns>
+        public static Dictionary<T, float> DrainAllInto<T>(this IInventoryItemSource<T> inventory, IInventoryItemSource<T> target, T[] itemTypes)
+        {
+            var result = new Dictionary<T, float>();
+            foreach (var itemType in itemTypes)
+            {
+                var transferOption = inventory.transferResourceInto(itemType, target, inventory.Get(itemType));
+
+                result[itemType] = transferOption.info;
+                transferOption.Execute();
+            }
+            return result;
+        }
+
+        /// <summary>
+        /// Transfer <paramref name="amount"/> of <paramref name="type"/> into <paramref name="target"/>
+        /// </summary>
+        /// <param name="type">the type of resource to transfer</param>
+        /// <param name="target">the inventory to transfer into</param>
+        /// <param name="amount">the amount to transfer</param>
+        /// <returns>An option to execute the transfer, wrapping the amount which would be transferred</returns>
+        public static ActionOption<float> transferResourceInto<T>(this IInventoryItemSource<T> inventory, T type, IInventoryItemSource<T> target, float amount)
+        {
+            if (amount < 0)
+            {
+                return target.transferResourceInto(type, inventory, -amount)
+                    .Then(added => -added);
+            }
+            var currentAmount = inventory.Get(type);
+
+            var possibleNewAmount = inventory.SetAmount(type, currentAmount - amount).info;
+            var idealAddAmount = currentAmount - possibleNewAmount;
+
+            return target
+                .Add(type, idealAddAmount)
+                .Then(addedAmount => inventory.SetAmount(type, currentAmount - addedAmount))
+                .Then(newAmount => currentAmount - newAmount);
+        }
+
     }
 }

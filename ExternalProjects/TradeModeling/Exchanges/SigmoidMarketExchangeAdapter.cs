@@ -23,7 +23,7 @@ namespace TradeModeling.Exchanges
         {
         }
 
-        public ActionOption<ExchangeResult<T>> Purchase(T type, float amount, BasicInventory<T> selfInventory, BasicInventory<T> marketInventory)
+        public ActionOption<ExchangeResult<T>> Purchase(T type, float amount, TradingInventoryAdapter<T> selfInventory, TradingInventoryAdapter<T> marketInventory)
         {
             //throw new NotImplementedException();
             // using the buying rate because this is a purchase from the "other". I.E. a sell from the perspective of the market
@@ -45,14 +45,14 @@ namespace TradeModeling.Exchanges
                 });
         }
 
-        public bool CanPurchase(T type, BasicInventory<T> selfInventory, BasicInventory<T> marketInventory)
+        public bool CanPurchase(T type, TradingInventoryAdapter<T> selfInventory, TradingInventoryAdapter<T> marketInventory)
         {
             return marketInventory.Get(type) > 0
                 && selfInventory.Get(moneyType) > 0
                 && selfInventory.CanFitMoreOf(type);
         }
 
-        public ActionOption<ExchangeResult<T>> Sell(T type, float amount, BasicInventory<T> selfInventory, BasicInventory<T> marketInventory)
+        public ActionOption<ExchangeResult<T>> Sell(T type, float amount, TradingInventoryAdapter<T> selfInventory, TradingInventoryAdapter<T> marketInventory)
         {
             //throw new NotImplementedException();
             // using the buying rate because this is a sell from the "other". I.E. a purchase from the market
@@ -74,7 +74,7 @@ namespace TradeModeling.Exchanges
                 });
         }
 
-        public bool CanSell(T type, BasicInventory<T> selfInventory, BasicInventory<T> marketInventory)
+        public bool CanSell(T type, TradingInventoryAdapter<T> selfInventory, TradingInventoryAdapter<T> marketInventory)
         {
             return selfInventory.Get(type) > 0
                 && marketInventory.Get(moneyType) > 0

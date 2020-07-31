@@ -7,7 +7,7 @@ namespace Assets.Scripts.Resources.UI
     {
 
         public ResourceInventory inventory;
-        private BasicInventory<ResourceType> _inventory;
+        private TradingInventoryAdapter<ResourceType> _inventory;
 
         private void Awake()
         {

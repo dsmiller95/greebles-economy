@@ -46,7 +46,7 @@ namespace UnitTests.Economics
                 }) }
             });
 
-            var optimizer = new PurchaseOptimizer<TestItemType, BasicInventory<TestItemType>, BasicInventory<TestItemType>>(
+            var optimizer = new PurchaseOptimizer<TestItemType, TradingInventoryAdapter<TestItemType>, TradingInventoryAdapter<TestItemType>>(
                 self,
                 market,
                 new[] { TestItemType.Cactus, TestItemType.Corn },
@@ -96,7 +96,7 @@ namespace UnitTests.Economics
                 }) }
             });
 
-            var optimizer = new PurchaseOptimizer<TestItemType, BasicInventory<TestItemType>, BasicInventory<TestItemType>>(
+            var optimizer = new PurchaseOptimizer<TestItemType, TradingInventoryAdapter<TestItemType>, TradingInventoryAdapter<TestItemType>>(
                 self,
                 market,
                 new[] { TestItemType.Cactus, TestItemType.Corn },
@@ -147,7 +147,7 @@ namespace UnitTests.Economics
                 }) }
             });
 
-            var optimizer = new PurchaseOptimizer<TestItemType, BasicInventory<TestItemType>, BasicInventory<TestItemType>>(
+            var optimizer = new PurchaseOptimizer<TestItemType, TradingInventoryAdapter<TestItemType>, TradingInventoryAdapter<TestItemType>>(
                 self,
                 market,
                 new[] { TestItemType.Cactus, TestItemType.Corn },
@@ -198,7 +198,7 @@ namespace UnitTests.Economics
             });
 
             var tradeableResources = new[] { TestItemType.Cactus, TestItemType.Corn };
-            var optimizer = new PurchaseOptimizer<TestItemType, BasicInventory<TestItemType>, BasicInventory<TestItemType>>(
+            var optimizer = new PurchaseOptimizer<TestItemType, TradingInventoryAdapter<TestItemType>, TradingInventoryAdapter<TestItemType>>(
                 self,
                 market,
                 new[] { TestItemType.Cactus, TestItemType.Corn },

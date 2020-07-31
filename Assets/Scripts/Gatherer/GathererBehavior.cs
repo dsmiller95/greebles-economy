@@ -34,7 +34,7 @@ namespace Assets.Scripts.Gatherer
 
         internal float lastTargetCheckTime = 0;
 
-        internal BasicInventory<ResourceType> inventory;
+        internal TradingInventoryAdapter<ResourceType> inventory;
         internal ITimeTracker timeTracker;
         internal GatherBehaviorOptimizer optimizer;
 
@@ -42,7 +42,7 @@ namespace Assets.Scripts.Gatherer
 
         private AsyncStateMachine<GathererState, GathererBehavior> stateMachine;
         public IDictionary<GathererState, dynamic> stateData;
-        public IUtilityEvaluator<ResourceType, BasicInventory<ResourceType>> utilityFunction
+        public IUtilityEvaluator<ResourceType, TradingInventoryAdapter<ResourceType>> utilityFunction
         {
             get;
             private set;

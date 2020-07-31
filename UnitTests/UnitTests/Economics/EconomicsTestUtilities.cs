@@ -41,20 +41,20 @@ namespace UnitTests.Economics
                 initialItems.ToDictionary(x => x.Item1, x => x.Item2));
         }
 
-        public static BasicInventory<TestItemType> CreateInventoryWithSpaceBacking(
+        public static TradingInventoryAdapter<TestItemType> CreateInventoryWithSpaceBacking(
             (TestItemType, float)[] initialItems,
             int capacity = 10,
             TestItemType[] spaceFillingItems = null,
             TestItemType moneyType = TestItemType.Pesos)
         {
             var backing = CreateSpaceFillingSource(initialItems, capacity, spaceFillingItems);
-            return new BasicInventory<TestItemType>(backing, moneyType);
+            return new TradingInventoryAdapter<TestItemType>(backing, moneyType);
         }
-        public static BasicInventory<TestItemType> CreateBasicInventory(
+        public static TradingInventoryAdapter<TestItemType> CreateBasicInventory(
             (TestItemType, float)[] initialItems,
             TestItemType moneyType = TestItemType.Pesos)
         {
-            return new BasicInventory<TestItemType>(
+            return new TradingInventoryAdapter<TestItemType>(
                 initialItems.ToDictionary(x => x.Item1, x => x.Item2),
                 moneyType);
         }
