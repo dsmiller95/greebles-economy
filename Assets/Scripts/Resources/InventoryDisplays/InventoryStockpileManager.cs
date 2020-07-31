@@ -39,7 +39,7 @@ namespace Assets.Scripts.Resources.InventoryDisplays
 
         void OnResourceAmountChanged(ResourceChanged<ResourceType> type)
         {
-            var currentInventory = inventoryForInspector.backingInventory.CreateSimulatedClone() as TradingInventoryAdapter<ResourceType>;
+            var currentInventory = inventoryForInspector.backingInventory.CloneSimulated();
 
             foreach (var pile in GetPiles())
             {

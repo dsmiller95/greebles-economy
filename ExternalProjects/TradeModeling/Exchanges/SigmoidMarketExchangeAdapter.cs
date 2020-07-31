@@ -33,7 +33,7 @@ namespace TradeModeling.Exchanges
 
             var amountToPurchase = Math.Min(amount, maxPurchase);
             return marketInventory
-                .transferResourceInto(type, selfInventory, amountToPurchase)
+                .TransferResourceInto(type, selfInventory, amountToPurchase)
                 .Then(withdrawn => new ExchangeResult<T>
                 {
                     amount = withdrawn,
@@ -41,7 +41,7 @@ namespace TradeModeling.Exchanges
                     type = type
                 }, exchangeResult =>
                 {
-                    selfInventory.transferResourceInto(moneyType, marketInventory, exchangeResult.cost).Execute();
+                    selfInventory.TransferResourceInto(moneyType, marketInventory, exchangeResult.cost).Execute();
                 });
         }
 
@@ -62,7 +62,7 @@ namespace TradeModeling.Exchanges
 
             var amountToSell = Math.Min(amount, maxSell);
             return selfInventory
-                .transferResourceInto(type, marketInventory, amountToSell)
+                .TransferResourceInto(type, marketInventory, amountToSell)
                 .Then(totalDeposited => new ExchangeResult<T>
                 {
                     amount = totalDeposited,
@@ -70,7 +70,7 @@ namespace TradeModeling.Exchanges
                     type = type
                 }, exchangeResult =>
                 {
-                    marketInventory.transferResourceInto(moneyType, selfInventory, exchangeResult.cost).Execute();
+                    marketInventory.TransferResourceInto(moneyType, selfInventory, exchangeResult.cost).Execute();
                 });
         }
 

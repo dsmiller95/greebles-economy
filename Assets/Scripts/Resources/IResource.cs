@@ -12,6 +12,6 @@ namespace Assets.Scripts.Resources
     {
         ResourceType _type { get; }
         float amount { get; }
-        Task<bool> Eat(TradingInventoryAdapter<ResourceType> inventory, float amount = -1);
+        Task<bool> Eat(IInventoryItemSource<ResourceType> inventory, float amount = -1);
     }
 }

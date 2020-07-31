@@ -129,5 +129,9 @@ namespace TradeModeling.Inventories
                 .Then(newAmount => currentAmount - newAmount);
         }
 
+        public static string SerializeDictionaryAmounts<T>(this IInventoryItemSource<T> inventory, Func<T, string> serializer)
+        {
+            return MyUtilities.SerializeDictionary(inventory.GetCurrentResourceAmounts(), serializer, num => num.ToString());
+        }
     }
 }

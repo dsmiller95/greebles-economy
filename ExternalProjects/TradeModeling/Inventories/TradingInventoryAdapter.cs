@@ -22,12 +22,6 @@ namespace TradeModeling.Inventories
             this.moneyType = moneyType;
         }
 
-        public TradingInventoryAdapter(
-            IDictionary<T, float> initialItems,
-            T moneyType) : this(new BasicInventorySource<T>(initialItems), moneyType)
-        {
-        }
-
         protected TradingInventoryAdapter(TradingInventoryAdapter<T> other) : this(other.itemSource.CloneSimulated(), other.moneyType)
         {
         }
@@ -37,22 +31,6 @@ namespace TradeModeling.Inventories
             return itemSource;
         }
 
-        public Dictionary<T, float> GetCurrentResourceAmounts()
-        {
-            return itemSource.GetCurrentResourceAmounts();
-        }
-
-        /// <summary>
-        /// Drain all the items from this inventory of type res
-        /// </summary>
-        /// <param name="target">the inventory to drain the items into</param>
-        /// <param name="res">the type of items to transfer. Could be a flags</param>
-        /// <returns>A map from the resource type to the amount transfered</returns>
-        public Dictionary<T, float> DrainAllInto(IInventory<T> target, T[] itemTypes)
-        {
-            return itemSource.DrainAllInto(target.GetBacker(), itemTypes);
-        }
-
         /// <summary>
         /// Transfer <paramref name="amount"/> of <paramref name="type"/> into <paramref name="target"/>
         /// </summary>
@@ -60,7 +38,7 @@ namespace TradeModeling.Inventories
         /// <param name="target">the inventory to transfer into</param>
         /// <param name="amount">the amount to transfer</param>
         /// <returns>An option to execute the transfer, wrapping the amount which would be transferred</returns>
-        public ActionOption<float> transferResourceInto(T type, IInventory<T> target, float amount)
+        public ActionOption<float> TransferResourceInto(T type, IInventory<T> target, float amount)
         {
             return itemSource.transferResourceInto(type, target.GetBacker(), amount);
         }
@@ -68,37 +46,6 @@ namespace TradeModeling.Inventories
         public float Get(T type)
         {
             return itemSource.Get(type);
-        }
-
-        protected IEnumerable<T> GetAllResourceTypes()
-        {
-            return itemSource.GetAllResourceTypes();
-        }
-        /// <summary>
-        /// Attempts to add as much of amount as possible into this inventory.
-        /// </summary>
-        /// <param name="type">the type of resource to add</param>
-        /// <param name="amount">the maximum amount of resource to add to the inventory</param>
-        /// <returns>An option to execute the transfer, wrapping the amount of the resource that was actually added</returns>
-        public virtual ActionOption<float> Add(T type, float amount)
-        {
-            return itemSource.Add(type, amount);
-        }
-
-        /// <summary>
-        /// Consume up to a certain amount out of the inventory
-        /// </summary>
-        /// <param name="type">the type to consume</param>
-        /// <param name="amount">the amount to attempt to consume</param>
-        /// <returns>an optional action representing the amount that was actually consumed</returns>
-        public ActionOption<float> Consume(T type, float amount)
-        {
-            return itemSource.Consume(type, amount);
-        }
-
-        protected virtual ActionOption<float> SetInventoryValue(T type, float newValue)
-        {
-            return itemSource.SetAmount(type, newValue);
         }
 
         /// <summary>
@@ -119,11 +66,6 @@ namespace TradeModeling.Inventories
         public virtual IExchangeInventory CreateSimulatedClone()
         {
             return new TradingInventoryAdapter<T>(this);
-        }
-
-        public string ToString(Func<T, string> serializer)
-        {
-            return MyUtilities.SerializeDictionary(GetCurrentResourceAmounts(), serializer, num => num.ToString());
         }
     }
 }

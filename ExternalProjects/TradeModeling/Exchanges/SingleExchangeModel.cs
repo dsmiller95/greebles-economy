@@ -33,7 +33,7 @@ namespace TradeModeling.Exchanges
             var maxPurchase = targetInventory.GetCurrentFunds() / exchangeRate;
             var amountToPurchase = Math.Min(amount, maxPurchase);
             return sourceInventory
-                .transferResourceInto(type, targetInventory, amountToPurchase)
+                .TransferResourceInto(type, targetInventory, amountToPurchase)
                 .Then(withdrawn => new ExchangeResult<T>
                 {
                     amount = withdrawn,
@@ -41,7 +41,7 @@ namespace TradeModeling.Exchanges
                     type = type
                 }, exchangeResult =>
                 {
-                    targetInventory.transferResourceInto(moneyType, sourceInventory, exchangeResult.cost).Execute();
+                    targetInventory.TransferResourceInto(moneyType, sourceInventory, exchangeResult.cost).Execute();
                 });
         }
 

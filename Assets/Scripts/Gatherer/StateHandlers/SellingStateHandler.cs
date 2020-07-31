@@ -65,9 +65,12 @@ namespace Assets.Scripts.Gatherer.StateHandlers
                 var market = touchedTarget.GetComponentInChildren<MarketBehavior>();
 
                 var exchangeAdapter = market.GetExchangeAdapter();
+                var selfAdapter = new TradingInventoryAdapter<ResourceType>(data.inventory, ResourceType.Gold);
+                var marketAdapter = new TradingInventoryAdapter<ResourceType>(data.inventory, ResourceType.Gold);
+
                 var optimizer = new PurchaseOptimizer<ResourceType, TradingInventoryAdapter<ResourceType>, TradingInventoryAdapter<ResourceType>>(
-                    data.inventory,
-                    market._inventory,
+                    selfAdapter,
+                    marketAdapter,
                     ResourceConfiguration.spaceFillingItems,
                     exchangeAdapter,
                     data.utilityFunction
@@ -76,7 +79,7 @@ namespace Assets.Scripts.Gatherer.StateHandlers
                 var ledger = optimizer.Optimize();
                 var sourceUtilities = (new UtilityAnalyzer<ResourceType>()).GetTotalUtilityByInitialResource(
                     ResourceConfiguration.spaceFillingItems,
-                    data.inventory,
+                    selfAdapter,
                     ledger,
                     data.utilityFunction);
 

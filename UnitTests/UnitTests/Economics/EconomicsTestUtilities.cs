@@ -50,14 +50,6 @@ namespace UnitTests.Economics
             var backing = CreateSpaceFillingSource(initialItems, capacity, spaceFillingItems);
             return new TradingInventoryAdapter<TestItemType>(backing, moneyType);
         }
-        public static TradingInventoryAdapter<TestItemType> CreateBasicInventory(
-            (TestItemType, float)[] initialItems,
-            TestItemType moneyType = TestItemType.Pesos)
-        {
-            return new TradingInventoryAdapter<TestItemType>(
-                initialItems.ToDictionary(x => x.Item1, x => x.Item2),
-                moneyType);
-        }
 
         public static SingleExchangeModel<TestItemType> CreateExchangeAdapter(
             (TestItemType, float)[] exchangeRates,

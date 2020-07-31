@@ -6,7 +6,6 @@ namespace TradeModeling.Inventories
     public interface IInventory<T> : IExchangeInventory
     {
         IInventoryItemSource<T> GetBacker();
-        Dictionary<T, float> DrainAllInto(IInventory<T> target, T[] items);
 
         /// <summary>
         /// Transfer <paramref name="amount"/> of <paramref name="type"/> into <paramref name="target"/>
@@ -15,23 +14,9 @@ namespace TradeModeling.Inventories
         /// <param name="target">the inventory to transfer into</param>
         /// <param name="amount">the amount to transfer</param>
         /// <returns>An option to execute the transfer, wrapping the amount which would be transferred</returns>
-        ActionOption<float> transferResourceInto(T type, IInventory<T> target, float amount);
+        ActionOption<float> TransferResourceInto(T type, IInventory<T> target, float amount);
         float Get(T type);
 
-        /// <summary>
-        /// Attempts to add as much of amount as possible into this inventory.
-        /// </summary>
-        /// <param name="type">the type of resource to add</param>
-        /// <param name="amount">the maximum amount of resource to add to the inventory</param>
-        /// <returns>An option to execute the transfer, wrapping the amount of the resource that was actually added</returns>
-        ActionOption<float> Add(T type, float amount);
-
-        /// <summary>
-        /// Consume up to a certain amount out of the inventory
-        /// </summary>
-        /// <param name="type">the type to consume</param>
-        /// <param name="amount">the amount to attempt to consume</param>
-        ActionOption<float> Consume(T type, float amount);
         /// <summary>
         /// Determine if it's possible to fit any more of the given item in this inventory
         /// </summary>

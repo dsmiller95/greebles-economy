@@ -34,7 +34,7 @@ namespace Assets.Scripts.Gatherer
 
         internal float lastTargetCheckTime = 0;
 
-        internal TradingInventoryAdapter<ResourceType> inventory;
+        internal IInventoryItemSource<ResourceType> inventory;
         internal ITimeTracker timeTracker;
         internal GatherBehaviorOptimizer optimizer;
 
@@ -126,7 +126,7 @@ namespace Assets.Scripts.Gatherer
         internal void attachBackpack()
         {
             backpack.SetActive(true);
-            if(inventory.itemSource is ISpaceFillingItemSource<ResourceType> spaceFilling)
+            if(inventory is ISpaceFillingItemSource<ResourceType> spaceFilling)
             {
                 spaceFilling.inventoryCapacity = pocketSize + backpackSize;
             }
@@ -135,7 +135,7 @@ namespace Assets.Scripts.Gatherer
         internal void removeBackpack()
         {
             backpack.SetActive(false);
-            if (inventory.itemSource is ISpaceFillingItemSource<ResourceType> spaceFilling)
+            if (inventory is ISpaceFillingItemSource<ResourceType> spaceFilling)
             {
                 spaceFilling.inventoryCapacity = pocketSize;
             }

@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using TradeModeling.TradeRouteUtilities;
 using UnityEngine;
+using TradeModeling.Inventories;
 
 namespace Assets.Scripts.Trader.StateHandlers
 {

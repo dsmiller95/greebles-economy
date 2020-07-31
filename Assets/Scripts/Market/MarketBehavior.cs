@@ -31,10 +31,10 @@ namespace Assets.Scripts.Market
         private Dictionary<ResourceType, float> purchasePriceDictionary;
         public ResourceInventory inventory;
         
-        public TradingInventoryAdapter<ResourceType> _inventory;
+        public IInventoryItemSource<ResourceType> _inventory;
         public float defaultSigmoidSizeIfNoInventorySpace = 50;
 
-        public override TradingInventoryAdapter<ResourceType> tradeInventory => _inventory;
+        public override IInventoryItemSource<ResourceType> tradeInventory => _inventory;
 
         [HideInInspector]
         [NonSerialized]
@@ -68,18 +68,18 @@ namespace Assets.Scripts.Market
         {
             return prices.SelectDictionary(x => new SigmoidFunctionConfig
             {
-                range = (tradeInventory.itemSource as ISpaceFillingItemSource<ResourceType>)?.inventoryCapacity ?? defaultInvSize,
+                range = (tradeInventory as ISpaceFillingItemSource<ResourceType>)?.inventoryCapacity ?? defaultInvSize,
                 yRange = x
             });
         }
 
         [Obsolete("Use the MarketExchangeAdapter provided by GetExchangeAdapter()", true)]
-        public Dictionary<ResourceType, ResourceSellResult> sellAllGoodsInInventory(TradingInventoryAdapter<ResourceType> inventory)
+        public Dictionary<ResourceType, ResourceSellResult> sellAllGoodsInInventory(IInventoryItemSource<ResourceType> inventory)
         {
             return SellAllGoods(inventory, _inventory, ResourceConfiguration.spaceFillingItems, sellPriceDictionary);
         }
 
-        private static Dictionary<ResourceType, ResourceSellResult> SellAllGoods(TradingInventoryAdapter<ResourceType> seller, TradingInventoryAdapter<ResourceType> consumer, ResourceType[] types, Dictionary<ResourceType, float> prices)
+        private static Dictionary<ResourceType, ResourceSellResult> SellAllGoods(IInventoryItemSource<ResourceType> seller, IInventoryItemSource<ResourceType> consumer, ResourceType[] types, Dictionary<ResourceType, float> prices)
         {
             var result = seller.DrainAllInto(consumer, types)
                 .Select(pair =>

@@ -12,7 +12,7 @@ namespace UnitTests.Economics.Inventories
         [TestMethod]
         public void ShouldOnlyConsumeAvailable()
         {
-            var basicInventory = EconomicsTestUtilities.CreateBasicInventory(new[]
+            var basicInventory = EconomicsTestUtilities.CreateBasicSource(new[]
             {
                 (TestItemType.Cactus,   10f),
                 (TestItemType.Corn,     8f),
@@ -30,13 +30,13 @@ namespace UnitTests.Economics.Inventories
         [TestMethod]
         public void ShouldOnlyTransferAvailable()
         {
-            var basicInventorySource = EconomicsTestUtilities.CreateBasicInventory(new[]
+            var basicInventorySource = EconomicsTestUtilities.CreateBasicSource(new[]
             {
                 (TestItemType.Cactus,   10f),
                 (TestItemType.Corn,     8f),
                 (TestItemType.Pesos,    5f)
             });
-            var basicInventoryTarget = EconomicsTestUtilities.CreateBasicInventory(new[]
+            var basicInventoryTarget = EconomicsTestUtilities.CreateBasicSource(new[]
             {
                 (TestItemType.Cactus,   2f),
                 (TestItemType.Corn,     1f),
@@ -57,7 +57,7 @@ namespace UnitTests.Economics.Inventories
         [TestMethod]
         public void ShouldAddAll()
         {
-            var basicInventory = EconomicsTestUtilities.CreateBasicInventory(new[]
+            var basicInventory = EconomicsTestUtilities.CreateBasicSource(new[]
             {
                 (TestItemType.Cactus,   10f),
                 (TestItemType.Corn,     8f),
@@ -76,7 +76,7 @@ namespace UnitTests.Economics.Inventories
         [TestMethod]
         public void ShouldAddUpToCapacity()
         {
-            var spaceFillingInventory = EconomicsTestUtilities.CreateInventoryWithSpaceBacking(new[]
+            var spaceFillingInventory = EconomicsTestUtilities.CreateSpaceFillingSource(new[]
             {
                 (TestItemType.Cactus,   2f),
                 (TestItemType.Corn,     3f),
@@ -95,13 +95,13 @@ namespace UnitTests.Economics.Inventories
         [TestMethod]
         public void ShouldTransferBasedOnCapacity()
         {
-            var spaceFillingInventorySource = EconomicsTestUtilities.CreateInventoryWithSpaceBacking(new[]
+            var spaceFillingInventorySource = EconomicsTestUtilities.CreateSpaceFillingSource(new[]
             {
                 (TestItemType.Cactus,   10f),
                 (TestItemType.Corn,     10f),
                 (TestItemType.Pesos,    5f)
             }, 100, new[] { TestItemType.Cactus, TestItemType.Corn });
-            var spaceFillingInventoryTarget = EconomicsTestUtilities.CreateInventoryWithSpaceBacking(new[]
+            var spaceFillingInventoryTarget = EconomicsTestUtilities.CreateSpaceFillingSource(new[]
             {
                 (TestItemType.Cactus,   2f),
                 (TestItemType.Corn,     3f),
@@ -122,13 +122,13 @@ namespace UnitTests.Economics.Inventories
         [TestMethod]
         public void ShouldNotifyOfResourceChanges()
         {
-            var inventory = EconomicsTestUtilities.CreateInventoryWithSpaceBacking(new[]
+            var inventory = EconomicsTestUtilities.CreateSpaceFillingSource(new[]
             {
                 (TestItemType.Cactus,   2f),
                 (TestItemType.Corn,     3f),
                 (TestItemType.Pesos,    5f)
             }, 100, new[] { TestItemType.Cactus, TestItemType.Corn });
-            var notifier = new InventoryNotifier<TestItemType>(inventory.itemSource, 50);
+            var notifier = new InventoryNotifier<TestItemType>(inventory, 50);
 
             var notifications = new Queue<ResourceChanged<TestItemType>>();
             var amountAtNotification = -1f;
@@ -149,13 +149,13 @@ namespace UnitTests.Economics.Inventories
         [TestMethod]
         public void ShouldNotifyOfCapacityChange()
         {
-            var inventory = EconomicsTestUtilities.CreateInventoryWithSpaceBacking(new[]
+            var inventory = EconomicsTestUtilities.CreateSpaceFillingSource(new[]
             {
                 (TestItemType.Cactus,   2f),
                 (TestItemType.Corn,     3f),
                 (TestItemType.Pesos,    5f)
             }, 100, new[] { TestItemType.Cactus, TestItemType.Corn });
-            var notifier = new InventoryNotifier<TestItemType>(inventory.itemSource, 50);
+            var notifier = new InventoryNotifier<TestItemType>(inventory, 50);
 
             var notifications = new List<ResourceChanged<TestItemType>>();
             notifier.resourceCapacityChanges += (sender, change) =>
@@ -163,7 +163,7 @@ namespace UnitTests.Economics.Inventories
                 notifications.Add(change);
             };
 
-            var source = inventory.itemSource as ISpaceFillingItemSource<TestItemType>;
+            var source = inventory;
             source.inventoryCapacity = 30;
 
             Assert.AreEqual(notifications.Count, 3);
@@ -175,13 +175,13 @@ namespace UnitTests.Economics.Inventories
         [TestMethod]
         public void ShouldNotifyEverything()
         {
-            var inventory = EconomicsTestUtilities.CreateInventoryWithSpaceBacking(new[]
+            var inventory = EconomicsTestUtilities.CreateSpaceFillingSource(new[]
             {
                 (TestItemType.Cactus,   2f),
                 (TestItemType.Corn,     3f),
                 (TestItemType.Pesos,    5f)
             }, 20, new[] { TestItemType.Cactus, TestItemType.Corn });
-            var notifier = new InventoryNotifier<TestItemType>(inventory.itemSource, 50);
+            var notifier = new InventoryNotifier<TestItemType>(inventory, 50);
 
 
             var resourceNotifications = new List<ResourceChanged<TestItemType>>();
