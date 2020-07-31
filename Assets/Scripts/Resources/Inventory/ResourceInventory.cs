@@ -20,7 +20,7 @@ namespace Assets.Scripts.Resources.Inventory
 
         public StartingInventoryAmount[] startingInventoryAmounts;
 
-        public IInventoryItemSource<ResourceType> backingInventory
+        public IInventory<ResourceType> backingInventory
         {
             get;
             private set;
@@ -42,7 +42,7 @@ namespace Assets.Scripts.Resources.Inventory
                 initialInventory[startingAmount.type] = startingAmount.amount;
             }
 
-            var itemSource = new SpaceFillingInventorySource<ResourceType>(
+            var itemSource = new SpaceFillingInventory<ResourceType>(
                 initialInventory,
                 ResourceConfiguration.spaceFillingItems,
                 inventoryCapacitySetForUI);

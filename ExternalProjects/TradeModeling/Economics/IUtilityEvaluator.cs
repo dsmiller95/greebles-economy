@@ -1,16 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using TradeModeling.Inventories;
+﻿using TradeModeling.Inventories.Adapter;
 
 namespace TradeModeling.Economics
 {
     /// <summary>
     /// An object which can give the current incremental utility; keeping track of an inventory
     /// </summary>
-    public interface IUtilityEvaluator<Resource, Self> where Self: IExchangeInventory
+    public interface IUtilityEvaluator<Resource, Self> where Self : IExchangeInventory
     {
         /// <summary>
         /// Calculate the utility of getting increment more

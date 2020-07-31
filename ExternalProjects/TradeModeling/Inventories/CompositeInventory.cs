@@ -16,16 +16,16 @@ namespace TradeModeling.Inventories
     /// An inventory which only stores items in a list of other inventory sources
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public class CompositeInventorySource<T> : IInventoryItemSource<T>
+    public class CompositeInventory<T> : IInventory<T>
     {
-        private IList<IInventoryItemSource<T>> inventorySources;
+        private IList<IInventory<T>> inventorySources;
 
         public Action<T, float> OnResourceChanged { private get; set; }
 
         private ISet<T> AllResourceTypes;
         private CompositeDistributionMode distributionMode;
 
-        public CompositeInventorySource(IList<IInventoryItemSource<T>> composingInventories, CompositeDistributionMode mode)
+        public CompositeInventory(IList<IInventory<T>> composingInventories, CompositeDistributionMode mode)
         {
             inventorySources = composingInventories;
             distributionMode = mode;
@@ -139,7 +139,7 @@ namespace TradeModeling.Inventories
             }
         }
 
-        private void SetInventoryValueBySteps(T type, float totalItemsToAllocate, IList<IInventoryItemSource<T>> inventorySourcesToFill, float step)
+        private void SetInventoryValueBySteps(T type, float totalItemsToAllocate, IList<IInventory<T>> inventorySourcesToFill, float step)
         {
             inventorySourcesToFill = inventorySourcesToFill.Where(x => x.CanFitMoreOf(type)).ToList();
 
@@ -163,7 +163,7 @@ namespace TradeModeling.Inventories
         {
             return inventorySources.Any(x => x.CanFitMoreOf(resource));
         }
-        public virtual IInventoryItemSource<T> CloneSimulated()
+        public virtual IInventory<T> CloneSimulated()
         {
             throw new NotImplementedException();
             //TODO: hmmmm

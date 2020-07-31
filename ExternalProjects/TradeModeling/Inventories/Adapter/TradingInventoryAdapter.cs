@@ -1,21 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using TradeModeling.Economics;
+﻿using TradeModeling.Economics;
 
-namespace TradeModeling.Inventories
+namespace TradeModeling.Inventories.Adapter
 {
-    /// <summary>
-    /// An inventory with infinite capacity
-    /// </summary>
-    /// <typeparam name="T"></typeparam>
-    public class TradingInventoryAdapter<T> : IExchangeInventory, IInventory<T>
+    public class TradingInventoryAdapter<T> : IExchangeInventory
     {
         protected T moneyType;
 
-        public IInventoryItemSource<T> itemSource;
+        public IInventory<T> itemSource;
 
         public TradingInventoryAdapter(
-            IInventoryItemSource<T> source,
+            IInventory<T> source,
             T moneyType)
         {
             itemSource = source;
@@ -26,11 +20,6 @@ namespace TradeModeling.Inventories
         {
         }
 
-        public IInventoryItemSource<T> GetBacker()
-        {
-            return itemSource;
-        }
-
         /// <summary>
         /// Transfer <paramref name="amount"/> of <paramref name="type"/> into <paramref name="target"/>
         /// </summary>
@@ -38,9 +27,9 @@ namespace TradeModeling.Inventories
         /// <param name="target">the inventory to transfer into</param>
         /// <param name="amount">the amount to transfer</param>
         /// <returns>An option to execute the transfer, wrapping the amount which would be transferred</returns>
-        public ActionOption<float> TransferResourceInto(T type, IInventory<T> target, float amount)
+        public ActionOption<float> TransferResourceInto(T type, TradingInventoryAdapter<T> target, float amount)
         {
-            return itemSource.transferResourceInto(type, target.GetBacker(), amount);
+            return itemSource.TransferResourceInto(type, target.itemSource, amount);
         }
 
         public float Get(T type)

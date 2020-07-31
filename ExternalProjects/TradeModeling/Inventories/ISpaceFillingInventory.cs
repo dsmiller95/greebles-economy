@@ -8,7 +8,7 @@ namespace TradeModeling.Inventories
     ///    and has a set capacity
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public interface ISpaceFillingItemSource<T> : IInventoryItemSource<T>
+    public interface ISpaceFillingInventory<T> : IInventory<T>
     {
         Action<float> OnCapacityChanged { set; }
         IEnumerable<T> SpaceFillingItems { get; }

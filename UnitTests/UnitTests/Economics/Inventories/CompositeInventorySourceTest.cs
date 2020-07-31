@@ -16,7 +16,7 @@ namespace UnitTests.Economics.Inventories
                 (TestItemType.Corn, 3f),
                 (TestItemType.Pesos, 5f)
             });
-            var composite = new CompositeInventorySource<TestItemType>(new[] { sourceInventory }, CompositeDistributionMode.EVEN);
+            var composite = new CompositeInventory<TestItemType>(new[] { sourceInventory }, CompositeDistributionMode.EVEN);
 
             Assert.AreEqual(2f, composite.Get(TestItemType.Cactus));
             Assert.AreEqual(3f, composite.Get(TestItemType.Corn));
@@ -39,7 +39,7 @@ namespace UnitTests.Economics.Inventories
                 (TestItemType.Corn, 3f),
                 (TestItemType.Pesos, 5f)
             }, 10, new[] { TestItemType.Cactus, TestItemType.Corn });
-            var composite = new CompositeInventorySource<TestItemType>(new[] { sourceInventory }, CompositeDistributionMode.EVEN);
+            var composite = new CompositeInventory<TestItemType>(new[] { sourceInventory }, CompositeDistributionMode.EVEN);
 
             Assert.AreEqual(2f, composite.Get(TestItemType.Cactus));
             Assert.AreEqual(3f, composite.Get(TestItemType.Corn));
@@ -71,7 +71,7 @@ namespace UnitTests.Economics.Inventories
                 (TestItemType.Corn, 3f),
                 (TestItemType.Pesos, 5f)
             }, 10, new[] { TestItemType.Cactus, TestItemType.Corn });
-            var composite = new CompositeInventorySource<TestItemType>(new[] { sourceInventory1, sourceInventory2 }, CompositeDistributionMode.EVEN);
+            var composite = new CompositeInventory<TestItemType>(new[] { sourceInventory1, sourceInventory2 }, CompositeDistributionMode.EVEN);
 
             Assert.AreEqual(2f, composite.Get(TestItemType.Cactus));
             Assert.AreEqual(3f, composite.Get(TestItemType.Corn));
@@ -124,7 +124,7 @@ namespace UnitTests.Economics.Inventories
                 (TestItemType.Corn, 3f),
                 (TestItemType.Pesos, 5f)
             }, 10, new[] { TestItemType.Cactus, TestItemType.Corn });
-            var composite = new CompositeInventorySource<TestItemType>(new[] { sourceInventory1, sourceInventory2 }, CompositeDistributionMode.IN_ORDER);
+            var composite = new CompositeInventory<TestItemType>(new[] { sourceInventory1, sourceInventory2 }, CompositeDistributionMode.IN_ORDER);
 
             Assert.AreEqual(2f, composite.Get(TestItemType.Cactus));
             Assert.AreEqual(3f, composite.Get(TestItemType.Corn));
@@ -178,7 +178,7 @@ namespace UnitTests.Economics.Inventories
                 (TestItemType.Corn, 3f),
                 (TestItemType.Pesos, 5f)
             }, 10, new[] { TestItemType.Cactus, TestItemType.Corn });
-            var composite = new CompositeInventorySource<TestItemType>(new[] { sourceInventory1, sourceInventory2 }, CompositeDistributionMode.EVEN_SNAP_TO_INT);
+            var composite = new CompositeInventory<TestItemType>(new[] { sourceInventory1, sourceInventory2 }, CompositeDistributionMode.EVEN_SNAP_TO_INT);
 
             Assert.AreEqual(0f, composite.Get(TestItemType.Cactus));
             Assert.AreEqual(3f, composite.Get(TestItemType.Corn));
@@ -248,7 +248,7 @@ namespace UnitTests.Economics.Inventories
             var sourceInventory3 = EconomicsTestUtilities.CreateSpaceFillingSource(new[]{
                 (TestItemType.Cactus, 0f)
             }, 10, new[] { TestItemType.Cactus });
-            var composite = new CompositeInventorySource<TestItemType>(new[] { sourceInventory1, sourceInventory2, sourceInventory3 }, CompositeDistributionMode.EVEN_SNAP_TO_INT);
+            var composite = new CompositeInventory<TestItemType>(new[] { sourceInventory1, sourceInventory2, sourceInventory3 }, CompositeDistributionMode.EVEN_SNAP_TO_INT);
 
             Assert.AreEqual(0f, composite.Get(TestItemType.Cactus));
             Assert.AreEqual(true, composite.CanFitMoreOf(TestItemType.Cactus));

@@ -1,4 +1,4 @@
-﻿namespace TradeModeling.Inventories
+﻿namespace TradeModeling.Inventories.Adapter
 {
     public interface IExchangeInventory
     {

@@ -9,19 +9,19 @@ namespace TradeModeling.Inventories
     /// An inventory with infinite capacity
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public class BasicInventorySource<T> : IInventoryItemSource<T>
+    public class BasicInventory<T> : IInventory<T>
     {
         protected IDictionary<T, float> inventory;
 
         public Action<T, float> OnResourceChanged { private get; set; }
 
-        public BasicInventorySource(
+        public BasicInventory(
             IDictionary<T, float> initialItems)
         {
             inventory = new Dictionary<T, float>(initialItems);
         }
 
-        protected BasicInventorySource(BasicInventorySource<T> other)
+        protected BasicInventory(BasicInventory<T> other)
         {
             inventory = new Dictionary<T, float>(other.inventory);
         }
@@ -62,9 +62,9 @@ namespace TradeModeling.Inventories
         {
             return true;
         }
-        public virtual IInventoryItemSource<T> CloneSimulated()
+        public virtual IInventory<T> CloneSimulated()
         {
-            return new BasicInventorySource<T>(this);
+            return new BasicInventory<T>(this);
         }
 
         public string ToString(Func<T, string> serializer)

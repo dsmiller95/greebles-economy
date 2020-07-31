@@ -22,8 +22,8 @@ namespace TradeModeling.TradeRouteUtilities
     public static class TradeRouteAutoBalance
     {
         public static ResourceTrade<T>[][] GetTradesWhichBalanceInventories<T>(
-            IInventoryItemSource<T> inventoryToDistribute,
-            IList<IInventoryItemSource<T>> inventories,
+            IInventory<T> inventoryToDistribute,
+            IList<IInventory<T>> inventories,
             IList<Dictionary<T, float>> maximumAmounts,
             T[] resourcesToTrade,
             bool roundToInts = false)
@@ -84,7 +84,7 @@ namespace TradeModeling.TradeRouteUtilities
             return tradeAmounts.ToArray();
         }
 
-        private static void SumInto<T>(Dictionary<T, float> seed, IList<IInventoryItemSource<T>> inventories)
+        private static void SumInto<T>(Dictionary<T, float> seed, IList<IInventory<T>> inventories)
             where T : Enum
         {
             foreach (var inventory in inventories)
@@ -96,7 +96,7 @@ namespace TradeModeling.TradeRouteUtilities
             }
         }
 
-        private static IEnumerable<ResourceTrade<T>> GetResourceTradesFromInventoryToTargetAmount<T>(IInventoryItemSource<T> inventory, IDictionary<T, float> targetInventoryAmount, bool roundToInt)
+        private static IEnumerable<ResourceTrade<T>> GetResourceTradesFromInventoryToTargetAmount<T>(IInventory<T> inventory, IDictionary<T, float> targetInventoryAmount, bool roundToInt)
             where T : System.Enum
         {
             foreach (var resource in targetInventoryAmount.Keys)

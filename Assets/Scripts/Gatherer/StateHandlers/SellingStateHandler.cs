@@ -7,6 +7,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using TradeModeling.Economics;
 using TradeModeling.Inventories;
+using TradeModeling.Inventories.Adapter;
 using UnityEngine;
 
 namespace Assets.Scripts.Gatherer.StateHandlers

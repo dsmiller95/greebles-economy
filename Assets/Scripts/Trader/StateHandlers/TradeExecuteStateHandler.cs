@@ -46,7 +46,7 @@ namespace Assets.Scripts.Trader.StateHandlers
                     // Abort!! we'll have to step back to the beginning and re-evaluate our opportunities
                     return Task.FromResult(TraderState.Initial);
                 }
-                var option = data.inventory.transferResourceInto(trade.type, targetInventory, Mathf.Sign(trade.amount));
+                var option = data.inventory.TransferResourceInto(trade.type, targetInventory, Mathf.Sign(trade.amount));
                 var remainingToTrade = trade.amount - option.info;
                 option.Execute();
                 

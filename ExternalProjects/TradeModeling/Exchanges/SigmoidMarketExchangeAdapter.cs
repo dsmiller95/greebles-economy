@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using TradeModeling.Economics;
 using TradeModeling.Functions;
-using TradeModeling.Inventories;
+using TradeModeling.Inventories.Adapter;
 
 namespace TradeModeling.Exchanges
 {

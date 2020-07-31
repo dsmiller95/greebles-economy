@@ -1,4 +1,4 @@
-﻿using TradeModeling.Inventories;
+﻿using TradeModeling.Inventories.Adapter;
 
 namespace TradeModeling.Economics
 {

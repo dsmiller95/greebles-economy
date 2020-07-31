@@ -19,13 +19,13 @@ namespace TradeModeling.Inventories
     /// <typeparam name="T"></typeparam>
     public class InventoryNotifier<T> : INotifyingInventory<T>
     {
-        protected IInventoryItemSource<T> backingSource;
+        protected IInventory<T> backingSource;
         private float defaultCapacity;
 
         public event EventHandler<ResourceChanged<T>> resourceAmountChanged;
         public event EventHandler<ResourceChanged<T>> resourceCapacityChanges;
 
-        public InventoryNotifier(IInventoryItemSource<T> backing, float defaultCapacity)
+        public InventoryNotifier(IInventory<T> backing, float defaultCapacity)
         {
             backingSource = backing;
             this.defaultCapacity = defaultCapacity;
@@ -39,7 +39,7 @@ namespace TradeModeling.Inventories
                 });
             };
 
-            if (backingSource is ISpaceFillingItemSource<T> spaceFilling)
+            if (backingSource is ISpaceFillingInventory<T> spaceFilling)
             {
                 spaceFilling.OnCapacityChanged = (amount) =>
                 {
@@ -51,7 +51,7 @@ namespace TradeModeling.Inventories
         private void NotifyAllCapacityChange()
         {
             var resourcesToSet = new HashSet<T>(backingSource.GetAllResourceTypes());
-            if (backingSource is ISpaceFillingItemSource<T> spaceFilling)
+            if (backingSource is ISpaceFillingInventory<T> spaceFilling)
             {
                 foreach (var resource in spaceFilling.SpaceFillingItems)
                 {

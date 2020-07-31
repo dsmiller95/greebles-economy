@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using TradeModeling.Economics;
+﻿using System.Linq;
 using TradeModeling.Exchanges;
-using TradeModeling.Inventories;
-using TradeModeling;
 using TradeModeling.Functions;
+using TradeModeling.Inventories;
+using TradeModeling.Inventories.Adapter;
 
 namespace UnitTests.Economics
 {
@@ -21,23 +16,23 @@ namespace UnitTests.Economics
     }
     public static class EconomicsTestUtilities
     {
-        public static ISpaceFillingItemSource<TestItemType> CreateSpaceFillingSource(
+        public static ISpaceFillingInventory<TestItemType> CreateSpaceFillingSource(
             (TestItemType, float)[] initialItems,
             int capacity = 10,
             TestItemType[] spaceFillingItems = null)
         {
             spaceFillingItems = spaceFillingItems ?? new[] { TestItemType.Cactus, TestItemType.Corn };
-            return new SpaceFillingInventorySource<TestItemType>(
+            return new SpaceFillingInventory<TestItemType>(
                 initialItems.ToDictionary(x => x.Item1, x => x.Item2),
                 spaceFillingItems,
                 capacity);
         }
-        public static IInventoryItemSource<TestItemType> CreateBasicSource(
+        public static IInventory<TestItemType> CreateBasicSource(
             (TestItemType, float)[] initialItems,
             TestItemType[] spaceFillingItems = null)
         {
             spaceFillingItems = spaceFillingItems ?? new[] { TestItemType.Cactus, TestItemType.Corn };
-            return new BasicInventorySource<TestItemType>(
+            return new BasicInventory<TestItemType>(
                 initialItems.ToDictionary(x => x.Item1, x => x.Item2));
         }
 

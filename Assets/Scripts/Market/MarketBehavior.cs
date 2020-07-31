@@ -31,10 +31,10 @@ namespace Assets.Scripts.Market
         private Dictionary<ResourceType, float> purchasePriceDictionary;
         public ResourceInventory inventory;
         
-        public IInventoryItemSource<ResourceType> _inventory;
+        public IInventory<ResourceType> _inventory;
         public float defaultSigmoidSizeIfNoInventorySpace = 50;
 
-        public override IInventoryItemSource<ResourceType> tradeInventory => _inventory;
+        public override IInventory<ResourceType> tradeInventory => _inventory;
 
         [HideInInspector]
         [NonSerialized]
@@ -68,18 +68,18 @@ namespace Assets.Scripts.Market
         {
             return prices.SelectDictionary(x => new SigmoidFunctionConfig
             {
-                range = (tradeInventory as ISpaceFillingItemSource<ResourceType>)?.inventoryCapacity ?? defaultInvSize,
+                range = (tradeInventory as ISpaceFillingInventory<ResourceType>)?.inventoryCapacity ?? defaultInvSize,
                 yRange = x
             });
         }
 
         [Obsolete("Use the MarketExchangeAdapter provided by GetExchangeAdapter()", true)]
-        public Dictionary<ResourceType, ResourceSellResult> sellAllGoodsInInventory(IInventoryItemSource<ResourceType> inventory)
+        public Dictionary<ResourceType, ResourceSellResult> sellAllGoodsInInventory(IInventory<ResourceType> inventory)
         {
             return SellAllGoods(inventory, _inventory, ResourceConfiguration.spaceFillingItems, sellPriceDictionary);
         }
 
-        private static Dictionary<ResourceType, ResourceSellResult> SellAllGoods(IInventoryItemSource<ResourceType> seller, IInventoryItemSource<ResourceType> consumer, ResourceType[] types, Dictionary<ResourceType, float> prices)
+        private static Dictionary<ResourceType, ResourceSellResult> SellAllGoods(IInventory<ResourceType> seller, IInventory<ResourceType> consumer, ResourceType[] types, Dictionary<ResourceType, float> prices)
         {
             var result = seller.DrainAllInto(consumer, types)
                 .Select(pair =>

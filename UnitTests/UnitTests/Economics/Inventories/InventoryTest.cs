@@ -43,7 +43,7 @@ namespace UnitTests.Economics.Inventories
                 (TestItemType.Pesos,    3f)
             });
 
-            var transferOption = basicInventorySource.transferResourceInto(TestItemType.Pesos, basicInventoryTarget, 10);
+            var transferOption = basicInventorySource.TransferResourceInto(TestItemType.Pesos, basicInventoryTarget, 10);
 
             Assert.AreEqual(5, transferOption.info);
             Assert.AreEqual(5, basicInventorySource.Get(TestItemType.Pesos));
@@ -108,7 +108,7 @@ namespace UnitTests.Economics.Inventories
                 (TestItemType.Pesos,    5f)
             }, 10, new[] { TestItemType.Cactus, TestItemType.Corn });
 
-            var transferOption = spaceFillingInventorySource.transferResourceInto(TestItemType.Cactus, spaceFillingInventoryTarget, 10);
+            var transferOption = spaceFillingInventorySource.TransferResourceInto(TestItemType.Cactus, spaceFillingInventoryTarget, 10);
 
             Assert.AreEqual(5, transferOption.info);
             Assert.AreEqual(10, spaceFillingInventorySource.Get(TestItemType.Cactus));

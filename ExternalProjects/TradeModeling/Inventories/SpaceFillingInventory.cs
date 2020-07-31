@@ -9,12 +9,12 @@ namespace TradeModeling.Inventories
     /// An inventory with infinite capacity
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public class SpaceFillingInventorySource<T> : BasicInventorySource<T>, ISpaceFillingItemSource<T>
+    public class SpaceFillingInventory<T> : BasicInventory<T>, ISpaceFillingInventory<T>
     {
         protected ISet<T> spaceFillingItems;
         public Action<float> OnCapacityChanged { private get; set; }
 
-        public SpaceFillingInventorySource(
+        public SpaceFillingInventory(
             IDictionary<T, float> initialItems,
             ICollection<T> spaceFillingItems,
             int capacity) : base(initialItems)
@@ -23,7 +23,7 @@ namespace TradeModeling.Inventories
             this.spaceFillingItems = new HashSet<T>(spaceFillingItems);
         }
 
-        protected SpaceFillingInventorySource(SpaceFillingInventorySource<T> other) : base(other)
+        protected SpaceFillingInventory(SpaceFillingInventory<T> other) : base(other)
         {
             _inventoryCapacity = other._inventoryCapacity;
             spaceFillingItems = new HashSet<T>(other.spaceFillingItems);
@@ -72,9 +72,9 @@ namespace TradeModeling.Inventories
             }
             return remainingCapacity > 0;
         }
-        public override IInventoryItemSource<T> CloneSimulated()
+        public override IInventory<T> CloneSimulated()
         {
-            return new SpaceFillingInventorySource<T>(this);
+            return new SpaceFillingInventory<T>(this);
         }
     }
 }

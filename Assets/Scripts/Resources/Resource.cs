@@ -21,7 +21,7 @@ namespace Assets.Scripts.Resources
 
         private int currentConsumerCount = 0;
 
-        public async Task<bool> Eat(IInventoryItemSource<ResourceType> inventory, float amount = -1)
+        public async Task<bool> Eat(IInventory<ResourceType> inventory, float amount = -1)
         {
             ActionOption<float> eatOption;
             lock (this)

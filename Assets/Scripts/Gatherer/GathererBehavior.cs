@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using TradeModeling.Economics;
 using TradeModeling.Functions;
 using TradeModeling.Inventories;
+using TradeModeling.Inventories.Adapter;
 using UnityEngine;
 
 namespace Assets.Scripts.Gatherer
@@ -34,7 +35,7 @@ namespace Assets.Scripts.Gatherer
 
         internal float lastTargetCheckTime = 0;
 
-        internal IInventoryItemSource<ResourceType> inventory;
+        internal IInventory<ResourceType> inventory;
         internal ITimeTracker timeTracker;
         internal GatherBehaviorOptimizer optimizer;
 
@@ -126,7 +127,7 @@ namespace Assets.Scripts.Gatherer
         internal void attachBackpack()
         {
             backpack.SetActive(true);
-            if(inventory is ISpaceFillingItemSource<ResourceType> spaceFilling)
+            if(inventory is ISpaceFillingInventory<ResourceType> spaceFilling)
             {
                 spaceFilling.inventoryCapacity = pocketSize + backpackSize;
             }
@@ -135,7 +136,7 @@ namespace Assets.Scripts.Gatherer
         internal void removeBackpack()
         {
             backpack.SetActive(false);
-            if (inventory is ISpaceFillingItemSource<ResourceType> spaceFilling)
+            if (inventory is ISpaceFillingInventory<ResourceType> spaceFilling)
             {
                 spaceFilling.inventoryCapacity = pocketSize;
             }

@@ -34,7 +34,7 @@ namespace Assets.Scripts.Gatherer.StateHandlers
             {
                 await data.eatResource(touchedObject);
             }
-            if(data.inventory is ISpaceFillingItemSource<ResourceType> spaceFilling)
+            if(data.inventory is ISpaceFillingInventory<ResourceType> spaceFilling)
             {
                 if(spaceFilling.getFullRatio() >= 1)
                 {

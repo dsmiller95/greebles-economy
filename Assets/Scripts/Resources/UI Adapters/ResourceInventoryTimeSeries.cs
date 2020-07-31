@@ -7,7 +7,7 @@ namespace Assets.Scripts.Resources.UI
     {
 
         public ResourceInventory inventory;
-        private IInventoryItemSource<ResourceType> _inventory;
+        private IInventory<ResourceType> _inventory;
 
         private void Awake()
         {

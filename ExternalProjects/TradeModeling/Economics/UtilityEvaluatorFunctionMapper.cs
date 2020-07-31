@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
 using TradeModeling.Functions;
-using TradeModeling.Inventories;
+using TradeModeling.Inventories.Adapter;
 
 namespace TradeModeling.Economics
 {
-    public class UtilityEvaluatorFunctionMapper<T>: IUtilityEvaluator<T, TradingInventoryAdapter<T>>
+    public class UtilityEvaluatorFunctionMapper<T> : IUtilityEvaluator<T, TradingInventoryAdapter<T>>
     {
         private IDictionary<T, IIncrementalFunction> utilityFunctions;
         public UtilityEvaluatorFunctionMapper(IDictionary<T, IIncrementalFunction> utilityFunctions)

@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using TradeModeling.Inventories;
+using TradeModeling.Inventories.Adapter;
 
 namespace TradeModeling.Economics
 {
@@ -35,12 +34,12 @@ namespace TradeModeling.Economics
 
             var transactionListReverse = transactionLedger
                 .Select(transaction =>
-                    this.GetTransactionMapFromSingleTransaction(tradeableResources, transaction)
+                    GetTransactionMapFromSingleTransaction(tradeableResources, transaction)
                 ).Reverse();
 
-            foreach(var transaction in transactionListReverse)
+            foreach (var transaction in transactionListReverse)
             {
-                this.DistributeUtilityBasedOnTransaction(tradeableResources, endingUtilities, transaction, retractingInventory);
+                DistributeUtilityBasedOnTransaction(tradeableResources, endingUtilities, transaction, retractingInventory);
                 retractingInventory = retractingInventory - transaction;
             }
 

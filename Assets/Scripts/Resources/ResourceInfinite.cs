@@ -13,7 +13,7 @@ namespace Assets.Scripts.Resources
         public ResourceType type;
         public float gatherTime = 1;
 
-        public async Task<bool> Eat(IInventoryItemSource<ResourceType> inventory, float amount = -1)
+        public async Task<bool> Eat(IInventory<ResourceType> inventory, float amount = -1)
         {
             await Task.Delay((int)(gatherTime * 1000));
             if (amount == -1)
