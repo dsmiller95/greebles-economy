@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using TradeModeling.Economics;
 
 namespace TradeModeling.Inventories
@@ -28,12 +27,12 @@ namespace TradeModeling.Inventories
 
         public CompositeInventorySource(IList<IInventoryItemSource<T>> composingInventories, CompositeDistributionMode mode)
         {
-            this.inventorySources = composingInventories;
+            inventorySources = composingInventories;
             distributionMode = mode;
             AllResourceTypes = new HashSet<T>();
-            foreach(var inv in inventorySources)
+            foreach (var inv in inventorySources)
             {
-                foreach(var type in inv.GetAllResourceTypes())
+                foreach (var type in inv.GetAllResourceTypes())
                 {
                     AllResourceTypes.Add(type);
                 }
@@ -43,9 +42,9 @@ namespace TradeModeling.Inventories
         public Dictionary<T, float> GetCurrentResourceAmounts()
         {
             var result = new Dictionary<T, float>();
-            foreach(var inv in inventorySources)
+            foreach (var inv in inventorySources)
             {
-                foreach(var amount in inv.GetCurrentResourceAmounts())
+                foreach (var amount in inv.GetCurrentResourceAmounts())
                 {
                     if (!result.ContainsKey(amount.Key))
                     {
@@ -69,33 +68,46 @@ namespace TradeModeling.Inventories
 
         public virtual ActionOption<float> SetAmount(T type, float amount)
         {
-            var totalSpace = SetInventoryValueInOrder(type, amount).Sum(x => x.info);
+            var inOrderOptions = SetInventoryValueInOrder(type, amount).ToList();
+            var totalSpace = inOrderOptions.Sum(x => x.info);
 
             // cannot have a negative amount
             var nonNegativeAmount = Math.Max(amount, 0);
             var newAmount = Math.Min(nonNegativeAmount, totalSpace);
             return new ActionOption<float>(newAmount, () =>
             {
-                SetInventoryValue(type, newAmount);
+                switch (distributionMode)
+                {
+                    case CompositeDistributionMode.EVEN:
+                        SetInventoryValueEvenlyDistributed(type, newAmount);
+                        break;
+
+                    case CompositeDistributionMode.IN_ORDER:
+                        foreach (var option in inOrderOptions)
+                        {
+                            option.Execute();
+                        }
+                        break;
+                }
                 OnResourceChanged?.Invoke(type, newAmount);
             });
         }
 
         private IEnumerable<ActionOption<float>> SetInventoryValueInOrder(T type, float newValue)
         {
-            foreach(var inventory in inventorySources)
+            foreach (var inventory in inventorySources)
             {
                 var option = inventory.SetAmount(type, newValue);
                 yield return option;
                 newValue -= option.info;
-                if(newValue <= 1e-5)
+                if (newValue <= 1e-5)
                 {
                     yield break;
                 }
             }
         }
 
-        private void SetInventoryValue(T type, float newValue)
+        private void SetInventoryValueEvenlyDistributed(T type, float newValue)
         {
             var inventorySourcesToFill = inventorySources;
             var average = newValue / inventorySourcesToFill.Count;
@@ -108,10 +120,10 @@ namespace TradeModeling.Inventories
             }
             inventorySourcesToFill = inventorySourcesToFill.Where(x => x.CanFitMoreOf(type)).ToList();
 
-            while(totalItemsToAllocate > 0 && inventorySourcesToFill.Count > 0)
+            while (totalItemsToAllocate > 0 && inventorySourcesToFill.Count > 0)
             {
                 var averageAmountToAdd = totalItemsToAllocate / inventorySourcesToFill.Count;
-                foreach(var inventory in inventorySourcesToFill)
+                foreach (var inventory in inventorySourcesToFill)
                 {
                     var addOption = inventory.Add(type, averageAmountToAdd);
                     totalItemsToAllocate -= addOption.info;
