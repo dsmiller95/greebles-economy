@@ -1,10 +1,7 @@
-﻿using JetBrains.Annotations;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System;
 using UnityEngine;
 
-namespace Simulation.Tiling
+namespace Simulation.Tiling.HexCoords
 {
     [Serializable]
     public struct OffsetCoordinate
@@ -38,7 +35,7 @@ namespace Simulation.Tiling
 
         public AxialCoordinate ToAxial()
         {
-            return this.ToCube().ToAxial();
+            return ToCube().ToAxial();
         }
 
         public bool IsZero()
@@ -52,8 +49,10 @@ namespace Simulation.Tiling
                 min.column < column && column < max.column;
         }
 
-        public static explicit operator OffsetCoordinate(Vector2Int d) => new OffsetCoordinate(d.x, d.y);
-
+        public static explicit operator OffsetCoordinate(Vector2Int d)
+        {
+            return new OffsetCoordinate(d.x, d.y);
+        }
 
         public override bool Equals(object obj)
         {

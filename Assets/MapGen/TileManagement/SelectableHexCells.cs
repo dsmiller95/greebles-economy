@@ -3,7 +3,7 @@ using Assets.MapGen.TileManagement;
 using Assets.Scripts.MovementExtensions;
 using Assets.UI.InfoPane;
 using Assets.UI.SelectionManager;
-using Simulation.Tiling;
+using Simulation.Tiling.HexCoords;
 using UnityEngine;
 
 public class SelectableHexCells : MonoBehaviour, IFocusable

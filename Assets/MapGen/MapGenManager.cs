@@ -1,10 +1,8 @@
 ﻿using Assets.MapGen;
 using Assets.MapGen.TileManagement;
 using Assets.Scripts.Market;
-using Assets.Scripts.MovementExtensions;
-using Simulation.Tiling;
+using Simulation.Tiling.HexCoords;
 using UnityEngine;
-using UnityEngine.Video;
 
 [System.Serializable]
 public struct MapGenSpawnable
@@ -87,10 +85,11 @@ public class MapGenManager : MonoBehaviour
     private AxialCoordinate getRandomPosInBounds(float scaleFactor)
     {
         Vector2 nextPoint;
-        if(scaleFactor == 0)
+        if (scaleFactor == 0)
         {
             nextPoint = pointGenerator.Sample(spawnBoxSize + new Vector2Int(1, 1));
-        }else
+        }
+        else
         {
             var maxSize = spawnBoxSize + new Vector2Int(1, 1);
             var newMin = ((Vector2)maxSize) * ((1 - scaleFactor) / 2f);

@@ -3,7 +3,7 @@ using Assets.Scripts.Resources;
 using Assets.Scripts.Resources.Inventory;
 using Assets.Scripts.Trader;
 using Extensions;
-using Simulation.Tiling;
+using Simulation.Tiling.HexCoords;
 using System;
 using System.Collections.Generic;
 using System.Linq;

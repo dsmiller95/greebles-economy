@@ -1,8 +1,9 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Simulation.Tiling;
+using Simulation.Tiling.HexCoords;
 using System.Linq;
 using UnityEngine;
 using Extensions;
+using Simulation.Tiling.HexCoords;
 
 namespace UnitTests.Simulation.Tiling
 {

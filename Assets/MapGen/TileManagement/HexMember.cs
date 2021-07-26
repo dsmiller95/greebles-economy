@@ -1,4 +1,4 @@
-﻿using Simulation.Tiling;
+﻿using Simulation.Tiling.HexCoords;
 using UnityEngine;
 
 namespace Assets.MapGen.TileManagement
@@ -19,8 +19,9 @@ namespace Assets.MapGen.TileManagement
         private ITilemapMember _parentMemeCache;
         private ITilemapMember parentMemberTransform
         {
-            get {
-                if(_parentMemeCache == null)
+            get
+            {
+                if (_parentMemeCache == null)
                 {
                     _parentMemeCache = transform.parent.GetComponentInParent<ITilemapMember>();
                 }
@@ -41,7 +42,7 @@ namespace Assets.MapGen.TileManagement
         {
             // this is not a no-op: will trigger the logic which ensures that this component is registered
             // in the grid, while making sure it is only registered once
-            this.PositionInTileMap = this.PositionInTileMap;
+            PositionInTileMap = PositionInTileMap;
             UpdatePositionInWorldSpace();
         }
 
@@ -109,7 +110,7 @@ namespace Assets.MapGen.TileManagement
         {
             if (this == null)
             {
-                Debug.LogError($"Error: attempting to access destroyed HexMember at {this.PositionInTileMap}");
+                Debug.LogError($"Error: attempting to access destroyed HexMember at {PositionInTileMap}");
             }
             return GetComponentInChildren<T>();
         }

@@ -1,16 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Cryptography;
 using UnityEngine;
 
-namespace Simulation.Tiling
+namespace Simulation.Tiling.HexCoords
 {
     public class HexCoordinateSystem
     {
         public float hexRadius;
 
-        private readonly Vector2 qBasis = new Vector2(3f/2f, -Mathf.Sqrt(3)/2f);
+        private readonly Vector2 qBasis = new Vector2(3f / 2f, -Mathf.Sqrt(3) / 2f);
         private readonly Vector2 rBasis = new Vector2(0, -Mathf.Sqrt(3));
 
         public HexCoordinateSystem(float hexRadius)
@@ -50,11 +49,11 @@ namespace Simulation.Tiling
 
         public static IEnumerable<AxialCoordinate> GetPositionsWithinJumpDistance(AxialCoordinate origin, int jumpDistance)
         {
-            for(var q = -jumpDistance; q <= jumpDistance; q++)
+            for (var q = -jumpDistance; q <= jumpDistance; q++)
             {
                 var sliceStart = Mathf.Max(-jumpDistance, -q - jumpDistance);
                 var sliceEnd = Mathf.Min(jumpDistance, -q + jumpDistance);
-                for(var r = sliceStart; r <= sliceEnd; r++)
+                for (var r = sliceStart; r <= sliceEnd; r++)
                 {
                     yield return new AxialCoordinate(q, r) + origin;
                 }
@@ -63,7 +62,7 @@ namespace Simulation.Tiling
 
         public IEnumerable<AxialCoordinate> GetPositionsSpiralingAround(AxialCoordinate origin)
         {
-            return this.InternalSpiraling(origin).SelectMany(x => x);
+            return InternalSpiraling(origin).SelectMany(x => x);
         }
 
         private IEnumerable<IEnumerable<AxialCoordinate>> InternalSpiraling(AxialCoordinate origin)
@@ -78,15 +77,15 @@ namespace Simulation.Tiling
 
         public static IEnumerable<AxialCoordinate> GetRing(AxialCoordinate origin, int distance)
         {
-            if(distance == 0)
+            if (distance == 0)
             {
                 yield return origin;
             }
 
             var currentPointInRing = origin + (AxialCoordinate.GetDirection(4) * distance);
-            for(var directionIndex = 0; directionIndex < 6; directionIndex++)
+            for (var directionIndex = 0; directionIndex < 6; directionIndex++)
             {
-                for(var i = 0; i < distance; i++)
+                for (var i = 0; i < distance; i++)
                 {
                     yield return currentPointInRing;
                     currentPointInRing = currentPointInRing.GetNeighbor(directionIndex);
@@ -122,7 +121,7 @@ namespace Simulation.Tiling
             var angle = Vector2.SignedAngle(Vector2.right, worldSpaceDestinationVector);
             if (0 <= angle && angle < 60)
             {
-                return new AxialCoordinate(1, -1);;
+                return new AxialCoordinate(1, -1); ;
             }
             if (60 <= angle && angle < 120)
             {

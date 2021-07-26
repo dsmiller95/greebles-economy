@@ -1,8 +1,7 @@
 ﻿using Assets.MapGen.TileManagement;
-using Simulation.Tiling;
+using Simulation.Tiling.HexCoords;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
 namespace Assets.Scripts.MovementExtensions
@@ -141,7 +140,7 @@ namespace Assets.Scripts.MovementExtensions
         {
             var myPositionCube = PositionInTileMap.ToCube();
             var members = MapManager.GetMembersWithinJumpDistanceByChunk(PositionInTileMap, Mathf.RoundToInt(maxDistance));
-            foreach(var member in members)
+            foreach (var member in members)
             {
                 var item = member.TryGetType<T>();
                 if (item != null && filter(item))

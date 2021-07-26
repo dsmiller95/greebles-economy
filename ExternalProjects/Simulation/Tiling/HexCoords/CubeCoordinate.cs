@@ -1,10 +1,7 @@
-﻿using JetBrains.Annotations;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System;
 using UnityEngine;
 
-namespace Simulation.Tiling
+namespace Simulation.Tiling.HexCoords
 {
     [Serializable]
     public struct CubeCoordinate

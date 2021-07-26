@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
-namespace Simulation.Tiling
+namespace Simulation.Tiling.HexCoords
 {
     public class VoroniTilingMapper
     {
@@ -23,10 +20,10 @@ namespace Simulation.Tiling
             var validWidth = maximumBound.column - minimumBound.column;
             var validHeight = maximumBound.row - minimumBound.row;
             int[][] owners = new int[validHeight][];
-            for(var row = 0; row < validHeight; row++)
+            for (var row = 0; row < validHeight; row++)
             {
                 owners[row] = new int[validWidth];
-                for(var col = 0; col < validWidth; col++)
+                for (var col = 0; col < validWidth; col++)
                 {
                     owners[row][col] = -1;
                 }

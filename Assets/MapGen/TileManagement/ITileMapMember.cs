@@ -1,4 +1,5 @@
-﻿using Simulation.Tiling;
+﻿using Simulation.Tiling.HexCoords;
+using Simulation.Tiling.HexCoords;
 using UnityEngine;
 
 namespace Assets.MapGen.TileManagement

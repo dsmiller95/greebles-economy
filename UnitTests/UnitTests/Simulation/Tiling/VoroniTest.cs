@@ -1,7 +1,6 @@
-﻿using System;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Simulation.Tiling.HexCoords;
 using System.Linq;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Simulation.Tiling;
 
 namespace UnitTests.Simulation.Tiling
 {
@@ -18,9 +17,9 @@ namespace UnitTests.Simulation.Tiling
             Assert.AreEqual(2, voroni.Length);
             Assert.AreEqual(2, voroni[0].Length);
 
-            foreach(var row in voroni)
+            foreach (var row in voroni)
             {
-                foreach(var cell in row)
+                foreach (var cell in row)
                 {
                     Assert.AreEqual(0, cell);
                 }

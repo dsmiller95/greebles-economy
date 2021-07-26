@@ -1,5 +1,5 @@
 ﻿using Assets.MapGen.TileManagement;
-using Simulation.Tiling;
+using Simulation.Tiling.HexCoords;
 using System.Linq;
 using UnityEngine;
 

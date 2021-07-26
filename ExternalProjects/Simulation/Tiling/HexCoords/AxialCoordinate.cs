@@ -1,10 +1,6 @@
-﻿using JetBrains.Annotations;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using UnityEngine;
+﻿using System;
 
-namespace Simulation.Tiling
+namespace Simulation.Tiling.HexCoords
 {
     [Serializable]
     public struct AxialCoordinate
@@ -28,12 +24,12 @@ namespace Simulation.Tiling
 
         public OffsetCoordinate ToOffset()
         {
-            return this.ToCube().ToOffset();
+            return ToCube().ToOffset();
         }
 
         public int DistanceTo(AxialCoordinate other)
         {
-            return this.DistanceTo(other.ToCube());
+            return DistanceTo(other.ToCube());
         }
 
         public int DistanceTo(CubeCoordinate other)
@@ -88,7 +84,7 @@ namespace Simulation.Tiling
 
         public static AxialCoordinate operator /(AxialCoordinate a, int b)
         {
-            return new AxialCoordinate(a.q/b, a.r/b);
+            return new AxialCoordinate(a.q / b, a.r / b);
         }
 
         public override bool Equals(object obj)

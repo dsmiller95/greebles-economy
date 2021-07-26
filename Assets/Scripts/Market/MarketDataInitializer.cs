@@ -1,6 +1,5 @@
 ﻿using Assets.MapGen.TileManagement;
-using Assets.Scripts.MovementExtensions;
-using Simulation.Tiling;
+using Simulation.Tiling.HexCoords;
 using System.Linq;
 using UnityEngine;
 
@@ -23,7 +22,7 @@ namespace Assets.Scripts.Market
             //        .GetPositionsWithinJumpDistance(myHexPosition, 2);
             //    market.myServiceRange = effectiveRange.ToArray();
             //}
-            
+
             var allMarkets = manager.GetAllOfType<MarketBehavior>().ToList();
             Debug.Log($"Initializing {allMarkets.Count} markets");
             var marketPositions = allMarkets
@@ -37,9 +36,9 @@ namespace Assets.Scripts.Market
 
             var voroniData = VoroniTilingMapper.SetupVoroniMap(marketPositions, minimum, maximum);
 
-            for(var row = 0; row < voroniData.Length; row++)
+            for (var row = 0; row < voroniData.Length; row++)
             {
-                for(var col = 0; col < voroniData[row].Length; col++)
+                for (var col = 0; col < voroniData[row].Length; col++)
                 {
                     var index = voroniData[row][col];
                     var coordinate = new OffsetCoordinate(col, row).ToAxial() + minimumAxial;

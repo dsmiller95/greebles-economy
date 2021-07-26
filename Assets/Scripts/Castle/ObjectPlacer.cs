@@ -2,7 +2,7 @@
 using Assets.Scripts.MovementExtensions;
 using Assets.UI.SelectionManager;
 using Boo.Lang;
-using Simulation.Tiling;
+using Simulation.Tiling.HexCoords;
 using System;
 using System.Collections.Generic;
 using System.Linq;

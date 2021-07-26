@@ -1,6 +1,6 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Simulation.Tiling;
+using Simulation.Tiling.HexCoords;
 
 namespace UnitTests.Simulation.Tiling
 {
